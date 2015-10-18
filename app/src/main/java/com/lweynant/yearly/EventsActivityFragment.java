@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import timber.log.Timber;
+
 /**
  * A placeholder fragment containing a simple view.
  */
@@ -17,6 +19,7 @@ public class EventsActivityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Timber.d("onCreateView");
         return inflater.inflate(R.layout.fragment_events, container, false);
     }
 }
