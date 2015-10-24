@@ -19,7 +19,7 @@ public class Birthday implements IEventType {
 
     @Override
     public String getTitle() {
-        return String.format(rstring.getString(R.string.birthday_title), name);
+        return String.format(rstring.getStringFromId(R.string.birthday_title), name);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.lweynant.yearly;
+package com.lweynant.yearly.controller;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+
+import com.lweynant.yearly.R;
 
 import timber.log.Timber;
 

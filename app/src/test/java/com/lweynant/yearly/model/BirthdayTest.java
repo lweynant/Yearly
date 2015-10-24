@@ -22,7 +22,7 @@ public class BirthdayTest {
     IRString rstring;
     @Test
     public void getTitle_ValidBirthday_ReturnsValidTitle() throws Exception{
-        when(rstring.getString(R.string.birthday_title)).thenReturn(BIRTHDAY_TITLE);
+        when(rstring.getStringFromId(R.string.birthday_title)).thenReturn(BIRTHDAY_TITLE);
         Birthday bd = new Birthday("John", getADate(), rstring);
         assertThat(bd.getTitle(), is("John's birthday"));
     }
