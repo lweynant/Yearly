@@ -12,10 +12,12 @@ import android.widget.Toast;
 import com.lweynant.yearly.IRString;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.model.Birthday;
-import com.lweynant.yearly.model.IEventType;
+import com.lweynant.yearly.model.EventRepo;
+import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.Date;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import timber.log.Timber;
@@ -27,7 +29,6 @@ public class EventsActivityFragment extends Fragment implements IRString, Events
 
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
-    private List<IEventType> events;
     private EventsAdapter eventsAdapter;
 
     public EventsActivityFragment() {
@@ -48,18 +49,37 @@ public class EventsActivityFragment extends Fragment implements IRString, Events
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         //set the adapter
-        events = new ArrayList<>(10);
-        events.add(new Birthday("Katinka", 10, Date.MARCH, this));
-        events.add(new Birthday("Kasper", 14, Date.MAY, this));
-        events.add(new Birthday("Ann", 5, Date.MARCH, this));
-        events.add(new Birthday("Ludwig", 8, Date.FEBRUARY, this));
+        EventRepo repo = EventRepo.getInstance();
+        repo.add(new Birthday("Katinka", 10, Date.MARCH, this));
+        repo.add(new Birthday("Kasper", 14, Date.MAY, this));
+        repo.add(new Birthday("Ann", 5, Date.MARCH, this));
+        repo.add(new Birthday("Ludwig", 8, Date.FEBRUARY, this));
+        repo.add(new Birthday("Jinthe", 27, Date.OCTOBER, this));
+        repo.add(new Birthday("Lis", 7, Date.NOVEMBER, this));
+        repo.add(new Birthday("Caroline", 6, Date.FEBRUARY, this));
+        repo.add(new Birthday("Ma", 11, Date.MARCH, this));
+        repo.add(new Birthday("Janne", 24, Date.NOVEMBER, this));
+        repo.add(new Birthday("Julien", 3, Date.FEBRUARY, this));
+        repo.add(new Birthday("Pa", 22, Date.MAY, this));
+        repo.add(new Birthday("Josephine", 29, Date.MAY, this));
+        repo.add(new Birthday("Joren", 30, Date.MAY, this));
+        repo.add(new Birthday("Bjorn", 22, Date.JULY, this));
+        java.util.Date date = Calendar.getInstance().getTime();
+        repo.sortFrom(date.getDay(), date.getMonth());
+        List<IEvent> events = repo.getEvents();
         eventsAdapter = new EventsAdapter(events, this);
         recyclerView.setAdapter(eventsAdapter);
         return view;
     }
 
     @Override
-    public void onSelected(IEventType eventType) {
+    public void onDetach() {
+        super.onDetach();
+        EventRepo.deleteInstance();
+    }
+
+    @Override
+    public void onSelected(IEvent eventType) {
         Toast.makeText(getContext(), eventType.getTitle() + " clicked", Toast.LENGTH_SHORT).show();
     }
 }

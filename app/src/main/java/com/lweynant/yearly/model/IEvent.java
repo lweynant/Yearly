@@ -1,6 +1,6 @@
 package com.lweynant.yearly.model;
 
-public interface IEventType {
+public interface IEvent {
 
 
     public String getTitle();

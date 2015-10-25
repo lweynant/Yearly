@@ -4,7 +4,7 @@ import com.lweynant.yearly.IRString;
 import com.lweynant.yearly.R;
 
 
-public class Birthday implements IEventType {
+public class Birthday implements IEvent {
 
     private final IRString rstring;
     private final int day;
@@ -21,7 +21,7 @@ public class Birthday implements IEventType {
 
     @Override
     public String getTitle() {
-        return String.format(rstring.getStringFromId(R.string.birthday_title), name);
+        return String.format(rstring.getStringFromId(R.string.birthday_title), name, day, month);
     }
 
     @Override

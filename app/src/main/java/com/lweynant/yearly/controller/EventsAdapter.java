@@ -6,23 +6,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.lweynant.yearly.model.IEventType;
+import com.lweynant.yearly.model.IEvent;
 
 import java.util.List;
 
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewHolder> {
 
-    private final List<IEventType> events;
+    private final List<IEvent> events;
     private final onEventTypeSelectedListener listener;
 
     public interface onEventTypeSelectedListener {
-        public void onSelected(IEventType eventType);
+        public void onSelected(IEvent eventType);
     }
 
     public static class EventViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private final onEventTypeSelectedListener listener;
         private TextView textView;
-        private IEventType event;
+        private IEvent event;
         // Provide a reference to the views for each data item
         // Complex data items may need more than one view per item, and
         // you provide access to all the views for a data item in a view holder
@@ -39,13 +39,13 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
             listener.onSelected(event);
         }
 
-        public void bindEvent(IEventType event) {
+        public void bindEvent(IEvent event) {
             this.event = event;
             textView.setText(event.getTitle());
         }
     }
 
-    public EventsAdapter(List<IEventType> events, EventsAdapter.onEventTypeSelectedListener listener){
+    public EventsAdapter(List<IEvent> events, EventsAdapter.onEventTypeSelectedListener listener){
         this.events = events;
         this.listener = listener;
     }
@@ -58,7 +58,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
 
     @Override
     public void onBindViewHolder(EventViewHolder holder, int position) {
-        IEventType event = events.get(position);
+        IEvent event = events.get(position);
         holder.bindEvent(event);
     }
 
