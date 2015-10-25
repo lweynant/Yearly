@@ -13,6 +13,7 @@ import com.lweynant.yearly.IRString;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.IEventType;
+import com.lweynant.yearly.model.Date;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,10 +49,10 @@ public class EventsActivityFragment extends Fragment implements IRString, Events
         recyclerView.setLayoutManager(layoutManager);
         //set the adapter
         events = new ArrayList<>(10);
-        events.add(new Birthday("Katinka", null, this));
-        events.add(new Birthday("Kasper", null, this));
-        events.add(new Birthday("Ann", null, this));
-        events.add(new Birthday("Ludwig", null, this));
+        events.add(new Birthday("Katinka", 10, Date.MARCH, this));
+        events.add(new Birthday("Kasper", 14, Date.MAY, this));
+        events.add(new Birthday("Ann", 5, Date.MARCH, this));
+        events.add(new Birthday("Ludwig", 8, Date.FEBRUARY, this));
         eventsAdapter = new EventsAdapter(events, this);
         recyclerView.setAdapter(eventsAdapter);
         return view;

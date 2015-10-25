@@ -3,18 +3,20 @@ package com.lweynant.yearly.model;
 import com.lweynant.yearly.IRString;
 import com.lweynant.yearly.R;
 
-import org.joda.time.LocalDate;
 
 public class Birthday implements IEventType {
 
     private final IRString rstring;
+    private final int day;
+    @Date.Month
+    private final int month;
     private String name;
-    private LocalDate date;
 
-    public Birthday(String name, LocalDate date, IRString rstring) {
+    public Birthday(String name, int day, @Date.Month int month, IRString rstring) {
         this.rstring = rstring;
         this.name = name;
-        this.date = date;
+        this.day = day;
+        this.month = month;
     }
 
     @Override
@@ -23,7 +25,12 @@ public class Birthday implements IEventType {
     }
 
     @Override
-    public LocalDate getDate() {
-        return date;
+    public int getDay() {
+        return day;
+    }
+
+    @Override
+    public int getMonth() {
+        return month;
     }
 }
