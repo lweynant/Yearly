@@ -65,7 +65,8 @@ public class EventsActivityFragment extends Fragment implements IRString, Events
         repo.add(new Birthday("Joren", 30, Date.MAY, this));
         repo.add(new Birthday("Bjorn", 22, Date.JULY, this));
         java.util.Date date = Calendar.getInstance().getTime();
-        repo.sortFrom(date.getDay(), date.getMonth());
+        Timber.d("sorting on date %d / %d", date.getDay(), date.getMonth());
+        repo.sortFrom(date.getDate(), date.getMonth() + 1);
         List<IEvent> events = repo.getEvents();
         eventsAdapter = new EventsAdapter(events, this);
         recyclerView.setAdapter(eventsAdapter);
@@ -74,6 +75,7 @@ public class EventsActivityFragment extends Fragment implements IRString, Events
 
     @Override
     public void onDetach() {
+        Timber.d("onDetach");
         super.onDetach();
         EventRepo.deleteInstance();
     }
