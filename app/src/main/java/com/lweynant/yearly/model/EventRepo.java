@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import timber.log.Timber;
+
 public class EventRepo {
     private List<IEvent> events = new ArrayList<>();
     private static EventRepo instance = null;
@@ -64,6 +66,7 @@ public class EventRepo {
     }
 
     public void sortFrom(int day, @Date.Month int month) {
+        Timber.d("sort on %d/%d", day, month);
         startDay = day;
         startMonth = month;
     }

@@ -64,9 +64,10 @@ public class EventsActivityFragment extends Fragment implements IRString, Events
         repo.add(new Birthday("Josephine", 29, Date.MAY, this));
         repo.add(new Birthday("Joren", 30, Date.MAY, this));
         repo.add(new Birthday("Bjorn", 22, Date.JULY, this));
-        java.util.Date date = Calendar.getInstance().getTime();
-        Timber.d("sorting on date %d / %d", date.getDay(), date.getMonth());
-        repo.sortFrom(date.getDate(), date.getMonth() + 1);
+        Calendar calendar = Calendar.getInstance();
+        @Date.Month int month = calendar.get(Calendar.MONTH)+1;
+        int date = calendar.get(Calendar.DATE);
+        repo.sortFrom(date, month);
         List<IEvent> events = repo.getEvents();
         eventsAdapter = new EventsAdapter(events, this);
         recyclerView.setAdapter(eventsAdapter);
