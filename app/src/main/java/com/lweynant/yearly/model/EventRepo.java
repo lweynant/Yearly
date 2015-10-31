@@ -70,4 +70,24 @@ public class EventRepo {
         startDay = day;
         startMonth = month;
     }
+
+    public List<IEvent> getUpcomingEvents() {
+        List<IEvent> sorted = getEvents();
+        List<IEvent> upcoming = new ArrayList<>();
+        if (sorted.size() > 0){
+            IEvent upcomingEvent = sorted.get(0);
+            upcoming.add(upcomingEvent);
+            for(int i = 1; i < sorted.size();i++){
+                if (sorted.get(i).getMonth() == upcomingEvent.getMonth()
+                        && sorted.get(i).getDay()==upcomingEvent.getDay()){
+                    upcoming.add(sorted.get(i));
+                }
+                else{
+                    break;
+                }
+
+            }
+        }
+        return upcoming;
+    }
 }
