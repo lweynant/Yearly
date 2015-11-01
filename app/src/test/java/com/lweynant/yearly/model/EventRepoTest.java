@@ -1,7 +1,6 @@
 package com.lweynant.yearly.model;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
@@ -38,7 +37,7 @@ public class EventRepoTest {
 
     @Test
     public void testAddEvent() throws Exception {
-        FakeEvent event = new FakeEvent(23, Date.APRIL);
+        FakeEvent event = new FakeEvent(Date.APRIL, 23);
         sut.add(event);
         List<IEvent> events = sut.getEvents();
         assertSame(events.get(0), event);
@@ -46,8 +45,8 @@ public class EventRepoTest {
 
     @Test
     public void testAdd2Events() throws Exception {
-        FakeEvent event1 = new FakeEvent(12, Date.JANUARY);
-        FakeEvent event2 = new FakeEvent(12, Date.FEBRUARY);
+        FakeEvent event1 = new FakeEvent(Date.JANUARY, 12);
+        FakeEvent event2 = new FakeEvent(Date.FEBRUARY, 12);
         sut.add(event1);
         sut.add(event2);
         List<IEvent> events = sut.getEvents();
@@ -57,8 +56,8 @@ public class EventRepoTest {
 
     @Test
     public void sort2EventsAddedInOrder() throws Exception {
-        FakeEvent first = new FakeEvent(12, Date.JANUARY);
-        FakeEvent second = new FakeEvent(6, Date.MARCH);
+        FakeEvent first = new FakeEvent(Date.JANUARY, 12);
+        FakeEvent second = new FakeEvent(Date.MARCH, 6);
         sut.add(first).add(second);
         sut.sortFrom(1, Date.JANUARY);
         List<IEvent> events = sut.getEvents();
@@ -69,8 +68,8 @@ public class EventRepoTest {
 
     @Test
     public void sort2EventsAddedOutOfOrder() throws Exception {
-        FakeEvent first = new FakeEvent(12, Date.JANUARY);
-        FakeEvent second = new FakeEvent(6, Date.MARCH);
+        FakeEvent first = new FakeEvent(Date.JANUARY, 12);
+        FakeEvent second = new FakeEvent(Date.MARCH, 6);
         sut.add(second).add(first);
         sut.sortFrom(1, Date.JANUARY);
         List<IEvent> events = sut.getEvents();
@@ -80,8 +79,8 @@ public class EventRepoTest {
 
     @Test
     public void sort2EventsSortFromInBetween() throws Exception {
-        FakeEvent first = new FakeEvent(12, Date.JANUARY);
-        FakeEvent second = new FakeEvent(6, Date.MARCH);
+        FakeEvent first = new FakeEvent(Date.JANUARY, 12);
+        FakeEvent second = new FakeEvent(Date.MARCH, 6);
         sut.add(first).add(second);
         sut.sortFrom(1, Date.FEBRUARY);
         List<IEvent> events = sut.getEvents();
@@ -91,9 +90,9 @@ public class EventRepoTest {
 
     @Test
     public void sort3EventsSortFromAfterFirst() throws Exception {
-        FakeEvent first = new FakeEvent(12, Date.JANUARY);
-        FakeEvent second = new FakeEvent(6, Date.MARCH);
-        FakeEvent third = new FakeEvent(6, Date.SEPTEMBER);
+        FakeEvent first = new FakeEvent(Date.JANUARY, 12);
+        FakeEvent second = new FakeEvent(Date.MARCH, 6);
+        FakeEvent third = new FakeEvent(Date.SEPTEMBER, 6);
         sut.add(first).add(second).add(third);
         sut.sortFrom(1, Date.FEBRUARY);
         List<IEvent> events = sut.getEvents();
@@ -104,9 +103,9 @@ public class EventRepoTest {
 
     @Test
     public void sort3EventsSortFromSecond() throws Exception {
-        FakeEvent first = new FakeEvent(12, Date.JANUARY);
-        FakeEvent second = new FakeEvent(6, Date.MARCH);
-        FakeEvent third = new FakeEvent(6, Date.SEPTEMBER);
+        FakeEvent first = new FakeEvent(Date.JANUARY, 12);
+        FakeEvent second = new FakeEvent(Date.MARCH, 6);
+        FakeEvent third = new FakeEvent(Date.SEPTEMBER, 6);
         sut.add(first).add(second).add(third);
         sut.sortFrom(second.getDay(), second.getMonth());
         List<IEvent> events = sut.getEvents();
@@ -117,9 +116,9 @@ public class EventRepoTest {
 
     @Test
     public void sort3EventsSortFromDayBeforeSecond() throws Exception {
-        FakeEvent first = new FakeEvent(12, Date.JANUARY);
-        FakeEvent second = new FakeEvent(6, Date.MARCH);
-        FakeEvent third = new FakeEvent(6, Date.SEPTEMBER);
+        FakeEvent first = new FakeEvent(Date.JANUARY, 12);
+        FakeEvent second = new FakeEvent(Date.MARCH, 6);
+        FakeEvent third = new FakeEvent(Date.SEPTEMBER, 6);
         sut.add(first).add(second).add(third);
         sut.sortFrom(second.getDay() - 1, second.getMonth());
         List<IEvent> events = sut.getEvents();
@@ -130,9 +129,9 @@ public class EventRepoTest {
 
     @Test
     public void sort3EventsSortFromDayAfterSecond() throws Exception {
-        FakeEvent first = new FakeEvent(12, Date.JANUARY);
-        FakeEvent second = new FakeEvent(6, Date.MARCH);
-        FakeEvent third = new FakeEvent(6, Date.SEPTEMBER);
+        FakeEvent first = new FakeEvent(Date.JANUARY, 12);
+        FakeEvent second = new FakeEvent(Date.MARCH, 6);
+        FakeEvent third = new FakeEvent(Date.SEPTEMBER, 6);
         sut.add(first).add(second).add(third);
         sut.sortFrom(second.getDay() + 1, second.getMonth());
         List<IEvent> events = sut.getEvents();
@@ -149,9 +148,9 @@ public class EventRepoTest {
 
     @Test
     public void getUpcomingEvent() throws Exception {
-        FakeEvent first = new FakeEvent(12, Date.JANUARY);
-        FakeEvent second = new FakeEvent(6, Date.MARCH);
-        FakeEvent third = new FakeEvent(6, Date.SEPTEMBER);
+        FakeEvent first = new FakeEvent(Date.JANUARY, 12);
+        FakeEvent second = new FakeEvent(Date.MARCH, 6);
+        FakeEvent third = new FakeEvent(Date.SEPTEMBER, 6);
         sut.add(first).add(second).add(third);
         sut.sortFrom(second.getDay() + 1, second.getMonth());
         List<IEvent> events = sut.getUpcomingEvents();
@@ -160,9 +159,9 @@ public class EventRepoTest {
     }
     @Test
     public void getUpcomingEvents() throws Exception {
-        FakeEvent first = new FakeEvent(12, Date.JANUARY);
-        FakeEvent second = new FakeEvent(6, Date.MARCH);
-        FakeEvent third = new FakeEvent(6, Date.MARCH);
+        FakeEvent first = new FakeEvent(Date.JANUARY, 12);
+        FakeEvent second = new FakeEvent(Date.MARCH, 6);
+        FakeEvent third = new FakeEvent(Date.MARCH, 6);
         sut.add(first).add(second).add(third);
         sut.sortFrom(first.getDay() + 1, first.getMonth());
         List<IEvent> events = sut.getUpcomingEvents();
@@ -171,35 +170,5 @@ public class EventRepoTest {
         assertThat(events, hasItem(third));
     }
 
-    private class FakeEvent implements IEvent {
-        private int day;
-        private
-        @Date.Month
-        int month;
 
-        public FakeEvent(int day, @Date.Month int month) {
-            this.day = day;
-            this.month = month;
-        }
-
-        @Override
-        public String toString() {
-            return String.format("%d-%d", day, month);
-        }
-
-        @Override
-        public String getTitle() {
-            return "fake";
-        }
-
-        @Override
-        public int getDay() {
-            return day;
-        }
-
-        @Override
-        public int getMonth() {
-            return month;
-        }
-    }
 }

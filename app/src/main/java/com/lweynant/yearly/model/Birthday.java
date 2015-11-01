@@ -21,7 +21,7 @@ public class Birthday implements IEvent {
 
     @Override
     public String getTitle() {
-        return String.format(rstring.getStringFromId(R.string.birthday_title), name, day, month);
+        return String.format(rstring.getStringFromId(R.string.birthday_from), name);
     }
 
     @Override

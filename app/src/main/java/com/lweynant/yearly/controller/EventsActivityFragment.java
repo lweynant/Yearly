@@ -16,6 +16,9 @@ import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.Date;
 
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -83,6 +86,13 @@ public class EventsActivityFragment extends Fragment implements IRString, Events
 
     @Override
     public void onSelected(IEvent eventType) {
-        Toast.makeText(getContext(), eventType.getTitle() + " clicked", Toast.LENGTH_SHORT).show();
+        LocalDate date = new LocalDate(Calendar.getInstance().get(Calendar.YEAR), eventType.getMonth(),eventType.getDay());
+        LocalDate now = LocalDate.now();
+        if (date.isBefore(now)){
+            date = date.plusYears(1);
+        }
+        Days d = Days.daysBetween(now, date);
+        int days = d.getDays();
+        Toast.makeText(getContext(), eventType.getTitle() + " in " + days + " days", Toast.LENGTH_SHORT).show();
     }
 }

@@ -3,6 +3,8 @@ package com.lweynant.yearly;
 import android.app.Application;
 
 
+import net.danlew.android.joda.JodaTimeAndroid;
+
 import timber.log.Timber;
 
 public class YearlyApp extends Application {
@@ -13,5 +15,6 @@ public class YearlyApp extends Application {
             Timber.plant(new Timber.DebugTree());
         }
         Timber.d("onCreate");
+        JodaTimeAndroid.init(this);
     }
 }
