@@ -19,16 +19,14 @@ import com.lweynant.yearly.model.Date;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 import timber.log.Timber;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class EventsActivityFragment extends Fragment implements IRString, EventsAdapter.onEventTypeSelectedListener {
+public class EventsActivityFragment extends Fragment implements EventsAdapter.onEventTypeSelectedListener {
 
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
@@ -37,11 +35,6 @@ public class EventsActivityFragment extends Fragment implements IRString, Events
     public EventsActivityFragment() {
     }
 
-    @Override
-    public String getStringFromId(int id)
-    {
-        return getResources().getString(id);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,26 +46,8 @@ public class EventsActivityFragment extends Fragment implements IRString, Events
         recyclerView.setLayoutManager(layoutManager);
         //set the adapter
         EventRepo repo = EventRepo.getInstance();
-        repo.add(new Birthday("Katinka", 10, Date.MARCH, this));
-        repo.add(new Birthday("Kasper", 14, Date.MAY, this));
-        repo.add(new Birthday("Ann", 5, Date.MARCH, this));
-        repo.add(new Birthday("Ludwig", 8, Date.FEBRUARY, this));
-        repo.add(new Birthday("Jinthe", 27, Date.OCTOBER, this));
-        repo.add(new Birthday("Lis", 7, Date.NOVEMBER, this));
-        repo.add(new Birthday("Caroline", 6, Date.FEBRUARY, this));
-        repo.add(new Birthday("Ma", 11, Date.MARCH, this));
-        repo.add(new Birthday("Janne", 24, Date.NOVEMBER, this));
-        repo.add(new Birthday("Julien", 3, Date.FEBRUARY, this));
-        repo.add(new Birthday("Pa", 22, Date.MAY, this));
-        repo.add(new Birthday("Josephine", 29, Date.MAY, this));
-        repo.add(new Birthday("Joren", 30, Date.MAY, this));
-        repo.add(new Birthday("Bjorn", 22, Date.JULY, this));
-        Calendar calendar = Calendar.getInstance();
-        @Date.Month int month = calendar.get(Calendar.MONTH)+1;
-        int date = calendar.get(Calendar.DATE);
-        repo.sortFrom(date, month);
-        List<IEvent> events = repo.getEvents();
-        eventsAdapter = new EventsAdapter(events, this);
+        LocalDate now = LocalDate.now();
+        eventsAdapter = new EventsAdapter(repo, now, this);
         recyclerView.setAdapter(eventsAdapter);
         return view;
     }
@@ -81,7 +56,20 @@ public class EventsActivityFragment extends Fragment implements IRString, Events
     public void onDetach() {
         Timber.d("onDetach");
         super.onDetach();
-        EventRepo.deleteInstance();
+    }
+
+    @Override
+    public void onResume() {
+        Timber.d("onResume");
+        super.onResume();
+        eventsAdapter.checkWhetherDataNeedsToBeResorted(LocalDate.now());
+
+    }
+
+    @Override
+    public void onPause() {
+        Timber.d("onPause");
+        super.onPause();
     }
 
     @Override

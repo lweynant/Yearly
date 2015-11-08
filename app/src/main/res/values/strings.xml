@@ -3,4 +3,7 @@
     <string name="action_settings">Settings</string>
     <string name="birthday_from">%1$s\'s birthday</string>
     <string name="birthday_from_at">%1$s\'s birthday at %2$d/%3$d</string>
+    <string name="action_set_alarm">set alarm</string>
+    <string name="today">today</string>
+    <string name="tomorrow">tomorrow</string>
 </resources>

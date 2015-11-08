@@ -59,7 +59,7 @@ public class EventRepoTest {
         FakeEvent first = new FakeEvent(Date.JANUARY, 12);
         FakeEvent second = new FakeEvent(Date.MARCH, 6);
         sut.add(first).add(second);
-        sut.sortFrom(1, Date.JANUARY);
+        sut.sortFrom(Date.JANUARY, 1);
         List<IEvent> events = sut.getEvents();
         assertSame(events.get(0), first);
         assertSame(events.get(1), second);
@@ -71,7 +71,7 @@ public class EventRepoTest {
         FakeEvent first = new FakeEvent(Date.JANUARY, 12);
         FakeEvent second = new FakeEvent(Date.MARCH, 6);
         sut.add(second).add(first);
-        sut.sortFrom(1, Date.JANUARY);
+        sut.sortFrom(Date.JANUARY, 1);
         List<IEvent> events = sut.getEvents();
         assertSame(events.get(0), first);
         assertSame(events.get(1), second);
@@ -82,7 +82,7 @@ public class EventRepoTest {
         FakeEvent first = new FakeEvent(Date.JANUARY, 12);
         FakeEvent second = new FakeEvent(Date.MARCH, 6);
         sut.add(first).add(second);
-        sut.sortFrom(1, Date.FEBRUARY);
+        sut.sortFrom(Date.FEBRUARY, 1);
         List<IEvent> events = sut.getEvents();
         assertSame(events.get(0), second);
         assertSame(events.get(1), first);
@@ -94,7 +94,7 @@ public class EventRepoTest {
         FakeEvent second = new FakeEvent(Date.MARCH, 6);
         FakeEvent third = new FakeEvent(Date.SEPTEMBER, 6);
         sut.add(first).add(second).add(third);
-        sut.sortFrom(1, Date.FEBRUARY);
+        sut.sortFrom(Date.FEBRUARY, 1);
         List<IEvent> events = sut.getEvents();
         assertSame(events.get(0), second);
         assertSame(events.get(1), third);
@@ -107,7 +107,7 @@ public class EventRepoTest {
         FakeEvent second = new FakeEvent(Date.MARCH, 6);
         FakeEvent third = new FakeEvent(Date.SEPTEMBER, 6);
         sut.add(first).add(second).add(third);
-        sut.sortFrom(second.getDay(), second.getMonth());
+        sut.sortFrom(second.getMonth(), second.getDay());
         List<IEvent> events = sut.getEvents();
         assertSame(events.get(0), second);
         assertSame(events.get(1), third);
@@ -120,7 +120,7 @@ public class EventRepoTest {
         FakeEvent second = new FakeEvent(Date.MARCH, 6);
         FakeEvent third = new FakeEvent(Date.SEPTEMBER, 6);
         sut.add(first).add(second).add(third);
-        sut.sortFrom(second.getDay() - 1, second.getMonth());
+        sut.sortFrom(second.getMonth(), second.getDay() - 1);
         List<IEvent> events = sut.getEvents();
         assertSame(events.get(0), second);
         assertSame(events.get(1), third);
@@ -133,7 +133,7 @@ public class EventRepoTest {
         FakeEvent second = new FakeEvent(Date.MARCH, 6);
         FakeEvent third = new FakeEvent(Date.SEPTEMBER, 6);
         sut.add(first).add(second).add(third);
-        sut.sortFrom(second.getDay() + 1, second.getMonth());
+        sut.sortFrom(second.getMonth(), second.getDay() + 1);
         List<IEvent> events = sut.getEvents();
         assertSame(events.get(0), third);
         assertSame(events.get(1), first);
@@ -152,7 +152,7 @@ public class EventRepoTest {
         FakeEvent second = new FakeEvent(Date.MARCH, 6);
         FakeEvent third = new FakeEvent(Date.SEPTEMBER, 6);
         sut.add(first).add(second).add(third);
-        sut.sortFrom(second.getDay() + 1, second.getMonth());
+        sut.sortFrom(second.getMonth(), second.getDay() + 1);
         List<IEvent> events = sut.getUpcomingEvents();
         assertThat(events.size(), is(1));
         assertSame(events.get(0), third);
@@ -163,7 +163,7 @@ public class EventRepoTest {
         FakeEvent second = new FakeEvent(Date.MARCH, 6);
         FakeEvent third = new FakeEvent(Date.MARCH, 6);
         sut.add(first).add(second).add(third);
-        sut.sortFrom(first.getDay() + 1, first.getMonth());
+        sut.sortFrom(first.getMonth(), first.getDay() + 1);
         List<IEvent> events = sut.getUpcomingEvents();
         assertThat(events.size(), is(2));
         assertThat(events, hasItem(second));

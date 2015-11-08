@@ -61,11 +61,8 @@ public class EventRepo {
     }
 
 
-    public static void deleteInstance() {
-        instance = null;
-    }
 
-    public void sortFrom(int day, @Date.Month int month) {
+    public void sortFrom(@Date.Month int month, int day) {
         Timber.d("sort on %d/%d", day, month);
         startDay = day;
         startMonth = month;
@@ -89,5 +86,9 @@ public class EventRepo {
             }
         }
         return upcoming;
+    }
+
+    public static void deleteInstance() {
+        instance = null;
     }
 }

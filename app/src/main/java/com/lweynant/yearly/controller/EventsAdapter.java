@@ -6,14 +6,37 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.IEvent;
+
+import org.joda.time.LocalDate;
 
 import java.util.List;
 
+import timber.log.Timber;
+
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewHolder> {
 
-    private final List<IEvent> events;
+    private List<IEvent> events;
     private final onEventTypeSelectedListener listener;
+    private LocalDate sortedFrom;
+
+
+    public void checkWhetherDataNeedsToBeResorted(LocalDate now) {
+        Timber.d("checkWhetherDataNeedsToBeResorted");
+        if (sortedFrom.isEqual(now)) {
+            Timber.d("we sorted repo on same day, so nothing to do");
+            return;
+        }
+        else {
+            Timber.d("sort on new date");
+            sortedFrom = now;
+            EventRepo repo = EventRepo.getInstance();
+            repo.sortFrom(sortedFrom.getMonthOfYear(), sortedFrom.getDayOfMonth());
+            events = repo.getEvents();
+            notifyDataSetChanged();
+        }
+    }
 
     public interface onEventTypeSelectedListener {
         public void onSelected(IEvent eventType);
@@ -45,9 +68,12 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
         }
     }
 
-    public EventsAdapter(List<IEvent> events, EventsAdapter.onEventTypeSelectedListener listener){
-        this.events = events;
+    public EventsAdapter(EventRepo repo, LocalDate now, EventsAdapter.onEventTypeSelectedListener listener) {
+        this.sortedFrom = now;
+        repo.sortFrom(now.getMonthOfYear(), now.getDayOfMonth());
+        this.events = repo.getEvents();
         this.listener = listener;
+
     }
     @Override
     public EventViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
