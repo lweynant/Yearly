@@ -1,7 +1,14 @@
 package com.lweynant.yearly.model;
 
+import com.lweynant.yearly.util.IClock;
+
+import org.joda.time.LocalDate;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 
@@ -11,15 +18,20 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class EventRepoTest {
 
     private EventRepo sut;
 
+    @Mock
+    IClock clock;
     @Before
     public void setUp() throws Exception {
-        EventRepo.deleteInstance();
-        sut = EventRepo.getInstance();
+        when(clock.now()).thenReturn(new LocalDate(2015, 1, 23));
+        sut = new EventRepo(clock);
+
     }
 
     @Test
@@ -28,12 +40,6 @@ public class EventRepoTest {
         assertTrue(events.isEmpty());
     }
 
-    @Test
-    public void testSingleton() throws Exception {
-        assertTrue(sut instanceof EventRepo);
-        EventRepo sut2 = EventRepo.getInstance();
-        assertThat(sut, is(sut2));
-    }
 
     @Test
     public void testAddEvent() throws Exception {
@@ -88,6 +94,26 @@ public class EventRepoTest {
         assertSame(events.get(1), first);
     }
 
+    @Test
+    public void sort2EventsInReverseOrderSameMonth() throws Exception {
+        FakeEvent addedFirst = new FakeEvent(Date.JANUARY, 12);
+        FakeEvent addedSecond = new FakeEvent(Date.JANUARY, 11);
+        sut.add(addedFirst).add(addedSecond);
+        sut.sortFrom(Date.JANUARY, 1);
+        List<IEvent> events = sut.getEvents();
+        assertSame(events.get(0), addedSecond);
+        assertSame(events.get(1), addedFirst);
+    }
+    @Test
+    public void sort2EventsInOrderSameMonth() throws Exception {
+        FakeEvent addedFirst = new FakeEvent(Date.JANUARY, 12);
+        FakeEvent addedSecond = new FakeEvent(Date.JANUARY, 13);
+        sut.add(addedFirst).add(addedSecond);
+        sut.sortFrom(Date.JANUARY, 1);
+        List<IEvent> events = sut.getEvents();
+        assertSame(events.get(0), addedFirst);
+        assertSame(events.get(1), addedSecond);
+    }
     @Test
     public void sort3EventsSortFromAfterFirst() throws Exception {
         FakeEvent first = new FakeEvent(Date.JANUARY, 12);
@@ -156,6 +182,22 @@ public class EventRepoTest {
         List<IEvent> events = sut.getUpcomingEvents();
         assertThat(events.size(), is(1));
         assertSame(events.get(0), third);
+    }
+    @Ignore
+    @Test
+    public void getUpcomingEventsForNDays() throws Exception {
+        FakeEvent first = new FakeEvent(Date.JANUARY, 12);
+        FakeEvent second = new FakeEvent(Date.MARCH, 6);
+        FakeEvent third = new FakeEvent(Date.MARCH, 7);
+        FakeEvent fourth = new FakeEvent(Date.MARCH, 8);
+        sut.add(first).add(second).add(third).add(fourth);
+        sut.sortFrom(second.getMonth(), second.getDay());
+        sut.setNbrOfDaysForUpcomingEvents(2);
+        List<IEvent> events = sut.getUpcomingEvents();
+        assertThat(events.size(), is(2));
+        assertThat(events, hasItem(second));
+        assertThat(events, hasItem(third));
+
     }
     @Test
     public void getUpcomingEvents() throws Exception {

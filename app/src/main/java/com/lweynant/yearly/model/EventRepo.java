@@ -1,5 +1,9 @@
 package com.lweynant.yearly.model;
 
+import com.lweynant.yearly.util.IClock;
+
+import org.joda.time.LocalDate;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -9,27 +13,26 @@ import java.util.List;
 import timber.log.Timber;
 
 public class EventRepo {
+    private final IClock clock;
     private List<IEvent> events = new ArrayList<>();
     private static EventRepo instance = null;
     private int startDay = 1;
     private @Date.Month int startMonth = Date.JANUARY;
-    private EventRepo(){
+    private int nbrOfDaysForUpcomingEvents;
 
+    public EventRepo(IClock clock){
+        this.clock = clock;
     }
 
-    public static EventRepo getInstance(){
-        if (instance == null) {
-            instance = new EventRepo();
-        }
-        return instance;
-    }
     public EventRepo add(IEvent event) {
         events.add(event);
         Collections.sort(events, new Comparator<IEvent>() {
             @Override
             public int compare(IEvent lhs, IEvent rhs) {
                 if (lhs.getMonth() == rhs.getMonth()) {
-                    return Integer.compare(lhs.getDay(), rhs.getDay());
+                    if (lhs.getDay() < rhs.getDay() ) return -1;
+                    else if (lhs.getDay() == rhs.getDay()) return 0;
+                    else return 1;
                 } else if (lhs.getMonth() < rhs.getMonth()) {
                     return -1;
                 }
@@ -88,7 +91,8 @@ public class EventRepo {
         return upcoming;
     }
 
-    public static void deleteInstance() {
-        instance = null;
+
+    public void setNbrOfDaysForUpcomingEvents(int nbrOfDaysForUpcomingEvents) {
+        this.nbrOfDaysForUpcomingEvents = nbrOfDaysForUpcomingEvents;
     }
 }

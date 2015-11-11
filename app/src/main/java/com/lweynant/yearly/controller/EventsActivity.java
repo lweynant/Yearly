@@ -12,6 +12,7 @@ import android.view.MenuItem;
 
 import com.lweynant.yearly.AlarmGenerator;
 import com.lweynant.yearly.R;
+import com.lweynant.yearly.YearlyApp;
 
 import org.joda.time.LocalDate;
 
@@ -59,7 +60,8 @@ public class EventsActivity extends AppCompatActivity {
         }
         else if (id == R.id.action_set_alarm){
             Timber.i("set alarm");
-            AlarmGenerator alarmGenerator = new AlarmGenerator(this);
+            YearlyApp app = (YearlyApp) getApplication();
+            AlarmGenerator alarmGenerator = new AlarmGenerator(this, app.getRepo());
             alarmGenerator.startAlarm(LocalDate.now());
         }
 

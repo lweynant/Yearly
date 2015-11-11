@@ -55,7 +55,8 @@ public class EventNotificationService extends IntentService {
 
     private void handleActionNotification() {
         Timber.d("handleActionNotification");
-        EventRepo repo = EventRepo.getInstance();
+        YearlyApp app = (YearlyApp)getApplication();
+        EventRepo repo = app.getRepo();
         LocalDate now = LocalDate.now();
         repo.sortFrom(now.getMonthOfYear(), now.getDayOfMonth());
         List<IEvent> upcomingEvents = repo.getUpcomingEvents();
@@ -95,7 +96,7 @@ public class EventNotificationService extends IntentService {
             NotificationManager nm = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
             nm.notify(id++, builder.build());
         }
-        AlarmGenerator alarmGenerator = new AlarmGenerator(this);
+        AlarmGenerator alarmGenerator = new AlarmGenerator(this, repo);
         LocalDate tomorrow = now.plusDays(1);
         Timber.d("schedule next alarm using date %s", tomorrow);
         alarmGenerator.startAlarm(tomorrow);

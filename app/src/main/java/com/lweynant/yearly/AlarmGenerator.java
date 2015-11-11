@@ -16,11 +16,13 @@ import java.util.List;
 import timber.log.Timber;
 
 public class AlarmGenerator {
+    private final EventRepo repo;
     private Context context;
     private PendingIntent mAlarmSender;
 
-    public AlarmGenerator(Context context) {
+    public AlarmGenerator(Context context, EventRepo repo) {
         this.context = context;
+        this.repo = repo;
         Intent intent = new Intent(context, AlarmReceiver.class);
         mAlarmSender = PendingIntent.getBroadcast(context, 0, intent, 0);
     }
@@ -29,7 +31,6 @@ public class AlarmGenerator {
 
     public void startAlarm(LocalDate now) {
         Timber.d("startAlarm");
-        EventRepo repo = EventRepo.getInstance();
         repo.sortFrom(now.getMonthOfYear(), now.getDayOfMonth());
         List<IEvent> events = repo.getUpcomingEvents();
         for (IEvent event : events) {

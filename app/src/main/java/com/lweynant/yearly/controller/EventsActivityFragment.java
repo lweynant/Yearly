@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.lweynant.yearly.IRString;
 import com.lweynant.yearly.R;
+import com.lweynant.yearly.YearlyApp;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.IEvent;
@@ -45,7 +46,7 @@ public class EventsActivityFragment extends Fragment implements EventsAdapter.on
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         //set the adapter
-        EventRepo repo = EventRepo.getInstance();
+        EventRepo repo = ((YearlyApp)getActivity().getApplication()).getRepo();
         LocalDate now = LocalDate.now();
         eventsAdapter = new EventsAdapter(repo, now, this);
         recyclerView.setAdapter(eventsAdapter);
@@ -62,7 +63,8 @@ public class EventsActivityFragment extends Fragment implements EventsAdapter.on
     public void onResume() {
         Timber.d("onResume");
         super.onResume();
-        eventsAdapter.checkWhetherDataNeedsToBeResorted(LocalDate.now());
+        YearlyApp app = (YearlyApp) getActivity().getApplication();
+        eventsAdapter.checkWhetherDataNeedsToBeResorted(LocalDate.now(),app.getRepo());
 
     }
 

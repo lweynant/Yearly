@@ -22,7 +22,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
     private LocalDate sortedFrom;
 
 
-    public void checkWhetherDataNeedsToBeResorted(LocalDate now) {
+    public void checkWhetherDataNeedsToBeResorted(LocalDate now, EventRepo repo) {
         Timber.d("checkWhetherDataNeedsToBeResorted");
         if (sortedFrom.isEqual(now)) {
             Timber.d("we sorted repo on same day, so nothing to do");
@@ -31,7 +31,6 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
         else {
             Timber.d("sort on new date");
             sortedFrom = now;
-            EventRepo repo = EventRepo.getInstance();
             repo.sortFrom(sortedFrom.getMonthOfYear(), sortedFrom.getDayOfMonth());
             events = repo.getEvents();
             notifyDataSetChanged();
