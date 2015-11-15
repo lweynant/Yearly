@@ -6,4 +6,6 @@
     <string name="action_set_alarm">set alarm</string>
     <string name="today">today</string>
     <string name="tomorrow">tomorrow</string>
+    <string name="in_x_days">in %1$s days</string>
+    <string name="adding_events_not_supported">Adding events is not supported yet...</string>
 </resources>

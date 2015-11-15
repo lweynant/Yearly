@@ -83,7 +83,7 @@ public class EventNotificationService extends IntentService {
             else {
                 Days d = Days.daysBetween(now, eventDate);
                 int days = d.getDays();
-                title += "in " + days + "days";
+                title += String.format(getResources().getString(R.string.in_x_days), days);
             }
             builder.setContentTitle(title);
             builder.setAutoCancel(true);

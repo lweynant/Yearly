@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Yearly</string>
+    <string name="action_settings">Instellingen</string>
+    <string name="action_set_alarm">Zet alarm</string>
+    <string name="birthday_from">%1$s\'s verjaardag</string>
+    <string name="birthday_from_at">%1$s\'s verjaardag op %2$d/%3$d</string>
+    <string name="in_x_days">in %1$s dagen</string>
+    <string name="today">vandaag</string>
+    <string name="tomorrow">morgen</string>
+    <string name="adding_events_not_supported">Events toevoegen is nog niet ondersteunt...</string>
+</resources>

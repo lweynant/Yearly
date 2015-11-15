@@ -80,6 +80,8 @@ public class EventsActivityFragment extends BaseFragment implements EventsAdapte
         LocalDate now = LocalDate.now();
         Days d = Days.daysBetween(now, date);
         int days = d.getDays();
-        Toast.makeText(getContext(), eventType.getTitle() + " in " + days + " days", Toast.LENGTH_SHORT).show();
+        String text = eventType.getTitle() + " ";
+        text += String.format(getResources().getString(R.string.in_x_days), days);
+        Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
     }
 }
