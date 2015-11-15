@@ -27,7 +27,7 @@ import timber.log.Timber;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class EventsActivityFragment extends Fragment implements EventsAdapter.onEventTypeSelectedListener {
+public class EventsActivityFragment extends BaseFragment implements EventsAdapter.onEventTypeSelectedListener {
 
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;

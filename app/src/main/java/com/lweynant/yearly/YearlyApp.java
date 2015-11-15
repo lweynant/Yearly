@@ -1,6 +1,7 @@
 package com.lweynant.yearly;
 
 import android.app.Application;
+import android.content.Context;
 
 
 import com.lweynant.yearly.model.Birthday;
@@ -8,6 +9,7 @@ import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.util.Clock;
 import com.squareup.leakcanary.LeakCanary;
+import com.squareup.leakcanary.RefWatcher;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
@@ -17,6 +19,7 @@ import timber.log.Timber;
 
 public class YearlyApp extends Application implements IRString {
     private EventRepo repo;
+    private RefWatcher refWatcher;
 
     public EventRepo getRepo()  {
         if (null == repo){
@@ -43,6 +46,12 @@ public class YearlyApp extends Application implements IRString {
         Timber.d("getRepo");
         return repo;
     }
+    public static RefWatcher getRefWatcher(Context context) {
+        YearlyApp application = (YearlyApp) context.getApplicationContext();
+        return application.refWatcher;
+    }
+
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -51,7 +60,7 @@ public class YearlyApp extends Application implements IRString {
         }
         Timber.d("onCreate");
         JodaTimeAndroid.init(this);
-        LeakCanary.install(this);
+        refWatcher= LeakCanary.install(this);
         getRepo();
     }
 
