@@ -7,6 +7,7 @@ import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.util.Clock;
+import com.squareup.leakcanary.LeakCanary;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
@@ -50,6 +51,7 @@ public class YearlyApp extends Application implements IRString {
         }
         Timber.d("onCreate");
         JodaTimeAndroid.init(this);
+        LeakCanary.install(this);
         getRepo();
     }
 
