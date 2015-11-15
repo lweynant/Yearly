@@ -68,10 +68,7 @@ public class EventNotificationService extends IntentService {
         int id = 0;
         for (IEvent event :upcomingEvents){
             Timber.d("sending notification for %s", event.getTitle());
-            LocalDate eventDate = new LocalDate(now.getYear(), event.getMonth(), event.getDay());
-            if (eventDate.isBefore(now)){
-                eventDate = eventDate.plusYears(1);
-            }
+            LocalDate eventDate = event.getDate();
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
             builder.setSmallIcon(R.mipmap.ic_event_note_white_48dp);

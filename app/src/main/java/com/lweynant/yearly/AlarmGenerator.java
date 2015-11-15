@@ -34,10 +34,7 @@ public class AlarmGenerator {
         repo.sortFrom(now.getMonthOfYear(), now.getDayOfMonth());
         List<IEvent> events = repo.getUpcomingEvents();
         for (IEvent event : events) {
-            LocalDate eventDate = new LocalDate(now.getYear(), event.getMonth(), event.getDay());
-            if (eventDate.isBefore(now)) {
-                eventDate = eventDate.plusYears(1);
-            }
+            LocalDate eventDate = event.getDate();
             int morning = 6;
             int evening = 19;
             int hour = eventDate.isEqual(now)? morning : evening;

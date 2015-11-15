@@ -20,23 +20,24 @@ public class YearlyApp extends Application implements IRString {
     public EventRepo getRepo()  {
         if (null == repo){
             Timber.e("repo was not initialized");
-            repo = new EventRepo(new Clock());
+            Clock clock = new Clock();
+            repo = new EventRepo(clock);
             LocalDate now = LocalDate.now().plusDays(1);
-            repo.add(new Birthday("Test", now.getDayOfMonth(), now.getMonthOfYear(), this));
-            repo.add(new Birthday("Katinka", 10, Date.MARCH, this));
-            repo.add(new Birthday("Kasper", 14, Date.MAY, this));
-            repo.add(new Birthday("Ann", 5, Date.MARCH, this));
-            repo.add(new Birthday("Ludwig", 8, Date.FEBRUARY, this));
-            repo.add(new Birthday("Jinthe", 27, Date.OCTOBER, this));
-            repo.add(new Birthday("Lis", 7, Date.NOVEMBER, this));
-            repo.add(new Birthday("Caroline", 6, Date.FEBRUARY, this));
-            repo.add(new Birthday("Ma", 11, Date.MARCH, this));
-            repo.add(new Birthday("Janne", 24, Date.NOVEMBER, this));
-            repo.add(new Birthday("Julien", 3, Date.FEBRUARY, this));
-            repo.add(new Birthday("Pa", 22, Date.MAY, this));
-            repo.add(new Birthday("Josephine", 29, Date.MAY, this));
-            repo.add(new Birthday("Joren", 30, Date.MAY, this));
-            repo.add(new Birthday("Bjorn", 22, Date.JULY, this));
+            //repo.add(new Birthday("Test", now.getDayOfMonth(), now.getMonthOfYear(), this));
+            repo.add(new Birthday("Katinka", Date.MARCH, 10, clock, this));
+            repo.add(new Birthday("Kasper", Date.MAY, 14, clock, this));
+            repo.add(new Birthday("Ann", Date.MARCH, 5, clock, this));
+            repo.add(new Birthday("Ludwig", Date.FEBRUARY, 8, clock, this));
+            repo.add(new Birthday("Jinthe", Date.OCTOBER, 27, clock, this));
+            repo.add(new Birthday("Lis", Date.NOVEMBER, 7, clock,this));
+            repo.add(new Birthday("Caroline", Date.FEBRUARY, 6, clock, this));
+            repo.add(new Birthday("Ma", Date.MARCH, 11, clock,this));
+            repo.add(new Birthday("Janne", Date.NOVEMBER, 24, clock, this));
+            repo.add(new Birthday("Julien", Date.FEBRUARY, 3, clock, this));
+            repo.add(new Birthday("Pa", Date.MAY, 22, clock,this));
+            repo.add(new Birthday("Josephine", Date.MAY, 29, clock,this));
+            repo.add(new Birthday("Joren", Date.MAY, 30, clock, this));
+            repo.add(new Birthday("Bjorn", Date.JULY, 22, clock,this));
         }
         Timber.d("getRepo");
         return repo;

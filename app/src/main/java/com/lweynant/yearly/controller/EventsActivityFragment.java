@@ -76,11 +76,8 @@ public class EventsActivityFragment extends Fragment implements EventsAdapter.on
 
     @Override
     public void onSelected(IEvent eventType) {
-        LocalDate date = new LocalDate(Calendar.getInstance().get(Calendar.YEAR), eventType.getMonth(),eventType.getDay());
+        LocalDate date = eventType.getDate();
         LocalDate now = LocalDate.now();
-        if (date.isBefore(now)){
-            date = date.plusYears(1);
-        }
         Days d = Days.daysBetween(now, date);
         int days = d.getDays();
         Toast.makeText(getContext(), eventType.getTitle() + " in " + days + " days", Toast.LENGTH_SHORT).show();

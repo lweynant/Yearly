@@ -2,6 +2,11 @@ package com.lweynant.yearly.model;
 
 import com.lweynant.yearly.IRString;
 import com.lweynant.yearly.R;
+import com.lweynant.yearly.YearlyApp;
+import com.lweynant.yearly.util.Clock;
+import com.lweynant.yearly.util.IClock;
+
+import org.joda.time.LocalDate;
 
 
 public class Birthday implements IEvent {
@@ -10,14 +15,17 @@ public class Birthday implements IEvent {
     private final int day;
     @Date.Month
     private final int month;
+    private final IClock clock;
     private String name;
 
-    public Birthday(String name, int day, @Date.Month int month, IRString rstring) {
+    public Birthday(String name, @Date.Month int month, int day, IClock clock, IRString rstring) {
         this.rstring = rstring;
         this.name = name;
         this.day = day;
         this.month = month;
+        this.clock = clock;
     }
+
 
     @Override
     public String getTitle() {
@@ -25,12 +33,11 @@ public class Birthday implements IEvent {
     }
 
     @Override
-    public int getDay() {
-        return day;
-    }
-
-    @Override
-    public int getMonth() {
-        return month;
+    public LocalDate getDate() {
+        LocalDate eventDate = new LocalDate(clock.now().getYear(), month, day);
+        if (eventDate.isBefore(clock.now())){
+            eventDate = eventDate.plusYears(1);
+        }
+        return eventDate;
     }
 }

@@ -13,8 +13,7 @@ public class DateTest {
 
     @Test
     public void testDayBeforeEventAtMiddleOfMonth() throws Exception{
-        FakeEvent event = new FakeEvent(Date.MARCH, 20);
-        LocalDate date = new LocalDate(2015, event.getMonth(), event.getDay());
+        LocalDate date = new LocalDate(2015, Date.MARCH, 20);
 
         LocalDate dayBefore = date.minusDays(1);
         assertThat(dayBefore.getDayOfMonth(), is(19));
@@ -22,8 +21,7 @@ public class DateTest {
     }
     @Test
     public void testDayBeforeEventAtFirstDayOfMonth() throws Exception{
-        FakeEvent event = new FakeEvent(Date.MARCH, 1);
-        LocalDate date = new LocalDate(2015, event.getMonth(), event.getDay());
+        LocalDate date = new LocalDate(2015, Date.MARCH, 1);
 
         LocalDate dayBefore = date.minusDays(1);
         assertThat(dayBefore.getDayOfMonth(), is(28));
