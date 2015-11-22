@@ -5,11 +5,12 @@ import com.lweynant.yearly.util.IClock;
 import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import rx.Observable;
+import rx.Subscriber;
 import timber.log.Timber;
 
 public class EventRepo {
@@ -34,7 +35,7 @@ public class EventRepo {
         return this;
     }
 
-    public List<IEvent> getEvents() {
+    public List<IEvent> getListOfEvents() {
         List<IEvent> sortedEvents = new ArrayList<>();
         int start;
         for (start = 0; start < events.size(); start++) {
@@ -56,7 +57,7 @@ public class EventRepo {
     }
 
     public List<IEvent> getUpcomingEvents() {
-        List<IEvent> sorted = getEvents();
+        List<IEvent> sorted = getListOfEvents();
         List<IEvent> upcoming = new ArrayList<>();
         if (sorted.size() > 0) {
             IEvent upcomingEvent = sorted.get(0);
@@ -76,5 +77,19 @@ public class EventRepo {
 
     public void setNbrOfDaysForUpcomingEvents(int nbrOfDaysForUpcomingEvents) {
         this.nbrOfDaysForUpcomingEvents = nbrOfDaysForUpcomingEvents;
+    }
+
+
+    public Observable<IEvent> getEvents() {
+        Observable<IEvent> observable = Observable.create(new Observable.OnSubscribe<IEvent>() {
+            @Override
+            public void call(Subscriber<? super IEvent> subscriber) {
+                for (IEvent event : events) {
+                    subscriber.onNext(event);
+                }
+                subscriber.onCompleted();
+            }
+        });
+        return observable;
     }
 }

@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.jakewharton.rxbinding.support.v7.widget.RxRecyclerViewAdapter;
 import com.lweynant.yearly.IRString;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.YearlyApp;
@@ -49,6 +50,7 @@ public class EventsActivityFragment extends BaseFragment implements EventsAdapte
         EventRepo repo = ((YearlyApp)getActivity().getApplication()).getRepo();
         LocalDate now = LocalDate.now();
         eventsAdapter = new EventsAdapter(repo, now, this);
+
         recyclerView.setAdapter(eventsAdapter);
         return view;
     }

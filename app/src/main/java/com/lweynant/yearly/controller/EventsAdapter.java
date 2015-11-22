@@ -13,6 +13,8 @@ import org.joda.time.LocalDate;
 
 import java.util.List;
 
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewHolder> {
@@ -32,7 +34,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
             Timber.d("sort on new date");
             sortedFrom = now;
             repo.sortFrom(sortedFrom.getMonthOfYear(), sortedFrom.getDayOfMonth());
-            events = repo.getEvents();
+            events = repo.getListOfEvents();
             notifyDataSetChanged();
         }
     }
@@ -68,10 +70,11 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
         }
     }
 
+
     public EventsAdapter(EventRepo repo, LocalDate now, EventsAdapter.onEventTypeSelectedListener listener) {
         this.sortedFrom = now;
         repo.sortFrom(now.getMonthOfYear(), now.getDayOfMonth());
-        this.events = repo.getEvents();
+        events = repo.getListOfEvents();
         this.listener = listener;
 
     }

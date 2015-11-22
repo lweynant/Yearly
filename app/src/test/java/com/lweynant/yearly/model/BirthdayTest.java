@@ -85,4 +85,23 @@ public class BirthdayTest {
         LocalDate eventDate = bd.getDate();
         assertThat(eventDate, is(new LocalDate(2014, 12, 31)));
     }
+
+    @Test
+    public void compareTo_NowIsAfter() throws Exception {
+        LocalDate now = new LocalDate(2014, 7, 15);
+        when(clock.now()).thenReturn(now);
+        Birthday joe =  new Birthday("joe", Date.MARCH, 4, clock, rstring);
+        Birthday fred = new Birthday("fred", Date.NOVEMBER, 5, clock, rstring);
+
+        assertThat(joe.compareTo(fred), is(1));
+    }
+    @Test
+    public void compareTo_NowIsBefore() throws Exception {
+        LocalDate now = new LocalDate(2014, 1, 15);
+        when(clock.now()).thenReturn(now);
+        Birthday joe =  new Birthday("joe", Date.MARCH, 4, clock, rstring);
+        Birthday fred = new Birthday("fred", Date.NOVEMBER, 5, clock, rstring);
+
+        assertThat(joe.compareTo(fred), is(-1));
+    }
 }

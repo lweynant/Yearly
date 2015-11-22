@@ -40,4 +40,9 @@ public class Birthday implements IEvent {
         }
         return eventDate;
     }
+
+    @Override
+    public int compareTo(IEvent another) {
+        return getDate().compareTo(another.getDate());
+    }
 }
