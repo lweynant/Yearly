@@ -10,7 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 
-import com.lweynant.yearly.AlarmGeneratorForUpcomingEvents;
+import com.lweynant.yearly.AlarmGeneratorForUpcomingEvent;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.YearlyApp;
 
@@ -61,8 +61,8 @@ public class EventsActivity extends AppCompatActivity {
         else if (id == R.id.action_set_alarm){
             Timber.i("set alarm");
             YearlyApp app = (YearlyApp) getApplication();
-            AlarmGeneratorForUpcomingEvents alarmGeneratorForUpcomingEvents = new AlarmGeneratorForUpcomingEvents(this, app.getRepo());
-            alarmGeneratorForUpcomingEvents.startAlarm(LocalDate.now());
+            AlarmGeneratorForUpcomingEvent alarmGeneratorForUpcomingEvent = new AlarmGeneratorForUpcomingEvent(this, app.getRepo());
+            alarmGeneratorForUpcomingEvent.startAlarm(LocalDate.now());
         }
 
         return super.onOptionsItemSelected(item);

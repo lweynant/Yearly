@@ -110,7 +110,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
         public void bindEvent(IEvent event) {
             this.event = event;
             LocalDate eventDate = event.getDate();
-            textView.setText(event.getTitle() + " at " + eventDate.getDayOfMonth() + "/" + eventDate.getMonthOfYear());
+            textView.setText(event.getTitle() + ": " + eventDate.dayOfWeek().getAsShortText() + " " + eventDate.getDayOfMonth() + " " + eventDate.monthOfYear().getAsShortText());
         }
     }
 

@@ -1,11 +1,9 @@
 package com.lweynant.yearly.model;
 
-import com.lweynant.yearly.FilterEventsInRange;
 import com.lweynant.yearly.util.IClock;
 
 import org.joda.time.LocalDate;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -14,6 +12,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.List;
 
 import rx.Observable;
+import rx.functions.Func1;
+import rx.functions.Func2;
 
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.hasItems;
@@ -36,32 +36,25 @@ public class EventRepoTest {
 
     @Mock
     IClock clock;
+    private int nbrOfDaysForNotification;
+
     @Before
     public void setUp() throws Exception {
         when(clock.now()).thenReturn(new LocalDate(2015, 1, 23));
+        nbrOfDaysForNotification = 1;
         sut = new EventRepo();
 
     }
 
-    private IEvent createFakeEvent(@Date.Month int month, int day)
-    {
-        IEvent event = mock(IEvent.class);
-        LocalDate now = clock.now();
-        LocalDate date = new LocalDate(now.getYear(), month, day);
-        when(event.getDate()).thenReturn(date);
-        when(event.toString()).thenReturn(date.toString());
-        return event;
-    }
-
-
     @Test
-    public void getEvents_FromEmptyRepo() throws Exception{
+    public void getEvents_FromEmptyRepo() throws Exception {
         Observable<IEvent> eventObservable = sut.getEvents();
         Iterable<IEvent> it = eventObservable.toBlocking().toIterable();
         assertThat(it, is(emptyIterable()));
     }
+
     @Test
-    public void getEvents_FromRepoWith1Event() throws Exception{
+    public void getEvents_FromRepoWith1Event() throws Exception {
         IEvent event = new Event(Date.AUGUST, 1, clock);
         sut.add(event);
         Observable<IEvent> events = sut.getEvents();
@@ -69,8 +62,9 @@ public class EventRepoTest {
         assertThat(list, hasSize(1));
         assertThat(list, containsInAnyOrder(event));
     }
+
     @Test
-    public void getEvents_FromRepoWithNEvent() throws Exception{
+    public void getEvents_FromRepoWithNEvent() throws Exception {
         when(clock.now()).thenReturn(new LocalDate(2015, Date.APRIL, 23));
 
         IEvent event1 = new Event(Date.FEBRUARY, 8, clock);
@@ -85,27 +79,56 @@ public class EventRepoTest {
     }
 
     @Test
-    public void getEvents_Upcoming() throws Exception{
+    public void getEvents_Upcoming() throws Exception {
         when(clock.now()).thenReturn(new LocalDate(2015, Date.JULY, 31));
 
         IEvent event1 = new Event(Date.FEBRUARY, 8, clock);
         IEvent event2 = new Event(Date.AUGUST, 1, clock);
         IEvent event3 = new Event(Date.AUGUST, 2, clock);
+        event3.setNbrOfDaysForNotification(2);
         IEvent event4 = new Event(Date.NOVEMBER, 8, clock);
-        sut.add(event1).add(event2).add(event3);
+        sut.add(event1).add(event2).add(event3).add(event4);
         Observable<IEvent> events = sut.getEvents();
         List<IEvent> list = events
-                .filter(new FilterEventsInRange(clock.now(), 2))
-//                .filter(new Func1<IEvent, Boolean>() {
-//                    @Override
-//                    public Boolean call(IEvent event) {
-//                        int days = Days.daysBetween(clock.now(), event.getDate()).getDays();
-//                        return days >= 0 && days <= 2;
-//                    }
-//                })
+                .filter(new Func1<IEvent, Boolean>() {
+                    @Override
+                    public Boolean call(IEvent event) {
+                        return Event.shouldBeNotified(clock.now(), event);
+                    }
+                })
                 .toList().toBlocking().single();
         assertThat(list, hasSize(2));
         assertThat(list, containsInAnyOrder(event2, event3));
+
+    }
+
+    @Test
+    public void getEvents_SetAlarm() throws Exception {
+        when(clock.now()).thenReturn(new LocalDate(2015, Date.JULY, 31));
+
+        IEvent event1 = new Event(Date.FEBRUARY, 8, clock);
+        IEvent event2 = new Event(Date.AUGUST, 1, clock);
+        IEvent event3 = new Event(Date.AUGUST, 2, clock);
+        event3.setNbrOfDaysForNotification(2);
+        IEvent event4 = new Event(Date.NOVEMBER, 8, clock);
+        sut.add(event1).add(event2).add(event3).add(event4);
+        Observable<IEvent> events = sut.getEvents();
+        TimeBeforeNotification timeBeforeNotification = events
+                .map(new Func1<IEvent, TimeBeforeNotification>() {
+                    @Override
+                    public TimeBeforeNotification call(IEvent event) {
+                        return Event.daysBeforeNotification(clock.now(), event);
+                    }
+                })
+                .reduce(new Func2<TimeBeforeNotification, TimeBeforeNotification, TimeBeforeNotification>() {
+                    @Override
+                    public TimeBeforeNotification call(TimeBeforeNotification currentMin, TimeBeforeNotification number) {
+                        return TimeBeforeNotification.min(currentMin, number);
+                    }
+                })
+                .toBlocking().single();
+        assertThat(timeBeforeNotification.getDays(), is(0));
+        assertThat(timeBeforeNotification.getHour(), is(19));
 
     }
 }

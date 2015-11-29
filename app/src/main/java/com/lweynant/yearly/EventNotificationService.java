@@ -4,14 +4,17 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 
+import com.lweynant.yearly.model.Event;
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.util.Clock;
+import com.lweynant.yearly.util.IClock;
 
 import org.joda.time.LocalDate;
 
 import rx.Observable;
 import rx.Subscription;
+import rx.functions.Func1;
 import timber.log.Timber;
 
 /**
@@ -53,17 +56,22 @@ public class EventNotificationService extends IntentService {
         Timber.d("handleActionNotification");
         YearlyApp app = (YearlyApp)getApplication();
         EventRepo repo = app.getRepo();
-        final LocalDate now = LocalDate.now();
 
+        final IClock clock = new Clock();
         Observable<IEvent> eventsObservable = repo.getEvents();
         Subscription subscription = eventsObservable
-                .filter(new FilterEventsInRange(now, 2))
-                .subscribe(new EventNotifier(this, new Clock()));
+                .filter(new Func1<IEvent, Boolean>() {
+                    @Override
+                    public Boolean call(IEvent event) {
+                        return Event.shouldBeNotified(clock.now(), event);
+                    }
+                })
+                .subscribe(new EventNotifier(this, clock));
         subscription.unsubscribe();
-        AlarmGeneratorForUpcomingEvents alarmGeneratorForUpcomingEvents = new AlarmGeneratorForUpcomingEvents(this, repo);
-        LocalDate tomorrow = now.plusDays(1);
+        AlarmGeneratorForUpcomingEvent alarmGeneratorForUpcomingEvent = new AlarmGeneratorForUpcomingEvent(this, repo);
+        LocalDate tomorrow = clock.now().plusDays(1);
         Timber.d("schedule next alarm using date %s", tomorrow);
-        alarmGeneratorForUpcomingEvents.startAlarm(tomorrow);
+        alarmGeneratorForUpcomingEvent.startAlarm(tomorrow);
 
     }
 

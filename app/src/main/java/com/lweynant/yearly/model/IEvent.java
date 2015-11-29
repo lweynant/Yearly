@@ -9,4 +9,7 @@ public interface IEvent extends Comparable<IEvent>{
 
     LocalDate getDate();
 
+    int getNbrOfDaysForNotification();
+
+    void setNbrOfDaysForNotification(int days);
 }

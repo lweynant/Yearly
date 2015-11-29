@@ -18,6 +18,7 @@ public class Birthday extends Event {
         super(month, day, clock);
         this.rstring = rstring;
         this.name = name;
+        super.setNbrOfDaysForNotification(2);
     }
 
 

@@ -5,8 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
-import com.lweynant.yearly.model.IEvent;
-import com.lweynant.yearly.util.IClock;
+import com.lweynant.yearly.model.TimeBeforeNotification;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -14,7 +13,7 @@ import org.joda.time.LocalDate;
 import rx.Subscriber;
 import timber.log.Timber;
 
-public class AlarmGenerator extends Subscriber<Integer> {
+public class AlarmGenerator extends Subscriber<TimeBeforeNotification> {
     private final PendingIntent alarmSender;
     private final LocalDate from;
     private Context context;
@@ -41,14 +40,16 @@ public class AlarmGenerator extends Subscriber<Integer> {
     }
 
     @Override
-    public void onNext(Integer event) {
-        Timber.d("onNext set alarm in  %d days", event);
-        int morning = 6;
-        int evening = 19;
-        int hour = event == 0? morning : evening;
-        LocalDate alarmDate = from.plusDays(event);
+    public void onNext(TimeBeforeNotification days) {
+        Timber.d("onNext set alarm in  %d days", days.getDays());
+        if (days.getDays() < 0)
+        {
+            Timber.d("can not set alarms in the past");
+            return;
+        }
+        LocalDate alarmDate = from.plusDays(days.getDays());
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        DateTime time = new DateTime(alarmDate.getYear(), alarmDate.getMonthOfYear(), alarmDate.getDayOfMonth(), hour, 0);
+        DateTime time = new DateTime(alarmDate.getYear(), alarmDate.getMonthOfYear(), alarmDate.getDayOfMonth(), days.getHour(), 0);
         long triggerAtMillis = time.toDateTime().getMillis();
         Timber.d("shedule an alarm on date: %s",  time.toString());
         am.set(AlarmManager.RTC, triggerAtMillis, alarmSender);
