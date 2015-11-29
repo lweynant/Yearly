@@ -25,9 +25,9 @@ public class YearlyApp extends Application implements IRString {
         if (null == repo){
             Timber.e("repo was not initialized");
             Clock clock = new Clock();
-            repo = new EventRepo(clock);
+            repo = new EventRepo();
             LocalDate now = LocalDate.now().plusDays(1);
-            //repo.add(new Birthday("Test", now.getDayOfMonth(), now.getMonthOfYear(), this));
+            repo.add(new Birthday("Test", now.getMonthOfYear(), now.getDayOfMonth(), clock, this));
             repo.add(new Birthday("Katinka", Date.MARCH, 10, clock, this));
             repo.add(new Birthday("Kasper", Date.MAY, 14, clock, this));
             repo.add(new Birthday("Ann", Date.MARCH, 5, clock, this));
@@ -42,6 +42,7 @@ public class YearlyApp extends Application implements IRString {
             repo.add(new Birthday("Josephine", Date.MAY, 29, clock,this));
             repo.add(new Birthday("Joren", Date.MAY, 30, clock, this));
             repo.add(new Birthday("Bjorn", Date.JULY, 22, clock,this));
+            repo.add(new Birthday("Timo", Date.MAY, 3, clock,this));
         }
         Timber.d("getRepo");
         return repo;

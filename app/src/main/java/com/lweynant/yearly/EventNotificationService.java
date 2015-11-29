@@ -1,21 +1,17 @@
 package com.lweynant.yearly;
 
 import android.app.IntentService;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.NotificationCompat;
 
-import com.lweynant.yearly.controller.EventsActivity;
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.IEvent;
+import com.lweynant.yearly.util.Clock;
 
-import org.joda.time.Days;
 import org.joda.time.LocalDate;
 
-import java.util.List;
-
+import rx.Observable;
+import rx.Subscription;
 import timber.log.Timber;
 
 /**
@@ -57,46 +53,17 @@ public class EventNotificationService extends IntentService {
         Timber.d("handleActionNotification");
         YearlyApp app = (YearlyApp)getApplication();
         EventRepo repo = app.getRepo();
-        LocalDate now = LocalDate.now();
-        repo.sortFrom(now.getMonthOfYear(), now.getDayOfMonth());
-        List<IEvent> upcomingEvents = repo.getUpcomingEvents();
+        final LocalDate now = LocalDate.now();
 
-        if (upcomingEvents.isEmpty()) {
-            Timber.e("no upcoming events ...");
-            return;
-        }
-        int id = 0;
-        for (IEvent event :upcomingEvents){
-            Timber.d("sending notification for %s", event.getTitle());
-            LocalDate eventDate = event.getDate();
-
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-            builder.setSmallIcon(R.mipmap.ic_event_note_white_48dp);
-            String title = event.getTitle() + " ";
-            if (eventDate.isEqual(now))
-            {
-                title += getResources().getString(R.string.today);
-            }
-            else if (eventDate.minusDays(1).isEqual(now)){
-                title += getResources().getString(R.string.tomorrow);
-            }
-            else {
-                Days d = Days.daysBetween(now, eventDate);
-                int days = d.getDays();
-                title += String.format(getResources().getString(R.string.in_x_days), days);
-            }
-            builder.setContentTitle(title);
-            builder.setAutoCancel(true);
-            Intent intent = new Intent(this, EventsActivity.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            builder.setContentIntent(pendingIntent);
-            NotificationManager nm = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-            nm.notify(id++, builder.build());
-        }
-        AlarmGenerator alarmGenerator = new AlarmGenerator(this, repo);
+        Observable<IEvent> eventsObservable = repo.getEvents();
+        Subscription subscription = eventsObservable
+                .filter(new FilterEventsInRange(now, 2))
+                .subscribe(new EventNotifier(this, new Clock()));
+        subscription.unsubscribe();
+        AlarmGeneratorForUpcomingEvents alarmGeneratorForUpcomingEvents = new AlarmGeneratorForUpcomingEvents(this, repo);
         LocalDate tomorrow = now.plusDays(1);
         Timber.d("schedule next alarm using date %s", tomorrow);
-        alarmGenerator.startAlarm(tomorrow);
+        alarmGeneratorForUpcomingEvents.startAlarm(tomorrow);
 
     }
 

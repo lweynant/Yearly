@@ -1,6 +1,7 @@
 package com.lweynant.yearly.model;
 
 import org.joda.time.LocalDate;
+import org.joda.time.Period;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -26,5 +27,16 @@ public class DateTest {
         LocalDate dayBefore = date.minusDays(1);
         assertThat(dayBefore.getDayOfMonth(), is(28));
         assertThat(dayBefore.getMonthOfYear(), is(Date.FEBRUARY));
+    }
+
+    @Test
+    public void testDays() throws Exception{
+        LocalDate from = new LocalDate(2015, Date.APRIL, 1);
+        LocalDate to = from.plusDays(3);
+        LocalDate date1 = new LocalDate(2015, Date.APRIL, 3);
+        LocalDate date2 = new LocalDate(2015, Date.APRIL, 4);
+        assertThat(date1.isAfter(from), is(true));
+        assertThat(date1.isBefore(to), is(true));
+
     }
 }

@@ -14,80 +14,35 @@ import rx.Subscriber;
 import timber.log.Timber;
 
 public class EventRepo {
-    private final IClock clock;
     private List<IEvent> events = new ArrayList<>();
-    private LocalDate startDate;
-    private int nbrOfDaysForUpcomingEvents;
 
-    public EventRepo(IClock clock) {
-        this.clock = clock;
-        this.startDate = clock.now();
+    public EventRepo() {
     }
 
     public EventRepo add(IEvent event) {
         events.add(event);
-        Collections.sort(events, new Comparator<IEvent>() {
-            @Override
-            public int compare(IEvent lhs, IEvent rhs) {
-                return lhs.getDate().compareTo(rhs.getDate());
-            }
-        });
         return this;
     }
-
-    public List<IEvent> getListOfEvents() {
-        List<IEvent> sortedEvents = new ArrayList<>();
-        int start;
-        for (start = 0; start < events.size(); start++) {
-            IEvent e = events.get(start);
-            LocalDate eventDate = e.getDate();
-            if (eventDate.isEqual(startDate) || eventDate.isAfter(startDate)) break;
-        }
-        for (int i = 0; i < events.size(); i++) {
-            sortedEvents.add(events.get(start % events.size()));
-            start++;
-        }
-        return sortedEvents;
-    }
-
-
-    public void sortFrom(@Date.Month int month, int day) {
-        Timber.d("sort on %d/%d", day, month);
-        startDate = new LocalDate(clock.now().getYear(), month, day);
-    }
-
-    public List<IEvent> getUpcomingEvents() {
-        List<IEvent> sorted = getListOfEvents();
-        List<IEvent> upcoming = new ArrayList<>();
-        if (sorted.size() > 0) {
-            IEvent upcomingEvent = sorted.get(0);
-            upcoming.add(upcomingEvent);
-            for (int i = 1; i < sorted.size(); i++) {
-                if (sorted.get(i).getDate().isEqual(upcomingEvent.getDate())) {
-                    upcoming.add(sorted.get(i));
-                } else {
-                    break;
-                }
-
-            }
-        }
-        return upcoming;
-    }
-
-
-    public void setNbrOfDaysForUpcomingEvents(int nbrOfDaysForUpcomingEvents) {
-        this.nbrOfDaysForUpcomingEvents = nbrOfDaysForUpcomingEvents;
-    }
-
 
     public Observable<IEvent> getEvents() {
         Observable<IEvent> observable = Observable.create(new Observable.OnSubscribe<IEvent>() {
             @Override
             public void call(Subscriber<? super IEvent> subscriber) {
-                for (IEvent event : events) {
-                    subscriber.onNext(event);
+                try {
+                    for (IEvent event : events) {
+                        if (!subscriber.isUnsubscribed()) {
+                            subscriber.onNext(event);
+                        }
+                        else {
+                            break;
+                        }
+                    }
+                    subscriber.onCompleted();
+
                 }
-                subscriber.onCompleted();
+                catch (Throwable t){
+                    subscriber.onError(t);
+                }
             }
         });
         return observable;

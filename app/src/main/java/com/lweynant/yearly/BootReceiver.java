@@ -19,8 +19,8 @@ public class BootReceiver extends BroadcastReceiver {
             Timber.d("generating the alarm...");
             YearlyApp app = (YearlyApp) context.getApplicationContext();
 
-            AlarmGenerator alarmGenerator = new AlarmGenerator(context, app.getRepo());
-            alarmGenerator.startAlarm(LocalDate.now());
+            AlarmGeneratorForUpcomingEvents alarmGeneratorForUpcomingEvents = new AlarmGeneratorForUpcomingEvents(context, app.getRepo());
+            alarmGeneratorForUpcomingEvents.startAlarm(LocalDate.now());
 
         }
     }

@@ -11,37 +11,81 @@ import com.lweynant.yearly.model.IEvent;
 
 import org.joda.time.LocalDate;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import rx.Observable;
+import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewHolder> {
 
-    private List<IEvent> events;
+    private List<IEvent> events = new ArrayList<>();
     private final onEventTypeSelectedListener listener;
     private LocalDate sortedFrom;
+    private Subscription subscription;
 
 
     public void checkWhetherDataNeedsToBeResorted(LocalDate now, EventRepo repo) {
         Timber.d("checkWhetherDataNeedsToBeResorted");
-        if (sortedFrom.isEqual(now)) {
+        if (subscription != null || sortedFrom.isEqual(now)) {
             Timber.d("we sorted repo on same day, so nothing to do");
             return;
         }
         else {
-            Timber.d("sort on new date");
+            Timber.d("sort on new date %s", now.toString());
+            Observable<IEvent> eventsObservable = repo.getEvents();
+            if (subscription != null)
+            {
+                subscription.unsubscribe();
+            }
+            subscription = eventsObservable.subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .toSortedList()
+                    .first()
+                    .subscribe(new Subscriber<List<IEvent>>() {
+                        @Override
+                        public void onCompleted() {
+                            Timber.d("onCompleted");
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Timber.e(e, "onError");
+                        }
+
+                        @Override
+                        public void onNext(List<IEvent> iEvents) {
+                            Timber.d("onNext");
+                            setEvents(iEvents);
+                        }
+                    });
+
             sortedFrom = now;
-            repo.sortFrom(sortedFrom.getMonthOfYear(), sortedFrom.getDayOfMonth());
-            events = repo.getListOfEvents();
-            notifyDataSetChanged();
+        }
+    }
+
+    private void setEvents(List<IEvent> events) {
+        Timber.d("setEvents");
+        this.events = events;
+        notifyDataSetChanged();
+    }
+
+    public void onDetach() {
+        if (subscription != null)
+        {
+            subscription.unsubscribe();
         }
     }
 
     public interface onEventTypeSelectedListener {
         public void onSelected(IEvent eventType);
     }
+
+
 
     public static class EventViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private final onEventTypeSelectedListener listener;
@@ -71,10 +115,8 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
     }
 
 
-    public EventsAdapter(EventRepo repo, LocalDate now, EventsAdapter.onEventTypeSelectedListener listener) {
-        this.sortedFrom = now;
-        repo.sortFrom(now.getMonthOfYear(), now.getDayOfMonth());
-        events = repo.getListOfEvents();
+    public EventsAdapter(EventsAdapter.onEventTypeSelectedListener listener) {
+        this.sortedFrom = new LocalDate(1900, 1, 1);
         this.listener = listener;
 
     }

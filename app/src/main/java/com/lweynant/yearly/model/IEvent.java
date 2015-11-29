@@ -8,4 +8,5 @@ public interface IEvent extends Comparable<IEvent>{
     public String getTitle();
 
     LocalDate getDate();
+
 }

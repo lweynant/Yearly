@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.jakewharton.rxbinding.support.v7.widget.RxRecyclerViewAdapter;
 import com.lweynant.yearly.IRString;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.YearlyApp;
@@ -22,7 +21,14 @@ import org.joda.time.Days;
 import org.joda.time.LocalDate;
 
 import java.util.Calendar;
+import java.util.List;
 
+import rx.Observable;
+import rx.Scheduler;
+import rx.Subscriber;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -49,15 +55,19 @@ public class EventsActivityFragment extends BaseFragment implements EventsAdapte
         //set the adapter
         EventRepo repo = ((YearlyApp)getActivity().getApplication()).getRepo();
         LocalDate now = LocalDate.now();
-        eventsAdapter = new EventsAdapter(repo, now, this);
+        eventsAdapter = new EventsAdapter(this);
 
         recyclerView.setAdapter(eventsAdapter);
+
+
+
         return view;
     }
 
     @Override
     public void onDetach() {
         Timber.d("onDetach");
+        eventsAdapter.onDetach();
         super.onDetach();
     }
 
