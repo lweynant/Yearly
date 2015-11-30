@@ -43,9 +43,9 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
                 subscription.unsubscribe();
             }
             subscription = eventsObservable.subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
                     .toSortedList()
                     .first()
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<List<IEvent>>() {
                         @Override
                         public void onCompleted() {
