@@ -29,18 +29,8 @@ public class AlarmGeneratorForUpcomingEvent {
 
         Subscription subscription;
         subscription = repo.getEvents()
-                .map(new Func1<IEvent, TimeBeforeNotification>() {
-                    @Override
-                    public TimeBeforeNotification call(IEvent event) {
-                        return Event.timeBeforeNotification(from, event);
-                    }
-                })
-                .reduce(new Func2<TimeBeforeNotification, TimeBeforeNotification, TimeBeforeNotification>() {
-                    @Override
-                    public TimeBeforeNotification call(TimeBeforeNotification currentMin, TimeBeforeNotification number) {
-                        return TimeBeforeNotification.min(currentMin, number);
-                    }
-                })
+                .map(event -> Event.timeBeforeNotification(from, event))
+                .reduce((currentMin, x) -> TimeBeforeNotification.min(currentMin, x))
                 .subscribe(new AlarmGenerator(context, from));
         subscription.unsubscribe();
     }

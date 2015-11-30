@@ -60,12 +60,7 @@ public class EventNotificationService extends IntentService {
         final IClock clock = new Clock();
         Observable<IEvent> eventsObservable = repo.getEvents();
         Subscription subscription = eventsObservable
-                .filter(new Func1<IEvent, Boolean>() {
-                    @Override
-                    public Boolean call(IEvent event) {
-                        return Event.shouldBeNotified(clock.now(), event);
-                    }
-                })
+                .filter(event -> Event.shouldBeNotified(clock.now(), event))
                 .subscribe(new EventNotifier(this, clock));
         subscription.unsubscribe();
         AlarmGeneratorForUpcomingEvent alarmGeneratorForUpcomingEvent = new AlarmGeneratorForUpcomingEvent(this, repo);

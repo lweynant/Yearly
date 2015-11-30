@@ -90,12 +90,7 @@ public class EventRepoTest {
         sut.add(event1).add(event2).add(event3).add(event4);
         Observable<IEvent> events = sut.getEvents();
         List<IEvent> list = events
-                .filter(new Func1<IEvent, Boolean>() {
-                    @Override
-                    public Boolean call(IEvent event) {
-                        return Event.shouldBeNotified(clock.now(), event);
-                    }
-                })
+                .filter(event -> Event.shouldBeNotified(clock.now(), event))
                 .toList().toBlocking().single();
         assertThat(list, hasSize(2));
         assertThat(list, containsInAnyOrder(event2, event3));
@@ -133,18 +128,8 @@ public class EventRepoTest {
 
     private TimeBeforeNotification getFirstUpComingEventTimeBeforeNotification(Observable<IEvent> events, final LocalDate from) {
         return events
-                .map(new Func1<IEvent, TimeBeforeNotification>() {
-                    @Override
-                    public TimeBeforeNotification call(IEvent event) {
-                        return Event.timeBeforeNotification(from, event);
-                    }
-                })
-                .reduce(new Func2<TimeBeforeNotification, TimeBeforeNotification, TimeBeforeNotification>() {
-                    @Override
-                    public TimeBeforeNotification call(TimeBeforeNotification currentMin, TimeBeforeNotification number) {
-                        return TimeBeforeNotification.min(currentMin, number);
-                    }
-                })
+                .map(event -> Event.timeBeforeNotification(from, event))
+                .reduce((currentMin, x) -> TimeBeforeNotification.min(currentMin, x) )
                 .toBlocking().single();
     }
 }
