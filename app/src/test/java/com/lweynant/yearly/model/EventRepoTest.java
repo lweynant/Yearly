@@ -103,7 +103,19 @@ public class EventRepoTest {
     }
 
     @Test
-    public void getEvents_SetAlarm() throws Exception {
+    public void getEvents_SetAlarmForEventToday() throws Exception{
+        LocalDate now = new LocalDate(2015, Date.FEBRUARY, 8);
+        when(clock.now()).thenReturn(now);
+        IEvent event1 = new Event(Date.JANUARY, 5, clock);
+        IEvent event2 = new Event(Date.AUGUST, 8, clock);
+        IEvent event3 = new Event(now.getMonthOfYear(), now.getDayOfMonth(), clock);
+        sut.add(event1).add(event2).add(event3);
+        TimeBeforeNotification time = getFirstUpComingEventTimeBeforeNotification(sut.getEvents(), now);
+        assertThat(time.getDays(), is(0));
+        assertThat(time.getHour(), is(6));
+    }
+    @Test
+    public void getEvents_SetAlarmForEventTomorrow() throws Exception {
         when(clock.now()).thenReturn(new LocalDate(2015, Date.JULY, 31));
 
         IEvent event1 = new Event(Date.FEBRUARY, 8, clock);
@@ -113,11 +125,18 @@ public class EventRepoTest {
         IEvent event4 = new Event(Date.NOVEMBER, 8, clock);
         sut.add(event1).add(event2).add(event3).add(event4);
         Observable<IEvent> events = sut.getEvents();
-        TimeBeforeNotification timeBeforeNotification = events
+        TimeBeforeNotification timeBeforeNotification = getFirstUpComingEventTimeBeforeNotification(events, clock.now());
+        assertThat(timeBeforeNotification.getDays(), is(0));
+        assertThat(timeBeforeNotification.getHour(), is(19));
+
+    }
+
+    private TimeBeforeNotification getFirstUpComingEventTimeBeforeNotification(Observable<IEvent> events, final LocalDate from) {
+        return events
                 .map(new Func1<IEvent, TimeBeforeNotification>() {
                     @Override
                     public TimeBeforeNotification call(IEvent event) {
-                        return Event.daysBeforeNotification(clock.now(), event);
+                        return Event.timeBeforeNotification(from, event);
                     }
                 })
                 .reduce(new Func2<TimeBeforeNotification, TimeBeforeNotification, TimeBeforeNotification>() {
@@ -127,8 +146,5 @@ public class EventRepoTest {
                     }
                 })
                 .toBlocking().single();
-        assertThat(timeBeforeNotification.getDays(), is(0));
-        assertThat(timeBeforeNotification.getHour(), is(19));
-
     }
 }

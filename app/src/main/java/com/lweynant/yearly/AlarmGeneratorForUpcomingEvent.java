@@ -32,7 +32,7 @@ public class AlarmGeneratorForUpcomingEvent {
                 .map(new Func1<IEvent, TimeBeforeNotification>() {
                     @Override
                     public TimeBeforeNotification call(IEvent event) {
-                        return Event.daysBeforeNotification(from, event);
+                        return Event.timeBeforeNotification(from, event);
                     }
                 })
                 .reduce(new Func2<TimeBeforeNotification, TimeBeforeNotification, TimeBeforeNotification>() {

@@ -60,7 +60,7 @@ public class Event implements IEvent {
         return getDate().compareTo(another.getDate());
     }
 
-    public static TimeBeforeNotification daysBeforeNotification(LocalDate from, IEvent event) {
+    public static TimeBeforeNotification timeBeforeNotification(LocalDate from, IEvent event) {
         LocalDate eventDate = event.getDate();
         if (eventDate.isBefore(from)) {
             eventDate = eventDate.plusYears(1);

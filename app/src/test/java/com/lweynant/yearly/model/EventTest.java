@@ -24,7 +24,7 @@ public class EventTest {
         when(clock.now()).thenReturn(now);
         Event sut = new Event(Date.MARCH, 10, clock);
         LocalDate from = now;
-        TimeBeforeNotification days = Event.daysBeforeNotification(from, sut);
+        TimeBeforeNotification days = Event.timeBeforeNotification(from, sut);
         assertThat(days.getDays(), is(8));
         assertThat(days.getHour(), is(19));
     }
@@ -34,7 +34,7 @@ public class EventTest {
         when(clock.now()).thenReturn(now);
         Event sut = new Event(now.getMonthOfYear(), now.getDayOfMonth(), clock);
         LocalDate from = now;
-        TimeBeforeNotification days = Event.daysBeforeNotification(from, sut);
+        TimeBeforeNotification days = Event.timeBeforeNotification(from, sut);
         assertThat(days.getDays(), is(0));
         assertThat(days.getHour(), is(6));
     }
@@ -44,7 +44,7 @@ public class EventTest {
         when(clock.now()).thenReturn(eventDate);
         Event sut = new Event(eventDate.getMonthOfYear(), eventDate.getDayOfMonth(), clock);
         LocalDate from = eventDate.plusDays(1);
-        TimeBeforeNotification days = Event.daysBeforeNotification(from, sut);
+        TimeBeforeNotification days = Event.timeBeforeNotification(from, sut);
         assertThat(days.getDays(), is(364));
         assertThat(days.getHour(), is(19));
     }
