@@ -1,6 +1,8 @@
 package com.lweynant.yearly.model;
 
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.lweynant.yearly.IRString;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.util.IClock;
@@ -12,6 +14,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static net.javacrumbs.jsonunit.fluent.JsonFluentAssert.assertThatJson;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
@@ -104,4 +107,17 @@ public class BirthdayTest {
 
         assertThat(joe.compareTo(fred), is(-1));
     }
+
+    @Test
+    public void testSerializeBirthday() throws Exception{
+        Birthday bd = new Birthday("Mine", Date.FEBRUARY, 8, clock, rstring);
+        GsonBuilder builder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation();
+        Gson gson = builder.create();
+        String json = gson.toJson(bd);
+        assertThatJson(json).node("name").isEqualTo("Mine");
+        assertThatJson(json).node("month").isEqualTo(Date.FEBRUARY);
+        assertThatJson(json).node("day").isEqualTo(8);
+        assertThatJson(json).node("type").isEqualTo(Birthday.class.getCanonicalName());
+    }
+
 }

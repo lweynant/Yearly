@@ -12,9 +12,11 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.List;
 
 import rx.Observable;
+import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.functions.Func2;
 
+import static net.javacrumbs.jsonunit.fluent.JsonFluentAssert.assertThatJson;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
@@ -110,7 +112,7 @@ public class EventRepoTest {
         assertThat(time.getHour(), is(6));
     }
     @Test
-    public void getEvents_SetAlarmForEventTomorrow() throws Exception {
+   public void getEvents_SetAlarmForEventTomorrow() throws Exception {
         when(clock.now()).thenReturn(new LocalDate(2015, Date.JULY, 31));
 
         IEvent event1 = new Event(Date.FEBRUARY, 8, clock);
@@ -132,4 +134,29 @@ public class EventRepoTest {
                 .reduce((currentMin, x) -> TimeBeforeNotification.min(currentMin, x) )
                 .toBlocking().single();
     }
+
+    @Test
+    public void getEvents_Serialize() throws Exception {
+        when(clock.now()).thenReturn(new LocalDate(2015, Date.JULY, 31));
+
+        IEvent event1 = new Event(Date.FEBRUARY, 8, clock);
+        IEvent event2 = new Event(Date.AUGUST, 1, clock);
+        IEvent event3 = new Event(Date.AUGUST, 2, clock);
+        event3.setNbrOfDaysForNotification(2);
+        IEvent event4 = new Event(Date.NOVEMBER, 8, clock);
+        sut.add(event1).add(event2).add(event3).add(event4);
+        Observable<IEvent> events = sut.getEvents();
+
+        String json = serialize(events);
+        assertThatJson(json).isArray().ofLength(4);
+
+    }
+
+    private String serialize(Observable<IEvent> events) {
+        EventRepoSerializer serializer = new EventRepoSerializer();
+        events.subscribe(serializer);
+        return serializer.serialized();
+    }
+
+
 }

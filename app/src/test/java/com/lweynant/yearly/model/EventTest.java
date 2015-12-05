@@ -1,5 +1,7 @@
 package com.lweynant.yearly.model;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.lweynant.yearly.util.IClock;
 
 import org.joda.time.LocalDate;
@@ -8,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static net.javacrumbs.jsonunit.fluent.JsonFluentAssert.assertThatJson;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
@@ -56,6 +59,17 @@ public class EventTest {
         when(clock.now()).thenReturn(now);
         Event event = new Event(eventDate.getMonthOfYear(), eventDate.getDayOfMonth(), clock);
         boolean notify = Event.shouldBeNotified(now, event);
+    }
+
+    @Test
+    public void testSerialize() throws Exception{
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        Event event = new Event(Date.AUGUST, 30, clock);
+        String json = gson.toJson(event);
+        assertThatJson(json).node("type").isEqualTo(Event.class.getCanonicalName());
+        assertThatJson(json).node("nbr_days_for_notification").isEqualTo(1);
+        assertThatJson(json).node("day").isEqualTo(30);
+        assertThatJson(json).node("month").isEqualTo(Date.AUGUST);
     }
 
 }

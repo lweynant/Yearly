@@ -1,21 +1,30 @@
 package com.lweynant.yearly.model;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import com.lweynant.yearly.util.IClock;
 
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 
 public class Event implements IEvent {
+    @Expose
     private final int day;
     @Date.Month
+    @Expose
     private final int month;
     private final IClock clock;
+    @Expose
+    private final String type;
+    @Expose
+    @SerializedName("nbr_days_for_notification")
     private int nbrDaysForNotification = 1;
 
-    public Event(@Date.Month int month, int day, IClock clock) {
+    public Event( @Date.Month int month, int day, IClock clock) {
         this.day = day;
         this.month = month;
         this.clock = clock;
+        this.type = getClass().getCanonicalName();
     }
 
 

@@ -1,5 +1,6 @@
 package com.lweynant.yearly.model;
 
+import com.google.gson.annotations.Expose;
 import com.lweynant.yearly.IRString;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.YearlyApp;
@@ -12,6 +13,7 @@ import org.joda.time.LocalDate;
 public class Birthday extends Event {
 
     private final IRString rstring;
+    @Expose
     private String name;
 
     public Birthday(String name, @Date.Month int month, int day, IClock clock, IRString rstring) {
