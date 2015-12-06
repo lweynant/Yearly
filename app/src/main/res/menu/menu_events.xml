@@ -8,6 +8,11 @@
         android:title="@string/action_set_alarm"
         app:showAsAction="never" />
     <item
+        android:id="@+id/action_archive"
+        android:orderInCategory="100"
+        android:title="@string/action_archive"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"

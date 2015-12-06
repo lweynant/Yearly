@@ -13,9 +13,17 @@ import android.view.MenuItem;
 import com.lweynant.yearly.AlarmGeneratorForUpcomingEvent;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.YearlyApp;
+import com.lweynant.yearly.model.EventRepo;
+import com.lweynant.yearly.model.EventRepoSerializer;
+import com.lweynant.yearly.model.IEvent;
+import com.lweynant.yearly.util.Clock;
+import com.lweynant.yearly.util.EventRepoSerializerToFileDecorator;
 
 import org.joda.time.LocalDate;
 
+
+import rx.Observable;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class EventsActivity extends AppCompatActivity {
@@ -57,6 +65,13 @@ public class EventsActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        }
+        else if (id == R.id.action_archive){
+            Timber.i("archive");
+            EventRepo repo = ((YearlyApp)getApplication()).getRepo();
+            Observable<IEvent> events = repo.getEvents();
+            events.subscribeOn(Schedulers.io())
+                    .subscribe(new EventRepoSerializerToFileDecorator(this, new EventRepoSerializer(new Clock())));
         }
         else if (id == R.id.action_set_alarm){
             Timber.i("set alarm");

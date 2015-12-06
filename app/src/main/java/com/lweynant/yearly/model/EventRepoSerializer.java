@@ -20,17 +20,13 @@ public class EventRepoSerializer extends Subscriber<IEvent> {
 
     public EventRepoSerializer(IClock clock) {
         this.clock = clock;
-        builder.excludeFieldsWithoutExposeAnnotation();
-        json.addProperty("version", "1.0");
-        json.addProperty("type", getClass().getCanonicalName());
-        json.add("events", jsonEventsArray);
     }
 
 
     @Override
     public void onCompleted() {
         Timber.d("onCompleted");
-        json.addProperty("serialized_on", clock.timestamp());
+        handleFirst();
         serialized = true;
     }
 
@@ -43,11 +39,19 @@ public class EventRepoSerializer extends Subscriber<IEvent> {
     @Override
     public void onNext(IEvent event) {
         Timber.d("onNext %s", event.toString());
+        handleFirst();
+        jsonEventsArray.add(builder.create().toJsonTree(event));
+    }
+
+    private void handleFirst() {
         if (first) {
             first = false;
-
+            builder.excludeFieldsWithoutExposeAnnotation();
+            json.addProperty("version", "1.0");
+            json.addProperty("type", getClass().getCanonicalName());
+            json.addProperty("serialized_on", clock.timestamp());
+            json.add("events", jsonEventsArray);
         }
-        jsonEventsArray.add(builder.create().toJsonTree(event));
     }
 
     public String serialized() {

@@ -117,7 +117,7 @@ public class BirthdayTest {
         assertThatJson(json).node("name").isEqualTo("Mine");
         assertThatJson(json).node("month").isEqualTo(Date.FEBRUARY);
         assertThatJson(json).node("day").isEqualTo(8);
-        assertThatJson(json).node("year_of_birth").isAbsent();
+        assertThatJson(json).node("year").isAbsent();
         assertThatJson(json).node("type").isEqualTo(Birthday.class.getCanonicalName());
     }
     @Test
@@ -129,7 +129,7 @@ public class BirthdayTest {
         assertThatJson(json).node("name").isEqualTo("Mine");
         assertThatJson(json).node("month").isEqualTo(Date.FEBRUARY);
         assertThatJson(json).node("day").isEqualTo(8);
-        assertThatJson(json).node("year_of_birth").isEqualTo(1966);
+        assertThatJson(json).node("year").isEqualTo(1966);
         assertThatJson(json).node("type").isEqualTo(Birthday.class.getCanonicalName());
     }
 
