@@ -117,6 +117,19 @@ public class BirthdayTest {
         assertThatJson(json).node("name").isEqualTo("Mine");
         assertThatJson(json).node("month").isEqualTo(Date.FEBRUARY);
         assertThatJson(json).node("day").isEqualTo(8);
+        assertThatJson(json).node("year_of_birth").isAbsent();
+        assertThatJson(json).node("type").isEqualTo(Birthday.class.getCanonicalName());
+    }
+    @Test
+    public void testSerializeBirthday_WithValidYearOfBirth() throws Exception{
+        Birthday bd = new Birthday("Mine", 1966, Date.FEBRUARY, 8, clock, rstring);
+        GsonBuilder builder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation();
+        Gson gson = builder.create();
+        String json = gson.toJson(bd);
+        assertThatJson(json).node("name").isEqualTo("Mine");
+        assertThatJson(json).node("month").isEqualTo(Date.FEBRUARY);
+        assertThatJson(json).node("day").isEqualTo(8);
+        assertThatJson(json).node("year_of_birth").isEqualTo(1966);
         assertThatJson(json).node("type").isEqualTo(Birthday.class.getCanonicalName());
     }
 

@@ -1,16 +1,20 @@
 package com.lweynant.yearly.model;
 
+import com.google.gson.annotations.Expose;
 import com.lweynant.yearly.util.IClock;
 
+import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static java.lang.String.valueOf;
 import static net.javacrumbs.jsonunit.fluent.JsonFluentAssert.assertThatJson;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EventRepoSerializerTest {
@@ -21,14 +25,20 @@ public class EventRepoSerializerTest {
 
     @Before
     public void setUp() throws Exception{
-        sut = new EventRepoSerializer();
+        when(clock.now()).thenReturn(new LocalDate(2000, Date.FEBRUARY, 8));
+        when(clock.timestamp()).thenReturn("timestamp");
+        sut = new EventRepoSerializer(clock);
     }
     @Test
     public void testEmpty() throws Exception{
         sut.onCompleted();
 
+        assertThat(sut.isSerialized(), is(true));
         String json = sut.serialized();
-        assertThatJson(json).isArray().ofLength(0);
+        assertThatJson(json).isObject();
+        assertThatJson(json).node("type").isEqualTo(EventRepoSerializer.class.getCanonicalName());
+        assertThatJson(json).node("version").isStringEqualTo("1.0");
+        assertThatJson(json).node("events").isArray().ofLength(0);
     }
 
     @Test
@@ -37,10 +47,10 @@ public class EventRepoSerializerTest {
         sut.onNext(event);
         sut.onCompleted();
 
+        assertThat(sut.isSerialized(), is(true));
         String json = sut.serialized();
-        assertThatJson(json).isArray().ofLength(1);
-        assertThatJson(json).node("[0].month").isEqualTo(Date.APRIL);
-        assertThatJson(json).node("[0].day").isEqualTo(20);
+        assertThatJson(json).node("events").isArray().ofLength(1);
+        assertThatJson(json).node("events[0].month").isEqualTo(Date.APRIL);
     }
 
     @Test
@@ -49,11 +59,20 @@ public class EventRepoSerializerTest {
         sut.onNext(createEvent(Date.JANUARY, 3));
         sut.onCompleted();
 
+        assertThat(sut.isSerialized(), is(true));
         String json = sut.serialized();
-        assertThatJson(json).isArray().ofLength(2);
-        assertThatJson(json).node("[0].month").isEqualTo(Date.AUGUST);
-        assertThatJson(json).node("[1].month").isEqualTo(Date.JANUARY);
+        assertThatJson(json).node("events").isArray().ofLength(2);
+        assertThatJson(json).node("events[0].month").isEqualTo(Date.AUGUST);
+        assertThatJson(json).node("events[1].month").isEqualTo(Date.JANUARY);
     }
+
+    @Test
+    public void testOnError_Empty() throws Exception{
+        sut.onError(new Throwable());
+
+        assertThat(sut.isSerialized(), is(false));
+    }
+
 
     private Event createEvent(int month, int day) {
         return new Event(month, day, clock);

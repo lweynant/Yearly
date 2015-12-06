@@ -12,9 +12,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.List;
 
 import rx.Observable;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.functions.Func2;
 
 import static net.javacrumbs.jsonunit.fluent.JsonFluentAssert.assertThatJson;
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -43,6 +40,7 @@ public class EventRepoTest {
     @Before
     public void setUp() throws Exception {
         when(clock.now()).thenReturn(new LocalDate(2015, 1, 23));
+        when(clock.timestamp()).thenReturn("timestamp");
         nbrOfDaysForNotification = 1;
         sut = new EventRepo();
 
@@ -148,12 +146,12 @@ public class EventRepoTest {
         Observable<IEvent> events = sut.getEvents();
 
         String json = serialize(events);
-        assertThatJson(json).isArray().ofLength(4);
+        assertThatJson(json).node("events").isArray().ofLength(4);
 
     }
 
     private String serialize(Observable<IEvent> events) {
-        EventRepoSerializer serializer = new EventRepoSerializer();
+        EventRepoSerializer serializer = new EventRepoSerializer(clock);
         events.subscribe(serializer);
         return serializer.serialized();
     }

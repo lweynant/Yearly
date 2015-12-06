@@ -8,17 +8,26 @@ import org.joda.time.Days;
 import org.joda.time.LocalDate;
 
 public class Event implements IEvent {
+    private static final String KEY_TYPE = "type";
+    private static final String KEY_DAY = "day";
+    private static final String KEY_MONTH = "month";
+    private static final String KEY_NBR_DAYS_FOR_NOTIFICATION = "nbr_days_for_notification";
+
     @Expose
+    @SerializedName(KEY_DAY)
     private final int day;
     @Date.Month
     @Expose
+    @SerializedName(KEY_MONTH)
     private final int month;
-    private final IClock clock;
     @Expose
+    @SerializedName(KEY_TYPE)
     private final String type;
     @Expose
-    @SerializedName("nbr_days_for_notification")
+    @SerializedName(KEY_NBR_DAYS_FOR_NOTIFICATION)
     private int nbrDaysForNotification = 1;
+
+    private final IClock clock;
 
     public Event( @Date.Month int month, int day, IClock clock) {
         this.day = day;
