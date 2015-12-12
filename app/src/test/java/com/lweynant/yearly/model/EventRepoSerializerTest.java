@@ -1,5 +1,9 @@
 package com.lweynant.yearly.model;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.annotations.Expose;
 import com.lweynant.yearly.util.IClock;
 import com.lweynant.yearly.util.IUUID;
@@ -40,9 +44,10 @@ public class EventRepoSerializerTest {
         assertThat(sut.isSerialized(), is(true));
         String json = sut.serialized();
         assertThatJson(json).isObject();
-        assertThatJson(json).node("type").isEqualTo(EventRepoSerializer.class.getCanonicalName());
-        assertThatJson(json).node("version").isStringEqualTo("1.0");
-        assertThatJson(json).node("events").isArray().ofLength(0);
+        assertThatJson(json).node(EventRepoSerializer.TYPE).isEqualTo(EventRepoSerializer.class.getCanonicalName());
+        assertThatJson(json).node(EventRepoSerializer.VERSION).isStringEqualTo("1.0");
+        assertThatJson(json).node(EventRepoSerializer.SERIALIZED_ON).isStringEqualTo("timestamp");
+        assertThatJson(json).node(EventRepoSerializer.EVENTS).isArray().ofLength(0);
     }
 
     @Test
@@ -68,6 +73,25 @@ public class EventRepoSerializerTest {
         assertThatJson(json).node("events").isArray().ofLength(2);
         assertThatJson(json).node("events[0].month").isEqualTo(Date.AUGUST);
         assertThatJson(json).node("events[1].month").isEqualTo(Date.JANUARY);
+    }
+    @Test
+        public void testDeserialize_prototype() throws Exception{
+        sut.onNext(createEvent(Date.AUGUST, 23));
+        sut.onNext(createEvent(Date.JANUARY, 3));
+        sut.onCompleted();
+
+        assertThat(sut.isSerialized(), is(true));
+        String json = sut.serialized();
+        assertThatJson(json).node("events").isArray().ofLength(2);
+        assertThatJson(json).node("events[0].month").isEqualTo(Date.AUGUST);
+        assertThatJson(json).node("events[1].month").isEqualTo(Date.JANUARY);
+        JsonParser parser = new JsonParser();
+
+        JsonObject jsonObject = parser.parse(json).getAsJsonObject();
+        JsonArray eventsArray = jsonObject.getAsJsonArray("events");
+        assertThat(eventsArray.size(), is(2));
+
+
     }
 
     @Test

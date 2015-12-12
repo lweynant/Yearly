@@ -11,47 +11,40 @@ import timber.log.Timber;
 public class EventRepoSerializer extends Subscriber<IEvent> {
 
 
+    public static final String VERSION = "version";
+    public static final String TYPE = "type";
+    public static final String SERIALIZED_ON = "serialized_on";
+    public static final String EVENTS = "events";
     private final IClock clock;
     JsonArray jsonEventsArray = new JsonArray();
     GsonBuilder builder = new GsonBuilder();
-    private boolean first = true;
-    private JsonObject json = new JsonObject();
-    private boolean serialized;
+    private JsonObject json = null;
 
     public EventRepoSerializer(IClock clock) {
         this.clock = clock;
+        builder.excludeFieldsWithoutExposeAnnotation();
     }
 
 
     @Override
     public void onCompleted() {
         Timber.d("onCompleted");
-        handleFirst();
-        serialized = true;
+        json = new JsonObject();
+        json.addProperty(VERSION, "1.0");
+        json.addProperty(TYPE, getClass().getCanonicalName());
+        json.addProperty(SERIALIZED_ON, clock.timestamp());
+        json.add(EVENTS, jsonEventsArray);
     }
 
     @Override
     public void onError(Throwable e) {
         Timber.e(e, "onError");
-        serialized = false;
     }
 
     @Override
     public void onNext(IEvent event) {
         Timber.d("onNext %s", event.toString());
-        handleFirst();
         jsonEventsArray.add(builder.create().toJsonTree(event));
-    }
-
-    private void handleFirst() {
-        if (first) {
-            first = false;
-            builder.excludeFieldsWithoutExposeAnnotation();
-            json.addProperty("version", "1.0");
-            json.addProperty("type", getClass().getCanonicalName());
-            json.addProperty("serialized_on", clock.timestamp());
-            json.add("events", jsonEventsArray);
-        }
     }
 
     public String serialized() {
@@ -59,6 +52,6 @@ public class EventRepoSerializer extends Subscriber<IEvent> {
     }
 
     public boolean isSerialized() {
-        return serialized;
+        return json != null;
     }
 }

@@ -117,11 +117,12 @@ public class BirthdayTest {
         GsonBuilder builder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation();
         Gson gson = builder.create();
         String json = gson.toJson(bd);
-        assertThatJson(json).node("name").isEqualTo("Mine");
-        assertThatJson(json).node("month").isEqualTo(Date.FEBRUARY);
-        assertThatJson(json).node("day").isEqualTo(8);
-        assertThatJson(json).node("year").isAbsent();
-        assertThatJson(json).node("type").isEqualTo(Birthday.class.getCanonicalName());
+        assertThatJson(json).node(Birthday.KEY_NAME).isEqualTo("Mine");
+        assertThatJson(json).node(Birthday.KEY_MONTH).isEqualTo(Date.FEBRUARY);
+        assertThatJson(json).node(Birthday.KEY_DAY).isEqualTo(8);
+        assertThatJson(json).node(Birthday.KEY_YEAR_OF_BIRTH).isAbsent();
+        assertThatJson(json).node(Birthday.KEY_TYPE).isEqualTo(Birthday.class.getCanonicalName());
+        assertThatJson(json).node(Birthday.KEY_NBR_DAYS_FOR_NOTIFICATION).isEqualTo(2);
     }
     @Test
     public void testSerializeBirthday_WithValidYearOfBirth() throws Exception{
@@ -129,11 +130,11 @@ public class BirthdayTest {
         GsonBuilder builder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation();
         Gson gson = builder.create();
         String json = gson.toJson(bd);
-        assertThatJson(json).node("name").isEqualTo("Mine");
-        assertThatJson(json).node("month").isEqualTo(Date.FEBRUARY);
-        assertThatJson(json).node("day").isEqualTo(8);
-        assertThatJson(json).node("year").isEqualTo(1966);
-        assertThatJson(json).node("type").isEqualTo(Birthday.class.getCanonicalName());
+        assertThatJson(json).node(Birthday.KEY_NAME).isEqualTo("Mine");
+        assertThatJson(json).node(Birthday.KEY_MONTH).isEqualTo(Date.FEBRUARY);
+        assertThatJson(json).node(Birthday.KEY_DAY).isEqualTo(8);
+        assertThatJson(json).node(Birthday.KEY_YEAR_OF_BIRTH).isEqualTo(1966);
+        assertThatJson(json).node(Birthday.KEY_TYPE).isEqualTo(Birthday.class.getCanonicalName());
     }
 
 }

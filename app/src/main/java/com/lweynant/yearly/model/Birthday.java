@@ -14,8 +14,8 @@ import org.joda.time.LocalDate;
 
 public class Birthday extends Event {
 
-    private static final String KEY_NAME="name";
-    private static final String KEY_YEAR_OF_BIRTH = "year";
+    public static final String KEY_NAME="name";
+    public static final String KEY_YEAR_OF_BIRTH = "year";
 
     private final IRString rstring;
     @Expose
