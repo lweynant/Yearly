@@ -25,18 +25,20 @@ public class EventRepoSerializerToFileDecorator extends Subscriber<IEvent> {
     @Override
     public void onCompleted() {
         serializer.onCompleted();
-        String filename = "events.json";
-        String string = serializer.serialized();
-        FileOutputStream outputStream;
+        if (serializer.isSerialized()) {
+            String filename = "events.json";
+            String string = serializer.serialized();
+            FileOutputStream outputStream;
 
-        try {
-            outputStream = context.openFileOutput(filename, Context.MODE_PRIVATE);
-            outputStream.write(string.getBytes());
-            outputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+            try {
+                outputStream = context.openFileOutput(filename, Context.MODE_PRIVATE);
+                outputStream.write(string.getBytes());
+                outputStream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            Timber.d("written file %s", context.getFileStreamPath(filename));
         }
-        Timber.d("written file %s", context.getFileStreamPath(filename));
         context = null;
     }
 

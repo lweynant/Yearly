@@ -7,6 +7,7 @@ import com.lweynant.yearly.R;
 import com.lweynant.yearly.YearlyApp;
 import com.lweynant.yearly.util.Clock;
 import com.lweynant.yearly.util.IClock;
+import com.lweynant.yearly.util.IUUID;
 
 import org.joda.time.LocalDate;
 
@@ -25,15 +26,15 @@ public class Birthday extends Event {
     @SerializedName(KEY_YEAR_OF_BIRTH)
     private Integer yearOfBirth;
 
-    public Birthday(String name, @Date.Month int month, int day, IClock clock, IRString rstring) {
-        super(month, day, clock);
+    public Birthday(String name, @Date.Month int month, int day, IClock clock, IUUID iuuid, IRString rstring) {
+        super(month, day, clock, iuuid);
         this.rstring = rstring;
         this.name = name;
         super.setNbrOfDaysForNotification(2);
     }
 
-    public Birthday(String name, int yearOfBirth, @Date.Month int month, int day, IClock clock, IRString rstring) {
-        this(name, month, day, clock, rstring);
+    public Birthday(String name, int yearOfBirth, @Date.Month int month, int day, IClock clock, IUUID iuuid, IRString rstring) {
+        this(name, month, day, clock, iuuid, rstring);
         this.yearOfBirth = yearOfBirth;
     }
 

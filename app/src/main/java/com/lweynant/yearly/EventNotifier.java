@@ -19,7 +19,6 @@ import timber.log.Timber;
 public class EventNotifier extends Subscriber<IEvent> {
     private final IClock clock;
     private Context context;
-    private int id = 0;
 
     public EventNotifier(Context context, IClock clock)
     {
@@ -41,7 +40,7 @@ public class EventNotifier extends Subscriber<IEvent> {
     @Override
     public void onNext(IEvent event) {
         Timber.d("onNext %s", event.toString());
-        Timber.d("sending notification for %s", event.getTitle());
+        Timber.d("sending notification for %s using id %d", event.getTitle(), event.getID());
         LocalDate now = clock.now();
         LocalDate eventDate = event.getDate();
 
@@ -68,7 +67,6 @@ public class EventNotifier extends Subscriber<IEvent> {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(pendingIntent);
         NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-        nm.notify(id++, builder.build());
-
+        nm.notify(event.getID(), builder.build());
     }
 }

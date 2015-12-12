@@ -3,6 +3,7 @@ package com.lweynant.yearly.model;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.lweynant.yearly.util.IClock;
+import com.lweynant.yearly.util.IUUID;
 
 import org.joda.time.LocalDate;
 import org.junit.Test;
@@ -20,12 +21,14 @@ public class EventTest {
 
     @Mock
     IClock clock;
+    @Mock
+    IUUID iuuid;
 
     @Test
     public void testDaysBeforeNotification_EventAfterFrom() throws Exception {
         LocalDate now = new LocalDate(2015, Date.MARCH, 1);
         when(clock.now()).thenReturn(now);
-        Event sut = new Event(Date.MARCH, 10, clock);
+        Event sut = new Event(Date.MARCH, 10, clock, iuuid);
         LocalDate from = now;
         TimeBeforeNotification days = Event.timeBeforeNotification(from, sut);
         assertThat(days.getDays(), is(8));
@@ -35,7 +38,7 @@ public class EventTest {
     public void testDaysBeforeNotification_EventSameAsFrom() throws Exception {
         LocalDate now = new LocalDate(2015, Date.MARCH, 1);
         when(clock.now()).thenReturn(now);
-        Event sut = new Event(now.getMonthOfYear(), now.getDayOfMonth(), clock);
+        Event sut = new Event(now.getMonthOfYear(), now.getDayOfMonth(), clock, iuuid);
         LocalDate from = now;
         TimeBeforeNotification days = Event.timeBeforeNotification(from, sut);
         assertThat(days.getDays(), is(0));
@@ -45,7 +48,7 @@ public class EventTest {
     public void testDaysBeforeNotification_EventBeforeFrom() throws Exception {
         LocalDate eventDate = new LocalDate(2015, Date.MARCH, 1);
         when(clock.now()).thenReturn(eventDate);
-        Event sut = new Event(eventDate.getMonthOfYear(), eventDate.getDayOfMonth(), clock);
+        Event sut = new Event(eventDate.getMonthOfYear(), eventDate.getDayOfMonth(), clock, iuuid);
         LocalDate from = eventDate.plusDays(1);
         TimeBeforeNotification days = Event.timeBeforeNotification(from, sut);
         assertThat(days.getDays(), is(364));
@@ -57,19 +60,32 @@ public class EventTest {
         LocalDate eventDate = new LocalDate(2015, Date.JULY, 8);
         LocalDate now = eventDate.minusDays(1);
         when(clock.now()).thenReturn(now);
-        Event event = new Event(eventDate.getMonthOfYear(), eventDate.getDayOfMonth(), clock);
+        Event event = new Event(eventDate.getMonthOfYear(), eventDate.getDayOfMonth(), clock, iuuid);
         boolean notify = Event.shouldBeNotified(now, event);
     }
 
     @Test
+    public void testID() throws Exception{
+        when(iuuid.getRandomUID()).thenReturn("random-id");
+        when(iuuid.hashCode("random-id")).thenReturn(45);
+        Event event= new Event(Date.AUGUST, 20, clock, iuuid);
+
+        assertThat(event.getID(), is(45));
+    }
+
+    @Test
     public void testSerialize() throws Exception{
+        when(iuuid.getRandomUID()).thenReturn("random-id");
+        when(iuuid.hashCode("random-id")).thenReturn(55);
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-        Event event = new Event(Date.AUGUST, 30, clock);
+        Event event = new Event(Date.AUGUST, 30, clock, iuuid);
         String json = gson.toJson(event);
-        assertThatJson(json).node("type").isEqualTo(Event.class.getCanonicalName());
-        assertThatJson(json).node("nbr_days_for_notification").isEqualTo(1);
-        assertThatJson(json).node("day").isEqualTo(30);
-        assertThatJson(json).node("month").isEqualTo(Date.AUGUST);
+        assertThatJson(json).node(Event.KEY_TYPE).isEqualTo(Event.class.getCanonicalName());
+        assertThatJson(json).node(Event.KEY_NBR_DAYS_FOR_NOTIFICATION).isEqualTo(1);
+        assertThatJson(json).node(Event.KEY_DAY).isEqualTo(30);
+        assertThatJson(json).node(Event.KEY_MONTH).isEqualTo(Date.AUGUST);
+        assertThatJson(json).node(Event.KEY_UID).isEqualTo("random-id");
+        assertThatJson(json).node(Event.KEY_ID).isEqualTo(55);
     }
 
 }

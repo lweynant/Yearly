@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder;
 import com.lweynant.yearly.IRString;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.util.IClock;
+import com.lweynant.yearly.util.IUUID;
 
 import org.joda.time.LocalDate;
 import org.junit.Before;
@@ -26,6 +27,8 @@ public class BirthdayTest {
     IRString rstring;
     @Mock
     IClock clock;
+    @Mock
+    IUUID iuuid;
     @Before
     public void setUp(){
         when(clock.now()).thenReturn(new LocalDate(2015, 8, 9));
@@ -34,7 +37,7 @@ public class BirthdayTest {
     public void getTitle_ValidBirthday_ReturnsValidTitle() throws Exception{
         when(rstring.getStringFromId(R.string.birthday_from)).thenReturn(BIRTHDAY_TITLE);
 
-        Birthday bd = new Birthday("John", Date.APRIL, 23, clock, rstring);
+        Birthday bd = new Birthday("John", Date.APRIL, 23, clock, iuuid, rstring);
         assertThat(bd.getTitle(), is("John's birthday"));
     }
 
@@ -42,7 +45,7 @@ public class BirthdayTest {
     public  void getDate_ValidBirthday_ReturnsValidDayAndMonth() throws Exception{
         int day = 23;
         @Date.Month int month = Date.FEBRUARY;
-        Birthday bd = new Birthday("John", month, day, clock,rstring);
+        Birthday bd = new Birthday("John", month, day, clock, iuuid, rstring);
         assertThat(bd.getDate().getDayOfMonth(), is(day));
         assertThat(bd.getDate().getMonthOfYear(), is(month));
     }
@@ -51,7 +54,7 @@ public class BirthdayTest {
     public void getDate_SameAsNow() throws Exception{
         LocalDate now = new LocalDate(2013, 7, 23);
         when(clock.now()).thenReturn(now);
-        Birthday bd = new Birthday("Fred", now.getMonthOfYear(), now.getDayOfMonth(), clock, rstring);
+        Birthday bd = new Birthday("Fred", now.getMonthOfYear(), now.getDayOfMonth(), clock, iuuid, rstring);
         LocalDate eventDate = bd.getDate();
         assertThat(eventDate, is(now));
     }
@@ -60,7 +63,7 @@ public class BirthdayTest {
     public void getDate_AfterNow() throws Exception{
         LocalDate now = new LocalDate(2014, 6, 5);
         when(clock.now()).thenReturn(now);
-        Birthday bd = new Birthday("Joe", now.getMonthOfYear(), now.getDayOfMonth() + 1 , clock, rstring);
+        Birthday bd = new Birthday("Joe", now.getMonthOfYear(), now.getDayOfMonth() + 1 , clock, iuuid, rstring);
         LocalDate eventDate = bd.getDate();
         assertThat(eventDate, is(now.plusDays(1)));
     }
@@ -68,7 +71,7 @@ public class BirthdayTest {
     public void getDate_BeforeNow() throws Exception{
         LocalDate now = new LocalDate(2014, 6, 5);
         when(clock.now()).thenReturn(now);
-        Birthday bd = new Birthday("Joe", now.getMonthOfYear(), now.getDayOfMonth() - 1 , clock, rstring);
+        Birthday bd = new Birthday("Joe", now.getMonthOfYear(), now.getDayOfMonth() - 1 , clock, iuuid, rstring);
         LocalDate eventDate = bd.getDate();
         assertThat(eventDate, is(now.minusDays(1).plusYears(1)));
     }
@@ -76,7 +79,7 @@ public class BirthdayTest {
     public void getDate_FirstDayOfYearAskedOnLastDayOfYear() throws Exception{
         LocalDate now = new LocalDate(2014, 12, 31);
         when(clock.now()).thenReturn(now);
-        Birthday bd = new Birthday("Joe", Date.JANUARY, 1 , clock, rstring);
+        Birthday bd = new Birthday("Joe", Date.JANUARY, 1 , clock, iuuid, rstring);
         LocalDate eventDate = bd.getDate();
         assertThat(eventDate, is(now.plusDays(1)));
     }
@@ -84,7 +87,7 @@ public class BirthdayTest {
     public void getDate_LastDayOfYearAskedOnFirstDayOfYear() throws Exception{
         LocalDate now = new LocalDate(2014, 1, 1);
         when(clock.now()).thenReturn(now);
-        Birthday bd = new Birthday("Joe", Date.DECEMBER, 31 , clock, rstring);
+        Birthday bd = new Birthday("Joe", Date.DECEMBER, 31 , clock, iuuid, rstring);
         LocalDate eventDate = bd.getDate();
         assertThat(eventDate, is(new LocalDate(2014, 12, 31)));
     }
@@ -93,8 +96,8 @@ public class BirthdayTest {
     public void compareTo_NowIsAfter() throws Exception {
         LocalDate now = new LocalDate(2014, 7, 15);
         when(clock.now()).thenReturn(now);
-        Birthday joe =  new Birthday("joe", Date.MARCH, 4, clock, rstring);
-        Birthday fred = new Birthday("fred", Date.NOVEMBER, 5, clock, rstring);
+        Birthday joe =  new Birthday("joe", Date.MARCH, 4, clock, iuuid, rstring);
+        Birthday fred = new Birthday("fred", Date.NOVEMBER, 5, clock, iuuid, rstring);
 
         assertThat(joe.compareTo(fred), is(1));
     }
@@ -102,15 +105,15 @@ public class BirthdayTest {
     public void compareTo_NowIsBefore() throws Exception {
         LocalDate now = new LocalDate(2014, 1, 15);
         when(clock.now()).thenReturn(now);
-        Birthday joe =  new Birthday("joe", Date.MARCH, 4, clock, rstring);
-        Birthday fred = new Birthday("fred", Date.NOVEMBER, 5, clock, rstring);
+        Birthday joe =  new Birthday("joe", Date.MARCH, 4, clock, iuuid, rstring);
+        Birthday fred = new Birthday("fred", Date.NOVEMBER, 5, clock, iuuid, rstring);
 
         assertThat(joe.compareTo(fred), is(-1));
     }
 
     @Test
     public void testSerializeBirthday() throws Exception{
-        Birthday bd = new Birthday("Mine", Date.FEBRUARY, 8, clock, rstring);
+        Birthday bd = new Birthday("Mine", Date.FEBRUARY, 8, clock, iuuid, rstring);
         GsonBuilder builder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation();
         Gson gson = builder.create();
         String json = gson.toJson(bd);
@@ -122,7 +125,7 @@ public class BirthdayTest {
     }
     @Test
     public void testSerializeBirthday_WithValidYearOfBirth() throws Exception{
-        Birthday bd = new Birthday("Mine", 1966, Date.FEBRUARY, 8, clock, rstring);
+        Birthday bd = new Birthday("Mine", 1966, Date.FEBRUARY, 8, clock, iuuid, rstring);
         GsonBuilder builder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation();
         Gson gson = builder.create();
         String json = gson.toJson(bd);

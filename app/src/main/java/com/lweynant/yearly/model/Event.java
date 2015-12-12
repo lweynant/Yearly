@@ -3,15 +3,18 @@ package com.lweynant.yearly.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.lweynant.yearly.util.IClock;
+import com.lweynant.yearly.util.IUUID;
 
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 
 public class Event implements IEvent {
-    private static final String KEY_TYPE = "type";
-    private static final String KEY_DAY = "day";
-    private static final String KEY_MONTH = "month";
-    private static final String KEY_NBR_DAYS_FOR_NOTIFICATION = "nbr_days_for_notification";
+    public static final String KEY_TYPE = "type";
+    public static final String KEY_DAY = "day";
+    public static final String KEY_MONTH = "month";
+    public static final String KEY_NBR_DAYS_FOR_NOTIFICATION = "nbr_days_for_notification";
+    public static final String KEY_UID = "uuid";
+    public static final String KEY_ID = "id";
 
     @Expose
     @SerializedName(KEY_DAY)
@@ -24,16 +27,24 @@ public class Event implements IEvent {
     @SerializedName(KEY_TYPE)
     private final String type;
     @Expose
+    @SerializedName(KEY_UID)
+    private final String uuid;
+    @Expose
+    @SerializedName(KEY_ID)
+    public int id;
+    @Expose
     @SerializedName(KEY_NBR_DAYS_FOR_NOTIFICATION)
     private int nbrDaysForNotification = 1;
 
     private final IClock clock;
 
-    public Event( @Date.Month int month, int day, IClock clock) {
+    public Event( @Date.Month int month, int day, IClock clock, IUUID iuuid) {
         this.day = day;
         this.month = month;
         this.clock = clock;
         this.type = getClass().getCanonicalName();
+        this.uuid = iuuid.getRandomUID();
+        this.id = iuuid.hashCode(uuid);
     }
 
 
@@ -65,6 +76,11 @@ public class Event implements IEvent {
     @Override
     public int getNbrOfDaysForNotification() {
         return nbrDaysForNotification;
+    }
+
+    @Override
+    public int getID() {
+        return id;
     }
 
     @Override
