@@ -1,5 +1,6 @@
 package com.lweynant.yearly.model;
 
+import com.google.gson.JsonObject;
 import com.lweynant.yearly.IRString;
 import com.lweynant.yearly.util.IClock;
 import com.lweynant.yearly.util.IUUID;
@@ -149,12 +150,12 @@ public class EventRepoTest {
         sut.add(event1).add(event2).add(event3).add(event4);
         Observable<IEvent> events = sut.getEvents();
 
-        String json = serialize(events);
+        JsonObject json = serialize(events);
         assertThatJson(json).node("events").isArray().ofLength(4);
 
     }
 
-    private String serialize(Observable<IEvent> events) {
+    private JsonObject serialize(Observable<IEvent> events) {
         EventRepoSerializer serializer = new EventRepoSerializer(clock);
         events.subscribe(serializer);
         return serializer.serialized();

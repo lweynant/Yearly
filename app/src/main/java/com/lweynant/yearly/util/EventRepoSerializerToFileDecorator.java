@@ -1,24 +1,20 @@
 package com.lweynant.yearly.util;
 
-import android.content.Context;
-
-import com.lweynant.yearly.controller.EventsActivity;
+import com.google.gson.JsonObject;
+import com.lweynant.yearly.model.EventRepoFileAccessor;
 import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.IEvent;
 
-import java.io.FileOutputStream;
+import java.io.IOException;
 
-import rx.Observer;
 import rx.Subscriber;
-import rx.functions.Action1;
-import timber.log.Timber;
 
 public class EventRepoSerializerToFileDecorator extends Subscriber<IEvent> {
-    private Context context;
+    private EventRepoFileAccessor accessor;
     private final EventRepoSerializer serializer;
 
-    public EventRepoSerializerToFileDecorator(Context context, EventRepoSerializer eventRepoSerializer) {
-        this.context = context;
+    public EventRepoSerializerToFileDecorator(EventRepoFileAccessor accessor, EventRepoSerializer eventRepoSerializer) {
+        this.accessor = accessor;
         this.serializer = eventRepoSerializer;
     }
 
@@ -26,30 +22,25 @@ public class EventRepoSerializerToFileDecorator extends Subscriber<IEvent> {
     public void onCompleted() {
         serializer.onCompleted();
         if (serializer.isSerialized()) {
-            String filename = "events.json";
-            String string = serializer.serialized();
-            FileOutputStream outputStream;
-
+            JsonObject json = serializer.serialized();
             try {
-                outputStream = context.openFileOutput(filename, Context.MODE_PRIVATE);
-                outputStream.write(string.getBytes());
-                outputStream.close();
-            } catch (Exception e) {
+                accessor.write(json);
+            } catch (IOException e) {
                 e.printStackTrace();
             }
-            Timber.d("written file %s", context.getFileStreamPath(filename));
         }
-        context = null;
+        accessor = null;
     }
 
     @Override
     public void onError(Throwable e) {
         serializer.onError(e);
-        context = null;
+        accessor = null;
     }
 
     @Override
     public void onNext(IEvent event) {
         serializer.onNext(event);
     }
+
 }

@@ -67,20 +67,23 @@ public class EventsActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
-        else if (id == R.id.action_archive){
-            Timber.i("archive");
-            EventRepo repo = ((YearlyApp)getApplication()).getRepo();
-            Observable<IEvent> events = repo.getEvents();
-            events.subscribeOn(Schedulers.io())
-                    .subscribe(new EventRepoSerializerToFileDecorator(this, new EventRepoSerializer(new Clock())));
-        }
-        else if (id == R.id.action_set_alarm){
-            Timber.i("set alarm");
-            YearlyApp app = (YearlyApp) getApplication();
-            LocalDate now = LocalDate.now();
-            Observable<TimeBeforeNotification> nextAlarmObservable = app.getRepo().timeBeforeFirstUpcomingEvent(now);
-            nextAlarmObservable.subscribeOn(Schedulers.io())
-                                .subscribe(new AlarmGenerator(this, now));
+        else {
+            YearlyApp application = (YearlyApp) getApplication();
+            if (id == R.id.action_archive){
+                Timber.i("archive");
+                EventRepo repo = application.getRepo();
+                Observable<IEvent> events = repo.getEvents();
+                events.subscribeOn(Schedulers.io())
+                        .subscribe(new EventRepoSerializerToFileDecorator(application.getRepoAccessor(), new EventRepoSerializer(new Clock())));
+            }
+            else if (id == R.id.action_set_alarm){
+                Timber.i("set alarm");
+                YearlyApp app = application;
+                LocalDate now = LocalDate.now();
+                Observable<TimeBeforeNotification> nextAlarmObservable = app.getRepo().timeBeforeFirstUpcomingEvent(now);
+                nextAlarmObservable.subscribeOn(Schedulers.io())
+                                    .subscribe(new AlarmGenerator(this, now));
+            }
         }
 
         return super.onOptionsItemSelected(item);

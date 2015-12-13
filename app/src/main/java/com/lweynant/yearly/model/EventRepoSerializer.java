@@ -47,8 +47,8 @@ public class EventRepoSerializer extends Subscriber<IEvent> {
         jsonEventsArray.add(builder.create().toJsonTree(event));
     }
 
-    public String serialized() {
-        return json.toString();
+    public JsonObject serialized() {
+        return json;
     }
 
     public boolean isSerialized() {

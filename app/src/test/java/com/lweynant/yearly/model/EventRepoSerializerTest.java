@@ -42,7 +42,7 @@ public class EventRepoSerializerTest {
         sut.onCompleted();
 
         assertThat(sut.isSerialized(), is(true));
-        String json = sut.serialized();
+        JsonObject json = sut.serialized();
         assertThatJson(json).isObject();
         assertThatJson(json).node(EventRepoSerializer.TYPE).isEqualTo(EventRepoSerializer.class.getCanonicalName());
         assertThatJson(json).node(EventRepoSerializer.VERSION).isStringEqualTo("1.0");
@@ -57,7 +57,7 @@ public class EventRepoSerializerTest {
         sut.onCompleted();
 
         assertThat(sut.isSerialized(), is(true));
-        String json = sut.serialized();
+        JsonObject json = sut.serialized();
         assertThatJson(json).node("events").isArray().ofLength(1);
         assertThatJson(json).node("events[0].month").isEqualTo(Date.APRIL);
     }
@@ -69,7 +69,7 @@ public class EventRepoSerializerTest {
         sut.onCompleted();
 
         assertThat(sut.isSerialized(), is(true));
-        String json = sut.serialized();
+        JsonObject json = sut.serialized();
         assertThatJson(json).node("events").isArray().ofLength(2);
         assertThatJson(json).node("events[0].month").isEqualTo(Date.AUGUST);
         assertThatJson(json).node("events[1].month").isEqualTo(Date.JANUARY);
@@ -81,13 +81,13 @@ public class EventRepoSerializerTest {
         sut.onCompleted();
 
         assertThat(sut.isSerialized(), is(true));
-        String json = sut.serialized();
+        JsonObject json = sut.serialized();
         assertThatJson(json).node("events").isArray().ofLength(2);
         assertThatJson(json).node("events[0].month").isEqualTo(Date.AUGUST);
         assertThatJson(json).node("events[1].month").isEqualTo(Date.JANUARY);
         JsonParser parser = new JsonParser();
 
-        JsonObject jsonObject = parser.parse(json).getAsJsonObject();
+        JsonObject jsonObject = parser.parse(json.toString()).getAsJsonObject();
         JsonArray eventsArray = jsonObject.getAsJsonArray("events");
         assertThat(eventsArray.size(), is(2));
 
