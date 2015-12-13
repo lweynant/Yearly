@@ -2,6 +2,8 @@ package com.lweynant.yearly.model;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.InstanceCreator;
+import com.google.gson.JsonObject;
 import com.lweynant.yearly.util.IClock;
 import com.lweynant.yearly.util.IUUID;
 
@@ -11,6 +13,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.lang.reflect.Type;
+
 import static net.javacrumbs.jsonunit.fluent.JsonFluentAssert.assertThatJson;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -18,6 +22,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EventTest {
+
 
     @Mock
     IClock clock;
@@ -86,6 +91,29 @@ public class EventTest {
         assertThatJson(json).node(Event.KEY_MONTH).isEqualTo(Date.AUGUST);
         assertThatJson(json).node(Event.KEY_UID).isEqualTo("random-id");
         assertThatJson(json).node(Event.KEY_ID).isEqualTo(55);
+    }
+    @Test
+    public void testCreateFromGson() throws Exception{
+        LocalDate now = new LocalDate(2015, Date.MARCH, 1);
+        when(clock.now()).thenReturn(now);
+
+        when(iuuid.getRandomUID()).thenReturn("random-id");
+        when(iuuid.hashCode("random-id")).thenReturn(55);
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        Event expectedEvent = new Event(Date.AUGUST, 30, clock, iuuid);
+        String json = gson.toJson(expectedEvent);
+
+
+        gson = new GsonBuilder()
+                //.excludeFieldsWithoutExposeAnnotation()
+                .registerTypeAdapter(Event.class, new EventInstanceCreator(clock, iuuid))
+                .create();
+        Event event = gson.fromJson(json, Event.class);
+        assertThat(event.getType(), is(Event.class.getCanonicalName()));
+        assertThat(event.getID(), is(55));
+
+        LocalDate date = event.getDate();
+        assertThat(date.getYear(), is(2015));
     }
 
 }

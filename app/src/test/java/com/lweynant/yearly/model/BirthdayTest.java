@@ -3,6 +3,7 @@ package com.lweynant.yearly.model;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.InstanceCreator;
 import com.lweynant.yearly.IRString;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.util.IClock;
@@ -15,9 +16,12 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.lang.reflect.Type;
+
 import static net.javacrumbs.jsonunit.fluent.JsonFluentAssert.assertThatJson;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class BirthdayTest {
@@ -137,4 +141,19 @@ public class BirthdayTest {
         assertThatJson(json).node(Birthday.KEY_TYPE).isEqualTo(Birthday.class.getCanonicalName());
     }
 
+    @Test
+    public void testDeserializeBirthDay() throws Exception{
+        when(rstring.getStringFromId(R.string.birthday_from)).thenReturn(BIRTHDAY_TITLE);
+
+        Birthday bd = new Birthday("Mine", Date.FEBRUARY, 8, clock, iuuid, rstring);
+        GsonBuilder builder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation();
+        Gson gson = builder.create();
+        String json = gson.toJson(bd);
+
+        builder.registerTypeAdapter(Birthday.class, new BirthdayInstanceCreator(clock, iuuid, rstring));
+        gson = builder.create();
+        Birthday readBirthday = gson.fromJson(json, Birthday.class);
+        assertThat(readBirthday.getTitle(), is("Mine's birthday"));
+        assertThat(readBirthday.getType(), is(Birthday.class.getCanonicalName()));
+    }
 }

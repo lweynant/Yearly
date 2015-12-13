@@ -14,4 +14,6 @@ public interface IEvent extends Comparable<IEvent>{
     int getID();
 
     void setNbrOfDaysForNotification(int days);
+
+    String getType();
 }

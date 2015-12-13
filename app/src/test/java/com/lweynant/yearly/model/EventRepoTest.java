@@ -1,5 +1,6 @@
 package com.lweynant.yearly.model;
 
+import com.lweynant.yearly.IRString;
 import com.lweynant.yearly.util.IClock;
 import com.lweynant.yearly.util.IUUID;
 

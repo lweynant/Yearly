@@ -24,31 +24,10 @@ public class YearlyApp extends Application implements IRString {
 
     public EventRepo getRepo()  {
         if (null == repo){
-            Timber.e("repo was not initialized");
+            Timber.d("repo was not initialized");
             Clock clock = new Clock();
             UUID uuid = new UUID();
-            repo = new EventRepo();
-            LocalDate now = LocalDate.now();
-            repo.add(new Birthday("Test 1", now.getMonthOfYear(), now.getDayOfMonth(), clock, uuid, this));
-            LocalDate other = now.plusDays(1);
-            //repo.add(new Birthday("Test 2", other.getMonthOfYear(), other.getDayOfMonth(), clock, uuid, this));
-            other = other.plusDays(1);
-            repo.add(new Birthday("Test 3", other.getMonthOfYear(), other.getDayOfMonth(), clock, uuid, this));
-            repo.add(new Birthday("Katinka", 2004, Date.MARCH, 10, clock, uuid, this));
-            repo.add(new Birthday("Kasper", 2002, Date.MAY, 14, clock, uuid, this));
-            repo.add(new Birthday("Ann", 1966, Date.MARCH, 5, clock, uuid, this));
-            repo.add(new Birthday("Ludwig", 1966, Date.FEBRUARY, 8, clock, uuid, this));
-            repo.add(new Birthday("Jinthe", Date.OCTOBER, 27, clock, uuid, this));
-            repo.add(new Birthday("Lis", Date.NOVEMBER, 7, clock, uuid, this));
-            repo.add(new Birthday("Caroline", Date.FEBRUARY, 6, clock, uuid, this));
-            repo.add(new Birthday("Ma", Date.MARCH, 11, clock,uuid, this));
-            repo.add(new Birthday("Janne", Date.NOVEMBER, 24, clock, uuid, this));
-            repo.add(new Birthday("Julien", Date.FEBRUARY, 3, clock, uuid, this));
-            repo.add(new Birthday("Pa", Date.MAY, 22, clock, uuid, this));
-            repo.add(new Birthday("Josephine", Date.MAY, 29, clock, uuid, this));
-            repo.add(new Birthday("Joren", Date.MAY, 30, clock, uuid, this));
-            repo.add(new Birthday("Bjorn", Date.JULY, 22, clock,uuid, this));
-            repo.add(new Birthday("Timo", Date.MAY, 3, clock, uuid, this));
+            repo = new EventRepo(clock, uuid, this, this);
         }
         Timber.d("getRepo");
         return repo;
@@ -68,9 +47,13 @@ public class YearlyApp extends Application implements IRString {
         Timber.d("onCreate");
         JodaTimeAndroid.init(this);
         refWatcher= LeakCanary.install(this);
-        getRepo();
     }
 
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        Timber.d("onTerminate");
+    }
 
     @Override
     public String getStringFromId(int id)

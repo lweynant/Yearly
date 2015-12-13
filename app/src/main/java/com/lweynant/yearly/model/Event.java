@@ -1,5 +1,6 @@
 package com.lweynant.yearly.model;
 
+import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.lweynant.yearly.util.IClock;
@@ -31,7 +32,7 @@ public class Event implements IEvent {
     private final String uuid;
     @Expose
     @SerializedName(KEY_ID)
-    public int id;
+    public final int id;
     @Expose
     @SerializedName(KEY_NBR_DAYS_FOR_NOTIFICATION)
     private int nbrDaysForNotification = 1;
@@ -46,7 +47,6 @@ public class Event implements IEvent {
         this.uuid = iuuid.getRandomUID();
         this.id = iuuid.hashCode(uuid);
     }
-
 
     @Override
     public String toString() {
@@ -86,6 +86,11 @@ public class Event implements IEvent {
     @Override
     public void setNbrOfDaysForNotification(int days) {
         nbrDaysForNotification = days;
+    }
+
+    @Override
+    public String getType() {
+        return type;
     }
 
 
