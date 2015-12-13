@@ -7,6 +7,7 @@ import android.content.Intent;
 import com.lweynant.yearly.model.Event;
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.IEvent;
+import com.lweynant.yearly.model.TimeBeforeNotification;
 import com.lweynant.yearly.util.Clock;
 import com.lweynant.yearly.util.IClock;
 
@@ -14,7 +15,6 @@ import org.joda.time.LocalDate;
 
 import rx.Observable;
 import rx.Subscription;
-import rx.functions.Func1;
 import timber.log.Timber;
 
 /**
@@ -63,10 +63,11 @@ public class EventNotificationService extends IntentService {
                 .filter(event -> Event.shouldBeNotified(clock.now(), event))
                 .subscribe(new EventNotifier(this, clock));
         subscription.unsubscribe();
-        AlarmGeneratorForUpcomingEvent alarmGeneratorForUpcomingEvent = new AlarmGeneratorForUpcomingEvent(this, repo);
         LocalDate tomorrow = clock.now().plusDays(1);
         Timber.d("schedule next alarm using date %s", tomorrow);
-        alarmGeneratorForUpcomingEvent.startAlarm(tomorrow);
+
+        Observable<TimeBeforeNotification> nextAlarmObservable = repo.timeBeforeFirstUpcomingEvent(tomorrow);
+        nextAlarmObservable.subscribe(new AlarmGenerator(this, tomorrow));
 
     }
 

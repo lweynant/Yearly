@@ -10,12 +10,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 
-import com.lweynant.yearly.AlarmGeneratorForUpcomingEvent;
+import com.lweynant.yearly.AlarmGenerator;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.YearlyApp;
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.IEvent;
+import com.lweynant.yearly.model.TimeBeforeNotification;
 import com.lweynant.yearly.util.Clock;
 import com.lweynant.yearly.util.EventRepoSerializerToFileDecorator;
 
@@ -76,8 +77,10 @@ public class EventsActivity extends AppCompatActivity {
         else if (id == R.id.action_set_alarm){
             Timber.i("set alarm");
             YearlyApp app = (YearlyApp) getApplication();
-            AlarmGeneratorForUpcomingEvent alarmGeneratorForUpcomingEvent = new AlarmGeneratorForUpcomingEvent(this, app.getRepo());
-            alarmGeneratorForUpcomingEvent.startAlarm(LocalDate.now());
+            LocalDate now = LocalDate.now();
+            Observable<TimeBeforeNotification> nextAlarmObservable = app.getRepo().timeBeforeFirstUpcomingEvent(now);
+            nextAlarmObservable.subscribeOn(Schedulers.io())
+                                .subscribe(new AlarmGenerator(this, now));
         }
 
         return super.onOptionsItemSelected(item);

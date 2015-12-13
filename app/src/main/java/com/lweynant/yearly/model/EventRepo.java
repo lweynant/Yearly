@@ -47,4 +47,11 @@ public class EventRepo {
         });
         return observable;
     }
+
+    public Observable<TimeBeforeNotification> timeBeforeFirstUpcomingEvent(final LocalDate from) {
+        Observable<TimeBeforeNotification> time = getEvents()
+                .map(event -> Event.timeBeforeNotification(from, event))
+                .reduce((currentMin, x) -> TimeBeforeNotification.min(currentMin, x));
+        return time;
+    }
 }

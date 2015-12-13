@@ -25,13 +25,13 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
 
     private List<IEvent> events = new ArrayList<>();
     private final onEventTypeSelectedListener listener;
-    private LocalDate sortedFrom;
+    private LocalDate sortedFrom =  new LocalDate(1900, 1, 1);
     private Subscription subscription;
 
 
     public void checkWhetherDataNeedsToBeResorted(LocalDate now, EventRepo repo) {
         Timber.d("checkWhetherDataNeedsToBeResorted");
-        if (subscription != null || sortedFrom.isEqual(now)) {
+        if (sortedFrom.isEqual(now)) {
             Timber.d("we sorted repo on same day, so nothing to do");
             return;
         }
@@ -116,7 +116,6 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
 
 
     public EventsAdapter(EventsAdapter.onEventTypeSelectedListener listener) {
-        this.sortedFrom = new LocalDate(1900, 1, 1);
         this.listener = listener;
 
     }

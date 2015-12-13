@@ -4,8 +4,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import com.lweynant.yearly.model.TimeBeforeNotification;
+
 import org.joda.time.LocalDate;
 
+import rx.Observable;
 import timber.log.Timber;
 
 public class BootReceiver extends BroadcastReceiver {
@@ -19,8 +22,9 @@ public class BootReceiver extends BroadcastReceiver {
             Timber.d("generating the alarm...");
             YearlyApp app = (YearlyApp) context.getApplicationContext();
 
-            AlarmGeneratorForUpcomingEvent alarmGeneratorForUpcomingEvent = new AlarmGeneratorForUpcomingEvent(context, app.getRepo());
-            alarmGeneratorForUpcomingEvent.startAlarm(LocalDate.now());
+            Observable<TimeBeforeNotification> nextAlarmObservable = app.getRepo().timeBeforeFirstUpcomingEvent(LocalDate.now());
+            nextAlarmObservable.subscribe(new AlarmGenerator(context, LocalDate.now()));
+
 
         }
     }

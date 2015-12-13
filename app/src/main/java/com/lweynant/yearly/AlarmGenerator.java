@@ -5,11 +5,14 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
+import com.lweynant.yearly.model.Event;
+import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.TimeBeforeNotification;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import rx.Observable;
 import rx.Subscriber;
 import timber.log.Timber;
 
@@ -18,7 +21,7 @@ public class AlarmGenerator extends Subscriber<TimeBeforeNotification> {
     private final LocalDate from;
     private Context context;
 
-    AlarmGenerator(Context context, LocalDate from)
+    public AlarmGenerator(Context context, LocalDate from)
     {
         this.context = context;
         this.from = from;
@@ -51,8 +54,10 @@ public class AlarmGenerator extends Subscriber<TimeBeforeNotification> {
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         DateTime time = new DateTime(alarmDate.getYear(), alarmDate.getMonthOfYear(), alarmDate.getDayOfMonth(), days.getHour(), 0);
         long triggerAtMillis = time.toDateTime().getMillis();
-        Timber.d("shedule an alarm on date: %s",  time.toString());
+        Timber.d("shedule an alarm on date: %s", time.toString());
         am.set(AlarmManager.RTC, triggerAtMillis, alarmSender);
 
     }
+
+
 }

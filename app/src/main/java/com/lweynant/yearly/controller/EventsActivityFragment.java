@@ -53,8 +53,6 @@ public class EventsActivityFragment extends BaseFragment implements EventsAdapte
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         //set the adapter
-        EventRepo repo = ((YearlyApp)getActivity().getApplication()).getRepo();
-        LocalDate now = LocalDate.now();
         eventsAdapter = new EventsAdapter(this);
 
         recyclerView.setAdapter(eventsAdapter);

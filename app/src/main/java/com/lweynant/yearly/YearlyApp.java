@@ -28,10 +28,12 @@ public class YearlyApp extends Application implements IRString {
             Clock clock = new Clock();
             UUID uuid = new UUID();
             repo = new EventRepo();
-//            LocalDate now = LocalDate.now();
-//            repo.add(new Birthday("Test", now.getMonthOfYear(), now.getDayOfMonth(), clock, this));
-//            LocalDate other = now.plusDays(20);
-//            repo.add(new Birthday("Test2", other.getMonthOfYear(), other.getDayOfMonth(), clock, this));
+            LocalDate now = LocalDate.now();
+            repo.add(new Birthday("Test 1", now.getMonthOfYear(), now.getDayOfMonth(), clock, uuid, this));
+            LocalDate other = now.plusDays(1);
+            //repo.add(new Birthday("Test 2", other.getMonthOfYear(), other.getDayOfMonth(), clock, uuid, this));
+            other = other.plusDays(1);
+            repo.add(new Birthday("Test 3", other.getMonthOfYear(), other.getDayOfMonth(), clock, uuid, this));
             repo.add(new Birthday("Katinka", 2004, Date.MARCH, 10, clock, uuid, this));
             repo.add(new Birthday("Kasper", 2002, Date.MAY, 14, clock, uuid, this));
             repo.add(new Birthday("Ann", 1966, Date.MARCH, 5, clock, uuid, this));
