@@ -13,12 +13,15 @@ import android.view.MenuItem;
 import com.lweynant.yearly.AlarmGenerator;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.YearlyApp;
+import com.lweynant.yearly.model.Birthday;
+import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.TimeBeforeNotification;
 import com.lweynant.yearly.util.Clock;
 import com.lweynant.yearly.util.EventRepoSerializerToFileDecorator;
+import com.lweynant.yearly.util.UUID;
 
 import org.joda.time.LocalDate;
 
@@ -41,6 +44,10 @@ public class EventsActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                YearlyApp app = (YearlyApp) getApplication();
+                EventRepo repo = app.getRepo();
+                LocalDate date = LocalDate.now();
+                repo.add(new Birthday("Darth Vader", date.getMonthOfYear(), date.getDayOfMonth(), new Clock(), new UUID(), app));
                 Snackbar.make(view, getResources().getString(R.string.adding_events_not_supported), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }

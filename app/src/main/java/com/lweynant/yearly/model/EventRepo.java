@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.lweynant.yearly.IRString;
+import com.lweynant.yearly.controller.EventsAdapter;
 import com.lweynant.yearly.util.IClock;
 import com.lweynant.yearly.util.IUUID;
 
@@ -12,6 +13,7 @@ import org.joda.time.LocalDate;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import rx.Observable;
@@ -24,6 +26,7 @@ public class EventRepo {
     private IUUID iuuid = null;
     private IRString rstring = null;
     private List<IEvent> cachedEvents = null;
+    private List<IEventRepoListener> listeners = new ArrayList<>();
 
     public EventRepo(EventRepoFileAccessor eventRepoFileAccessor, IClock clock, IUUID iuuid, IRString rstring) {
         this.clock = clock;
@@ -36,21 +39,45 @@ public class EventRepo {
 
     }
 
+    public void addListener(IEventRepoListener listener) {
+        listeners.add(listener);
+    }
+
+    private void notifyListeners(){
+        // since onChanged() is implemented by the listener, it could do anything, including
+        // removing itself from {@link mObservers} - and that could cause problems if
+        // an iterator is used on the ArrayList {@link listeners}.
+        // to avoid such problems, just march thru the list in the reverse order.
+        for (int i = listeners.size() - 1; i >= 0; i--) {
+            listeners.get(i).onDataSetChanged(this);
+        }
+
+    }
+
     public EventRepo add(IEvent event) {
         if (cachedEvents == null) {
-            cachedEvents = new ArrayList<>();
+            cachedEvents = Collections.synchronizedList(new ArrayList<>());
         }
         cachedEvents.add(event);
+        notifyListeners();
+        return this;
+    }
+
+    public EventRepo remove(IEvent event) {
+        if (cachedEvents != null){
+            cachedEvents.remove(event);
+        }
+        notifyListeners();
         return this;
     }
 
 
     public Observable<IEvent> getEvents() {
-        if (cachedEvents != null || eventRepoFileAccessor == null) {
-            return getEventsFromCache();
-        } else {
-            return getEventsFromFile();
-        }
+            if (cachedEvents != null || eventRepoFileAccessor == null) {
+                return getEventsFromCache();
+            } else {
+                return getEventsFromFile();
+            }
     }
 
     private Observable<IEvent> getEventsFromFile() {
@@ -81,7 +108,7 @@ public class EventRepo {
                         }
                         Timber.d("calling onCompleted");
                         subscriber.onCompleted();
-                        cachedEvents = cache;
+                        cachedEvents = Collections.synchronizedList(cache);
                     } catch (FileNotFoundException e) {
                         Timber.d("file not found, so we assume we have empty list");
                         subscriber.onCompleted();
@@ -100,20 +127,22 @@ public class EventRepo {
         Observable<IEvent> observable = Observable.create(new Observable.OnSubscribe<IEvent>() {
             @Override
             public void call(Subscriber<? super IEvent> subscriber) {
-                try {
-                    if (cachedEvents != null) {
-                        for (IEvent event : cachedEvents) {
-                            if (!subscriber.isUnsubscribed()) {
-                                subscriber.onNext(event);
-                            } else {
-                                break;
+                synchronized (cachedEvents) {
+                    try {
+                        if (cachedEvents != null) {
+                            for (IEvent event : cachedEvents) {
+                                if (!subscriber.isUnsubscribed()) {
+                                    subscriber.onNext(event);
+                                } else {
+                                    break;
+                                }
                             }
                         }
-                    }
-                    subscriber.onCompleted();
+                        subscriber.onCompleted();
 
-                } catch (Throwable t) {
-                    subscriber.onError(t);
+                    } catch (Throwable t) {
+                        subscriber.onError(t);
+                    }
                 }
             }
         });
@@ -125,5 +154,9 @@ public class EventRepo {
                 .map(event -> Event.timeBeforeNotification(from, event))
                 .reduce((currentMin, x) -> TimeBeforeNotification.min(currentMin, x));
         return time;
+    }
+
+    public void removeListener(IEventRepoListener listener) {
+        listeners.remove(listener);
     }
 }

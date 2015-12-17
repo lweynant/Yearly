@@ -84,6 +84,26 @@ public class EventRepoTest {
     }
 
     @Test
+    public void getEvents_RemoveEvent_EmptyList() throws Exception{
+        IEvent event = new Event(Date.AUGUST, 4, clock, uuid);
+        sut.add(event);
+        sut.remove(event);
+        List<IEvent> events = sut.getEvents().toList().toBlocking().single();
+        assertThat(events, hasSize(0));
+    }
+    @Test
+    public void getEvents_RemoveEvent() throws Exception{
+        IEvent event1 = new Event(Date.AUGUST, 4, clock, uuid);
+        IEvent event2 = new Event(Date.AUGUST, 4, clock, uuid);
+        sut.add(event1).add(event2);
+        sut.remove(event1);
+        List<IEvent> events = sut.getEvents().toList().toBlocking().single();
+        assertThat(events, hasSize(1));
+        assertThat(events, contains(event2));
+    }
+
+
+    @Test
     public void getEvents_Upcoming() throws Exception {
         when(clock.now()).thenReturn(new LocalDate(2015, Date.JULY, 31));
 

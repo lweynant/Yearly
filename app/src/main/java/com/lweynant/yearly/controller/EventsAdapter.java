@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.IEvent;
+import com.lweynant.yearly.model.IEventRepoListener;
 
 import org.joda.time.LocalDate;
 
@@ -21,7 +22,8 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
-public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewHolder> {
+
+public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewHolder> implements IEventRepoListener {
 
     private List<IEvent> events = new ArrayList<>();
     private final onEventTypeSelectedListener listener;
@@ -37,33 +39,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
         }
         else {
             Timber.d("sort on new date %s", now.toString());
-            Observable<IEvent> eventsObservable = repo.getEvents();
-            if (subscription != null)
-            {
-                subscription.unsubscribe();
-            }
-            subscription = eventsObservable.subscribeOn(Schedulers.io())
-                    .toSortedList()
-                    .first()
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<List<IEvent>>() {
-                        @Override
-                        public void onCompleted() {
-                            Timber.d("onCompleted");
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            Timber.e(e, "onError");
-                        }
-
-                        @Override
-                        public void onNext(List<IEvent> iEvents) {
-                            Timber.d("onNext");
-                            setEvents(iEvents);
-                        }
-                    });
-
+            onDataSetChanged(repo);
             sortedFrom = now;
         }
     }
@@ -79,6 +55,39 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
         {
             subscription.unsubscribe();
         }
+    }
+
+    @Override
+    public void onDataSetChanged(EventRepo repo) {
+        Timber.d("onDataSetChanged");
+        Observable<IEvent> eventsObservable = repo.getEvents();
+        if (subscription != null)
+        {
+            subscription.unsubscribe();
+        }
+        subscription = eventsObservable.subscribeOn(Schedulers.io())
+                .toSortedList()
+                .first()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<IEvent>>() {
+                    @Override
+                    public void onCompleted() {
+                        Timber.d("onCompleted");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e, "onError");
+                    }
+
+                    @Override
+                    public void onNext(List<IEvent> iEvents) {
+                        Timber.d("onNext");
+                        setEvents(iEvents);
+                    }
+                });
+
+
     }
 
     public interface onEventTypeSelectedListener {
@@ -102,6 +111,9 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
             textView = (TextView)itemView;
         }
 
+        public IEvent getEvent(){
+            return event;
+        }
         @Override
         public void onClick(View v) {
             listener.onSelected(event);
