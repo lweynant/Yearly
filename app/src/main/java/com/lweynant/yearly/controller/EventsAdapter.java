@@ -1,14 +1,14 @@
 package com.lweynant.yearly.controller;
 
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.IEventRepoListener;
+import com.lweynant.yearly.ui.EventViewFactory;
+import com.lweynant.yearly.ui.IEventListElementView;
 
 import org.joda.time.LocalDate;
 
@@ -27,17 +27,54 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
 
     private List<IEvent> events = new ArrayList<>();
     private final onEventTypeSelectedListener listener;
-    private LocalDate sortedFrom =  new LocalDate(1900, 1, 1);
+    private LocalDate sortedFrom = new LocalDate(1900, 1, 1);
     private Subscription subscription;
+    private EventViewFactory viewFactory;
 
+
+    public static class EventViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private final onEventTypeSelectedListener listener;
+        private IEventListElementView eventListElementView;
+        private IEvent event;
+        // Provide a reference to the views for each data item
+        // Complex data items may need more than one view per item, and
+        // you provide access to all the views for a data item in a view holder
+
+        public EventViewHolder(IEventListElementView itemView, onEventTypeSelectedListener listener) {
+            super(itemView.getView());
+            itemView.setOnClickListener(this);
+            this.listener = listener;
+            this.eventListElementView = itemView;
+        }
+
+        public IEvent getEvent() {
+            return event;
+        }
+
+        @Override
+        public void onClick(View v) {
+            listener.onSelected(event);
+        }
+
+        public void bindEvent(IEvent event) {
+            this.event = event;
+            eventListElementView.bindEvent(event);
+        }
+    }
+
+
+    public EventsAdapter(EventViewFactory viewFactory, EventsAdapter.onEventTypeSelectedListener listener) {
+        this.listener = listener;
+        this.viewFactory = viewFactory;
+
+    }
 
     public void checkWhetherDataNeedsToBeResorted(LocalDate now, EventRepo repo) {
         Timber.d("checkWhetherDataNeedsToBeResorted");
         if (sortedFrom.isEqual(now)) {
             Timber.d("we sorted repo on same day, so nothing to do");
             return;
-        }
-        else {
+        } else {
             Timber.d("sort on new date %s", now.toString());
             onDataSetChanged(repo);
             sortedFrom = now;
@@ -51,8 +88,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
     }
 
     public void onDetach() {
-        if (subscription != null)
-        {
+        if (subscription != null) {
             subscription.unsubscribe();
         }
     }
@@ -61,8 +97,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
     public void onDataSetChanged(EventRepo repo) {
         Timber.d("onDataSetChanged");
         Observable<IEvent> eventsObservable = repo.getEvents();
-        if (subscription != null)
-        {
+        if (subscription != null) {
             subscription.unsubscribe();
         }
         subscription = eventsObservable.subscribeOn(Schedulers.io())
@@ -95,46 +130,11 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
     }
 
 
-
-    public static class EventViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private final onEventTypeSelectedListener listener;
-        private TextView textView;
-        private IEvent event;
-        // Provide a reference to the views for each data item
-        // Complex data items may need more than one view per item, and
-        // you provide access to all the views for a data item in a view holder
-
-        public EventViewHolder(View itemView, EventsAdapter.onEventTypeSelectedListener listener) {
-            super(itemView);
-            itemView.setOnClickListener(this);
-            this.listener = listener;
-            textView = (TextView)itemView;
-        }
-
-        public IEvent getEvent(){
-            return event;
-        }
-        @Override
-        public void onClick(View v) {
-            listener.onSelected(event);
-        }
-
-        public void bindEvent(IEvent event) {
-            this.event = event;
-            LocalDate eventDate = event.getDate();
-            textView.setText(event.getTitle() + ": " + eventDate.dayOfWeek().getAsShortText() + " " + eventDate.getDayOfMonth() + " " + eventDate.monthOfYear().getAsShortText());
-        }
-    }
-
-
-    public EventsAdapter(EventsAdapter.onEventTypeSelectedListener listener) {
-        this.listener = listener;
-
-    }
     @Override
     public EventViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_list_item_1, parent, false);
-        EventViewHolder eventViewHolder = new EventViewHolder(v, listener);
+        IEventListElementView view = viewFactory.getEventListElementView(parent, viewType);
+        //View v = LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_list_item_1, parent, false);
+        EventViewHolder eventViewHolder = new EventViewHolder(view, listener);
         return eventViewHolder;
     }
 
@@ -142,6 +142,11 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
     public void onBindViewHolder(EventViewHolder holder, int position) {
         IEvent event = events.get(position);
         holder.bindEvent(event);
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return viewFactory.getEventListElementViewType(events.get(position));
     }
 
     @Override

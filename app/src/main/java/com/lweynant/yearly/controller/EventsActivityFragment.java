@@ -1,6 +1,5 @@
 package com.lweynant.yearly.controller;
 
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,27 +13,19 @@ import com.lweynant.yearly.AlarmGenerator;
 import com.lweynant.yearly.IRString;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.YearlyApp;
-import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.IEvent;
-import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.IEventRepoListener;
 import com.lweynant.yearly.model.TimeBeforeNotification;
+import com.lweynant.yearly.ui.EventViewFactory;
+import com.lweynant.yearly.ui.IEventNotificationText;
 import com.lweynant.yearly.util.Clock;
 import com.lweynant.yearly.util.EventRepoSerializerToFileDecorator;
 
-import org.joda.time.Days;
 import org.joda.time.LocalDate;
 
-import java.util.Calendar;
-import java.util.List;
-
 import rx.Observable;
-import rx.Scheduler;
-import rx.Subscriber;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
@@ -61,7 +52,10 @@ public class EventsActivityFragment extends BaseFragment implements EventsAdapte
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         //set the adapter
-        eventsAdapter = new EventsAdapter(this);
+        YearlyApp app = (YearlyApp) getActivity().getApplication();
+        EventViewFactory viewFactory = new EventViewFactory(app, new Clock());
+
+        eventsAdapter = new EventsAdapter(viewFactory, this);
 
         recyclerView.setAdapter(eventsAdapter);
 
@@ -122,12 +116,9 @@ public class EventsActivityFragment extends BaseFragment implements EventsAdapte
 
     @Override
     public void onSelected(IEvent eventType) {
-        LocalDate date = eventType.getDate();
-        LocalDate now = LocalDate.now();
-        Days d = Days.daysBetween(now, date);
-        int days = d.getDays();
-        String text = eventType.getTitle() + " ";
-        text += String.format(getResources().getString(R.string.in_x_days), days);
+        EventViewFactory factory = new EventViewFactory((IRString) getActivity().getApplication(), new Clock());
+        IEventNotificationText notifText = factory.getEventNotificationText(eventType);
+        String text = notifText.getOneLiner();
         Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
     }
 

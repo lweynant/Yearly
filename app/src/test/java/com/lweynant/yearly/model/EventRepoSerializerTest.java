@@ -1,12 +1,10 @@
 package com.lweynant.yearly.model;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.annotations.Expose;
 import com.lweynant.yearly.util.IClock;
-import com.lweynant.yearly.util.IUUID;
+import com.lweynant.yearly.util.IUniqueIdGenerator;
 
 import org.joda.time.LocalDate;
 import org.junit.Before;
@@ -27,14 +25,14 @@ public class EventRepoSerializerTest {
     @Mock
     IClock clock;
     @Mock
-    IUUID iuuid;
+    IUniqueIdGenerator uniqueIdGenerator;
     private EventRepoSerializer sut;
 
     @Before
     public void setUp() throws Exception{
         when(clock.now()).thenReturn(new LocalDate(2000, Date.FEBRUARY, 8));
         when(clock.timestamp()).thenReturn("timestamp");
-        when(iuuid.getRandomUID()).thenReturn("random id");
+        when(uniqueIdGenerator.getRandomUID()).thenReturn("random id");
         sut = new EventRepoSerializer(clock);
     }
     @Test
@@ -103,7 +101,7 @@ public class EventRepoSerializerTest {
 
 
     private Event createEvent(int month, int day) {
-        return new Event(month, day, clock, iuuid);
+        return new Event(month, day, clock, uniqueIdGenerator);
 
     }
 }

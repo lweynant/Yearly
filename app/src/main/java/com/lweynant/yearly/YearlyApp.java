@@ -25,7 +25,7 @@ public class YearlyApp extends Application implements IRString {
             Timber.d("repo was not initialized");
             Clock clock = new Clock();
             UUID uuid = new UUID();
-            repo = new EventRepo(getRepoAccessor(), clock, uuid, this);
+            repo = new EventRepo(getRepoAccessor(), clock, uuid);
         }
         Timber.d("getRepo");
         return repo;

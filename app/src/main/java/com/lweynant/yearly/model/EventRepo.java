@@ -4,10 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.lweynant.yearly.IRString;
-import com.lweynant.yearly.controller.EventsAdapter;
 import com.lweynant.yearly.util.IClock;
-import com.lweynant.yearly.util.IUUID;
+import com.lweynant.yearly.util.IUniqueIdGenerator;
 
 import org.joda.time.LocalDate;
 
@@ -23,15 +21,13 @@ import timber.log.Timber;
 public class EventRepo {
     private EventRepoFileAccessor eventRepoFileAccessor = null;
     private IClock clock = null;
-    private IUUID iuuid = null;
-    private IRString rstring = null;
-    private List<IEvent> cachedEvents = null;
+    private IUniqueIdGenerator uniqueIdGenerator = null;
+    private List<IEvent> cachedEvents = Collections.synchronizedList(new ArrayList<>());
     private List<IEventRepoListener> listeners = new ArrayList<>();
 
-    public EventRepo(EventRepoFileAccessor eventRepoFileAccessor, IClock clock, IUUID iuuid, IRString rstring) {
+    public EventRepo(EventRepoFileAccessor eventRepoFileAccessor, IClock clock, IUniqueIdGenerator uniqueIdGenerator) {
         this.clock = clock;
-        this.iuuid = iuuid;
-        this.rstring = rstring;
+        this.uniqueIdGenerator = uniqueIdGenerator;
         this.eventRepoFileAccessor = eventRepoFileAccessor;
     }
 
@@ -55,25 +51,20 @@ public class EventRepo {
     }
 
     public EventRepo add(IEvent event) {
-        if (cachedEvents == null) {
-            cachedEvents = Collections.synchronizedList(new ArrayList<>());
-        }
         cachedEvents.add(event);
         notifyListeners();
         return this;
     }
 
     public EventRepo remove(IEvent event) {
-        if (cachedEvents != null){
-            cachedEvents.remove(event);
-        }
+        cachedEvents.remove(event);
         notifyListeners();
         return this;
     }
 
 
     public Observable<IEvent> getEvents() {
-            if (cachedEvents != null || eventRepoFileAccessor == null) {
+            if (!cachedEvents.isEmpty() || eventRepoFileAccessor == null) {
                 return getEventsFromCache();
             } else {
                 return getEventsFromFile();
@@ -93,7 +84,7 @@ public class EventRepo {
                         JsonArray jsonArray = jsonObject.getAsJsonArray("events");
                         GsonBuilder builder = new GsonBuilder()
                                 .excludeFieldsWithoutExposeAnnotation()
-                                .registerTypeAdapter(Birthday.class, new BirthdayInstanceCreator(clock, iuuid, rstring));
+                                .registerTypeAdapter(Birthday.class, new BirthdayInstanceCreator(clock, uniqueIdGenerator));
                         Gson gson = builder.create();
                         for (int i = 0; i < jsonArray.size(); i++) {
                             JsonObject eventObj = jsonArray.get(i).getAsJsonObject();

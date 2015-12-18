@@ -1,6 +1,6 @@
 package com.lweynant.yearly.util;
 
-public class UUID implements IUUID{
+public class UUID implements IUniqueIdGenerator {
 
     @Override
     public String getRandomUID() {

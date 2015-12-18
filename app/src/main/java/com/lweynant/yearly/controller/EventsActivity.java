@@ -47,7 +47,7 @@ public class EventsActivity extends AppCompatActivity {
                 YearlyApp app = (YearlyApp) getApplication();
                 EventRepo repo = app.getRepo();
                 LocalDate date = LocalDate.now();
-                repo.add(new Birthday("Darth Vader", date.getMonthOfYear(), date.getDayOfMonth(), new Clock(), new UUID(), app));
+                repo.add(new Birthday("Darth Vader", date.getMonthOfYear(), date.getDayOfMonth(), new Clock(), new UUID()));
                 Snackbar.make(view, getResources().getString(R.string.adding_events_not_supported), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }

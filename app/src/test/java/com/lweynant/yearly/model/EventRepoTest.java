@@ -1,9 +1,8 @@
 package com.lweynant.yearly.model;
 
 import com.google.gson.JsonObject;
-import com.lweynant.yearly.IRString;
 import com.lweynant.yearly.util.IClock;
-import com.lweynant.yearly.util.IUUID;
+import com.lweynant.yearly.util.IUniqueIdGenerator;
 
 import org.joda.time.LocalDate;
 import org.junit.Before;
@@ -39,7 +38,7 @@ public class EventRepoTest {
     @Mock
     IClock clock;
     @Mock
-    IUUID uuid;
+    IUniqueIdGenerator uniqueIdGenerator;
     private int nbrOfDaysForNotification;
 
     @Before
@@ -60,7 +59,7 @@ public class EventRepoTest {
 
     @Test
     public void getEvents_FromRepoWith1Event() throws Exception {
-        IEvent event = new Event(Date.AUGUST, 1, clock, uuid);
+        IEvent event = new Event(Date.AUGUST, 1, clock, uniqueIdGenerator);
         sut.add(event);
         Observable<IEvent> events = sut.getEvents();
         List<IEvent> list = events.toList().toBlocking().single();
@@ -72,9 +71,9 @@ public class EventRepoTest {
     public void getEvents_FromRepoWithNEvent() throws Exception {
         when(clock.now()).thenReturn(new LocalDate(2015, Date.APRIL, 23));
 
-        IEvent event1 = new Event(Date.FEBRUARY, 8, clock, uuid);
-        IEvent event2 = new Event(Date.AUGUST, 1, clock, uuid);
-        IEvent event3 = new Event(Date.NOVEMBER, 8, clock, uuid);
+        IEvent event1 = new Event(Date.FEBRUARY, 8, clock, uniqueIdGenerator);
+        IEvent event2 = new Event(Date.AUGUST, 1, clock, uniqueIdGenerator);
+        IEvent event3 = new Event(Date.NOVEMBER, 8, clock, uniqueIdGenerator);
         sut.add(event1).add(event2).add(event3);
         Observable<IEvent> events = sut.getEvents();
         List<IEvent> list = events.toSortedList().toBlocking().single();
@@ -85,7 +84,7 @@ public class EventRepoTest {
 
     @Test
     public void getEvents_RemoveEvent_EmptyList() throws Exception{
-        IEvent event = new Event(Date.AUGUST, 4, clock, uuid);
+        IEvent event = new Event(Date.AUGUST, 4, clock, uniqueIdGenerator);
         sut.add(event);
         sut.remove(event);
         List<IEvent> events = sut.getEvents().toList().toBlocking().single();
@@ -93,8 +92,8 @@ public class EventRepoTest {
     }
     @Test
     public void getEvents_RemoveEvent() throws Exception{
-        IEvent event1 = new Event(Date.AUGUST, 4, clock, uuid);
-        IEvent event2 = new Event(Date.AUGUST, 4, clock, uuid);
+        IEvent event1 = new Event(Date.AUGUST, 4, clock, uniqueIdGenerator);
+        IEvent event2 = new Event(Date.AUGUST, 4, clock, uniqueIdGenerator);
         sut.add(event1).add(event2);
         sut.remove(event1);
         List<IEvent> events = sut.getEvents().toList().toBlocking().single();
@@ -107,11 +106,11 @@ public class EventRepoTest {
     public void getEvents_Upcoming() throws Exception {
         when(clock.now()).thenReturn(new LocalDate(2015, Date.JULY, 31));
 
-        IEvent event1 = new Event(Date.FEBRUARY, 8, clock, uuid);
-        IEvent event2 = new Event(Date.AUGUST, 1, clock, uuid);
-        IEvent event3 = new Event(Date.AUGUST, 2, clock, uuid);
+        IEvent event1 = new Event(Date.FEBRUARY, 8, clock, uniqueIdGenerator);
+        IEvent event2 = new Event(Date.AUGUST, 1, clock, uniqueIdGenerator);
+        IEvent event3 = new Event(Date.AUGUST, 2, clock, uniqueIdGenerator);
         event3.setNbrOfDaysForNotification(2);
-        IEvent event4 = new Event(Date.NOVEMBER, 8, clock, uuid);
+        IEvent event4 = new Event(Date.NOVEMBER, 8, clock, uniqueIdGenerator);
         sut.add(event1).add(event2).add(event3).add(event4);
         Observable<IEvent> events = sut.getEvents();
         List<IEvent> list = events
@@ -126,9 +125,9 @@ public class EventRepoTest {
     public void getEvents_SetAlarmForEventToday() throws Exception{
         LocalDate now = new LocalDate(2015, Date.FEBRUARY, 8);
         when(clock.now()).thenReturn(now);
-        IEvent event1 = new Event(Date.JANUARY, 5, clock, uuid);
-        IEvent event2 = new Event(Date.AUGUST, 8, clock, uuid);
-        IEvent event3 = new Event(now.getMonthOfYear(), now.getDayOfMonth(), clock, uuid);
+        IEvent event1 = new Event(Date.JANUARY, 5, clock, uniqueIdGenerator);
+        IEvent event2 = new Event(Date.AUGUST, 8, clock, uniqueIdGenerator);
+        IEvent event3 = new Event(now.getMonthOfYear(), now.getDayOfMonth(), clock, uniqueIdGenerator);
         sut.add(event1).add(event2).add(event3);
         TimeBeforeNotification time = getFirstUpComingEventTimeBeforeNotification(sut.getEvents(), now);
         assertThat(time.getDays(), is(0));
@@ -138,11 +137,11 @@ public class EventRepoTest {
    public void getEvents_SetAlarmForEventTomorrow() throws Exception {
         when(clock.now()).thenReturn(new LocalDate(2015, Date.JULY, 31));
 
-        IEvent event1 = new Event(Date.FEBRUARY, 8, clock, uuid);
-        IEvent event2 = new Event(Date.AUGUST, 1, clock, uuid);
-        IEvent event3 = new Event(Date.AUGUST, 2, clock, uuid);
+        IEvent event1 = new Event(Date.FEBRUARY, 8, clock, uniqueIdGenerator);
+        IEvent event2 = new Event(Date.AUGUST, 1, clock, uniqueIdGenerator);
+        IEvent event3 = new Event(Date.AUGUST, 2, clock, uniqueIdGenerator);
         event3.setNbrOfDaysForNotification(2);
-        IEvent event4 = new Event(Date.NOVEMBER, 8, clock, uuid);
+        IEvent event4 = new Event(Date.NOVEMBER, 8, clock, uniqueIdGenerator);
         sut.add(event1).add(event2).add(event3).add(event4);
         Observable<IEvent> events = sut.getEvents();
         TimeBeforeNotification timeBeforeNotification = getFirstUpComingEventTimeBeforeNotification(events, clock.now());
@@ -162,11 +161,11 @@ public class EventRepoTest {
     public void getEvents_Serialize() throws Exception {
         when(clock.now()).thenReturn(new LocalDate(2015, Date.JULY, 31));
 
-        IEvent event1 = new Event(Date.FEBRUARY, 8, clock, uuid);
-        IEvent event2 = new Event(Date.AUGUST, 1, clock, uuid);
-        IEvent event3 = new Event(Date.AUGUST, 2, clock, uuid);
+        IEvent event1 = new Event(Date.FEBRUARY, 8, clock, uniqueIdGenerator);
+        IEvent event2 = new Event(Date.AUGUST, 1, clock, uniqueIdGenerator);
+        IEvent event3 = new Event(Date.AUGUST, 2, clock, uniqueIdGenerator);
         event3.setNbrOfDaysForNotification(2);
-        IEvent event4 = new Event(Date.NOVEMBER, 8, clock, uuid);
+        IEvent event4 = new Event(Date.NOVEMBER, 8, clock, uniqueIdGenerator);
         sut.add(event1).add(event2).add(event3).add(event4);
         Observable<IEvent> events = sut.getEvents();
 

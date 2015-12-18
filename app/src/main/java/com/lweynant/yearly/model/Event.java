@@ -1,10 +1,9 @@
 package com.lweynant.yearly.model;
 
-import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.lweynant.yearly.util.IClock;
-import com.lweynant.yearly.util.IUUID;
+import com.lweynant.yearly.util.IUniqueIdGenerator;
 
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
@@ -39,13 +38,13 @@ public class Event implements IEvent {
 
     private final IClock clock;
 
-    public Event( @Date.Month int month, int day, IClock clock, IUUID iuuid) {
+    public Event( @Date.Month int month, int day, IClock clock, IUniqueIdGenerator uniqueIdGenerator) {
         this.day = day;
         this.month = month;
         this.clock = clock;
         this.type = getClass().getCanonicalName();
-        this.uuid = iuuid.getRandomUID();
-        this.id = iuuid.hashCode(uuid);
+        this.uuid = uniqueIdGenerator.getRandomUID();
+        this.id = uniqueIdGenerator.hashCode(uuid);
     }
 
     @Override

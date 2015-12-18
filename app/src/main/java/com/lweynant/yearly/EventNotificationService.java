@@ -8,6 +8,7 @@ import com.lweynant.yearly.model.Event;
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.TimeBeforeNotification;
+import com.lweynant.yearly.ui.EventViewFactory;
 import com.lweynant.yearly.util.Clock;
 import com.lweynant.yearly.util.IClock;
 
@@ -54,14 +55,15 @@ public class EventNotificationService extends IntentService {
 
     private void handleActionNotification() {
         Timber.d("handleActionNotification");
+        final IClock clock = new Clock();
         YearlyApp app = (YearlyApp)getApplication();
+        EventViewFactory viewFactory = new EventViewFactory(app, clock);
         EventRepo repo = app.getRepo();
 
-        final IClock clock = new Clock();
         Observable<IEvent> eventsObservable = repo.getEvents();
         Subscription subscription = eventsObservable
                 .filter(event -> Event.shouldBeNotified(clock.now(), event))
-                .subscribe(new EventNotifier(this, clock));
+                .subscribe(new EventNotifier(viewFactory, this, clock));
         subscription.unsubscribe();
         LocalDate tomorrow = clock.now().plusDays(1);
         Timber.d("schedule next alarm using date %s", tomorrow);
