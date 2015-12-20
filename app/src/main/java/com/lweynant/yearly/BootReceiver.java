@@ -4,7 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.lweynant.yearly.model.TimeBeforeNotification;
+import com.lweynant.yearly.model.EventRepo;
+import com.lweynant.yearly.model.NotificationTime;
 
 import org.joda.time.LocalDate;
 
@@ -20,10 +21,10 @@ public class BootReceiver extends BroadcastReceiver {
         Timber.d("onReceive");
         if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
             Timber.d("generating the alarm...");
-            YearlyApp app = (YearlyApp) context.getApplicationContext();
+            EventRepo repo = ((YearlyApp) context.getApplicationContext()).getRepo();
 
-            Observable<TimeBeforeNotification> nextAlarmObservable = app.getRepo().timeBeforeFirstUpcomingEvent(LocalDate.now());
-            nextAlarmObservable.subscribe(new AlarmGenerator(context, LocalDate.now()));
+            Observable<NotificationTime> nextAlarmObservable = repo.notificationTimeForFirstUpcomingEvent(LocalDate.now());
+            nextAlarmObservable.subscribe(new AlarmGenerator(context));
 
 
         }

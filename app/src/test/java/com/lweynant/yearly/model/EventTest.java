@@ -25,36 +25,6 @@ public class EventTest {
     @Mock
     IUniqueIdGenerator uniqueIdGenerator;
 
-    @Test
-    public void testDaysBeforeNotification_EventAfterFrom() throws Exception {
-        LocalDate now = new LocalDate(2015, Date.MARCH, 1);
-        when(clock.now()).thenReturn(now);
-        Event sut = new Event(Date.MARCH, 10, clock, uniqueIdGenerator);
-        LocalDate from = now;
-        TimeBeforeNotification days = Event.timeBeforeNotification(from, sut);
-        assertThat(days.getDays(), is(8));
-        assertThat(days.getHour(), is(19));
-    }
-    @Test
-    public void testDaysBeforeNotification_EventSameAsFrom() throws Exception {
-        LocalDate now = new LocalDate(2015, Date.MARCH, 1);
-        when(clock.now()).thenReturn(now);
-        Event sut = new Event(now.getMonthOfYear(), now.getDayOfMonth(), clock, uniqueIdGenerator);
-        LocalDate from = now;
-        TimeBeforeNotification days = Event.timeBeforeNotification(from, sut);
-        assertThat(days.getDays(), is(0));
-        assertThat(days.getHour(), is(6));
-    }
-    @Test
-    public void testDaysBeforeNotification_EventBeforeFrom() throws Exception {
-        LocalDate eventDate = new LocalDate(2015, Date.MARCH, 1);
-        when(clock.now()).thenReturn(eventDate);
-        Event sut = new Event(eventDate.getMonthOfYear(), eventDate.getDayOfMonth(), clock, uniqueIdGenerator);
-        LocalDate from = eventDate.plusDays(1);
-        TimeBeforeNotification days = Event.timeBeforeNotification(from, sut);
-        assertThat(days.getDays(), is(364));
-        assertThat(days.getHour(), is(19));
-    }
 
     @Test
     public void testShouldEventBeNotified() throws Exception{

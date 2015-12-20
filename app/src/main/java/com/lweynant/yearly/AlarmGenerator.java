@@ -5,26 +5,21 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
-import com.lweynant.yearly.model.Event;
-import com.lweynant.yearly.model.EventRepo;
-import com.lweynant.yearly.model.TimeBeforeNotification;
+import com.lweynant.yearly.model.NotificationTime;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import rx.Observable;
 import rx.Subscriber;
 import timber.log.Timber;
 
-public class AlarmGenerator extends Subscriber<TimeBeforeNotification> {
+public class AlarmGenerator extends Subscriber<NotificationTime> {
     private final PendingIntent alarmSender;
-    private final LocalDate from;
     private Context context;
 
-    public AlarmGenerator(Context context, LocalDate from)
+    public AlarmGenerator(Context context)
     {
         this.context = context;
-        this.from = from;
         Intent intent = new Intent(context, AlarmReceiver.class);
 
         this.alarmSender = PendingIntent.getBroadcast(context, 0, intent, 0);
@@ -43,18 +38,14 @@ public class AlarmGenerator extends Subscriber<TimeBeforeNotification> {
     }
 
     @Override
-    public void onNext(TimeBeforeNotification days) {
-        Timber.d("onNext set alarm in  %d days", days.getDays());
-        if (days.getDays() < 0)
-        {
-            Timber.d("can not set alarms in the past");
-            return;
-        }
-        LocalDate alarmDate = from.plusDays(days.getDays());
+    public void onNext(NotificationTime notificationTime) {
+        Timber.d("onNext set alarm on %s at %d", notificationTime.getAlarmDate(), notificationTime.getHour());
+
+        LocalDate alarmDate = notificationTime.getAlarmDate();
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        DateTime time = new DateTime(alarmDate.getYear(), alarmDate.getMonthOfYear(), alarmDate.getDayOfMonth(), days.getHour(), 0);
+        DateTime time = new DateTime(alarmDate.getYear(), alarmDate.getMonthOfYear(), alarmDate.getDayOfMonth(), notificationTime.getHour(), 0);
         long triggerAtMillis = time.toDateTime().getMillis();
-        Timber.d("shedule an alarm on date: %s", time.toString());
+        Timber.i("shedule an alarm on date: %s", time.toString());
         am.set(AlarmManager.RTC, triggerAtMillis, alarmSender);
 
     }

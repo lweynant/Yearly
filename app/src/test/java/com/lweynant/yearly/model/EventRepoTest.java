@@ -129,13 +129,14 @@ public class EventRepoTest {
         IEvent event2 = new Event(Date.AUGUST, 8, clock, uniqueIdGenerator);
         IEvent event3 = new Event(now.getMonthOfYear(), now.getDayOfMonth(), clock, uniqueIdGenerator);
         sut.add(event1).add(event2).add(event3);
-        TimeBeforeNotification time = getFirstUpComingEventTimeBeforeNotification(sut.getEvents(), now);
-        assertThat(time.getDays(), is(0));
+        NotificationTime time = getFirstUpComingEventTimeBeforeNotification(sut.getEvents(), now);
+        assertThat(time.getAlarmDate(), is(now));
         assertThat(time.getHour(), is(6));
     }
     @Test
    public void getEvents_SetAlarmForEventTomorrow() throws Exception {
-        when(clock.now()).thenReturn(new LocalDate(2015, Date.JULY, 31));
+        LocalDate now = new LocalDate(2015, Date.JULY, 31);
+        when(clock.now()).thenReturn(now);
 
         IEvent event1 = new Event(Date.FEBRUARY, 8, clock, uniqueIdGenerator);
         IEvent event2 = new Event(Date.AUGUST, 1, clock, uniqueIdGenerator);
@@ -144,16 +145,16 @@ public class EventRepoTest {
         IEvent event4 = new Event(Date.NOVEMBER, 8, clock, uniqueIdGenerator);
         sut.add(event1).add(event2).add(event3).add(event4);
         Observable<IEvent> events = sut.getEvents();
-        TimeBeforeNotification timeBeforeNotification = getFirstUpComingEventTimeBeforeNotification(events, clock.now());
-        assertThat(timeBeforeNotification.getDays(), is(0));
-        assertThat(timeBeforeNotification.getHour(), is(19));
+        NotificationTime notificationTime = getFirstUpComingEventTimeBeforeNotification(events, now);
+        assertThat(notificationTime.getAlarmDate(), is(now));
+        assertThat(notificationTime.getHour(), is(19));
 
     }
 
-    private TimeBeforeNotification getFirstUpComingEventTimeBeforeNotification(Observable<IEvent> events, final LocalDate from) {
+    private NotificationTime getFirstUpComingEventTimeBeforeNotification(Observable<IEvent> events, final LocalDate from) {
         return events
-                .map(event -> Event.timeBeforeNotification(from, event))
-                .reduce((currentMin, x) -> TimeBeforeNotification.min(currentMin, x) )
+                .map(event -> new NotificationTime(from, event))
+                .reduce((currentMin, x) -> NotificationTime.min(currentMin, x) )
                 .toBlocking().single();
     }
 

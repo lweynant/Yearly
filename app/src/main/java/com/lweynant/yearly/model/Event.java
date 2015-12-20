@@ -98,22 +98,6 @@ public class Event implements IEvent {
         return getDate().compareTo(another.getDate());
     }
 
-    public static TimeBeforeNotification timeBeforeNotification(LocalDate from, IEvent event) {
-        LocalDate eventDate = event.getDate();
-        if (eventDate.isBefore(from)) {
-            eventDate = eventDate.plusYears(1);
-        }
-        int days = Days.daysBetween(from, eventDate).getDays();
-        if (days > 0) {
-            days = days - event.getNbrOfDaysForNotification();
-            days = days < 0 ? 0 : days;
-        }
-        int morning = 6;
-        int evening = 19;
-        int hour = from.isEqual(eventDate)? morning : evening;
-
-        return new TimeBeforeNotification(days, hour);
-    }
 
     public static boolean shouldBeNotified(LocalDate from, IEvent event) {
         int days = Days.daysBetween(from, event.getDate()).getDays();

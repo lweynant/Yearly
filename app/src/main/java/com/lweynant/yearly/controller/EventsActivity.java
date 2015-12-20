@@ -18,7 +18,7 @@ import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.IEvent;
-import com.lweynant.yearly.model.TimeBeforeNotification;
+import com.lweynant.yearly.model.NotificationTime;
 import com.lweynant.yearly.util.Clock;
 import com.lweynant.yearly.util.EventRepoSerializerToFileDecorator;
 import com.lweynant.yearly.util.UUID;
@@ -103,9 +103,9 @@ public class EventsActivity extends AppCompatActivity {
                 Timber.i("set alarm");
                 YearlyApp app = application;
                 LocalDate now = LocalDate.now();
-                Observable<TimeBeforeNotification> nextAlarmObservable = app.getRepo().timeBeforeFirstUpcomingEvent(now);
+                Observable<NotificationTime> nextAlarmObservable = app.getRepo().notificationTimeForFirstUpcomingEvent(now);
                 nextAlarmObservable.subscribeOn(Schedulers.io())
-                                    .subscribe(new AlarmGenerator(this, now));
+                                    .subscribe(new AlarmGenerator(this));
             }
         }
 

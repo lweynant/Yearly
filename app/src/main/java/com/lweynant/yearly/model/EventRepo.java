@@ -140,10 +140,10 @@ public class EventRepo {
         return observable;
     }
 
-    public Observable<TimeBeforeNotification> timeBeforeFirstUpcomingEvent(final LocalDate from) {
-        Observable<TimeBeforeNotification> time = getEvents()
-                .map(event -> Event.timeBeforeNotification(from, event))
-                .reduce((currentMin, x) -> TimeBeforeNotification.min(currentMin, x));
+    public Observable<NotificationTime> notificationTimeForFirstUpcomingEvent(final LocalDate from) {
+        Observable<NotificationTime> time = getEvents()
+                .map(event -> new NotificationTime(from, event))
+                .reduce((currentMin, x) -> NotificationTime.min(currentMin, x));
         return time;
     }
 

@@ -17,7 +17,7 @@ import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.IEventRepoListener;
-import com.lweynant.yearly.model.TimeBeforeNotification;
+import com.lweynant.yearly.model.NotificationTime;
 import com.lweynant.yearly.ui.EventViewFactory;
 import com.lweynant.yearly.ui.IEventNotificationText;
 import com.lweynant.yearly.util.Clock;
@@ -132,9 +132,9 @@ public class EventsActivityFragment extends BaseFragment implements EventsAdapte
                 .subscribe(new EventRepoSerializerToFileDecorator(app.getRepoAccessor(), new EventRepoSerializer(new Clock())));
         Timber.i("set next event");
         LocalDate now = LocalDate.now();
-        Observable<TimeBeforeNotification> nextAlarmObservable = repo.timeBeforeFirstUpcomingEvent(now);
+        Observable<NotificationTime> nextAlarmObservable = repo.notificationTimeForFirstUpcomingEvent(now);
         nextAlarmObservable.subscribeOn(Schedulers.io())
-                .subscribe(new AlarmGenerator(getContext(), now));
+                .subscribe(new AlarmGenerator(getContext()));
 
 
     }
