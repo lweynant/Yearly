@@ -1,7 +1,6 @@
 package com.lweynant.yearly.controller;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -10,11 +9,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 
+import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.lweynant.yearly.AlarmGenerator;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.YearlyApp;
 import com.lweynant.yearly.model.Birthday;
-import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.IEvent;
@@ -32,6 +32,8 @@ import timber.log.Timber;
 
 public class EventsActivity extends AppCompatActivity {
 
+    private FloatingActionsMenu menuMultipleActions;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +42,20 @@ public class EventsActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        menuMultipleActions = (FloatingActionsMenu) findViewById(R.id.multiple_actions);
+        final FloatingActionButton actionA = (FloatingActionButton) findViewById(R.id.action_add_event);
+        actionA.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                //actionA.setTitle("Action A clicked");
+                if(menuMultipleActions.isExpanded()){
+                    menuMultipleActions.collapse();
+                }
+            }
+        });
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.action_b);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -50,6 +65,7 @@ public class EventsActivity extends AppCompatActivity {
                 repo.add(new Birthday("Darth Vader", date.getMonthOfYear(), date.getDayOfMonth(), new Clock(), new UUID()));
                 Snackbar.make(view, getResources().getString(R.string.adding_events_not_supported), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+
             }
         });
     }

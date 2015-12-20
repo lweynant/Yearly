@@ -9,4 +9,6 @@
     <string name="today">vandaag</string>
     <string name="tomorrow">morgen</string>
     <string name="adding_events_not_supported">Events toevoegen is nog niet ondersteunt...</string>
+    <string name="action_add_birthday">Verjaardag</string>
+    <string name="action_add_event">Gebeurtenis</string>
 </resources>
