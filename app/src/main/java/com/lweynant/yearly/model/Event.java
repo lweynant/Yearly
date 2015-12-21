@@ -9,12 +9,17 @@ import org.joda.time.Days;
 import org.joda.time.LocalDate;
 
 public class Event implements IEvent {
+    public static final String KEY_NAME="name";
     public static final String KEY_TYPE = "type";
     public static final String KEY_DAY = "day";
     public static final String KEY_MONTH = "month";
     public static final String KEY_NBR_DAYS_FOR_NOTIFICATION = "nbr_days_for_notification";
     public static final String KEY_UID = "uuid";
     public static final String KEY_ID = "id";
+
+    @Expose
+    @SerializedName(KEY_NAME)
+    private String name;
 
     @Expose
     @SerializedName(KEY_DAY)
@@ -38,7 +43,8 @@ public class Event implements IEvent {
 
     private final IClock clock;
 
-    public Event( @Date.Month int month, int day, IClock clock, IUniqueIdGenerator uniqueIdGenerator) {
+    public Event(String name, @Date.Month int month, int day, IClock clock, IUniqueIdGenerator uniqueIdGenerator) {
+        this.name = name;
         this.day = day;
         this.month = month;
         this.clock = clock;
@@ -58,8 +64,8 @@ public class Event implements IEvent {
     }
 
     @Override
-    public String getTitle() {
-        return "";
+    public String getName() {
+        return name;
     }
 
 

@@ -14,7 +14,7 @@ public class BirthdayStringResource {
     }
 
     public String getFormattedTitle(IEvent event){
-        return String.format(rstring.getStringFromId(R.string.birthday_from), event.getTitle());
+        return String.format(rstring.getStringFromId(R.string.birthday_from), event.getName());
     }
     public String getStringFromId(int id) {
         return rstring.getStringFromId(id);

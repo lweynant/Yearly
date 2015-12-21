@@ -113,7 +113,7 @@ public class NotificationTimeTest {
     public void testDaysBeforeNotification_EventAfterFrom() throws Exception {
         LocalDate now = new LocalDate(2015, Date.MARCH, 1);
         when(clock.now()).thenReturn(now);
-        Event event = new Event(Date.MARCH, 10, clock, uniqueIdGenerator);
+        Event event = new Event("name", Date.MARCH, 10, clock, uniqueIdGenerator);
         LocalDate from = now;
         NotificationTime sut = new NotificationTime(from, event);
         assertThat(sut.getAlarmDate(), is(from.plusDays(8)));
@@ -133,7 +133,7 @@ public class NotificationTimeTest {
 
     @NonNull
     private Event getEvent(LocalDate date) {
-        return new Event(date.getMonthOfYear(), date.getDayOfMonth(), clock, uniqueIdGenerator);
+        return new Event("event name", date.getMonthOfYear(), date.getDayOfMonth(), clock, uniqueIdGenerator);
     }
 
     @Test

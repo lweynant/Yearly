@@ -16,6 +16,6 @@ public class EventInstanceCreator implements InstanceCreator<Event> {
     }
     @Override
     public Event createInstance(Type type) {
-        return new Event(Date.JANUARY, 1, clock, uniqueIdGenerator);
+        return new Event("", Date.JANUARY, 1, clock, uniqueIdGenerator);
     }
 }

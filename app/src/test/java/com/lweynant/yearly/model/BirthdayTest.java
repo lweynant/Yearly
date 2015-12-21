@@ -34,7 +34,7 @@ public class BirthdayTest {
     public void getTitle_ValidBirthday_ReturnsValidTitle() throws Exception{
 
         Birthday bd = new Birthday("John", Date.APRIL, 23, clock, uniqueIdGenerator);
-        assertThat(bd.getTitle(), is("John"));
+        assertThat(bd.getName(), is("John"));
     }
 
     @Test
@@ -144,7 +144,7 @@ public class BirthdayTest {
         builder.registerTypeAdapter(Birthday.class, new BirthdayInstanceCreator(clock, uniqueIdGenerator));
         gson = builder.create();
         Birthday readBirthday = gson.fromJson(json, Birthday.class);
-        assertThat(readBirthday.getTitle(), is("Mine"));
+        assertThat(readBirthday.getName(), is("Mine"));
         assertThat(readBirthday.getType(), is(Birthday.class.getCanonicalName()));
     }
 }

@@ -43,7 +43,7 @@ public class EventNotifier extends Subscriber<IEvent> {
     @Override
     public void onNext(IEvent event) {
         Timber.d("onNext %s", event.toString());
-        Timber.d("sending notification for %s using id %d", event.getTitle(), event.getID());
+        Timber.d("sending notification for %s using id %d", event.getName(), event.getID());
         LocalDate now = clock.now();
         LocalDate eventDate = event.getDate();
 

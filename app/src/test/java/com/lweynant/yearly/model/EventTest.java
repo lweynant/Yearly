@@ -24,6 +24,7 @@ public class EventTest {
     IClock clock;
     @Mock
     IUniqueIdGenerator uniqueIdGenerator;
+    private final String name = "event name";
 
 
     @Test
@@ -31,7 +32,7 @@ public class EventTest {
         LocalDate eventDate = new LocalDate(2015, Date.JULY, 8);
         LocalDate now = eventDate.minusDays(1);
         when(clock.now()).thenReturn(now);
-        Event event = new Event(eventDate.getMonthOfYear(), eventDate.getDayOfMonth(), clock, uniqueIdGenerator);
+        Event event = new Event(name, eventDate.getMonthOfYear(), eventDate.getDayOfMonth(), clock, uniqueIdGenerator);
         boolean notify = Event.shouldBeNotified(now, event);
     }
 
@@ -39,7 +40,7 @@ public class EventTest {
     public void testID() throws Exception{
         when(uniqueIdGenerator.getRandomUID()).thenReturn("random-id");
         when(uniqueIdGenerator.hashCode("random-id")).thenReturn(45);
-        Event event= new Event(Date.AUGUST, 20, clock, uniqueIdGenerator);
+        Event event= new Event(name, Date.AUGUST, 20, clock, uniqueIdGenerator);
 
         assertThat(event.getID(), is(45));
     }
@@ -49,8 +50,10 @@ public class EventTest {
         when(uniqueIdGenerator.getRandomUID()).thenReturn("random-id");
         when(uniqueIdGenerator.hashCode("random-id")).thenReturn(55);
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-        Event event = new Event(Date.AUGUST, 30, clock, uniqueIdGenerator);
+        String name = "event name";
+        Event event = new Event(name, Date.AUGUST, 30, clock, uniqueIdGenerator);
         String json = gson.toJson(event);
+        assertThatJson(json).node(Event.KEY_NAME).isEqualTo(name);
         assertThatJson(json).node(Event.KEY_TYPE).isEqualTo(Event.class.getCanonicalName());
         assertThatJson(json).node(Event.KEY_NBR_DAYS_FOR_NOTIFICATION).isEqualTo(1);
         assertThatJson(json).node(Event.KEY_DAY).isEqualTo(30);
@@ -66,7 +69,8 @@ public class EventTest {
         when(uniqueIdGenerator.getRandomUID()).thenReturn("random-id");
         when(uniqueIdGenerator.hashCode("random-id")).thenReturn(55);
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-        Event expectedEvent = new Event(Date.AUGUST, 30, clock, uniqueIdGenerator);
+        String name = "event name";
+        Event expectedEvent = new Event(name, Date.AUGUST, 30, clock, uniqueIdGenerator);
         String json = gson.toJson(expectedEvent);
 
 
@@ -77,7 +81,7 @@ public class EventTest {
         Event event = gson.fromJson(json, Event.class);
         assertThat(event.getType(), is(Event.class.getCanonicalName()));
         assertThat(event.getID(), is(55));
-
+        assertThat(event.getName(), is(name));
         LocalDate date = event.getDate();
         assertThat(date.getYear(), is(2015));
     }

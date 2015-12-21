@@ -101,7 +101,7 @@ public class EventRepoSerializerTest {
 
 
     private Event createEvent(int month, int day) {
-        return new Event(month, day, clock, uniqueIdGenerator);
+        return new Event("name", month, day, clock, uniqueIdGenerator);
 
     }
 }

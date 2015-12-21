@@ -8,20 +8,15 @@ import com.lweynant.yearly.util.IUniqueIdGenerator;
 
 public class Birthday extends Event {
 
-    public static final String KEY_NAME="name";
     public static final String KEY_YEAR_OF_BIRTH = "year";
 
-    @Expose
-    @SerializedName(KEY_NAME)
-    private String name;
 
     @Expose
     @SerializedName(KEY_YEAR_OF_BIRTH)
     private Integer yearOfBirth;
 
     public Birthday(String name, @Date.Month int month, int day, IClock clock, IUniqueIdGenerator uniqueIdGenerator) {
-        super(month, day, clock, uniqueIdGenerator);
-        this.name = name;
+        super(name, month, day, clock, uniqueIdGenerator);
         super.setNbrOfDaysForNotification(2);
     }
 
@@ -31,9 +26,5 @@ public class Birthday extends Event {
     }
 
 
-    @Override
-    public String getTitle() {
-        return name;
-    }
 
 }
