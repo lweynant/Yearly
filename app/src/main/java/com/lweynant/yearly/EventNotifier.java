@@ -48,7 +48,7 @@ public class EventNotifier extends Subscriber<IEvent> {
         LocalDate eventDate = event.getDate();
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-        builder.setSmallIcon(R.mipmap.ic_event_note_white_48dp);
+        builder.setSmallIcon(R.drawable.ic_cake_white_48dp);
         IEventNotificationText notifText = viewFactory.getEventNotificationText(event);
         String title = notifText.getTitle();
         String subTitle = notifText.getText();
