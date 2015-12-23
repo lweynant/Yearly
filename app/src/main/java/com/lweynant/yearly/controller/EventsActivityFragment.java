@@ -33,7 +33,7 @@ import timber.log.Timber;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class EventsActivityFragment extends BaseFragment implements EventsAdapter.onEventTypeSelectedListener, IEventRepoListener {
+public class EventsActivityFragment extends BaseFragment implements EventsAdapter.onEventTypeSelectedListener{
 
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
@@ -101,7 +101,6 @@ public class EventsActivityFragment extends BaseFragment implements EventsAdapte
         repo.addListener(eventsAdapter);
 
         eventsAdapter.checkWhetherDataNeedsToBeResorted(LocalDate.now(), repo);
-        repo.addListener(this);
 
     }
 
@@ -111,7 +110,6 @@ public class EventsActivityFragment extends BaseFragment implements EventsAdapte
         super.onPause();
         EventRepo repo = getRepo();
         repo.removeListener(eventsAdapter);
-        repo.removeListener(this);
     }
 
     @Override
@@ -122,20 +120,4 @@ public class EventsActivityFragment extends BaseFragment implements EventsAdapte
         Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    public void onDataSetChanged(EventRepo repo) {
-        Timber.d("onDataSetChanged");
-        YearlyApp app = (YearlyApp) getActivity().getApplication();
-        Observable<IEvent> events = repo.getEvents();
-        Timber.i("archive");
-        events.subscribeOn(Schedulers.io())
-                .subscribe(new EventRepoSerializerToFileDecorator(app.getRepoAccessor(), new EventRepoSerializer(new Clock())));
-        Timber.i("set next event");
-        LocalDate now = LocalDate.now();
-        Observable<NotificationTime> nextAlarmObservable = repo.notificationTimeForFirstUpcomingEvent(now);
-        nextAlarmObservable.subscribeOn(Schedulers.io())
-                .subscribe(new AlarmGenerator(getContext()));
-
-
-    }
 }

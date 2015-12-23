@@ -3,6 +3,7 @@
     package="com.lweynant.yearly">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <application
         android:name=".YearlyApp"
         android:allowBackup="true"
@@ -24,11 +25,11 @@
         <receiver
             android:name=".AlarmReceiver"
             android:enabled="true"
-            android:exported="true"></receiver>
+            android:exported="true" />
 
         <service
             android:name=".EventNotificationService"
-            android:exported="false"></service>
+            android:exported="false" />
 
         <receiver
             android:name=".BootReceiver"
@@ -37,8 +38,17 @@
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
-
         </receiver>
+
+        <activity
+            android:name=".controller.AddBirthdayActivity"
+            android:label="@string/title_activity_add_birthday"
+            android:parentActivityName=".controller.EventsActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.lweynant.yearly.controller.EventsActivity" />
+        </activity>
     </application>
 
 </manifest>

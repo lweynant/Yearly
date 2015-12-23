@@ -30,6 +30,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
     private LocalDate sortedFrom = new LocalDate(1900, 1, 1);
     private Subscription subscription;
     private EventViewFactory viewFactory;
+    private String repoId;
 
 
     public static class EventViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -71,13 +72,14 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
 
     public void checkWhetherDataNeedsToBeResorted(LocalDate now, EventRepo repo) {
         Timber.d("checkWhetherDataNeedsToBeResorted");
-        if (sortedFrom.isEqual(now)) {
+        if (sortedFrom.isEqual(now) && repo.getModificationId().equals(repoId)) {
             Timber.d("we sorted repo on same day, so nothing to do");
             return;
         } else {
-            Timber.d("sort on new date %s", now.toString());
+            Timber.d("sort on new date %s and/or id %s", now.toString(), repo.getModificationId());
             onDataSetChanged(repo);
             sortedFrom = now;
+            repoId = repo.getModificationId();
         }
     }
 

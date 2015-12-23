@@ -1,5 +1,6 @@
 package com.lweynant.yearly.controller;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -47,6 +48,12 @@ public class EventsActivity extends AppCompatActivity {
         actionA.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                YearlyApp app = (YearlyApp) getApplication();
+                EventRepo repo = app.getRepo();
+                LocalDate date = LocalDate.now();
+                repo.add(new Birthday("Darth Vader", date.getMonthOfYear(), date.getDayOfMonth(), new Clock(), new UUID()));
+                Snackbar.make(view, getResources().getString(R.string.adding_events_not_supported), Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
 
                 //actionA.setTitle("Action A clicked");
                 if(menuMultipleActions.isExpanded()){
@@ -59,12 +66,8 @@ public class EventsActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                YearlyApp app = (YearlyApp) getApplication();
-                EventRepo repo = app.getRepo();
-                LocalDate date = LocalDate.now();
-                repo.add(new Birthday("Darth Vader", date.getMonthOfYear(), date.getDayOfMonth(), new Clock(), new UUID()));
-                Snackbar.make(view, getResources().getString(R.string.adding_events_not_supported), Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent = new Intent(getApplicationContext(), AddBirthdayActivity.class);
+                startActivity(intent);
                 menuMultipleActions.collapse();
             }
         });

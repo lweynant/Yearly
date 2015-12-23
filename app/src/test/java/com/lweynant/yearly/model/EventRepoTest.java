@@ -39,6 +39,8 @@ public class EventRepoTest {
     IClock clock;
     @Mock
     IUniqueIdGenerator uniqueIdGenerator;
+    @Mock
+    EventRepoFileAccessor fileAccessor;
     private int nbrOfDaysForNotification;
     private String name;
 
@@ -46,8 +48,10 @@ public class EventRepoTest {
     public void setUp() throws Exception {
         when(clock.now()).thenReturn(new LocalDate(2015, 1, 23));
         when(clock.timestamp()).thenReturn("timestamp");
+        when(uniqueIdGenerator.getRandomUID()).thenReturn("random id");
+        when(fileAccessor.read()).thenReturn(new JsonObject());
         nbrOfDaysForNotification = 1;
-        sut = new EventRepo();
+        sut = new EventRepo(fileAccessor, clock, uniqueIdGenerator);
         name = "event name";
 
     }

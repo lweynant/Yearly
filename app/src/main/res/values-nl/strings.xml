@@ -11,4 +11,5 @@
     <string name="adding_events_not_supported">Events toevoegen is nog niet ondersteunt...</string>
     <string name="action_add_birthday">Verjaardag</string>
     <string name="action_add_event">Gebeurtenis</string>
+    <string name="first_name">Voornaam</string>
 </resources>

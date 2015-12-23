@@ -21,9 +21,10 @@ import timber.log.Timber;
 public class EventRepo {
     private EventRepoFileAccessor eventRepoFileAccessor = null;
     private IClock clock = null;
-    private IUniqueIdGenerator uniqueIdGenerator = null;
+    private final IUniqueIdGenerator uniqueIdGenerator;
     private List<IEvent> cachedEvents = Collections.synchronizedList(new ArrayList<>());
     private List<IEventRepoListener> listeners = new ArrayList<>();
+    private String uuid;
 
     public EventRepo(EventRepoFileAccessor eventRepoFileAccessor, IClock clock, IUniqueIdGenerator uniqueIdGenerator) {
         this.clock = clock;
@@ -31,15 +32,13 @@ public class EventRepo {
         this.eventRepoFileAccessor = eventRepoFileAccessor;
     }
 
-    public EventRepo() {
-
-    }
 
     public void addListener(IEventRepoListener listener) {
         listeners.add(listener);
     }
 
     private void notifyListeners(){
+        uuid = uniqueIdGenerator.getRandomUID();
         // since onChanged() is implemented by the listener, it could do anything, including
         // removing itself from {@link mObservers} - and that could cause problems if
         // an iterator is used on the ArrayList {@link listeners}.
@@ -82,19 +81,21 @@ public class EventRepo {
                     try {
                         JsonObject jsonObject = eventRepoFileAccessor.read();
                         JsonArray jsonArray = jsonObject.getAsJsonArray("events");
-                        GsonBuilder builder = new GsonBuilder()
-                                .excludeFieldsWithoutExposeAnnotation()
-                                .registerTypeAdapter(Birthday.class, new BirthdayInstanceCreator(clock, uniqueIdGenerator));
-                        Gson gson = builder.create();
-                        for (int i = 0; i < jsonArray.size(); i++) {
-                            JsonObject eventObj = jsonArray.get(i).getAsJsonObject();
-                            Event event = gson.fromJson(eventObj, Birthday.class);
-                            if (!subscriber.isUnsubscribed()) {
-                                Timber.d("calling onNext for %s", event.toString());
-                                cache.add(event);
-                                subscriber.onNext(event);
-                            } else {
-                                break;
+                        if (jsonArray != null) {
+                            GsonBuilder builder = new GsonBuilder()
+                                    .excludeFieldsWithoutExposeAnnotation()
+                                    .registerTypeAdapter(Birthday.class, new BirthdayInstanceCreator(clock, uniqueIdGenerator));
+                            Gson gson = builder.create();
+                            for (int i = 0; i < jsonArray.size(); i++) {
+                                JsonObject eventObj = jsonArray.get(i).getAsJsonObject();
+                                Event event = gson.fromJson(eventObj, Birthday.class);
+                                if (!subscriber.isUnsubscribed()) {
+                                    Timber.d("calling onNext for %s", event.toString());
+                                    cache.add(event);
+                                    subscriber.onNext(event);
+                                } else {
+                                    break;
+                                }
                             }
                         }
                         Timber.d("calling onCompleted");
@@ -149,5 +150,9 @@ public class EventRepo {
 
     public void removeListener(IEventRepoListener listener) {
         listeners.remove(listener);
+    }
+
+    public String getModificationId() {
+        return uuid;
     }
 }
