@@ -17,7 +17,7 @@ public class EventRepoFileAccessor {
     private final Context context;
 
     public EventRepoFileAccessor(Context context) {
-        Timber.d("create EventRepoFileAccessor instance");
+        Timber.d("build EventRepoFileAccessor instance");
         this.filename = "events.json";
         this.context = context;
     }

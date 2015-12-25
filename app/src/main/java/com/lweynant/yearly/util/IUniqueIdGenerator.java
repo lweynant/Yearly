@@ -1,6 +1,6 @@
 package com.lweynant.yearly.util;
 
 public interface IUniqueIdGenerator {
-    String getRandomUID();
+    String getUniqueId();
     int hashCode(String uuid);
 }

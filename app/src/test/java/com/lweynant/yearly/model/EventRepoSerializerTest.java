@@ -32,7 +32,7 @@ public class EventRepoSerializerTest {
     public void setUp() throws Exception{
         when(clock.now()).thenReturn(new LocalDate(2000, Date.FEBRUARY, 8));
         when(clock.timestamp()).thenReturn("timestamp");
-        when(uniqueIdGenerator.getRandomUID()).thenReturn("random id");
+        when(uniqueIdGenerator.getUniqueId()).thenReturn("random id");
         sut = new EventRepoSerializer(clock);
     }
     @Test

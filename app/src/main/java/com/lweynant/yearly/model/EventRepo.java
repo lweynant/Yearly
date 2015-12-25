@@ -12,7 +12,9 @@ import org.joda.time.LocalDate;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -22,14 +24,15 @@ public class EventRepo {
     private EventRepoFileAccessor eventRepoFileAccessor = null;
     private IClock clock = null;
     private final IUniqueIdGenerator uniqueIdGenerator;
-    private List<IEvent> cachedEvents = Collections.synchronizedList(new ArrayList<>());
+    private Set<IEvent> cachedEvents = Collections.synchronizedSet(new HashSet<>());
     private List<IEventRepoListener> listeners = new ArrayList<>();
-    private String uuid;
+    private String modificationId;
 
     public EventRepo(EventRepoFileAccessor eventRepoFileAccessor, IClock clock, IUniqueIdGenerator uniqueIdGenerator) {
         this.clock = clock;
         this.uniqueIdGenerator = uniqueIdGenerator;
         this.eventRepoFileAccessor = eventRepoFileAccessor;
+        this.modificationId = uniqueIdGenerator.getUniqueId();
     }
 
 
@@ -38,7 +41,7 @@ public class EventRepo {
     }
 
     private void notifyListeners(){
-        uuid = uniqueIdGenerator.getRandomUID();
+        modificationId = uniqueIdGenerator.getUniqueId();
         // since onChanged() is implemented by the listener, it could do anything, including
         // removing itself from {@link mObservers} - and that could cause problems if
         // an iterator is used on the ArrayList {@link listeners}.
@@ -50,8 +53,11 @@ public class EventRepo {
     }
 
     public EventRepo add(IEvent event) {
+        int before = cachedEvents.size();
         cachedEvents.add(event);
-        notifyListeners();
+        if (cachedEvents.size() != before) {
+            notifyListeners();
+        }
         return this;
     }
 
@@ -63,7 +69,7 @@ public class EventRepo {
 
 
     public Observable<IEvent> getEvents() {
-            if (!cachedEvents.isEmpty() || eventRepoFileAccessor == null) {
+            if (!cachedEvents.isEmpty()) {
                 return getEventsFromCache();
             } else {
                 return getEventsFromFile();
@@ -76,7 +82,7 @@ public class EventRepo {
             @Override
             public void call(Subscriber<? super IEvent> subscriber) {
                 cachedEvents = null;
-                ArrayList<IEvent> cache = new ArrayList<IEvent>();
+                Set<IEvent> cache = new HashSet<IEvent>();
                 try {
                     try {
                         JsonObject jsonObject = eventRepoFileAccessor.read();
@@ -100,7 +106,7 @@ public class EventRepo {
                         }
                         Timber.d("calling onCompleted");
                         subscriber.onCompleted();
-                        cachedEvents = Collections.synchronizedList(cache);
+                        cachedEvents = Collections.synchronizedSet(cache);
                     } catch (FileNotFoundException e) {
                         Timber.d("file not found, so we assume we have empty list");
                         subscriber.onCompleted();
@@ -153,6 +159,6 @@ public class EventRepo {
     }
 
     public String getModificationId() {
-        return uuid;
+        return modificationId;
     }
 }

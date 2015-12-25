@@ -12,4 +12,12 @@
     <string name="action_add_birthday">Verjaardag</string>
     <string name="action_add_event">Gebeurtenis</string>
     <string name="first_name">Voornaam</string>
+    <string name="birthday">Verjaardag</string>
+    <string name="last_name">Achternaam</string>
+    <string name="title_activity_add_birthday">Nw verjaardag toevoegen</string>
+    <string name="select_date">Selecteer datum</string>
+    <string name="add_birthday_for">Veraardag van %1$s toegevoegd</string>
+    <string name="nothig_added">Niets toegevoegd</string>
+    <string name="add_year">Een jaar opgeven</string>
+    <string name="apply">Instellen</string>
 </resources>

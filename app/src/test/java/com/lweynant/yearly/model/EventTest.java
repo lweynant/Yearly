@@ -38,7 +38,7 @@ public class EventTest {
 
     @Test
     public void testID() throws Exception{
-        when(uniqueIdGenerator.getRandomUID()).thenReturn("random-id");
+        when(uniqueIdGenerator.getUniqueId()).thenReturn("random-id");
         when(uniqueIdGenerator.hashCode("random-id")).thenReturn(45);
         Event event= new Event(name, Date.AUGUST, 20, clock, uniqueIdGenerator);
 
@@ -47,7 +47,7 @@ public class EventTest {
 
     @Test
     public void testSerialize() throws Exception{
-        when(uniqueIdGenerator.getRandomUID()).thenReturn("random-id");
+        when(uniqueIdGenerator.getUniqueId()).thenReturn("random-id");
         when(uniqueIdGenerator.hashCode("random-id")).thenReturn(55);
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         String name = "event name";
@@ -66,7 +66,7 @@ public class EventTest {
         LocalDate now = new LocalDate(2015, Date.MARCH, 1);
         when(clock.now()).thenReturn(now);
 
-        when(uniqueIdGenerator.getRandomUID()).thenReturn("random-id");
+        when(uniqueIdGenerator.getUniqueId()).thenReturn("random-id");
         when(uniqueIdGenerator.hashCode("random-id")).thenReturn(55);
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         String name = "event name";

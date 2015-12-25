@@ -1,13 +1,17 @@
 package com.lweynant.yearly.controller;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.lweynant.yearly.R;
+
+import timber.log.Timber;
 
 public class AddBirthdayActivity extends AppCompatActivity {
 
@@ -27,6 +31,46 @@ public class AddBirthdayActivity extends AppCompatActivity {
 //            }
 //        });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setResult(RESULT_OK, new Intent());
+    }
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Timber.d("onOptionsItemSelected");
+        if (item.getItemId() == android.R.id.home) {
+            Timber.d("item id is android.R.id.home");
+            finish();
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
+    }
+    @Override
+    protected void onResume() {
+        Timber.d("onResume");
+        super.onResume();
     }
 
+    @Override
+    protected void onPause() {
+        Timber.d("onPause");
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        Timber.d("onStop");
+        super.onStop();
+    }
+
+    @Override
+    public void finish() {
+        Timber.d("finish");
+
+        super.finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Timber.d("onBackPressed");
+        super.onBackPressed();
+    }
 }

@@ -11,7 +11,13 @@
     <string name="action_archive">archive</string>
     <string name="action_add_birthday">Add birthday</string>
     <string name="action_add_event">Add event</string>
-    <string name="title_activity_add_birthday">AddBirthdayActivity</string>
+    <string name="title_activity_add_birthday">Add birthday</string>
     <string name="first_name">First name</string>
     <string name="birthday">Birthday</string>
+    <string name="last_name">Last name</string>
+    <string name="select_date">Select date</string>
+    <string name="nothig_added">Nothing added</string>
+    <string name="add_birthday_for">Added birthday from %1$s</string>
+    <string name="add_year">Add year</string>
+    <string name="apply">apply</string>
 </resources>

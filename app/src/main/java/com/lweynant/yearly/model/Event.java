@@ -49,19 +49,15 @@ public class Event implements IEvent {
         this.month = month;
         this.clock = clock;
         this.type = getClass().getCanonicalName();
-        this.uuid = uniqueIdGenerator.getRandomUID();
+        this.uuid = uniqueIdGenerator.getUniqueId();
         this.id = uniqueIdGenerator.hashCode(uuid);
     }
 
     @Override
     public String toString() {
-        return getDate().toString();
+        return name + " - " + getDate().toString("dd/MM");
     }
 
-    @Override
-    public int hashCode() {
-        return getDate().hashCode();
-    }
 
     @Override
     public String getName() {

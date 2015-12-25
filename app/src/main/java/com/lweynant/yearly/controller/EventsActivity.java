@@ -16,6 +16,7 @@ import com.lweynant.yearly.AlarmGenerator;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.YearlyApp;
 import com.lweynant.yearly.model.Birthday;
+import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.IEvent;
@@ -51,6 +52,7 @@ public class EventsActivity extends AppCompatActivity {
                 YearlyApp app = (YearlyApp) getApplication();
                 EventRepo repo = app.getRepo();
                 LocalDate date = LocalDate.now();
+                //noinspection ResourceType
                 repo.add(new Birthday("Darth Vader", date.getMonthOfYear(), date.getDayOfMonth(), new Clock(), new UUID()));
                 Snackbar.make(view, getResources().getString(R.string.adding_events_not_supported), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
@@ -66,11 +68,46 @@ public class EventsActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), AddBirthdayActivity.class);
-                startActivity(intent);
+                Intent intent = new Intent(EventsActivity.this, AddBirthdayActivity.class);
+                Timber.d("startActivityForResult");
+                startActivityForResult(intent, 0);
                 menuMultipleActions.collapse();
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Timber.d("onActivityResult %d", resultCode);
+        if (data != null) {
+            Timber.d("inspecting the valid intent");
+            BirthdayBuilder builder = new BirthdayBuilder(new Clock(), new UUID());
+            if (data.hasExtra(AddBirthdayActivityFragment.EXTRA_KEY_NAME)) {
+                builder.setName(data.getStringExtra(AddBirthdayActivityFragment.EXTRA_KEY_NAME));
+            }
+            builder.setYear(data.getIntExtra(AddBirthdayActivityFragment.EXTRA_KEY_YEAR, 0));
+            //noinspection ResourceType
+            builder.setMonth(data.getIntExtra(AddBirthdayActivityFragment.EXTRA_KEY_MONTH, 0));
+            builder.setDay(data.getIntExtra(AddBirthdayActivityFragment.EXTRA_KEY_DAY, 0));
+            Birthday bd = builder.build();
+            if (bd != null) {
+                Timber.d("adding birthday %s", bd);
+                ((YearlyApp) getApplication()).getRepo().add(bd);
+                View view = findViewById(R.id.multiple_actions);
+                Snackbar.make(view, String.format(getResources().getString(R.string.add_birthday_for), bd.getName()), Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+            else {
+                View view = findViewById(R.id.multiple_actions);
+                Snackbar.make(view, "nothig added", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        }
+        else{
+            Timber.d("onActivityResult with null data...");
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

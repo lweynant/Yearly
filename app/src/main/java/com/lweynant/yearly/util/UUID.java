@@ -3,7 +3,7 @@ package com.lweynant.yearly.util;
 public class UUID implements IUniqueIdGenerator {
 
     @Override
-    public String getRandomUID() {
+    public String getUniqueId() {
         return java.util.UUID.randomUUID().toString();
     }
 

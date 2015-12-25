@@ -1,5 +1,6 @@
 package com.lweynant.yearly.model;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.lweynant.yearly.util.IClock;
 import com.lweynant.yearly.util.IUniqueIdGenerator;
@@ -11,23 +12,21 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
 
 import static net.javacrumbs.jsonunit.fluent.JsonFluentAssert.assertThatJson;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.collection.IsEmptyIterable.emptyIterable;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
-import static org.hamcrest.core.IsNot.not;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -48,12 +47,36 @@ public class EventRepoTest {
     public void setUp() throws Exception {
         when(clock.now()).thenReturn(new LocalDate(2015, 1, 23));
         when(clock.timestamp()).thenReturn("timestamp");
-        when(uniqueIdGenerator.getRandomUID()).thenReturn("random id");
+        when(uniqueIdGenerator.getUniqueId()).thenReturn("initial id");
         when(fileAccessor.read()).thenReturn(new JsonObject());
         nbrOfDaysForNotification = 1;
         sut = new EventRepo(fileAccessor, clock, uniqueIdGenerator);
         name = "event name";
 
+    }
+
+    @Test
+    public void getModificationId_FromEmptyRepo() throws Exception{
+        String uid = sut.getModificationId();
+        assertThat(uid, is("initial id"));
+    }
+    @Test
+    public void getModificationId_AfterAddingEvent() throws Exception{
+        IEvent anEvent = createAnEvent();
+        when(uniqueIdGenerator.getUniqueId()).thenReturn("id after adding event");
+        sut.add(anEvent);
+        assertThat(sut.getModificationId(), is("id after adding event"));
+    }
+    @Test
+    public void getModificationId_AfterRemovingEvent() throws Exception{
+        IEvent anEvent = createAnEvent();
+        when(uniqueIdGenerator.getUniqueId()).thenReturn("id after removing event");
+        sut.remove(anEvent);
+        assertThat(sut.getModificationId(), is("id after removing event"));
+    }
+
+    private IEvent createAnEvent() {
+        return new Event(name, Date.AUGUST, 2, clock, uniqueIdGenerator);
     }
 
     @Test
@@ -165,20 +188,48 @@ public class EventRepoTest {
     }
 
     @Test
-    public void getEvents_Serialize() throws Exception {
-        when(clock.now()).thenReturn(new LocalDate(2015, Date.JULY, 31));
-
-        IEvent event1 = new Event(name, Date.FEBRUARY, 8, clock, uniqueIdGenerator);
-        IEvent event2 = new Event(name, Date.AUGUST, 1, clock, uniqueIdGenerator);
-        IEvent event3 = new Event(name, Date.AUGUST, 2, clock, uniqueIdGenerator);
-        event3.setNbrOfDaysForNotification(2);
-        IEvent event4 = new Event(name, Date.NOVEMBER, 8, clock, uniqueIdGenerator);
+    public void getEvents_SerializeDeserialize() throws Exception {
+        IEvent event1 = createAnEvent("event 1");
+        IEvent event2 = createAnEvent("event 2");
+        IEvent event3 = createAnEvent("event 3");
+        IEvent event4 = createAnEvent("event 4");
         sut.add(event1).add(event2).add(event3).add(event4);
         Observable<IEvent> events = sut.getEvents();
 
         JsonObject json = serialize(events);
         assertThatJson(json).node("events").isArray().ofLength(4);
+        List<String> names = new ArrayList<>();
+        JsonArray array = json.getAsJsonArray("events");
+        for (int i = 0; i < 4; i++){
+          names.add(array.get(i).getAsJsonObject().getAsJsonPrimitive(Event.KEY_NAME).getAsString());
+        }
+        assertThat(names, containsInAnyOrder("event 1", "event 2", "event 3", "event 4"));
 
+        when(fileAccessor.read()).thenReturn(json);
+        EventRepo repo = new EventRepo(fileAccessor, clock, uniqueIdGenerator);
+        List<String> list = repo
+                .getEvents()
+                .map(event -> event.getName())
+                .toList().toBlocking().single();
+        assertThat(list, hasSize(4));
+        assertThat(list, containsInAnyOrder("event 1", "event 2", "event 3", "event 4"));
+    }
+
+    @Test
+    public void addSameEventTwice() throws Exception{
+        IEvent event = createAnEvent();
+        IEventRepoListener listener = mock(IEventRepoListener.class);
+        sut.addListener(listener);
+        sut.add(event);
+        sut.add(event);
+        List<IEvent> events = sut.getEvents().toList().toBlocking().single();
+        assertThat(events, hasSize(1));
+        assertThat(events, contains(event));
+        verify(listener, times(1)).onDataSetChanged(sut);
+    }
+
+    private IEvent createAnEvent(String name) {
+        return new Event(name, Date.DECEMBER, 23, clock, uniqueIdGenerator);
     }
 
     private JsonObject serialize(Observable<IEvent> events) {

@@ -132,6 +132,33 @@ public class BirthdayTest {
         assertThatJson(json).node(Birthday.KEY_YEAR_OF_BIRTH).isEqualTo(1966);
         assertThatJson(json).node(Birthday.KEY_TYPE).isEqualTo(Birthday.class.getCanonicalName());
     }
+    @Test
+    public void testSerializeBirthdayWithLastName() throws Exception{
+        Birthday bd = new Birthday("First", "Last", Date.FEBRUARY, 8, clock, uniqueIdGenerator);
+        GsonBuilder builder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation();
+        Gson gson = builder.create();
+        String json = gson.toJson(bd);
+        assertThatJson(json).node(Birthday.KEY_NAME).isEqualTo("First");
+        assertThatJson(json).node(Birthday.KEY_LAST_NAME).isEqualTo("Last");
+        assertThatJson(json).node(Birthday.KEY_MONTH).isEqualTo(Date.FEBRUARY);
+        assertThatJson(json).node(Birthday.KEY_DAY).isEqualTo(8);
+        assertThatJson(json).node(Birthday.KEY_YEAR_OF_BIRTH).isAbsent();
+        assertThatJson(json).node(Birthday.KEY_TYPE).isEqualTo(Birthday.class.getCanonicalName());
+        assertThatJson(json).node(Birthday.KEY_NBR_DAYS_FOR_NOTIFICATION).isEqualTo(2);
+    }
+    @Test
+    public void testSerializeBirthday_WithValidYearOfBirthAndLastName() throws Exception{
+        Birthday bd = new Birthday("First", "Last", 1966, Date.FEBRUARY, 8, clock, uniqueIdGenerator);
+        GsonBuilder builder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation();
+        Gson gson = builder.create();
+        String json = gson.toJson(bd);
+        assertThatJson(json).node(Birthday.KEY_NAME).isEqualTo("First");
+        assertThatJson(json).node(Birthday.KEY_LAST_NAME).isEqualTo("Last");
+        assertThatJson(json).node(Birthday.KEY_MONTH).isEqualTo(Date.FEBRUARY);
+        assertThatJson(json).node(Birthday.KEY_DAY).isEqualTo(8);
+        assertThatJson(json).node(Birthday.KEY_YEAR_OF_BIRTH).isEqualTo(1966);
+        assertThatJson(json).node(Birthday.KEY_TYPE).isEqualTo(Birthday.class.getCanonicalName());
+    }
 
     @Test
     public void testDeserializeBirthDay() throws Exception{

@@ -1,12 +1,11 @@
 package com.lweynant.yearly.controller;
 
-import android.app.DatePickerDialog;
+import android.app.Activity;
 import android.content.DialogInterface;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,25 +14,15 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.lweynant.yearly.AlarmGenerator;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.YearlyApp;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.EventRepo;
-import com.lweynant.yearly.model.EventRepoSerializer;
-import com.lweynant.yearly.model.IEvent;
-import com.lweynant.yearly.model.IEventRepoListener;
-import com.lweynant.yearly.model.NotificationTime;
 import com.lweynant.yearly.util.Clock;
-import com.lweynant.yearly.util.EventRepoSerializerToFileDecorator;
 import com.lweynant.yearly.util.UUID;
 
 import org.joda.time.LocalDate;
 
-import java.util.Calendar;
-
-import rx.Observable;
-import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -41,6 +30,11 @@ import timber.log.Timber;
  */
 public class AddBirthdayActivityFragment extends Fragment {
 
+    public static final int RESULT_CODE = 1288;
+    public static final String EXTRA_KEY_NAME = "name";
+    public static final String EXTRA_KEY_MONTH = "month";
+    public static final String EXTRA_KEY_DAY = "day";
+    public static final String EXTRA_KEY_YEAR = "year";
     private EditText dateView;
     private AlertDialog.Builder builder;
     private DatePicker datePicker;
@@ -52,6 +46,7 @@ public class AddBirthdayActivityFragment extends Fragment {
     private int day = 0;
     private String name = null;
     private EditText nameEditText;
+    private View fragmentView;
 
     public AddBirthdayActivityFragment() {
     }
@@ -60,10 +55,10 @@ public class AddBirthdayActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Timber.d("onCreateView");
-        View fragmentView = inflater.inflate(R.layout.fragment_add_birthday, container, false);
-        nameEditText = (EditText)fragmentView.findViewById(R.id.edit_text_name);
+        fragmentView = inflater.inflate(R.layout.fragment_add_birthday, container, false);
+        nameEditText = (EditText) fragmentView.findViewById(R.id.edit_text_name);
         builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("select date");
+        builder.setTitle(R.string.select_date);
         View dateSelectionView = inflater.inflate(R.layout.date_selection, null);
         datePicker = (DatePicker) dateSelectionView.findViewById(R.id.date_picker);
         yearSelector = (CheckBox) dateSelectionView.findViewById(R.id.checkbox_add_year);
@@ -75,7 +70,7 @@ public class AddBirthdayActivityFragment extends Fragment {
             }
         });
         builder.setView(dateSelectionView);
-        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Timber.d("pressed ok");
@@ -87,6 +82,8 @@ public class AddBirthdayActivityFragment extends Fragment {
                 int year = yearSelector.isChecked() ? datePicker.getYear() : 2015;
                 LocalDate date = new LocalDate(year, datePicker.getMonth() + 1, datePicker.getDayOfMonth());
                 dateView.setText(date.toString());
+                sendResult();
+
             }
         });
         builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -100,10 +97,11 @@ public class AddBirthdayActivityFragment extends Fragment {
         dateView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                fragmentView.requestFocus();
                 datePickerDialog.show();
             }
         });
+
         return fragmentView;
     }
 
@@ -122,26 +120,30 @@ public class AddBirthdayActivityFragment extends Fragment {
     }
 
     @Override
+    public void onStop() {
+        Timber.d("onStop");
+        super.onStop();
+    }
+
+    @Override
     public void onPause() {
         Timber.d("onPause");
+
         super.onPause();
+    }
+
+    private void sendResult() {
+        Timber.d("sendResult");
+        Intent result = new Intent();
         name = nameEditText.getText().toString();
-        if (name != null && !name.isEmpty() && month != 0 && day != 0) {
-            Birthday bd;
-            Clock clock = new Clock();
-            UUID uniqueIdGenerator = new UUID();
-            EventRepo repo = ((YearlyApp) getActivity().getApplication()).getRepo();
-            if (year == 0) {
-                bd = new Birthday(name, month, day, clock, uniqueIdGenerator);
-            } else {
-                bd = new Birthday(name, year, month, day, clock, uniqueIdGenerator);
-            }
-            Timber.i("add birthday %s", bd.toString());
-            repo.add(bd);
-            Toast.makeText(getContext(), "added birthday for " + name, Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(getContext(), "nothing added", Toast.LENGTH_SHORT).show();
+        if (name != null && !name.isEmpty()) {
+            result.putExtra(EXTRA_KEY_NAME, name);
         }
+        result.putExtra(EXTRA_KEY_MONTH, month);
+        result.putExtra(EXTRA_KEY_DAY, day);
+        result.putExtra(EXTRA_KEY_YEAR, year);
+        Timber.i("add birthday %s", name);
+        getActivity().setResult(Activity.RESULT_OK, result);
     }
 
     private void hideYear(boolean checked) {
@@ -153,7 +155,6 @@ public class AddBirthdayActivityFragment extends Fragment {
             }
         }
     }
-
 
 
 }

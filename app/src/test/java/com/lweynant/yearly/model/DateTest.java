@@ -39,4 +39,10 @@ public class DateTest {
         assertThat(date1.isBefore(to), is(true));
 
     }
+
+    @Test
+    public void testToString() throws Exception{
+        LocalDate date = new LocalDate(2015, Date.FEBRUARY, 20);
+        assertThat(date.toString("dd/MM"), is("20/02"));
+    }
 }
