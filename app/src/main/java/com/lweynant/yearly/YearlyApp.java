@@ -13,8 +13,7 @@ import com.lweynant.yearly.model.NotificationTime;
 import com.lweynant.yearly.util.Clock;
 import com.lweynant.yearly.util.EventRepoSerializerToFileDecorator;
 import com.lweynant.yearly.util.UUID;
-import com.squareup.leakcanary.LeakCanary;
-import com.squareup.leakcanary.RefWatcher;
+
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
@@ -26,7 +25,6 @@ import timber.log.Timber;
 
 public class YearlyApp extends Application implements IRString, IEventRepoListener {
     private EventRepo repo;
-    private RefWatcher refWatcher;
     private EventRepoFileAccessor repoAccessor;
 
     public EventRepo getRepo()  {
@@ -39,10 +37,6 @@ public class YearlyApp extends Application implements IRString, IEventRepoListen
         Timber.d("getRepo");
         return repo;
     }
-    public static RefWatcher getRefWatcher(Context context) {
-        YearlyApp application = (YearlyApp) context.getApplicationContext();
-        return application.refWatcher;
-    }
 
 
     @Override
@@ -53,7 +47,6 @@ public class YearlyApp extends Application implements IRString, IEventRepoListen
         }
         Timber.d("onCreate");
         JodaTimeAndroid.init(this);
-        refWatcher= LeakCanary.install(this);
         getRepo().addListener(this);
     }
 
