@@ -13,16 +13,14 @@ import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 
+import com.jakewharton.rxbinding.widget.RxTextView;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.util.Clock;
 import com.lweynant.yearly.util.UUID;
 
-import org.joda.time.LocalDate;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
+import rx.Observable;
+import rx.subscriptions.CompositeSubscription;
 import timber.log.Timber;
 
 /**
@@ -32,7 +30,9 @@ public class AddBirthdayActivityFragment extends Fragment {
 
     public static final int RESULT_CODE = 1288;
     public static final String EXTRA_KEY_BIRTHDAY = "birthday";
-    private EditText dateView;
+    private EditText dateEditText;
+    private EditText nameEditText;
+    private EditText lastNameEditText;
     private AlertDialog.Builder dialogBuilder;
     private DatePicker datePicker;
     private AlertDialog datePickerDialog;
@@ -40,8 +40,10 @@ public class AddBirthdayActivityFragment extends Fragment {
 
     private BirthdayBuilder birthdayBuilder;
 
-    private EditText nameEditText;
     private View fragmentView;
+    private CompositeSubscription subscription;
+    private Bundle birthdayBundle;
+    private Intent resultIntent;
 
     public AddBirthdayActivityFragment() {
     }
@@ -51,11 +53,17 @@ public class AddBirthdayActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         Timber.d("onCreateView");
         birthdayBuilder = new BirthdayBuilder(new Clock(), new UUID());
+        birthdayBundle = new Bundle();
+        resultIntent = new Intent();
         if (savedInstanceState != null) {
             birthdayBuilder.set(savedInstanceState);
         }
+        birthdayBuilder.archiveTo(birthdayBundle);
+        resultIntent.putExtra(EXTRA_KEY_BIRTHDAY, birthdayBundle);
+
         fragmentView = inflater.inflate(R.layout.fragment_add_birthday, container, false);
         nameEditText = (EditText) fragmentView.findViewById(R.id.edit_text_name);
+        lastNameEditText = (EditText) fragmentView.findViewById(R.id.edit_text_lastname);
         dialogBuilder = new AlertDialog.Builder(getContext());
         dialogBuilder.setTitle(R.string.select_date);
         View dateSelectionView = inflater.inflate(R.layout.date_selection, null);
@@ -80,8 +88,7 @@ public class AddBirthdayActivityFragment extends Fragment {
                     int year = datePicker.getYear();
                     birthdayBuilder.setYear(year);
                     textDate = getString(R.string.yyy_mm_dd, year, month, day);
-                }
-                else {
+                } else {
                     String[] months = getResources().getStringArray(R.array.months_day);
                     textDate = String.format(months[month], day);
                     birthdayBuilder.clearYear();
@@ -89,9 +96,8 @@ public class AddBirthdayActivityFragment extends Fragment {
                 //noinspection ResourceType
                 birthdayBuilder.setMonth(month);
                 birthdayBuilder.setDay(day);
-                dateView.setText(textDate);
-                sendResult();
-
+                dateEditText.setText(textDate);
+                birthdayBuilder.archiveTo(birthdayBundle);
             }
         });
         dialogBuilder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -101,8 +107,8 @@ public class AddBirthdayActivityFragment extends Fragment {
             }
         });
         datePickerDialog = dialogBuilder.create();
-        dateView = (EditText) fragmentView.findViewById(R.id.edit_text_birthday_date);
-        dateView.setOnClickListener(new View.OnClickListener() {
+        dateEditText = (EditText) fragmentView.findViewById(R.id.edit_text_birthday_date);
+        dateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 fragmentView.requestFocus();
@@ -114,10 +120,70 @@ public class AddBirthdayActivityFragment extends Fragment {
     }
 
     @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        Timber.d("onViewCreated");
+        super.onViewCreated(view, savedInstanceState);
+        subscription = new CompositeSubscription();
+        Observable<CharSequence> nameObservable = RxTextView.textChangeEvents(nameEditText).skip(1)
+                .map(e -> e.text());
+        Observable<CharSequence> lastNameObservable = RxTextView.textChangeEvents(lastNameEditText).skip(1)
+                .map(e -> e.text());
+        Observable<Boolean> validName = nameObservable
+                .doOnNext(t -> Timber.d("name text field %s", t))
+                .map(t -> t.length())
+                .map(l -> l > 0);
+
+
+        Observable<Boolean> validDate = RxTextView.textChangeEvents(dateEditText).skip(1)
+                .map(e -> e.text())
+                .doOnNext(t -> Timber.d("date text field %s", t))
+                .map(t -> t.length())
+                .map(l -> l > 0);
+
+
+        Observable<Boolean> enableSaveButton = Observable.combineLatest(validName, validDate, (a, b) -> a && b);
+
+        subscription.add(nameObservable
+                .subscribe(n -> {
+                    birthdayBuilder.setName(n.toString());
+                    birthdayBuilder.archiveTo(birthdayBundle);
+                }));
+        subscription.add(lastNameObservable
+                .subscribe(n -> {
+                    birthdayBuilder.setLastName(n.toString());
+                    birthdayBuilder.archiveTo(birthdayBundle);
+                }));
+
+        subscription.add(enableSaveButton.distinctUntilChanged()
+                .subscribe(enabled -> enableSaveButton(enabled)));
+
+    }
+
+    private void enableSaveButton(Boolean enabled) {
+        Timber.d("enableSaveButton %s", enabled?"true":"false");
+        //todo add a save button in the toolbar
+    }
+
+    @Override
+    public void onDestroyView() {
+        Timber.d("onDestroyView");
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        Timber.d("onDestroy");
+        super.onDestroy();
+        if (subscription != null) {
+            subscription.unsubscribe();
+        }
+    }
+
+    @Override
     public void onResume() {
         Timber.d("onResume");
         super.onResume();
-        sendResult();
+        getActivity().setResult(Activity.RESULT_OK, resultIntent);
     }
 
     @Override
@@ -141,17 +207,12 @@ public class AddBirthdayActivityFragment extends Fragment {
         super.onPause();
     }
 
-    private void sendResult() {
-        Timber.d("sendResult");
-        Intent result = new Intent();
-        birthdayBuilder.setName(nameEditText.getText().toString());
+//    private void updateResult(){
+//        Timber.d("updateResult");
+//        birthdayBuilder.archiveTo(birthdayBundle);
+//        getActivity().setResult(Activity.RESULT_OK, resultIntent);
+//    }
 
-        Bundle bundle = new Bundle();
-        birthdayBuilder.archiveTo(bundle);
-        result.putExtra(EXTRA_KEY_BIRTHDAY, bundle);
-
-        getActivity().setResult(Activity.RESULT_OK, result);
-    }
 
     private void hideYear(boolean checked) {
         int year = getContext().getResources().getIdentifier("android:id/year", null, null);

@@ -5,6 +5,8 @@ import android.os.Bundle;
 import com.lweynant.yearly.util.IClock;
 import com.lweynant.yearly.util.IUniqueIdGenerator;
 
+import timber.log.Timber;
+
 public class BirthdayBuilder {
 
     public static final String KEY_NAME = "name";
@@ -29,6 +31,7 @@ public class BirthdayBuilder {
     }
 
     public Birthday build() {
+        Timber.d("build");
         if (validName(name) && validMonth(month) && validDay(day)) {
             if (validYear(year)) {
                 return new Birthday(name, lastName, year, month, day, clock, uniquedIdGenerator);
@@ -36,6 +39,7 @@ public class BirthdayBuilder {
                 return new Birthday(name, lastName, month, day, clock, uniquedIdGenerator);
             }
         }
+        Timber.d("data incomplete, nothing build");
         return null;
     }
 
@@ -56,26 +60,31 @@ public class BirthdayBuilder {
     }
 
     public BirthdayBuilder setName(String newName) {
+        Timber.d("setName %s", newName);
         this.name = newName;
         return this;
     }
 
     public BirthdayBuilder setDay(int day) {
+        Timber.d("setDay %d",day);
         this.day = day;
         return this;
     }
 
     public BirthdayBuilder setMonth(@Date.Month int month) {
+        Timber.d("setMonth %d", month);
         this.month = month;
         return this;
     }
 
     public BirthdayBuilder setYear(int year) {
+        Timber.d("setYear %d", year);
         this.year = year;
         return this;
     }
 
     public void archiveTo(Bundle bundle) {
+        Timber.d("archiveTo bundle");
         archiveString(name, KEY_NAME, bundle);
         archiveString(lastName, KEY_LAST_NAME, bundle);
         if (validYear(year)){
@@ -108,11 +117,13 @@ public class BirthdayBuilder {
     }
 
     public BirthdayBuilder setLastName(String lastName) {
+        Timber.d("setLastName %s", lastName);
         this.lastName = lastName;
         return this;
     }
 
     public BirthdayBuilder set(Bundle bundle) {
+        Timber.d("set bundle");
         if (bundle.containsKey(KEY_NAME)){
             name = bundle.getString(KEY_NAME);
         }
@@ -133,6 +144,7 @@ public class BirthdayBuilder {
     }
 
     public BirthdayBuilder clearYear() {
+        Timber.d("clearYear");
         year = INVALID_YEAR;
         return this;
     }

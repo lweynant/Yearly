@@ -44,6 +44,6 @@ dependencies {
     compile 'com.google.code.gson:gson:2.5'
     testCompile 'net.javacrumbs.json-unit:json-unit:1.7.0'
     testCompile 'net.javacrumbs.json-unit:json-unit-fluent:1.7.0'
-
     compile 'com.getbase:floatingactionbutton:1.10.1'
+    compile 'com.jakewharton.rxbinding:rxbinding:0.3.0'
 }
