@@ -29,6 +29,7 @@ public class EventRepo {
     private String modificationId;
 
     public EventRepo(EventRepoFileAccessor eventRepoFileAccessor, IClock clock, IUniqueIdGenerator uniqueIdGenerator) {
+        Timber.d("create event repo");
         this.clock = clock;
         this.uniqueIdGenerator = uniqueIdGenerator;
         this.eventRepoFileAccessor = eventRepoFileAccessor;
@@ -42,6 +43,7 @@ public class EventRepo {
 
     private void notifyListeners(){
         modificationId = uniqueIdGenerator.getUniqueId();
+        Timber.d("notifyListeners that data set changed %s", modificationId);
         // since onChanged() is implemented by the listener, it could do anything, including
         // removing itself from {@link mObservers} - and that could cause problems if
         // an iterator is used on the ArrayList {@link listeners}.
@@ -53,6 +55,7 @@ public class EventRepo {
     }
 
     public EventRepo add(IEvent event) {
+        Timber.d("add event %s", event.toString());
         int before = cachedEvents.size();
         cachedEvents.add(event);
         if (cachedEvents.size() != before) {
@@ -62,6 +65,7 @@ public class EventRepo {
     }
 
     public EventRepo remove(IEvent event) {
+        Timber.d("remove event %s", event.toString());
         cachedEvents.remove(event);
         notifyListeners();
         return this;
@@ -81,7 +85,7 @@ public class EventRepo {
         Observable<IEvent> observable = Observable.create(new Observable.OnSubscribe<IEvent>() {
             @Override
             public void call(Subscriber<? super IEvent> subscriber) {
-                cachedEvents = null;
+                cachedEvents.clear();
                 Set<IEvent> cache = new HashSet<IEvent>();
                 try {
                     try {

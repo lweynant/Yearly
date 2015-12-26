@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="months_day">
+        <item>null %1$d</item>
+        <item>%1$d januari</item>
+        <item>%1$d februari</item>
+        <item>%1$d maart</item>
+        <item>%1$d april</item>
+        <item>%1$d mei</item>
+        <item>%1$d juni</item>
+        <item>%1$d juli</item>
+        <item>%1$d augustus</item>
+        <item>%1$d september</item>
+        <item>%1$d oktober</item>
+        <item>%1$d november</item>
+        <item>%1$d december</item>
+    </string-array>
     <string name="app_name">Yearly</string>
     <string name="action_settings">Instellingen</string>
     <string name="action_set_alarm">Zet alarm</string>
@@ -20,4 +35,6 @@
     <string name="nothig_added">Niets toegevoegd</string>
     <string name="add_year">Een jaar opgeven</string>
     <string name="apply">Instellen</string>
+    <string name="yyy_mm_dd">%3$d/%2$d/%1$d</string>
+    <string name="mm_dd">%2$d/%1$d</string>
 </resources>

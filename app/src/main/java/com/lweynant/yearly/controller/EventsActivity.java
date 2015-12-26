@@ -53,7 +53,7 @@ public class EventsActivity extends AppCompatActivity {
                 EventRepo repo = app.getRepo();
                 LocalDate date = LocalDate.now();
                 //noinspection ResourceType
-                repo.add(new Birthday("Darth Vader", date.getMonthOfYear(), date.getDayOfMonth(), new Clock(), new UUID()));
+                repo.add(new Birthday("Darth","Vader", date.getMonthOfYear(), date.getDayOfMonth(), new Clock(), new UUID()));
                 Snackbar.make(view, getResources().getString(R.string.adding_events_not_supported), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
@@ -82,25 +82,20 @@ public class EventsActivity extends AppCompatActivity {
         if (data != null) {
             Timber.d("inspecting the valid intent");
             BirthdayBuilder builder = new BirthdayBuilder(new Clock(), new UUID());
-            if (data.hasExtra(AddBirthdayActivityFragment.EXTRA_KEY_NAME)) {
-                builder.setName(data.getStringExtra(AddBirthdayActivityFragment.EXTRA_KEY_NAME));
-            }
-            builder.setYear(data.getIntExtra(AddBirthdayActivityFragment.EXTRA_KEY_YEAR, 0));
-            //noinspection ResourceType
-            builder.setMonth(data.getIntExtra(AddBirthdayActivityFragment.EXTRA_KEY_MONTH, 0));
-            builder.setDay(data.getIntExtra(AddBirthdayActivityFragment.EXTRA_KEY_DAY, 0));
-            Birthday bd = builder.build();
-            if (bd != null) {
-                Timber.d("adding birthday %s", bd);
-                ((YearlyApp) getApplication()).getRepo().add(bd);
-                View view = findViewById(R.id.multiple_actions);
-                Snackbar.make(view, String.format(getResources().getString(R.string.add_birthday_for), bd.getName()), Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-            else {
-                View view = findViewById(R.id.multiple_actions);
-                Snackbar.make(view, "nothig added", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            Bundle bundle = data.getBundleExtra(AddBirthdayActivityFragment.EXTRA_KEY_BIRTHDAY);
+            if (bundle != null) {
+                Timber.d("we have a bundle");
+                builder.set(bundle);
+                Birthday bd = builder.build();
+                if (bd != null) {
+                    Timber.d("adding birthday %s", bd);
+                    ((YearlyApp) getApplication()).getRepo().add(bd);
+                    View view = findViewById(R.id.multiple_actions);
+                    Snackbar.make(view, String.format(getResources().getString(R.string.add_birthday_for), bd.getName()), Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                } else {
+                    Timber.d("nothing added");
+                }
             }
         }
         else{

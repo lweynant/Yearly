@@ -42,12 +42,24 @@ public class Birthday extends Event {
 
     @Override
     public String toString() {
-        if (yearOfBirth == null){
+        if (yearOfBirth == null && lastName == null){
             return super.toString();
         }
         else {
-            return getName() + " - " + getDate().toString("dd/MM/") + yearOfBirth;
+            String date = getDate().toString("dd-MM");
+            String name = getName();
+            if (yearOfBirth != null) {
+                date += "-" + yearOfBirth;
+            }
+            if (lastName != null){
+                name += " " + lastName;
+            }
+            return name + " - " +date;
         }
 
+    }
+
+    public String getLastName() {
+        return lastName;
     }
 }

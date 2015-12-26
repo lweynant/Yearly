@@ -12,16 +12,16 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.lweynant.yearly.R;
-import com.lweynant.yearly.YearlyApp;
-import com.lweynant.yearly.model.Birthday;
-import com.lweynant.yearly.model.EventRepo;
+import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.util.Clock;
 import com.lweynant.yearly.util.UUID;
 
 import org.joda.time.LocalDate;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import timber.log.Timber;
 
@@ -31,20 +31,15 @@ import timber.log.Timber;
 public class AddBirthdayActivityFragment extends Fragment {
 
     public static final int RESULT_CODE = 1288;
-    public static final String EXTRA_KEY_NAME = "name";
-    public static final String EXTRA_KEY_MONTH = "month";
-    public static final String EXTRA_KEY_DAY = "day";
-    public static final String EXTRA_KEY_YEAR = "year";
+    public static final String EXTRA_KEY_BIRTHDAY = "birthday";
     private EditText dateView;
-    private AlertDialog.Builder builder;
+    private AlertDialog.Builder dialogBuilder;
     private DatePicker datePicker;
     private AlertDialog datePickerDialog;
     private CheckBox yearSelector;
 
-    private int year = 0;
-    private int month = 0;
-    private int day = 0;
-    private String name = null;
+    private BirthdayBuilder birthdayBuilder;
+
     private EditText nameEditText;
     private View fragmentView;
 
@@ -55,10 +50,14 @@ public class AddBirthdayActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Timber.d("onCreateView");
+        birthdayBuilder = new BirthdayBuilder(new Clock(), new UUID());
+        if (savedInstanceState != null) {
+            birthdayBuilder.set(savedInstanceState);
+        }
         fragmentView = inflater.inflate(R.layout.fragment_add_birthday, container, false);
         nameEditText = (EditText) fragmentView.findViewById(R.id.edit_text_name);
-        builder = new AlertDialog.Builder(getContext());
-        builder.setTitle(R.string.select_date);
+        dialogBuilder = new AlertDialog.Builder(getContext());
+        dialogBuilder.setTitle(R.string.select_date);
         View dateSelectionView = inflater.inflate(R.layout.date_selection, null);
         datePicker = (DatePicker) dateSelectionView.findViewById(R.id.date_picker);
         yearSelector = (CheckBox) dateSelectionView.findViewById(R.id.checkbox_add_year);
@@ -69,30 +68,39 @@ public class AddBirthdayActivityFragment extends Fragment {
                 hideYear(yearSelector.isChecked());
             }
         });
-        builder.setView(dateSelectionView);
-        builder.setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
+        dialogBuilder.setView(dateSelectionView);
+        dialogBuilder.setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Timber.d("pressed ok");
+                int month = datePicker.getMonth() + 1;
+                int day = datePicker.getDayOfMonth();
+                String textDate;
                 if (yearSelector.isChecked()) {
-                    year = datePicker.getYear();
+                    int year = datePicker.getYear();
+                    birthdayBuilder.setYear(year);
+                    textDate = getString(R.string.yyy_mm_dd, year, month, day);
                 }
-                month = datePicker.getMonth() + 1;
-                day = datePicker.getDayOfMonth();
-                int year = yearSelector.isChecked() ? datePicker.getYear() : 2015;
-                LocalDate date = new LocalDate(year, datePicker.getMonth() + 1, datePicker.getDayOfMonth());
-                dateView.setText(date.toString());
+                else {
+                    String[] months = getResources().getStringArray(R.array.months_day);
+                    textDate = String.format(months[month], day);
+                    birthdayBuilder.clearYear();
+                }
+                //noinspection ResourceType
+                birthdayBuilder.setMonth(month);
+                birthdayBuilder.setDay(day);
+                dateView.setText(textDate);
                 sendResult();
 
             }
         });
-        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+        dialogBuilder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Timber.d("cancel");
             }
         });
-        datePickerDialog = builder.create();
+        datePickerDialog = dialogBuilder.create();
         dateView = (EditText) fragmentView.findViewById(R.id.edit_text_birthday_date);
         dateView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,15 +117,16 @@ public class AddBirthdayActivityFragment extends Fragment {
     public void onResume() {
         Timber.d("onResume");
         super.onResume();
-        initializeEventInfo();
+        sendResult();
     }
 
-    private void initializeEventInfo() {
-        year = 0;
-        month = 0;
-        day = 0;
-        name = null;
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        Timber.d("onSaveInstanceState");
+        super.onSaveInstanceState(outState);
+        birthdayBuilder.archiveTo(outState);
     }
+
 
     @Override
     public void onStop() {
@@ -135,14 +144,12 @@ public class AddBirthdayActivityFragment extends Fragment {
     private void sendResult() {
         Timber.d("sendResult");
         Intent result = new Intent();
-        name = nameEditText.getText().toString();
-        if (name != null && !name.isEmpty()) {
-            result.putExtra(EXTRA_KEY_NAME, name);
-        }
-        result.putExtra(EXTRA_KEY_MONTH, month);
-        result.putExtra(EXTRA_KEY_DAY, day);
-        result.putExtra(EXTRA_KEY_YEAR, year);
-        Timber.i("add birthday %s", name);
+        birthdayBuilder.setName(nameEditText.getText().toString());
+
+        Bundle bundle = new Bundle();
+        birthdayBuilder.archiveTo(bundle);
+        result.putExtra(EXTRA_KEY_BIRTHDAY, bundle);
+
         getActivity().setResult(Activity.RESULT_OK, result);
     }
 

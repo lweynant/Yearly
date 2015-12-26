@@ -55,7 +55,7 @@ public class Event implements IEvent {
 
     @Override
     public String toString() {
-        return name + " - " + getDate().toString("dd/MM");
+        return name + " - " + getDate().toString("dd-MM");
     }
 
 
