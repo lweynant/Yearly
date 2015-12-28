@@ -12,7 +12,7 @@ import java.io.InputStreamReader;
 
 import timber.log.Timber;
 
-public class EventRepoFileAccessor {
+public class EventRepoFileAccessor implements IJsonFileAccessor {
     private final String filename;
     private final Context context;
 
@@ -22,6 +22,7 @@ public class EventRepoFileAccessor {
         this.context = context;
     }
 
+    @Override
     public void write(JsonObject content) throws IOException {
         Timber.d("write file %s", filename);
         synchronized (this) {
@@ -34,6 +35,7 @@ public class EventRepoFileAccessor {
         }
     }
 
+    @Override
     public JsonObject read() throws IOException {
         Timber.d("reading file %s", filename);
         synchronized (this) {

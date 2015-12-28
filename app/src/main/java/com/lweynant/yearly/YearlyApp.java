@@ -1,40 +1,58 @@
 package com.lweynant.yearly;
 
 import android.app.Application;
-import android.content.Context;
 
 
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.EventRepoFileAccessor;
+import com.lweynant.yearly.model.EventRepoModule;
 import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.IEventRepoListener;
+import com.lweynant.yearly.model.IJsonFileAccessor;
 import com.lweynant.yearly.model.NotificationTime;
 import com.lweynant.yearly.util.Clock;
+import com.lweynant.yearly.util.ClockModule;
 import com.lweynant.yearly.util.EventRepoSerializerToFileDecorator;
-import com.lweynant.yearly.util.UUID;
 
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
 import org.joda.time.LocalDate;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import dagger.Component;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class YearlyApp extends Application implements IRString, IEventRepoListener {
-    private EventRepo repo;
-    private EventRepoFileAccessor repoAccessor;
+    public void setComponent(YearlyAppComponent component) {
+        Timber.d("setComponent repo: %s fileAccessor: %s", repo==null?"null":repo.toString(), repoAccessor==null?"null": repoAccessor.toString());
+        component.inject(this);
+        Timber.d("injected component repo: %s fileAccessor: %s", repo==null?"null":repo.toString(), repoAccessor==null?"null": repoAccessor.toString());
+    }
+
+    @Singleton
+    @Component (modules = {EventRepoModule.class, ClockModule.class})
+    public interface ApplicationComponent extends YearlyAppComponent {
+
+    }
+
+    private YearlyAppComponent component = null;
+
+    @Inject EventRepo repo;
+    @Inject
+    IJsonFileAccessor repoAccessor;
 
     public EventRepo getRepo()  {
-        if (null == repo){
-            Timber.d("repo was not initialized");
-            Clock clock = new Clock();
-            UUID uuid = new UUID();
-            repo = new EventRepo(getRepoAccessor(), clock, uuid);
-        }
         Timber.d("getRepo");
+        if (repo == null){
+            component.inject(this);
+            repo.addListener(this);
+        }
         return repo;
     }
 
@@ -47,7 +65,11 @@ public class YearlyApp extends Application implements IRString, IEventRepoListen
         }
         Timber.d("onCreate");
         JodaTimeAndroid.init(this);
-        getRepo().addListener(this);
+        if (component == null) {
+            component = DaggerYearlyApp_ApplicationComponent.builder()
+                    .eventRepoModule(new EventRepoModule(this))
+                    .build();
+        }
     }
 
     @Override
@@ -63,11 +85,8 @@ public class YearlyApp extends Application implements IRString, IEventRepoListen
         return getResources().getString(id);
     }
 
-    public EventRepoFileAccessor getRepoAccessor() {
+    public IJsonFileAccessor getRepoAccessor() {
         Timber.d("getRepoAccessor");
-        if (repoAccessor == null){
-            repoAccessor = new EventRepoFileAccessor(this);
-        }
         return repoAccessor;
     }
 

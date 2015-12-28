@@ -16,19 +16,24 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import rx.Observable;
 import rx.Subscriber;
 import timber.log.Timber;
 
+
 public class EventRepo {
-    private EventRepoFileAccessor eventRepoFileAccessor = null;
+    public IJsonFileAccessor eventRepoFileAccessor = null;
     private IClock clock = null;
     private final IUniqueIdGenerator uniqueIdGenerator;
     private Set<IEvent> cachedEvents = Collections.synchronizedSet(new HashSet<>());
     private List<IEventRepoListener> listeners = new ArrayList<>();
     private String modificationId;
 
-    public EventRepo(EventRepoFileAccessor eventRepoFileAccessor, IClock clock, IUniqueIdGenerator uniqueIdGenerator) {
+
+    public EventRepo(IJsonFileAccessor eventRepoFileAccessor, IClock clock, IUniqueIdGenerator uniqueIdGenerator) {
         Timber.d("create event repo");
         this.clock = clock;
         this.uniqueIdGenerator = uniqueIdGenerator;

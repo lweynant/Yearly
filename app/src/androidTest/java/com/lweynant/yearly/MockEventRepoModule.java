@@ -1,0 +1,29 @@
+package com.lweynant.yearly;
+
+import com.lweynant.yearly.model.EventRepo;
+import com.lweynant.yearly.model.EventRepoFileAccessor;
+import com.lweynant.yearly.model.IJsonFileAccessor;
+import com.lweynant.yearly.util.IClock;
+import com.lweynant.yearly.util.IUniqueIdGenerator;
+
+import javax.inject.Singleton;
+
+import dagger.Module;
+import dagger.Provides;
+
+import static org.mockito.Mockito.mock;
+
+@Module
+public class MockEventRepoModule {
+    @Provides
+    @Singleton
+    IJsonFileAccessor provideJsonFileAcessor()
+    {
+        return mock(IJsonFileAccessor.class);
+    }
+    @Provides
+    @Singleton
+    EventRepo provideEventRepo(IJsonFileAccessor fileAccessor, IClock clock, IUniqueIdGenerator idGenerator){
+        return new EventRepo(fileAccessor, clock, idGenerator);
+    }
+}

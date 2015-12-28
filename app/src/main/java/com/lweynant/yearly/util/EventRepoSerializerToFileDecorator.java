@@ -4,16 +4,17 @@ import com.google.gson.JsonObject;
 import com.lweynant.yearly.model.EventRepoFileAccessor;
 import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.IEvent;
+import com.lweynant.yearly.model.IJsonFileAccessor;
 
 import java.io.IOException;
 
 import rx.Subscriber;
 
 public class EventRepoSerializerToFileDecorator extends Subscriber<IEvent> {
-    private EventRepoFileAccessor accessor;
+    private IJsonFileAccessor accessor;
     private final EventRepoSerializer serializer;
 
-    public EventRepoSerializerToFileDecorator(EventRepoFileAccessor accessor, EventRepoSerializer eventRepoSerializer) {
+    public EventRepoSerializerToFileDecorator(IJsonFileAccessor accessor, EventRepoSerializer eventRepoSerializer) {
         this.accessor = accessor;
         this.serializer = eventRepoSerializer;
     }
