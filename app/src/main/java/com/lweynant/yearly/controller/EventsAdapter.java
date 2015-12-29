@@ -14,6 +14,7 @@ import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -105,6 +106,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
         subscription = eventsObservable.subscribeOn(Schedulers.io())
                 .toSortedList()
                 .first()
+                //.delay(2, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<List<IEvent>>() {
                     @Override
