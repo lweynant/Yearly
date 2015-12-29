@@ -9,7 +9,6 @@ import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.NotificationTime;
 import com.lweynant.yearly.ui.EventViewFactory;
-import com.lweynant.yearly.util.Clock;
 import com.lweynant.yearly.util.IClock;
 
 import org.joda.time.LocalDate;
@@ -55,10 +54,12 @@ public class EventNotificationService extends IntentService {
 
     private void handleActionNotification() {
         Timber.d("handleActionNotification");
-        final IClock clock = new Clock();
         YearlyApp app = (YearlyApp)getApplication();
+
+        final IClock clock = app.getComponent().clock();
         EventViewFactory viewFactory = new EventViewFactory(app, clock);
-        EventRepo repo = app.getRepo();
+        EventRepo repo = app.getComponent().eventRepo();
+        Timber.d("retrieved repo from component %s", repo.toString());
 
         Observable<IEvent> eventsObservable = repo.getEvents();
         Subscription subscription = eventsObservable

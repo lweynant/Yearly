@@ -3,7 +3,13 @@ package com.lweynant.yearly.util;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import timber.log.Timber;
+
 public class Clock implements IClock {
+    public Clock() {
+        Timber.d("create the clock");
+    }
+
     @Override
     public LocalDate now() {
         return LocalDate.now();

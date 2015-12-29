@@ -1,12 +1,9 @@
 package com.lweynant.yearly;
 
 import com.lweynant.yearly.model.EventRepo;
-import com.lweynant.yearly.model.EventRepoFileAccessor;
 import com.lweynant.yearly.model.IJsonFileAccessor;
 import com.lweynant.yearly.util.IClock;
 import com.lweynant.yearly.util.IUniqueIdGenerator;
-
-import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;

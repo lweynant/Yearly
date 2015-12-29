@@ -1,7 +1,6 @@
 package com.lweynant.yearly.util;
 
 import com.google.gson.JsonObject;
-import com.lweynant.yearly.model.EventRepoFileAccessor;
 import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.IJsonFileAccessor;

@@ -16,9 +16,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import rx.Observable;
 import rx.Subscriber;
 import timber.log.Timber;
@@ -34,7 +31,7 @@ public class EventRepo {
 
 
     public EventRepo(IJsonFileAccessor eventRepoFileAccessor, IClock clock, IUniqueIdGenerator uniqueIdGenerator) {
-        Timber.d("create event repo");
+        Timber.d("create event repo with file accessor %s", eventRepoFileAccessor.toString());
         this.clock = clock;
         this.uniqueIdGenerator = uniqueIdGenerator;
         this.eventRepoFileAccessor = eventRepoFileAccessor;
@@ -46,7 +43,7 @@ public class EventRepo {
         listeners.add(listener);
     }
 
-    private void notifyListeners(){
+    private void notifyListeners() {
         modificationId = uniqueIdGenerator.getUniqueId();
         Timber.d("notifyListeners that data set changed %s", modificationId);
         // since onChanged() is implemented by the listener, it could do anything, including
@@ -78,11 +75,11 @@ public class EventRepo {
 
 
     public Observable<IEvent> getEvents() {
-            if (!cachedEvents.isEmpty()) {
-                return getEventsFromCache();
-            } else {
-                return getEventsFromFile();
-            }
+        if (!cachedEvents.isEmpty()) {
+            return getEventsFromCache();
+        } else {
+            return getEventsFromFile();
+        }
     }
 
     private Observable<IEvent> getEventsFromFile() {

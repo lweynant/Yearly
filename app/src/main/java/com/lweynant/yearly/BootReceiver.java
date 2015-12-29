@@ -21,7 +21,7 @@ public class BootReceiver extends BroadcastReceiver {
         Timber.d("onReceive");
         if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
             Timber.d("generating the alarm...");
-            EventRepo repo = ((YearlyApp) context.getApplicationContext()).getRepo();
+            EventRepo repo = ((YearlyApp) context.getApplicationContext()).getComponent().eventRepo();
 
             Observable<NotificationTime> nextAlarmObservable = repo.notificationTimeForFirstUpcomingEvent(LocalDate.now());
             nextAlarmObservable.subscribe(new AlarmGenerator(context));

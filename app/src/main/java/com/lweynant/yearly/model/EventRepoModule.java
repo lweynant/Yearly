@@ -1,14 +1,13 @@
 package com.lweynant.yearly.model;
 
-import dagger.Module;
-import dagger.Provides;
 import android.content.Context;
 
 import com.lweynant.yearly.PerApp;
-import com.lweynant.yearly.util.Clock;
 import com.lweynant.yearly.util.IClock;
 import com.lweynant.yearly.util.IUniqueIdGenerator;
-import com.lweynant.yearly.util.UUID;
+
+import dagger.Module;
+import dagger.Provides;
 
 
 @Module

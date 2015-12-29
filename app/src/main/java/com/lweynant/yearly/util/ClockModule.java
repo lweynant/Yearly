@@ -1,7 +1,8 @@
 package com.lweynant.yearly.util;
 
-import com.lweynant.yearly.PerApp;
 
+
+import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
@@ -9,10 +10,10 @@ import dagger.Provides;
 @Module
 public class ClockModule {
 
-    @Provides @PerApp IClock provideClock(){
+    @Provides @Singleton IClock provideClock(){
         return new Clock();
     }
-    @Provides @PerApp IUniqueIdGenerator provideUniqueIdGenerator(){
+    @Provides @Singleton IUniqueIdGenerator provideUniqueIdGenerator(){
         return new UUID();
     }
 }

@@ -9,24 +9,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.lweynant.yearly.AlarmGenerator;
 import com.lweynant.yearly.IRString;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.YearlyApp;
 import com.lweynant.yearly.model.EventRepo;
-import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.IEvent;
-import com.lweynant.yearly.model.IEventRepoListener;
-import com.lweynant.yearly.model.NotificationTime;
 import com.lweynant.yearly.ui.EventViewFactory;
 import com.lweynant.yearly.ui.IEventNotificationText;
-import com.lweynant.yearly.util.Clock;
-import com.lweynant.yearly.util.EventRepoSerializerToFileDecorator;
+import com.lweynant.yearly.util.IClock;
 
 import org.joda.time.LocalDate;
 
-import rx.Observable;
-import rx.schedulers.Schedulers;
+import javax.inject.Inject;
+
 import timber.log.Timber;
 
 
@@ -38,6 +33,11 @@ public class EventsActivityFragment extends BaseFragment implements EventsAdapte
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private EventsAdapter eventsAdapter;
+
+    @Inject
+    IClock clock;
+    @Inject
+    EventRepo repo;
 
     public EventsActivityFragment() {
     }
@@ -53,7 +53,10 @@ public class EventsActivityFragment extends BaseFragment implements EventsAdapte
         recyclerView.setLayoutManager(layoutManager);
         //set the adapter
         YearlyApp app = (YearlyApp) getActivity().getApplication();
-        EventViewFactory viewFactory = new EventViewFactory(app, new Clock());
+        getComponent().inject(this);
+        Timber.d("injected component");
+        Timber.d("repo: %s", repo.toString());
+        EventViewFactory viewFactory = new EventViewFactory(app, clock);
 
         eventsAdapter = new EventsAdapter(viewFactory, this);
 
@@ -71,7 +74,7 @@ public class EventsActivityFragment extends BaseFragment implements EventsAdapte
                 if (direction == ItemTouchHelper.LEFT){
                     Timber.d("removing event");
                     IEvent event = ((EventsAdapter.EventViewHolder)viewHolder).getEvent();
-                    getRepo().remove(event);
+                    repo.remove(event);
                 }
 
             }
@@ -80,10 +83,6 @@ public class EventsActivityFragment extends BaseFragment implements EventsAdapte
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
         return view;
-    }
-
-    private EventRepo getRepo() {
-        return ((YearlyApp)getActivity().getApplication()).getRepo();
     }
 
     @Override
@@ -97,7 +96,6 @@ public class EventsActivityFragment extends BaseFragment implements EventsAdapte
     public void onResume() {
         Timber.d("onResume");
         super.onResume();
-        EventRepo repo = getRepo();
         repo.addListener(eventsAdapter);
 
         eventsAdapter.checkWhetherDataNeedsToBeResorted(LocalDate.now(), repo);
@@ -108,13 +106,12 @@ public class EventsActivityFragment extends BaseFragment implements EventsAdapte
     public void onPause() {
         Timber.d("onPause");
         super.onPause();
-        EventRepo repo = getRepo();
         repo.removeListener(eventsAdapter);
     }
 
     @Override
     public void onSelected(IEvent eventType) {
-        EventViewFactory factory = new EventViewFactory((IRString) getActivity().getApplication(), new Clock());
+        EventViewFactory factory = new EventViewFactory((IRString) getActivity().getApplication(), clock);
         IEventNotificationText notifText = factory.getEventNotificationText(eventType);
         String text = notifText.getOneLiner();
         Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();

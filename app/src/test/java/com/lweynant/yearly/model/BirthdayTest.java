@@ -16,7 +16,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static net.javacrumbs.jsonunit.fluent.JsonFluentAssert.assertThatJson;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class BirthdayTest {

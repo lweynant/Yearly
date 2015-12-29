@@ -1,7 +1,6 @@
 package com.lweynant.yearly.model;
 
 import org.joda.time.LocalDate;
-import org.joda.time.Period;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;

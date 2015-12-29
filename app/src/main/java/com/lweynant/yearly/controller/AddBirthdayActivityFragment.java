@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,17 +15,17 @@ import android.widget.EditText;
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.model.BirthdayBuilder;
-import com.lweynant.yearly.util.Clock;
-import com.lweynant.yearly.util.UUID;
+import com.lweynant.yearly.util.IClock;
+import com.lweynant.yearly.util.IUniqueIdGenerator;
+
+import javax.inject.Inject;
 
 import rx.Observable;
 import rx.subscriptions.CompositeSubscription;
 import timber.log.Timber;
 
-/**
- * A placeholder fragment containing a simple view.
- */
-public class AddBirthdayActivityFragment extends Fragment {
+
+public class AddBirthdayActivityFragment extends BaseFragment {
 
     public static final int RESULT_CODE = 1288;
     public static final String EXTRA_KEY_BIRTHDAY = "birthday";
@@ -45,6 +44,11 @@ public class AddBirthdayActivityFragment extends Fragment {
     private Bundle birthdayBundle;
     private Intent resultIntent;
 
+    @Inject
+    IClock clock;
+    @Inject
+    IUniqueIdGenerator idGenerator;
+
     public AddBirthdayActivityFragment() {
     }
 
@@ -52,7 +56,8 @@ public class AddBirthdayActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Timber.d("onCreateView");
-        birthdayBuilder = new BirthdayBuilder(new Clock(), new UUID());
+        getComponent().inject(this);
+        birthdayBuilder = new BirthdayBuilder(clock, idGenerator);
         birthdayBundle = new Bundle();
         resultIntent = new Intent();
         if (savedInstanceState != null) {
@@ -206,12 +211,6 @@ public class AddBirthdayActivityFragment extends Fragment {
 
         super.onPause();
     }
-
-//    private void updateResult(){
-//        Timber.d("updateResult");
-//        birthdayBuilder.archiveTo(birthdayBundle);
-//        getActivity().setResult(Activity.RESULT_OK, resultIntent);
-//    }
 
 
     private void hideYear(boolean checked) {

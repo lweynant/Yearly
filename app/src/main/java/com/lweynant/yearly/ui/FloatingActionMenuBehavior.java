@@ -6,7 +6,6 @@ import android.support.design.widget.Snackbar;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
 public class FloatingActionMenuBehavior extends CoordinatorLayout.Behavior<FloatingActionsMenu> {

@@ -3,12 +3,10 @@ package com.lweynant.yearly.controller;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-
+import android.view.View;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
@@ -20,26 +18,40 @@ import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.IEvent;
+import com.lweynant.yearly.model.IJsonFileAccessor;
 import com.lweynant.yearly.model.NotificationTime;
-import com.lweynant.yearly.util.Clock;
 import com.lweynant.yearly.util.EventRepoSerializerToFileDecorator;
-import com.lweynant.yearly.util.UUID;
+import com.lweynant.yearly.util.IClock;
+import com.lweynant.yearly.util.IUniqueIdGenerator;
 
 import org.joda.time.LocalDate;
 
+import javax.inject.Inject;
 
 import rx.Observable;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
-public class EventsActivity extends AppCompatActivity {
+
+
+public class EventsActivity extends BaseActivity {
 
     private FloatingActionsMenu menuMultipleActions;
+    @Inject
+    IClock clock;
+    @Inject
+    IUniqueIdGenerator idGenerator;
+    @Inject
+    EventRepo repo;
+    @Inject
+    IJsonFileAccessor fileAccessor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Timber.d("onCreate");
+        getComponent().inject(this);
+        Timber.d("injected component");
         setContentView(R.layout.activity_events);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -49,11 +61,9 @@ public class EventsActivity extends AppCompatActivity {
         actionA.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                YearlyApp app = (YearlyApp) getApplication();
-                EventRepo repo = app.getRepo();
                 LocalDate date = LocalDate.now();
                 //noinspection ResourceType
-                repo.add(new Birthday("Darth","Vader", date.getMonthOfYear(), date.getDayOfMonth(), new Clock(), new UUID()));
+                repo.add(new Birthday("Darth","Vader", date.getMonthOfYear(), date.getDayOfMonth(), clock, idGenerator));
                 Snackbar.make(view, getResources().getString(R.string.adding_events_not_supported), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
@@ -81,7 +91,7 @@ public class EventsActivity extends AppCompatActivity {
         Timber.d("onActivityResult %d", resultCode);
         if (data != null) {
             Timber.d("inspecting the valid intent");
-            BirthdayBuilder builder = new BirthdayBuilder(new Clock(), new UUID());
+            BirthdayBuilder builder = new BirthdayBuilder(clock, idGenerator);
             Bundle bundle = data.getBundleExtra(AddBirthdayActivityFragment.EXTRA_KEY_BIRTHDAY);
             if (bundle != null) {
                 Timber.d("we have a bundle");
@@ -89,7 +99,7 @@ public class EventsActivity extends AppCompatActivity {
                 Birthday bd = builder.build();
                 if (bd != null) {
                     Timber.d("adding birthday %s", bd);
-                    ((YearlyApp) getApplication()).getRepo().add(bd);
+                    repo.add(bd);
                     View view = findViewById(R.id.multiple_actions);
                     Snackbar.make(view, String.format(getResources().getString(R.string.add_birthday_for), bd.getName()), Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
@@ -129,16 +139,14 @@ public class EventsActivity extends AppCompatActivity {
             YearlyApp application = (YearlyApp) getApplication();
             if (id == R.id.action_archive){
                 Timber.i("archive");
-                EventRepo repo = application.getRepo();
                 Observable<IEvent> events = repo.getEvents();
                 events.subscribeOn(Schedulers.io())
-                        .subscribe(new EventRepoSerializerToFileDecorator(application.getRepoAccessor(), new EventRepoSerializer(new Clock())));
+                        .subscribe(new EventRepoSerializerToFileDecorator(fileAccessor, new EventRepoSerializer(clock)));
             }
             else if (id == R.id.action_set_alarm){
                 Timber.i("set alarm");
-                YearlyApp app = application;
                 LocalDate now = LocalDate.now();
-                Observable<NotificationTime> nextAlarmObservable = app.getRepo().notificationTimeForFirstUpcomingEvent(now);
+                Observable<NotificationTime> nextAlarmObservable = repo.notificationTimeForFirstUpcomingEvent(now);
                 nextAlarmObservable.subscribeOn(Schedulers.io())
                                     .subscribe(new AlarmGenerator(this));
             }
