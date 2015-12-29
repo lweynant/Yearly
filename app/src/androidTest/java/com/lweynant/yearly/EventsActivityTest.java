@@ -66,7 +66,7 @@ public class EventsActivityTest {
     @Inject
     EventRepo eventRepo;
 
-    @Singleton
+    @PerApp
     @Component(modules = {ClockModule.class, MockEventRepoModule.class})
     public interface TestComponent extends YearlyAppComponent{
         void inject(EventsActivityTest eventsActivityTest);

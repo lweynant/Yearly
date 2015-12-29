@@ -16,13 +16,13 @@ import static org.mockito.Mockito.mock;
 @Module
 public class MockEventRepoModule {
     @Provides
-    @Singleton
+    @PerApp
     IJsonFileAccessor provideJsonFileAcessor()
     {
         return mock(IJsonFileAccessor.class);
     }
     @Provides
-    @Singleton
+    @PerApp
     EventRepo provideEventRepo(IJsonFileAccessor fileAccessor, IClock clock, IUniqueIdGenerator idGenerator){
         return new EventRepo(fileAccessor, clock, idGenerator);
     }

@@ -32,10 +32,10 @@ public class YearlyApp extends Application implements IRString, IEventRepoListen
     public void setComponent(YearlyAppComponent component) {
         Timber.d("setComponent repo: %s fileAccessor: %s", repo==null?"null":repo.toString(), repoAccessor==null?"null": repoAccessor.toString());
         component.inject(this);
-        Timber.d("injected component repo: %s fileAccessor: %s", repo==null?"null":repo.toString(), repoAccessor==null?"null": repoAccessor.toString());
+        Timber.d("injected component repo: %s fileAccessor: %s", repo == null ? "null" : repo.toString(), repoAccessor == null ? "null" : repoAccessor.toString());
     }
 
-    @Singleton
+    @PerApp
     @Component (modules = {EventRepoModule.class, ClockModule.class})
     public interface ApplicationComponent extends YearlyAppComponent {
 
