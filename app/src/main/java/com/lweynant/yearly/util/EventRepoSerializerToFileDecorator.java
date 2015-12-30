@@ -10,8 +10,8 @@ import java.io.IOException;
 import rx.Subscriber;
 
 public class EventRepoSerializerToFileDecorator extends Subscriber<IEvent> {
-    private IJsonFileAccessor accessor;
     private final EventRepoSerializer serializer;
+    private IJsonFileAccessor accessor;
 
     public EventRepoSerializerToFileDecorator(IJsonFileAccessor accessor, EventRepoSerializer eventRepoSerializer) {
         this.accessor = accessor;

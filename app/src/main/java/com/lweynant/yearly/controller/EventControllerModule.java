@@ -12,20 +12,15 @@ import dagger.Provides;
 
 @Module
 public class EventControllerModule {
-    @Provides
-    EventsAdapter provideEventsAdapter(EventViewFactory viewFactory) {
+    @Provides EventsAdapter provideEventsAdapter(EventViewFactory viewFactory) {
         return new EventsAdapter(viewFactory);
     }
 
-    @Provides
-    @Named("birthday_builder")
-    Bundle providesBundle() {
+    @Provides @Named("birthday_builder") Bundle providesBundle() {
         return new Bundle();
     }
 
-    @Provides
-    @Named("birthday_builder")
-    Intent providesIntent() {
+    @Provides @Named("birthday_builder") Intent providesIntent() {
         return new Intent();
     }
 }

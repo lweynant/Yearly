@@ -32,14 +32,13 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class EventRepoTest {
 
-    private EventRepo sut;
-
     @Mock
     IClock clock;
     @Mock
     IUniqueIdGenerator uniqueIdGenerator;
     @Mock
     EventRepoFileAccessor fileAccessor;
+    private EventRepo sut;
     private int nbrOfDaysForNotification;
     private String name;
 
@@ -56,19 +55,21 @@ public class EventRepoTest {
     }
 
     @Test
-    public void getModificationId_FromEmptyRepo() throws Exception{
+    public void getModificationId_FromEmptyRepo() throws Exception {
         String uid = sut.getModificationId();
         assertThat(uid, is("initial id"));
     }
+
     @Test
-    public void getModificationId_AfterAddingEvent() throws Exception{
+    public void getModificationId_AfterAddingEvent() throws Exception {
         IEvent anEvent = createAnEvent();
         when(uniqueIdGenerator.getUniqueId()).thenReturn("id after adding event");
         sut.add(anEvent);
         assertThat(sut.getModificationId(), is("id after adding event"));
     }
+
     @Test
-    public void getModificationId_AfterRemovingEvent() throws Exception{
+    public void getModificationId_AfterRemovingEvent() throws Exception {
         IEvent anEvent = createAnEvent();
         when(uniqueIdGenerator.getUniqueId()).thenReturn("id after removing event");
         sut.remove(anEvent);
@@ -112,15 +113,16 @@ public class EventRepoTest {
     }
 
     @Test
-    public void getEvents_RemoveEvent_EmptyList() throws Exception{
+    public void getEvents_RemoveEvent_EmptyList() throws Exception {
         IEvent event = new Event(name, Date.AUGUST, 4, clock, uniqueIdGenerator);
         sut.add(event);
         sut.remove(event);
         List<IEvent> events = sut.getEvents().toList().toBlocking().single();
         assertThat(events, hasSize(0));
     }
+
     @Test
-    public void getEvents_RemoveEvent() throws Exception{
+    public void getEvents_RemoveEvent() throws Exception {
         IEvent event1 = new Event(name, Date.AUGUST, 4, clock, uniqueIdGenerator);
         IEvent event2 = new Event(name, Date.AUGUST, 4, clock, uniqueIdGenerator);
         sut.add(event1).add(event2);
@@ -151,7 +153,7 @@ public class EventRepoTest {
     }
 
     @Test
-    public void getEvents_SetAlarmForEventToday() throws Exception{
+    public void getEvents_SetAlarmForEventToday() throws Exception {
         LocalDate now = new LocalDate(2015, Date.FEBRUARY, 8);
         when(clock.now()).thenReturn(now);
         IEvent event1 = new Event(name, Date.JANUARY, 5, clock, uniqueIdGenerator);
@@ -162,8 +164,9 @@ public class EventRepoTest {
         assertThat(time.getAlarmDate(), is(now));
         assertThat(time.getHour(), is(6));
     }
+
     @Test
-   public void getEvents_SetAlarmForEventTomorrow() throws Exception {
+    public void getEvents_SetAlarmForEventTomorrow() throws Exception {
         LocalDate now = new LocalDate(2015, Date.JULY, 31);
         when(clock.now()).thenReturn(now);
 
@@ -183,7 +186,7 @@ public class EventRepoTest {
     private NotificationTime getFirstUpComingEventTimeBeforeNotification(Observable<IEvent> events, final LocalDate from) {
         return events
                 .map(event -> new NotificationTime(from, event))
-                .reduce((currentMin, x) -> NotificationTime.min(currentMin, x) )
+                .reduce((currentMin, x) -> NotificationTime.min(currentMin, x))
                 .toBlocking().single();
     }
 
@@ -200,8 +203,8 @@ public class EventRepoTest {
         assertThatJson(json).node("events").isArray().ofLength(4);
         List<String> names = new ArrayList<>();
         JsonArray array = json.getAsJsonArray("events");
-        for (int i = 0; i < 4; i++){
-          names.add(array.get(i).getAsJsonObject().getAsJsonPrimitive(Event.KEY_NAME).getAsString());
+        for (int i = 0; i < 4; i++) {
+            names.add(array.get(i).getAsJsonObject().getAsJsonPrimitive(Event.KEY_NAME).getAsString());
         }
         assertThat(names, containsInAnyOrder("event 1", "event 2", "event 3", "event 4"));
 
@@ -216,7 +219,7 @@ public class EventRepoTest {
     }
 
     @Test
-    public void addSameEventTwice() throws Exception{
+    public void addSameEventTwice() throws Exception {
         IEvent event = createAnEvent();
         IEventRepoListener listener = mock(IEventRepoListener.class);
         sut.addListener(listener);

@@ -22,12 +22,12 @@ public class EventNotifier extends Subscriber<IEvent> {
     private final EventViewFactory viewFactory;
     private Context context;
 
-    public EventNotifier(EventViewFactory viewFactory, Context context, IClock clock)
-    {
+    public EventNotifier(EventViewFactory viewFactory, Context context, IClock clock) {
         this.viewFactory = viewFactory;
         this.clock = clock;
         this.context = context;
     }
+
     @Override
     public void onCompleted() {
         Timber.d("onCompleted");
@@ -58,7 +58,7 @@ public class EventNotifier extends Subscriber<IEvent> {
         Intent intent = new Intent(context, EventsActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(pendingIntent);
-        NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         nm.notify(event.getID(), builder.build());
     }
 }

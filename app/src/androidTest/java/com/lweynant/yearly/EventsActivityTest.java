@@ -49,6 +49,10 @@ import static org.mockito.Mockito.when;
 @LargeTest
 public class EventsActivityTest {
 
+    @Rule
+    public ActivityTestRule<EventsActivity> activityTestRule = new ActivityTestRule<EventsActivity>(EventsActivity.class,
+            true,  //initialTouchMode
+            false); //launchActivity. False we need to set the mock file accessor
     @Inject
     IJsonFileAccessor fileAccessor;
     @Inject
@@ -58,11 +62,10 @@ public class EventsActivityTest {
     @Inject
     IUniqueIdGenerator idGenerator;
 
-
     @Before
     public void setUp() throws IOException {
         Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
-        YearlyApp app = (YearlyApp)instrumentation.getTargetContext().getApplicationContext();
+        YearlyApp app = (YearlyApp) instrumentation.getTargetContext().getApplicationContext();
         TestPlatformModule clockComponent = DaggerEventsActivityTest_TestPlatformModule.builder()
                 .mockPlatformModule(new MockPlatformModule()).build();
 
@@ -81,29 +84,8 @@ public class EventsActivityTest {
         activityTestRule.launchActivity(new Intent());
     }
 
-    @Singleton
-    @Component(modules = MockPlatformModule.class)
-    public interface TestPlatformModule {
-        IClock clock();
-        IUniqueIdGenerator uniqueIdGenerator();
-
-        IJsonFileAccessor jsonFileAccessor();
-    }
-
-
-    @Rule
-    public ActivityTestRule<EventsActivity> activityTestRule = new ActivityTestRule<EventsActivity>(EventsActivity.class,
-            true,  //initialTouchMode
-            false); //launchActivity. False we need to set the mock file accessor
-
-    @PerApp
-    @Component(dependencies = TestPlatformModule.class, modules = {EventViewModule.class, EventModelModule.class, EventControllerModule.class})
-    public interface TestComponent extends YearlyAppComponent{
-        void inject(EventsActivityTest eventsActivityTest);
-    }
-
     @Test
-    public void testOneEventInList()  {
+    public void testOneEventInList() {
         eventRepo.add(new Birthday("John", Date.APRIL, 23, clock, idGenerator));
         onView(withText(containsString("John"))).check(matches(isDisplayed()));
     }
@@ -125,11 +107,28 @@ public class EventsActivityTest {
         onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("One")))));
         onView(withId(R.id.events_recycler_view)).check(matches(not(hasDescendant(withText(containsString("Two"))))));
     }
+
     @Test
     public void testPushAddBirthdayStartsNewActivity() throws IOException {
         onView(withId(R.id.fab_expand_menu_button)).perform(click());
         onView(withId(R.id.action_add_birthday)).perform(click());
         onView(withText(R.string.title_activity_add_birthday)).check(matches(isDisplayed()));
+    }
+
+    @Singleton
+    @Component(modules = MockPlatformModule.class)
+    public interface TestPlatformModule {
+        IClock clock();
+
+        IUniqueIdGenerator uniqueIdGenerator();
+
+        IJsonFileAccessor jsonFileAccessor();
+    }
+
+    @PerApp
+    @Component(dependencies = TestPlatformModule.class, modules = {EventViewModule.class, EventModelModule.class, EventControllerModule.class})
+    public interface TestComponent extends YearlyAppComponent {
+        void inject(EventsActivityTest eventsActivityTest);
     }
 
 }

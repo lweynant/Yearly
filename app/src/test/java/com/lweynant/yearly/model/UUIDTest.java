@@ -13,7 +13,7 @@ import static org.hamcrest.core.Is.is;
 public class UUIDTest {
 
     @Test
-    public void testUUID() throws Exception{
+    public void testUUID() throws Exception {
         UUID sut = new UUID();
 
         int hash = sut.hashCode("3997b6e5-218b-4b96-b44a-5fbdf9c32295");

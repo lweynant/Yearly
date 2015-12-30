@@ -9,13 +9,14 @@ public class BirthdayStringResource {
 
     private final IRString rstring;
 
-    BirthdayStringResource(IRString rstring){
+    BirthdayStringResource(IRString rstring) {
         this.rstring = rstring;
     }
 
-    public String getFormattedTitle(IEvent event){
+    public String getFormattedTitle(IEvent event) {
         return String.format(rstring.getStringFromId(R.string.birthday_from), event.getName());
     }
+
     public String getStringFromId(int id) {
         return rstring.getStringFromId(id);
     }

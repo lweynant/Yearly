@@ -12,15 +12,16 @@ import static org.hamcrest.core.Is.is;
 public class DateTest {
 
     @Test
-    public void testDayBeforeEventAtMiddleOfMonth() throws Exception{
+    public void testDayBeforeEventAtMiddleOfMonth() throws Exception {
         LocalDate date = new LocalDate(2015, Date.MARCH, 20);
 
         LocalDate dayBefore = date.minusDays(1);
         assertThat(dayBefore.getDayOfMonth(), is(19));
         assertThat(dayBefore.getMonthOfYear(), is(Date.MARCH));
     }
+
     @Test
-    public void testDayBeforeEventAtFirstDayOfMonth() throws Exception{
+    public void testDayBeforeEventAtFirstDayOfMonth() throws Exception {
         LocalDate date = new LocalDate(2015, Date.MARCH, 1);
 
         LocalDate dayBefore = date.minusDays(1);
@@ -29,7 +30,7 @@ public class DateTest {
     }
 
     @Test
-    public void testDays() throws Exception{
+    public void testDays() throws Exception {
         LocalDate from = new LocalDate(2015, Date.APRIL, 1);
         LocalDate to = from.plusDays(3);
         LocalDate date1 = new LocalDate(2015, Date.APRIL, 3);
@@ -40,7 +41,7 @@ public class DateTest {
     }
 
     @Test
-    public void testToString() throws Exception{
+    public void testToString() throws Exception {
         LocalDate date = new LocalDate(2015, Date.FEBRUARY, 20);
         assertThat(date.toString("dd/MM"), is("20/02"));
     }

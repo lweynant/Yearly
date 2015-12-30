@@ -20,20 +20,17 @@ public class PlatformModule {
     }
 
     @Provides
-    @Singleton
-    IJsonFileAccessor provideJsonFileAccessor() {
+    @Singleton IJsonFileAccessor provideJsonFileAccessor() {
         return new EventRepoFileAccessor(context);
     }
 
     @Provides
-    @Singleton
-    IClock provideClock() {
+    @Singleton IClock provideClock() {
         return new Clock();
     }
 
     @Provides
-    @Singleton
-    IUniqueIdGenerator provideUniqueIdGenerator() {
+    @Singleton IUniqueIdGenerator provideUniqueIdGenerator() {
         return new UUID();
     }
 }

@@ -30,6 +30,7 @@ public class AddBirthdayActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setResult(RESULT_OK, new Intent());
     }
+
     public boolean onOptionsItemSelected(MenuItem item) {
         Timber.d("onOptionsItemSelected");
         if (item.getItemId() == android.R.id.home) {
@@ -40,6 +41,7 @@ public class AddBirthdayActivity extends AppCompatActivity {
             return super.onOptionsItemSelected(item);
         }
     }
+
     @Override
     protected void onResume() {
         Timber.d("onResume");

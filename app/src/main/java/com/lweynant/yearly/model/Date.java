@@ -6,15 +6,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 public class Date {
-    //Define the list of accepted constants
-    @IntDef({JANUARY, FEBRUARY, MARCH, APRIL, MAY, JUNE, JULY, AUGUST, SEPTEMBER, OCTOBER, NOVEMBER, DECEMBER})
-
-    //Tell the compiler not to store annotation data in the .class file
-    @Retention(RetentionPolicy.SOURCE)
-
-    public @interface Month {
-    }
-
     //Declare the constants
     public static final int JANUARY = 1;
     public static final int FEBRUARY = 2;
@@ -28,5 +19,13 @@ public class Date {
     public static final int OCTOBER = 10;
     public static final int NOVEMBER = 11;
     public static final int DECEMBER = 12;
+    //Define the list of accepted constants
+    @IntDef({JANUARY, FEBRUARY, MARCH, APRIL, MAY, JUNE, JULY, AUGUST, SEPTEMBER, OCTOBER, NOVEMBER, DECEMBER})
+
+    //Tell the compiler not to store annotation data in the .class file
+    @Retention(RetentionPolicy.SOURCE)
+
+    public @interface Month {
+    }
 
 }

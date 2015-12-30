@@ -20,15 +20,14 @@ import static org.mockito.Mockito.when;
 public class EventTest {
 
 
+    private final String name = "event name";
     @Mock
     IClock clock;
     @Mock
     IUniqueIdGenerator uniqueIdGenerator;
-    private final String name = "event name";
-
 
     @Test
-    public void testShouldEventBeNotified() throws Exception{
+    public void testShouldEventBeNotified() throws Exception {
         LocalDate eventDate = new LocalDate(2015, Date.JULY, 8);
         LocalDate now = eventDate.minusDays(1);
         when(clock.now()).thenReturn(now);
@@ -37,16 +36,16 @@ public class EventTest {
     }
 
     @Test
-    public void testID() throws Exception{
+    public void testID() throws Exception {
         when(uniqueIdGenerator.getUniqueId()).thenReturn("random-id");
         when(uniqueIdGenerator.hashCode("random-id")).thenReturn(45);
-        Event event= new Event(name, Date.AUGUST, 20, clock, uniqueIdGenerator);
+        Event event = new Event(name, Date.AUGUST, 20, clock, uniqueIdGenerator);
 
         assertThat(event.getID(), is(45));
     }
 
     @Test
-    public void testSerialize() throws Exception{
+    public void testSerialize() throws Exception {
         when(uniqueIdGenerator.getUniqueId()).thenReturn("random-id");
         when(uniqueIdGenerator.hashCode("random-id")).thenReturn(55);
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
@@ -61,8 +60,9 @@ public class EventTest {
         assertThatJson(json).node(Event.KEY_UID).isEqualTo("random-id");
         assertThatJson(json).node(Event.KEY_ID).isEqualTo(55);
     }
+
     @Test
-    public void testCreateFromGson() throws Exception{
+    public void testCreateFromGson() throws Exception {
         LocalDate now = new LocalDate(2015, Date.MARCH, 1);
         when(clock.now()).thenReturn(now);
 

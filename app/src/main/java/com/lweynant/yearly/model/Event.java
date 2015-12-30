@@ -9,38 +9,20 @@ import org.joda.time.Days;
 import org.joda.time.LocalDate;
 
 public class Event implements IEvent {
-    public static final String KEY_NAME="name";
+    public static final String KEY_NAME = "name";
     public static final String KEY_TYPE = "type";
     public static final String KEY_DAY = "day";
     public static final String KEY_MONTH = "month";
     public static final String KEY_NBR_DAYS_FOR_NOTIFICATION = "nbr_days_for_notification";
     public static final String KEY_UID = "uuid";
     public static final String KEY_ID = "id";
-
-    @Expose
-    @SerializedName(KEY_NAME)
-    private String name;
-
-    @Expose
-    @SerializedName(KEY_DAY)
-    private final int day;
-    @Date.Month
-    @Expose
-    @SerializedName(KEY_MONTH)
-    private final int month;
-    @Expose
-    @SerializedName(KEY_TYPE)
-    private final String type;
-    @Expose
-    @SerializedName(KEY_UID)
-    private final String uuid;
-    @Expose
-    @SerializedName(KEY_ID)
-    public final int id;
-    @Expose
-    @SerializedName(KEY_NBR_DAYS_FOR_NOTIFICATION)
-    private int nbrDaysForNotification = 1;
-
+    @Expose @SerializedName(KEY_ID) public final int id;
+    @Expose @SerializedName(KEY_DAY) private final int day;
+    @Expose @SerializedName(KEY_MONTH) @Date.Month private final int month;
+    @Expose @SerializedName(KEY_TYPE) private final String type;
+    @Expose @SerializedName(KEY_UID) private final String uuid;
+    @Expose @SerializedName(KEY_NAME) private String name;
+    @Expose @SerializedName(KEY_NBR_DAYS_FOR_NOTIFICATION) private int nbrDaysForNotification = 1;
     private final IClock clock;
 
     public Event(String name, @Date.Month int month, int day, IClock clock, IUniqueIdGenerator uniqueIdGenerator) {
@@ -53,17 +35,20 @@ public class Event implements IEvent {
         this.id = uniqueIdGenerator.hashCode(uuid);
     }
 
+    public static boolean shouldBeNotified(LocalDate from, IEvent event) {
+        int days = Days.daysBetween(from, event.getDate()).getDays();
+        return days >= 0 && days <= event.getNbrOfDaysForNotification();
+    }
+
     @Override
     public String toString() {
         return name + " - " + getDate().toString("dd-MM");
     }
 
-
     @Override
     public String getName() {
         return name;
     }
-
 
     @Override
     public LocalDate getDate() {
@@ -80,13 +65,13 @@ public class Event implements IEvent {
     }
 
     @Override
-    public int getID() {
-        return id;
+    public void setNbrOfDaysForNotification(int days) {
+        nbrDaysForNotification = days;
     }
 
     @Override
-    public void setNbrOfDaysForNotification(int days) {
-        nbrDaysForNotification = days;
+    public int getID() {
+        return id;
     }
 
     @Override
@@ -94,15 +79,8 @@ public class Event implements IEvent {
         return type;
     }
 
-
     @Override
     public int compareTo(IEvent another) {
         return getDate().compareTo(another.getDate());
-    }
-
-
-    public static boolean shouldBeNotified(LocalDate from, IEvent event) {
-        int days = Days.daysBetween(from, event.getDate()).getDays();
-        return days >= 0 && days <= event.getNbrOfDaysForNotification();
     }
 }

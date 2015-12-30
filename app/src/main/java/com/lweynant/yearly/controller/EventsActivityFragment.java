@@ -29,19 +29,14 @@ import timber.log.Timber;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class EventsActivityFragment extends BaseFragment implements EventsAdapter.onEventTypeSelectedListener{
+public class EventsActivityFragment extends BaseFragment implements EventsAdapter.onEventTypeSelectedListener {
 
+    @Inject EventsAdapter eventsAdapter;
+    @Inject IClock clock;
+    @Inject EventRepo repo;
+    @Inject EventViewFactory viewFactory;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
-    @Inject
-    EventsAdapter eventsAdapter;
-
-    @Inject
-    IClock clock;
-    @Inject
-    EventRepo repo;
-    @Inject
-    EventViewFactory viewFactory;
 
 
     public EventsActivityFragment() {
@@ -74,9 +69,9 @@ public class EventsActivityFragment extends BaseFragment implements EventsAdapte
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                 Timber.d("onSwiped");
-                if (direction == ItemTouchHelper.LEFT){
+                if (direction == ItemTouchHelper.LEFT) {
                     Timber.d("removing event");
-                    IEvent event = ((EventsAdapter.EventViewHolder)viewHolder).getEvent();
+                    IEvent event = ((EventsAdapter.EventViewHolder) viewHolder).getEvent();
                     repo.remove(event);
                 }
 

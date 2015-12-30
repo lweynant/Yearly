@@ -33,18 +33,13 @@ import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 
-
 public class EventsActivity extends BaseActivity {
 
+    @Inject IClock clock;
+    @Inject IUniqueIdGenerator idGenerator;
+    @Inject EventRepo repo;
+    @Inject IJsonFileAccessor fileAccessor;
     private FloatingActionsMenu menuMultipleActions;
-    @Inject
-    IClock clock;
-    @Inject
-    IUniqueIdGenerator idGenerator;
-    @Inject
-    EventRepo repo;
-    @Inject
-    IJsonFileAccessor fileAccessor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,12 +57,12 @@ public class EventsActivity extends BaseActivity {
             public void onClick(View view) {
                 LocalDate date = LocalDate.now();
                 //noinspection ResourceType
-                repo.add(new Birthday("Darth","Vader", date.getMonthOfYear(), date.getDayOfMonth(), clock, idGenerator));
+                repo.add(new Birthday("Darth", "Vader", date.getMonthOfYear(), date.getDayOfMonth(), clock, idGenerator));
                 Snackbar.make(view, getResources().getString(R.string.adding_events_not_supported), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
                 //actionA.setTitle("Action A clicked");
-                if(menuMultipleActions.isExpanded()){
+                if (menuMultipleActions.isExpanded()) {
                     menuMultipleActions.collapse();
                 }
             }
@@ -111,8 +106,7 @@ public class EventsActivity extends BaseActivity {
                     Timber.d("nothing added");
                 }
             }
-        }
-        else{
+        } else {
             Timber.d("onActivityResult with null data...");
         }
 
@@ -138,20 +132,18 @@ public class EventsActivity extends BaseActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
-        }
-        else {
-            if (id == R.id.action_archive){
+        } else {
+            if (id == R.id.action_archive) {
                 Timber.i("archive");
                 Observable<IEvent> events = repo.getEvents();
                 events.subscribeOn(Schedulers.io())
                         .subscribe(new EventRepoSerializerToFileDecorator(fileAccessor, new EventRepoSerializer(clock)));
-            }
-            else if (id == R.id.action_set_alarm){
+            } else if (id == R.id.action_set_alarm) {
                 Timber.i("set alarm");
                 LocalDate now = LocalDate.now();
                 Observable<NotificationTime> nextAlarmObservable = repo.notificationTimeForFirstUpcomingEvent(now);
                 nextAlarmObservable.subscribeOn(Schedulers.io())
-                                    .subscribe(new AlarmGenerator(this));
+                        .subscribe(new AlarmGenerator(this));
             }
         }
 

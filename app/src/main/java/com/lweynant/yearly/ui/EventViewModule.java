@@ -14,8 +14,7 @@ public class EventViewModule {
         this.rstring = rstring;
     }
 
-    @Provides
-    EventViewFactory provideEventViewFactory(IClock clock) {
+    @Provides EventViewFactory provideEventViewFactory(IClock clock) {
         return new EventViewFactory(rstring, clock);
     }
 }

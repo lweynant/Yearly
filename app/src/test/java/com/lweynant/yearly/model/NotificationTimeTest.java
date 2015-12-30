@@ -43,6 +43,7 @@ public class NotificationTimeTest {
         assertThat(sut.getAlarmDate(), is(now));
         assertThat(sut.getHour(), is(NotificationTime.EVENING));
     }
+
     @Test
     public void test_getAlarmDateAndHour_EventIsInFuture() throws Exception {
         LocalDate now = new LocalDate(2015, Date.FEBRUARY, 23);
@@ -54,6 +55,7 @@ public class NotificationTimeTest {
         assertThat(sut.getAlarmDate(), is(future.minusDays(event.getNbrOfDaysForNotification())));
         assertThat(sut.getHour(), is(NotificationTime.EVENING));
     }
+
     @Test
     public void test_getAlarmDateAndHour_EventIsYesterday() throws Exception {
         LocalDate now = new LocalDate(2015, Date.FEBRUARY, 23);
@@ -65,6 +67,7 @@ public class NotificationTimeTest {
         assertThat(sut.getAlarmDate(), is(yesterday.plusYears(1).minusDays(event.getNbrOfDaysForNotification())));
         assertThat(sut.getHour(), is(NotificationTime.EVENING));
     }
+
     @Test
     public void test_isBefore_OtherIsSame() throws Exception {
         LocalDate now = new LocalDate(2015, Date.FEBRUARY, 23);

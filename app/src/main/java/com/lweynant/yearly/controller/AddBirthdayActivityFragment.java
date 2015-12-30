@@ -29,8 +29,14 @@ import timber.log.Timber;
 
 public class AddBirthdayActivityFragment extends BaseFragment {
 
-    public static final int RESULT_CODE = 1288;
     public static final String EXTRA_KEY_BIRTHDAY = "birthday";
+
+
+    @Inject BirthdayBuilder birthdayBuilder;
+    @Inject @Named("birthday_builder") Bundle birthdayBundle;
+    @Inject @Named("birthday_builder") Intent resultIntent;
+    @Inject IClock clock;
+    @Inject IUniqueIdGenerator idGenerator;
     private EditText dateEditText;
     private EditText nameEditText;
     private EditText lastNameEditText;
@@ -38,23 +44,8 @@ public class AddBirthdayActivityFragment extends BaseFragment {
     private DatePicker datePicker;
     private AlertDialog datePickerDialog;
     private CheckBox yearSelector;
-
-    @Inject
-    BirthdayBuilder birthdayBuilder;
-    @Inject
-    @Named("birthday_builder")
-    Bundle birthdayBundle;
-    @Inject
-    @Named("birthday_builder")
-    Intent resultIntent;
-
     private View fragmentView;
     private CompositeSubscription subscription;
-
-    @Inject
-    IClock clock;
-    @Inject
-    IUniqueIdGenerator idGenerator;
 
     public AddBirthdayActivityFragment() {
     }

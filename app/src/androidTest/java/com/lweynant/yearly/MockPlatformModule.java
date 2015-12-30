@@ -14,21 +14,18 @@ import static org.mockito.Mockito.mock;
 @Module
 public class MockPlatformModule {
     @Provides
-    @Singleton
-    IClock provideClock() {
+    @Singleton IClock provideClock() {
         return mock(IClock.class);
     }
 
     @Provides
-    @Singleton
-    IUniqueIdGenerator provideUniqueIdGenerator() {
+    @Singleton IUniqueIdGenerator provideUniqueIdGenerator() {
         return mock(IUniqueIdGenerator.class);
     }
 
 
     @Provides
-    @Singleton
-    IJsonFileAccessor provideJsonFileAccessor() {
+    @Singleton IJsonFileAccessor provideJsonFileAccessor() {
         return mock(IJsonFileAccessor.class);
     }
 

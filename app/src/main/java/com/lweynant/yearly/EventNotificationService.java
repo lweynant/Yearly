@@ -26,6 +26,10 @@ public class EventNotificationService extends IntentService {
     // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
     private static final String ACTION_NOTIFY = "com.lweynant.yearly.action.ACTION-NOTIFY";
 
+    public EventNotificationService() {
+        super("EventNotificationService");
+    }
+
     /**
      * Starts this service to perform action Foo with the given parameters. If
      * the service is already performing a task this action will be queued.
@@ -36,9 +40,6 @@ public class EventNotificationService extends IntentService {
         Intent intent = new Intent(context, EventNotificationService.class);
         intent.setAction(ACTION_NOTIFY);
         context.startService(intent);
-    }
-    public EventNotificationService() {
-        super("EventNotificationService");
     }
 
     @Override
@@ -54,7 +55,7 @@ public class EventNotificationService extends IntentService {
 
     private void handleActionNotification() {
         Timber.d("handleActionNotification");
-        YearlyApp app = (YearlyApp)getApplication();
+        YearlyApp app = (YearlyApp) getApplication();
 
         final IClock clock = app.getComponent().clock();
         EventViewFactory viewFactory = new EventViewFactory(app, clock);

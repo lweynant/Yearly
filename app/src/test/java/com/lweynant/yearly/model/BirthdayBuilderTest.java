@@ -68,6 +68,7 @@ public class BirthdayBuilderTest {
         assertThat(bd, instanceOf(Birthday.class));
         assertThat(bd, is(birthday("name", Date.APRIL, 20)));
     }
+
     @Test
     public void testBuildTwiceGivesOtherInstance() throws Exception {
         sut.setName("name");
@@ -78,7 +79,7 @@ public class BirthdayBuilderTest {
     }
 
     @Test
-    public void testBuildValidBirthDayWithLastName() throws Exception{
+    public void testBuildValidBirthDayWithLastName() throws Exception {
         sut.setName("Joe").setLastName("Doe").setMonth(Date.APRIL).setDay(22);
         Birthday bd = sut.build();
         assertThat(bd, is(birthday("Joe", "Doe", Date.APRIL, 22)));
@@ -104,6 +105,7 @@ public class BirthdayBuilderTest {
         verify(bundle, times(1)).remove(BirthdayBuilder.KEY_LAST_NAME);
         verifyNoMoreInteractions(bundle);
     }
+
     @Test
     public void testArchiveCompleteBirthdayToBundle() throws Exception {
         sut.setName("Joe").setLastName("Doe").setYear(1966).setMonth(Date.DECEMBER).setDay(20);
@@ -118,14 +120,15 @@ public class BirthdayBuilderTest {
     }
 
     @Test
-    public void testSetFromEmptyBundle() throws Exception{
+    public void testSetFromEmptyBundle() throws Exception {
         Bundle bundle = mock(Bundle.class);
         sut.set(bundle);
         Birthday bd = sut.build();
         assertNull(bd);
     }
+
     @Test
-    public void testSetFromMinimalBundle() throws Exception{
+    public void testSetFromMinimalBundle() throws Exception {
         Bundle bundle = mock(Bundle.class);
         when(bundle.containsKey(BirthdayBuilder.KEY_NAME)).thenReturn(true);
         when(bundle.getString(BirthdayBuilder.KEY_NAME)).thenReturn("Fred");
@@ -137,8 +140,9 @@ public class BirthdayBuilderTest {
         Birthday bd = sut.build();
         assertThat(bd, is(birthday("Fred", Date.APRIL, 21)));
     }
+
     @Test
-    public void testSetFromCompleteBundle() throws Exception{
+    public void testSetFromCompleteBundle() throws Exception {
         Bundle bundle = mock(Bundle.class);
         when(bundle.containsKey(BirthdayBuilder.KEY_NAME)).thenReturn(true);
         when(bundle.getString(BirthdayBuilder.KEY_NAME)).thenReturn("Fred");
@@ -152,7 +156,7 @@ public class BirthdayBuilderTest {
         when(bundle.getInt(BirthdayBuilder.KEY_DAY)).thenReturn(21);
         sut.set(bundle);
         Birthday bd = sut.build();
-        assertThat(bd, is(birthday("Fred", "Flinstone", 1500,  Date.APRIL, 21)));
+        assertThat(bd, is(birthday("Fred", "Flinstone", 1500, Date.APRIL, 21)));
     }
 
 }

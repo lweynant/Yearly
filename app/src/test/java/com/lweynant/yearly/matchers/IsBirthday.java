@@ -31,6 +31,26 @@ public class IsBirthday extends TypeSafeMatcher<Birthday> {
 
     }
 
+    @Factory
+    public static <T> Matcher<Birthday> birthday(String name, @Date.Month int month, int day) {
+        return new IsBirthday(name, INVALID_YEAR, month, day);
+    }
+
+    @Factory
+    public static <T> Matcher<Birthday> birthday(String name, int year, @Date.Month int month, int day) {
+        return new IsBirthday(name, year, month, day);
+    }
+
+    @Factory
+    public static <T> Matcher<Birthday> birthday(String name, String lastName, @Date.Month int month, int day) {
+        return new IsBirthday(name, lastName, INVALID_YEAR, month, day);
+    }
+
+    @Factory
+    public static <T> Matcher<Birthday> birthday(String name, String lastName, int year, @Date.Month int month, int day) {
+        return new IsBirthday(name, lastName, year, month, day);
+    }
+
     @Override
     protected boolean matchesSafely(Birthday actual) {
         LocalDate actualDate = actual.getDate();
@@ -40,14 +60,13 @@ public class IsBirthday extends TypeSafeMatcher<Birthday> {
             } else {
                 return actual.getYear() == year;
             }
-        }
-        else {
+        } else {
             return false;
         }
     }
 
     private boolean sameLastName(Birthday actual) {
-        if (actual.getLastName()==null) return lastName == null;
+        if (actual.getLastName() == null) return lastName == null;
         else return actual.getLastName().equals(lastName);
     }
 
@@ -61,24 +80,6 @@ public class IsBirthday extends TypeSafeMatcher<Birthday> {
     }
 
     private String getValidLastName(String lastName) {
-        return lastName == null? "":lastName;
-    }
-
-    @Factory
-    public static <T> Matcher<Birthday> birthday(String name, @Date.Month int month, int day) {
-        return new IsBirthday(name, INVALID_YEAR, month, day);
-    }
-
-    @Factory
-    public static <T> Matcher<Birthday> birthday(String name, int year, @Date.Month int month, int day) {
-        return new IsBirthday(name, year, month, day);
-    }
-    @Factory
-    public static <T> Matcher<Birthday> birthday(String name, String lastName, @Date.Month int month, int day) {
-        return new IsBirthday(name, lastName, INVALID_YEAR, month, day);
-    }
-    @Factory
-    public static <T> Matcher<Birthday> birthday(String name, String lastName, int year,  @Date.Month int month, int day) {
-        return new IsBirthday(name, lastName, year, month, day);
+        return lastName == null ? "" : lastName;
     }
 }

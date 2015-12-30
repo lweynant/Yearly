@@ -28,14 +28,15 @@ public class EventRepoSerializerTest {
     private EventRepoSerializer sut;
 
     @Before
-    public void setUp() throws Exception{
+    public void setUp() throws Exception {
         when(clock.now()).thenReturn(new LocalDate(2000, Date.FEBRUARY, 8));
         when(clock.timestamp()).thenReturn("timestamp");
         when(uniqueIdGenerator.getUniqueId()).thenReturn("random id");
         sut = new EventRepoSerializer(clock);
     }
+
     @Test
-    public void testEmpty() throws Exception{
+    public void testEmpty() throws Exception {
         sut.onCompleted();
 
         assertThat(sut.isSerialized(), is(true));
@@ -48,7 +49,7 @@ public class EventRepoSerializerTest {
     }
 
     @Test
-    public void testOneEvent() throws Exception{
+    public void testOneEvent() throws Exception {
         Event event = createEvent(Date.APRIL, 20);
         sut.onNext(event);
         sut.onCompleted();
@@ -60,7 +61,7 @@ public class EventRepoSerializerTest {
     }
 
     @Test
-    public void test2Events() throws Exception{
+    public void test2Events() throws Exception {
         sut.onNext(createEvent(Date.AUGUST, 23));
         sut.onNext(createEvent(Date.JANUARY, 3));
         sut.onCompleted();
@@ -71,8 +72,9 @@ public class EventRepoSerializerTest {
         assertThatJson(json).node("events[0].month").isEqualTo(Date.AUGUST);
         assertThatJson(json).node("events[1].month").isEqualTo(Date.JANUARY);
     }
+
     @Test
-        public void testDeserialize_prototype() throws Exception{
+    public void testDeserialize_prototype() throws Exception {
         sut.onNext(createEvent(Date.AUGUST, 23));
         sut.onNext(createEvent(Date.JANUARY, 3));
         sut.onCompleted();
@@ -92,7 +94,7 @@ public class EventRepoSerializerTest {
     }
 
     @Test
-    public void testOnError_Empty() throws Exception{
+    public void testOnError_Empty() throws Exception {
         sut.onError(new Throwable());
 
         assertThat(sut.isSerialized(), is(false));

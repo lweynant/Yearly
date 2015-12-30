@@ -14,30 +14,31 @@ public class EventViewFactory {
     private final IRString rstring;
     private final IClock clock;
 
-    public EventViewFactory(IRString rstring, IClock clock){
+    public EventViewFactory(IRString rstring, IClock clock) {
         this.rstring = rstring;
         this.clock = clock;
     }
+
     public IEventListElementView getEventListElementView(IEvent event) {
         return null;
     }
 
     public IEventListElementView getEventListElementView(ViewGroup parent, int eventType) {
-        if (eventType == BIRTHDAY_LIST_ELEMENT_VIEW_TYPE){
+        if (eventType == BIRTHDAY_LIST_ELEMENT_VIEW_TYPE) {
             return new BirthdayListElementView(rstring, parent);
         }
         return null;
     }
 
     public int getEventListElementViewType(IEvent event) {
-        if (event.getType().equals(Birthday.class.getCanonicalName())){
-           return BIRTHDAY_LIST_ELEMENT_VIEW_TYPE;
+        if (event.getType().equals(Birthday.class.getCanonicalName())) {
+            return BIRTHDAY_LIST_ELEMENT_VIEW_TYPE;
         }
         return EVENT_LIST_ELEMENT_VIEW_TYPE;
     }
 
-    public IEventNotificationText getEventNotificationText(IEvent event){
-        if (event.getType().equals(Birthday.class.getCanonicalName())){
+    public IEventNotificationText getEventNotificationText(IEvent event) {
+        if (event.getType().equals(Birthday.class.getCanonicalName())) {
             return new BirthdayEventNotificationText(event, rstring, clock);
         }
         return null;

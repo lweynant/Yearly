@@ -10,7 +10,7 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
 public class FloatingActionMenuBehavior extends CoordinatorLayout.Behavior<FloatingActionsMenu> {
 
-    public FloatingActionMenuBehavior(Context context, AttributeSet attributeSet){
+    public FloatingActionMenuBehavior(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
     }
 
@@ -29,6 +29,7 @@ public class FloatingActionMenuBehavior extends CoordinatorLayout.Behavior<Float
         }
         return true;
     }
+
     @Override
     public void onDependentViewRemoved(CoordinatorLayout parent, FloatingActionsMenu child, View dependency) {
         super.onDependentViewRemoved(parent, child, dependency);

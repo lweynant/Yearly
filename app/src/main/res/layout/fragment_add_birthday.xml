@@ -16,51 +16,50 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"
-        >
+        android:layout_marginTop="8dp">
 
         <EditText
             android:id="@+id/edit_text_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/text_setting_sp"
             android:hint="@string/first_name"
-            android:inputType="textPersonName|textCapWords" />
+            android:inputType="textPersonName|textCapWords"
+            android:textSize="@dimen/text_setting_sp" />
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/text_input_layout_lastname"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp">
 
         <EditText
             android:id="@+id/edit_text_lastname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/text_setting_sp"
             android:hint="@string/last_name"
-            android:inputType="textPersonName|textCapWords" />
+            android:inputType="textPersonName|textCapWords"
+            android:textSize="@dimen/text_setting_sp" />
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/text_input_layout_date"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_height="wrap_content">
+        android:layout_marginTop="8dp">
 
         <EditText
             android:id="@+id/edit_text_birthday_date"
             style="@style/Widget.AppCompat.Spinner.Underlined"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/text_setting_sp"
             android:focusable="false"
             android:hint="@string/birthday"
+            android:inputType="date"
             android:paddingTop="8dp"
-            android:inputType="date" />
+            android:textSize="@dimen/text_setting_sp" />
     </android.support.design.widget.TextInputLayout>
 
 

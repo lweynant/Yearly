@@ -17,6 +17,7 @@ import static net.javacrumbs.jsonunit.fluent.JsonFluentAssert.assertThatJson;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
+
 @RunWith(MockitoJUnitRunner.class)
 public class BirthdayTest {
 
@@ -25,19 +26,21 @@ public class BirthdayTest {
     IClock clock;
     @Mock
     IUniqueIdGenerator uniqueIdGenerator;
+
     @Before
-    public void setUp(){
+    public void setUp() {
         when(clock.now()).thenReturn(new LocalDate(2015, 8, 9));
     }
+
     @Test
-    public void getTitle_ValidBirthday_ReturnsValidTitle() throws Exception{
+    public void getTitle_ValidBirthday_ReturnsValidTitle() throws Exception {
 
         Birthday bd = new Birthday("John", Date.APRIL, 23, clock, uniqueIdGenerator);
         assertThat(bd.getName(), is("John"));
     }
 
     @Test
-    public  void getDate_ValidBirthday_ReturnsValidDayAndMonth() throws Exception{
+    public void getDate_ValidBirthday_ReturnsValidDayAndMonth() throws Exception {
         int day = 23;
         @Date.Month int month = Date.FEBRUARY;
         Birthday bd = new Birthday("John", month, day, clock, uniqueIdGenerator);
@@ -46,7 +49,7 @@ public class BirthdayTest {
     }
 
     @Test
-    public void getDate_SameAsNow() throws Exception{
+    public void getDate_SameAsNow() throws Exception {
         LocalDate now = new LocalDate(2013, 7, 23);
         when(clock.now()).thenReturn(now);
         Birthday bd = new Birthday("Fred", now.getMonthOfYear(), now.getDayOfMonth(), clock, uniqueIdGenerator);
@@ -55,34 +58,37 @@ public class BirthdayTest {
     }
 
     @Test
-    public void getDate_AfterNow() throws Exception{
+    public void getDate_AfterNow() throws Exception {
         LocalDate now = new LocalDate(2014, 6, 5);
         when(clock.now()).thenReturn(now);
-        Birthday bd = new Birthday("Joe", now.getMonthOfYear(), now.getDayOfMonth() + 1 , clock, uniqueIdGenerator);
+        Birthday bd = new Birthday("Joe", now.getMonthOfYear(), now.getDayOfMonth() + 1, clock, uniqueIdGenerator);
         LocalDate eventDate = bd.getDate();
         assertThat(eventDate, is(now.plusDays(1)));
     }
+
     @Test
-    public void getDate_BeforeNow() throws Exception{
+    public void getDate_BeforeNow() throws Exception {
         LocalDate now = new LocalDate(2014, 6, 5);
         when(clock.now()).thenReturn(now);
-        Birthday bd = new Birthday("Joe", now.getMonthOfYear(), now.getDayOfMonth() - 1 , clock, uniqueIdGenerator);
+        Birthday bd = new Birthday("Joe", now.getMonthOfYear(), now.getDayOfMonth() - 1, clock, uniqueIdGenerator);
         LocalDate eventDate = bd.getDate();
         assertThat(eventDate, is(now.minusDays(1).plusYears(1)));
     }
+
     @Test
-    public void getDate_FirstDayOfYearAskedOnLastDayOfYear() throws Exception{
+    public void getDate_FirstDayOfYearAskedOnLastDayOfYear() throws Exception {
         LocalDate now = new LocalDate(2014, 12, 31);
         when(clock.now()).thenReturn(now);
-        Birthday bd = new Birthday("Joe", Date.JANUARY, 1 , clock, uniqueIdGenerator);
+        Birthday bd = new Birthday("Joe", Date.JANUARY, 1, clock, uniqueIdGenerator);
         LocalDate eventDate = bd.getDate();
         assertThat(eventDate, is(now.plusDays(1)));
     }
+
     @Test
-    public void getDate_LastDayOfYearAskedOnFirstDayOfYear() throws Exception{
+    public void getDate_LastDayOfYearAskedOnFirstDayOfYear() throws Exception {
         LocalDate now = new LocalDate(2014, 1, 1);
         when(clock.now()).thenReturn(now);
-        Birthday bd = new Birthday("Joe", Date.DECEMBER, 31 , clock, uniqueIdGenerator);
+        Birthday bd = new Birthday("Joe", Date.DECEMBER, 31, clock, uniqueIdGenerator);
         LocalDate eventDate = bd.getDate();
         assertThat(eventDate, is(new LocalDate(2014, 12, 31)));
     }
@@ -91,23 +97,24 @@ public class BirthdayTest {
     public void compareTo_NowIsAfter() throws Exception {
         LocalDate now = new LocalDate(2014, 7, 15);
         when(clock.now()).thenReturn(now);
-        Birthday joe =  new Birthday("joe", Date.MARCH, 4, clock, uniqueIdGenerator);
+        Birthday joe = new Birthday("joe", Date.MARCH, 4, clock, uniqueIdGenerator);
         Birthday fred = new Birthday("fred", Date.NOVEMBER, 5, clock, uniqueIdGenerator);
 
         assertThat(joe.compareTo(fred), is(1));
     }
+
     @Test
     public void compareTo_NowIsBefore() throws Exception {
         LocalDate now = new LocalDate(2014, 1, 15);
         when(clock.now()).thenReturn(now);
-        Birthday joe =  new Birthday("joe", Date.MARCH, 4, clock, uniqueIdGenerator);
+        Birthday joe = new Birthday("joe", Date.MARCH, 4, clock, uniqueIdGenerator);
         Birthday fred = new Birthday("fred", Date.NOVEMBER, 5, clock, uniqueIdGenerator);
 
         assertThat(joe.compareTo(fred), is(-1));
     }
 
     @Test
-    public void testSerializeBirthday() throws Exception{
+    public void testSerializeBirthday() throws Exception {
         Birthday bd = new Birthday("Mine", Date.FEBRUARY, 8, clock, uniqueIdGenerator);
         GsonBuilder builder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation();
         Gson gson = builder.create();
@@ -119,8 +126,9 @@ public class BirthdayTest {
         assertThatJson(json).node(Birthday.KEY_TYPE).isEqualTo(Birthday.class.getCanonicalName());
         assertThatJson(json).node(Birthday.KEY_NBR_DAYS_FOR_NOTIFICATION).isEqualTo(2);
     }
+
     @Test
-    public void testSerializeBirthday_WithValidYearOfBirth() throws Exception{
+    public void testSerializeBirthday_WithValidYearOfBirth() throws Exception {
         Birthday bd = new Birthday("Mine", 1966, Date.FEBRUARY, 8, clock, uniqueIdGenerator);
         GsonBuilder builder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation();
         Gson gson = builder.create();
@@ -131,8 +139,9 @@ public class BirthdayTest {
         assertThatJson(json).node(Birthday.KEY_YEAR_OF_BIRTH).isEqualTo(1966);
         assertThatJson(json).node(Birthday.KEY_TYPE).isEqualTo(Birthday.class.getCanonicalName());
     }
+
     @Test
-    public void testSerializeBirthdayWithLastName() throws Exception{
+    public void testSerializeBirthdayWithLastName() throws Exception {
         Birthday bd = new Birthday("First", "Last", Date.FEBRUARY, 8, clock, uniqueIdGenerator);
         GsonBuilder builder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation();
         Gson gson = builder.create();
@@ -145,8 +154,9 @@ public class BirthdayTest {
         assertThatJson(json).node(Birthday.KEY_TYPE).isEqualTo(Birthday.class.getCanonicalName());
         assertThatJson(json).node(Birthday.KEY_NBR_DAYS_FOR_NOTIFICATION).isEqualTo(2);
     }
+
     @Test
-    public void testSerializeBirthday_WithValidYearOfBirthAndLastName() throws Exception{
+    public void testSerializeBirthday_WithValidYearOfBirthAndLastName() throws Exception {
         Birthday bd = new Birthday("First", "Last", 1966, Date.FEBRUARY, 8, clock, uniqueIdGenerator);
         GsonBuilder builder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation();
         Gson gson = builder.create();
@@ -160,7 +170,7 @@ public class BirthdayTest {
     }
 
     @Test
-    public void testDeserializeBirthDay() throws Exception{
+    public void testDeserializeBirthDay() throws Exception {
 
         Birthday bd = new Birthday("Mine", Date.FEBRUARY, 8, clock, uniqueIdGenerator);
         GsonBuilder builder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation();

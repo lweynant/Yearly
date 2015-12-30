@@ -17,13 +17,13 @@ public class AlarmGenerator extends Subscriber<NotificationTime> {
     private final PendingIntent alarmSender;
     private Context context;
 
-    public AlarmGenerator(Context context)
-    {
+    public AlarmGenerator(Context context) {
         this.context = context;
         Intent intent = new Intent(context, AlarmReceiver.class);
 
         this.alarmSender = PendingIntent.getBroadcast(context, 0, intent, 0);
     }
+
     @Override
     public void onCompleted() {
         Timber.d("onCompleted");

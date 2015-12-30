@@ -30,15 +30,14 @@ import timber.log.Timber;
 
 public class YearlyApp extends Application implements IRString, IEventRepoListener {
 
-    private boolean isInjected = false;
-    private YearlyAppComponent component = null;
-
     @Inject
     IClock clock;
     @Inject
     EventRepo repo;
     @Inject
     IJsonFileAccessor repoAccessor;
+    private boolean isInjected = false;
+    private YearlyAppComponent component = null;
 
     @Override
     public void onCreate() {
@@ -59,7 +58,6 @@ public class YearlyApp extends Application implements IRString, IEventRepoListen
         }
 
     }
-
 
 
     @Override
@@ -95,14 +93,6 @@ public class YearlyApp extends Application implements IRString, IEventRepoListen
         Timber.d("injected component repo: %s fileAccessor: %s", repo == null ? "null" : repo.toString(), repoAccessor == null ? "null" : repoAccessor.toString());
     }
 
-    @PerApp
-    @Component(dependencies = PlatformComponent.class, modules = {
-            EventModelModule.class, EventViewModule.class, EventControllerModule.class})
-    public interface ApplicationComponent extends YearlyAppComponent {
-
-    }
-
-
     @Override
     public void onDataSetChanged(EventRepo repo) {
         Timber.d("onDataSetChanged");
@@ -116,6 +106,14 @@ public class YearlyApp extends Application implements IRString, IEventRepoListen
         nextAlarmObservable.subscribeOn(Schedulers.io())
                 .subscribe(new AlarmGenerator(this));
 
+
+    }
+
+
+    @PerApp
+    @Component(dependencies = PlatformComponent.class, modules = {
+            EventModelModule.class, EventViewModule.class, EventControllerModule.class})
+    public interface ApplicationComponent extends YearlyAppComponent {
 
     }
 }

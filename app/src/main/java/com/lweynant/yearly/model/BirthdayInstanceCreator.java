@@ -10,10 +10,11 @@ public class BirthdayInstanceCreator implements InstanceCreator<Birthday> {
     private final IClock clock;
     private final IUniqueIdGenerator uniqueIdGenerator;
 
-    public BirthdayInstanceCreator(IClock clock, IUniqueIdGenerator uniqueIdGenerator){
+    public BirthdayInstanceCreator(IClock clock, IUniqueIdGenerator uniqueIdGenerator) {
         this.clock = clock;
         this.uniqueIdGenerator = uniqueIdGenerator;
     }
+
     @Override
     public Birthday createInstance(Type type) {
         return new Birthday("", Date.JANUARY, 1, clock, uniqueIdGenerator);

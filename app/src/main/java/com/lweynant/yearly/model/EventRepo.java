@@ -22,9 +22,9 @@ import timber.log.Timber;
 
 
 public class EventRepo {
+    private final IUniqueIdGenerator uniqueIdGenerator;
     public IJsonFileAccessor eventRepoFileAccessor = null;
     private IClock clock = null;
-    private final IUniqueIdGenerator uniqueIdGenerator;
     private Set<IEvent> cachedEvents = Collections.synchronizedSet(new HashSet<>());
     private List<IEventRepoListener> listeners = new ArrayList<>();
     private String modificationId;

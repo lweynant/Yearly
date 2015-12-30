@@ -12,7 +12,8 @@ import dagger.Provides;
 public class EventModelModule {
 
 
-    @Provides @PerApp EventRepo provideEventRepo(IJsonFileAccessor fileAccessor, IClock clock, IUniqueIdGenerator idGenerator){
+    @Provides @PerApp
+    EventRepo provideEventRepo(IJsonFileAccessor fileAccessor, IClock clock, IUniqueIdGenerator idGenerator) {
         return new EventRepo(fileAccessor, clock, idGenerator);
     }
 

@@ -21,6 +21,10 @@ public class NotificationTime {
         alarmDate = from.plusDays(days);
     }
 
+    public static NotificationTime min(NotificationTime rhs, NotificationTime lhs) {
+        return rhs.isBefore(lhs) ? rhs : lhs;
+    }
+
     public final int getHour() {
         return hour;
     }
@@ -29,10 +33,6 @@ public class NotificationTime {
         if (alarmDate.isBefore(other.alarmDate)) return true;
         else if (alarmDate.isAfter(other.alarmDate)) return false;
         else return hour < other.hour;
-    }
-
-    public static NotificationTime min(NotificationTime rhs, NotificationTime lhs) {
-        return rhs.isBefore(lhs) ? rhs : lhs;
     }
 
     public LocalDate getAlarmDate() {

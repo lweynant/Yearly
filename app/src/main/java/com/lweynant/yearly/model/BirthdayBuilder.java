@@ -19,8 +19,7 @@ public class BirthdayBuilder {
     private final IUniqueIdGenerator uniquedIdGenerator;
     private String name;
     private
-    @Date.Month
-    int month;
+    @Date.Month int month;
     private int day;
     private int year;
     private String lastName;
@@ -66,7 +65,7 @@ public class BirthdayBuilder {
     }
 
     public BirthdayBuilder setDay(int day) {
-        Timber.d("setDay %d",day);
+        Timber.d("setDay %d", day);
         this.day = day;
         return this;
     }
@@ -87,31 +86,27 @@ public class BirthdayBuilder {
         Timber.d("archiveTo bundle");
         archiveString(name, KEY_NAME, bundle);
         archiveString(lastName, KEY_LAST_NAME, bundle);
-        if (validYear(year)){
+        if (validYear(year)) {
             bundle.putInt(KEY_YEAR, year);
-        }
-        else {
+        } else {
             bundle.remove(KEY_YEAR);
         }
-        if (validMonth(month)){
+        if (validMonth(month)) {
             bundle.putInt(KEY_MONTH, month);
-        }
-        else {
+        } else {
             bundle.remove(KEY_MONTH);
         }
-        if (validDay(day)){
+        if (validDay(day)) {
             bundle.putInt(KEY_DAY, day);
-        }
-        else {
+        } else {
             bundle.remove(KEY_DAY);
         }
     }
 
     private void archiveString(String string, String key, Bundle bundle) {
-        if (validName(string)){
+        if (validName(string)) {
             bundle.putString(key, string);
-        }
-        else {
+        } else {
             bundle.remove(key);
         }
     }
@@ -124,20 +119,20 @@ public class BirthdayBuilder {
 
     public BirthdayBuilder set(Bundle bundle) {
         Timber.d("set bundle");
-        if (bundle.containsKey(KEY_NAME)){
+        if (bundle.containsKey(KEY_NAME)) {
             name = bundle.getString(KEY_NAME);
         }
-        if (bundle.containsKey(KEY_LAST_NAME)){
+        if (bundle.containsKey(KEY_LAST_NAME)) {
             lastName = bundle.getString(KEY_LAST_NAME);
         }
-        if (bundle.containsKey(KEY_YEAR)){
+        if (bundle.containsKey(KEY_YEAR)) {
             year = bundle.getInt(KEY_YEAR);
         }
-        if (bundle.containsKey(KEY_MONTH)){
+        if (bundle.containsKey(KEY_MONTH)) {
             //noinspection ResourceType
             month = bundle.getInt(KEY_MONTH);
         }
-        if (bundle.containsKey(KEY_DAY)){
+        if (bundle.containsKey(KEY_DAY)) {
             day = bundle.getInt(KEY_DAY);
         }
         return this;
