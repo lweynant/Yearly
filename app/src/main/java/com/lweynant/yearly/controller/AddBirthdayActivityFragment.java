@@ -14,11 +14,13 @@ import android.widget.EditText;
 
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.lweynant.yearly.R;
+import com.lweynant.yearly.YearlyAppComponent;
 import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.util.IClock;
 import com.lweynant.yearly.util.IUniqueIdGenerator;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import rx.Observable;
 import rx.subscriptions.CompositeSubscription;
@@ -37,12 +39,17 @@ public class AddBirthdayActivityFragment extends BaseFragment {
     private AlertDialog datePickerDialog;
     private CheckBox yearSelector;
 
-    private BirthdayBuilder birthdayBuilder;
+    @Inject
+    BirthdayBuilder birthdayBuilder;
+    @Inject
+    @Named("birthday_builder")
+    Bundle birthdayBundle;
+    @Inject
+    @Named("birthday_builder")
+    Intent resultIntent;
 
     private View fragmentView;
     private CompositeSubscription subscription;
-    private Bundle birthdayBundle;
-    private Intent resultIntent;
 
     @Inject
     IClock clock;
@@ -53,13 +60,14 @@ public class AddBirthdayActivityFragment extends BaseFragment {
     }
 
     @Override
+    protected void resolveDependencies(YearlyAppComponent component) {
+        component.inject(this);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Timber.d("onCreateView");
-        getComponent().inject(this);
-        birthdayBuilder = new BirthdayBuilder(clock, idGenerator);
-        birthdayBundle = new Bundle();
-        resultIntent = new Intent();
         if (savedInstanceState != null) {
             birthdayBuilder.set(savedInstanceState);
         }
@@ -165,7 +173,7 @@ public class AddBirthdayActivityFragment extends BaseFragment {
     }
 
     private void enableSaveButton(Boolean enabled) {
-        Timber.d("enableSaveButton %s", enabled?"true":"false");
+        Timber.d("enableSaveButton %s", enabled ? "true" : "false");
         //todo add a save button in the toolbar
     }
 
@@ -174,6 +182,7 @@ public class AddBirthdayActivityFragment extends BaseFragment {
         Timber.d("onDestroyView");
         super.onDestroyView();
     }
+
 
     @Override
     public void onDestroy() {

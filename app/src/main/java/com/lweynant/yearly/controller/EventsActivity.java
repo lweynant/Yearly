@@ -12,7 +12,7 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.lweynant.yearly.AlarmGenerator;
 import com.lweynant.yearly.R;
-import com.lweynant.yearly.YearlyApp;
+import com.lweynant.yearly.YearlyAppComponent;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.model.EventRepo;
@@ -50,7 +50,6 @@ public class EventsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Timber.d("onCreate");
-        getComponent().inject(this);
         Timber.d("injected component");
         setContentView(R.layout.activity_events);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -84,6 +83,11 @@ public class EventsActivity extends BaseActivity {
                 menuMultipleActions.collapse();
             }
         });
+    }
+
+    @Override
+    protected void resolveDependencies(YearlyAppComponent component) {
+        component.inject(this);
     }
 
     @Override
@@ -136,7 +140,6 @@ public class EventsActivity extends BaseActivity {
             return true;
         }
         else {
-            YearlyApp application = (YearlyApp) getApplication();
             if (id == R.id.action_archive){
                 Timber.i("archive");
                 Observable<IEvent> events = repo.getEvents();

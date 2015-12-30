@@ -1,5 +1,6 @@
 package com.lweynant.yearly;
 
+import com.lweynant.yearly.model.IJsonFileAccessor;
 import com.lweynant.yearly.util.IClock;
 import com.lweynant.yearly.util.IUniqueIdGenerator;
 
@@ -11,7 +12,7 @@ import dagger.Provides;
 import static org.mockito.Mockito.mock;
 
 @Module
-public class MockClockModule {
+public class MockPlatformModule {
     @Provides
     @Singleton
     IClock provideClock() {
@@ -23,4 +24,12 @@ public class MockClockModule {
     IUniqueIdGenerator provideUniqueIdGenerator() {
         return mock(IUniqueIdGenerator.class);
     }
+
+
+    @Provides
+    @Singleton
+    IJsonFileAccessor provideJsonFileAccessor() {
+        return mock(IJsonFileAccessor.class);
+    }
+
 }

@@ -26,12 +26,21 @@ import timber.log.Timber;
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewHolder> implements IEventRepoListener {
 
     private List<IEvent> events = new ArrayList<>();
-    private final onEventTypeSelectedListener listener;
+    private onEventTypeSelectedListener listener;
     private LocalDate sortedFrom = new LocalDate(1900, 1, 1);
     private Subscription subscription;
     private EventViewFactory viewFactory;
     private String repoId;
 
+
+    public EventsAdapter(EventViewFactory viewFactory) {
+        this.viewFactory = viewFactory;
+
+    }
+
+    public void setListener(EventsAdapter.onEventTypeSelectedListener listener) {
+        this.listener = listener;
+    }
 
     public static class EventViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private final onEventTypeSelectedListener listener;
@@ -54,7 +63,9 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
 
         @Override
         public void onClick(View v) {
-            listener.onSelected(event);
+            if (listener != null) {
+                listener.onSelected(event);
+            }
         }
 
         public void bindEvent(IEvent event) {
@@ -62,14 +73,6 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
             eventListElementView.bindEvent(event);
         }
     }
-
-
-    public EventsAdapter(EventViewFactory viewFactory, EventsAdapter.onEventTypeSelectedListener listener) {
-        this.listener = listener;
-        this.viewFactory = viewFactory;
-
-    }
-
     public void checkWhetherDataNeedsToBeResorted(LocalDate now, EventRepo repo) {
         Timber.d("checkWhetherDataNeedsToBeResorted");
         if (sortedFrom.isEqual(now) && repo.getModificationId().equals(repoId)) {

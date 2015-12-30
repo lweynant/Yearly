@@ -8,11 +8,14 @@ import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
 
 import com.google.gson.JsonObject;
+import com.lweynant.yearly.controller.EventControllerModule;
 import com.lweynant.yearly.controller.EventsActivity;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.Date;
+import com.lweynant.yearly.model.EventModelModule;
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.IJsonFileAccessor;
+import com.lweynant.yearly.ui.EventViewModule;
 import com.lweynant.yearly.util.IClock;
 import com.lweynant.yearly.util.IUniqueIdGenerator;
 
@@ -56,34 +59,17 @@ public class EventsActivityTest {
     IUniqueIdGenerator idGenerator;
 
 
-    @Singleton
-    @Component(modules = MockClockModule.class)
-    public interface TestClockComponent {
-        IClock clock();
-        IUniqueIdGenerator uniqueIdGenerator();
-    }
-
-    @PerApp
-    @Component(dependencies = TestClockComponent.class, modules = { MockEventRepoModule.class})
-    public interface TestComponent extends YearlyAppComponent{
-        void inject(EventsActivityTest eventsActivityTest);
-    }
-
-
-    @Rule
-    public ActivityTestRule<EventsActivity> activityTestRule = new ActivityTestRule<EventsActivity>(EventsActivity.class,
-            true,  //initialTouchMode
-            false); //launchActivity. False we need to set the mock file accessor
-
     @Before
     public void setUp() throws IOException {
         Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
         YearlyApp app = (YearlyApp)instrumentation.getTargetContext().getApplicationContext();
-        TestClockComponent clockComponent = DaggerEventsActivityTest_TestClockComponent.create();
+        TestPlatformModule clockComponent = DaggerEventsActivityTest_TestPlatformModule.builder()
+                .mockPlatformModule(new MockPlatformModule()).build();
 
         TestComponent component = DaggerEventsActivityTest_TestComponent.builder()
-                .mockEventRepoModule(new MockEventRepoModule())
-                .testClockComponent(clockComponent)
+                .testPlatformModule(clockComponent)
+                .eventViewModule(new EventViewModule(app))
+                .eventModelModule(new EventModelModule())
                 .build();
         app.setComponent(component);
         component.inject(this);
@@ -93,6 +79,27 @@ public class EventsActivityTest {
         when(clock.timestamp()).thenReturn("fake timestamp");
         when(idGenerator.getUniqueId()).thenReturn("unique id");
         activityTestRule.launchActivity(new Intent());
+    }
+
+    @Singleton
+    @Component(modules = MockPlatformModule.class)
+    public interface TestPlatformModule {
+        IClock clock();
+        IUniqueIdGenerator uniqueIdGenerator();
+
+        IJsonFileAccessor jsonFileAccessor();
+    }
+
+
+    @Rule
+    public ActivityTestRule<EventsActivity> activityTestRule = new ActivityTestRule<EventsActivity>(EventsActivity.class,
+            true,  //initialTouchMode
+            false); //launchActivity. False we need to set the mock file accessor
+
+    @PerApp
+    @Component(dependencies = TestPlatformModule.class, modules = {EventViewModule.class, EventModelModule.class, EventControllerModule.class})
+    public interface TestComponent extends YearlyAppComponent{
+        void inject(EventsActivityTest eventsActivityTest);
     }
 
     @Test

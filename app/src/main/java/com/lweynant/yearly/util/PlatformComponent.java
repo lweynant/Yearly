@@ -1,13 +1,17 @@
 package com.lweynant.yearly.util;
 
+import com.lweynant.yearly.model.IJsonFileAccessor;
+
 import javax.inject.Singleton;
 
 import dagger.Component;
 
 @Singleton
-@Component(modules = ClockModule.class)
-public interface ClockComponent {
+@Component(modules = PlatformModule.class)
+public interface PlatformComponent {
     public IClock clock();
 
     public IUniqueIdGenerator uniqueIdGenerator();
+
+    public IJsonFileAccessor jsonFileAccessor();
 }

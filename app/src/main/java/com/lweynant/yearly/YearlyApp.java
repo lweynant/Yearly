@@ -2,17 +2,20 @@ package com.lweynant.yearly;
 
 import android.app.Application;
 
+import com.lweynant.yearly.controller.EventControllerModule;
+import com.lweynant.yearly.model.EventModelModule;
 import com.lweynant.yearly.model.EventRepo;
-import com.lweynant.yearly.model.EventRepoModule;
 import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.IEventRepoListener;
 import com.lweynant.yearly.model.IJsonFileAccessor;
 import com.lweynant.yearly.model.NotificationTime;
-import com.lweynant.yearly.util.ClockComponent;
-import com.lweynant.yearly.util.DaggerClockComponent;
+import com.lweynant.yearly.ui.EventViewModule;
+import com.lweynant.yearly.util.DaggerPlatformComponent;
 import com.lweynant.yearly.util.EventRepoSerializerToFileDecorator;
 import com.lweynant.yearly.util.IClock;
+import com.lweynant.yearly.util.PlatformComponent;
+import com.lweynant.yearly.util.PlatformModule;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
@@ -27,34 +30,7 @@ import timber.log.Timber;
 
 public class YearlyApp extends Application implements IRString, IEventRepoListener {
 
-    boolean isInjected = false;
-
-    public void setComponent(YearlyAppComponent component) {
-        Timber.d("setComponent repo: %s fileAccessor: %s", repo==null?"null":repo.toString(), repoAccessor==null?"null": repoAccessor.toString());
-        this.component = component;
-        this.component.inject(this);
-        isInjected = true;
-        Timber.d("injected component repo: %s fileAccessor: %s", repo == null ? "null" : repo.toString(), repoAccessor == null ? "null" : repoAccessor.toString());
-    }
-
-    public YearlyAppComponent getComponent() {
-        Timber.d("getComponent");
-        if (!isInjected) {
-            //todo this is a test artefact that I should get rid off - is we reach this point it means
-            // we are in production code and not in the test - so we need to inject and register as listener
-            Timber.d("injecting component and registering as listener");
-            component.inject(this);
-            repo.addListener(this);
-        }
-        return component;
-    }
-
-    @PerApp
-    @Component (dependencies = ClockComponent.class, modules = {EventRepoModule.class})
-    public interface ApplicationComponent extends YearlyAppComponent {
-
-    }
-
+    private boolean isInjected = false;
     private YearlyAppComponent component = null;
 
     @Inject
@@ -63,7 +39,6 @@ public class YearlyApp extends Application implements IRString, IEventRepoListen
     EventRepo repo;
     @Inject
     IJsonFileAccessor repoAccessor;
-
 
     @Override
     public void onCreate() {
@@ -75,12 +50,21 @@ public class YearlyApp extends Application implements IRString, IEventRepoListen
         JodaTimeAndroid.init(this);
         if (component == null) {
             component = DaggerYearlyApp_ApplicationComponent.builder()
-                    .clockComponent(DaggerClockComponent.create())
-                    .eventRepoModule(new EventRepoModule(this))
+                    .platformComponent(DaggerPlatformComponent.builder().platformModule(new PlatformModule(this)).build())
+                    .eventModelModule(new EventModelModule())
+                    .eventViewModule(new EventViewModule(this))
+                    .eventControllerModule(new EventControllerModule())
                     .build();
 
         }
 
+    }
+
+
+
+    @Override
+    public String getStringFromId(int id) {
+        return getResources().getString(id);
     }
 
     @Override
@@ -90,10 +74,32 @@ public class YearlyApp extends Application implements IRString, IEventRepoListen
         repo.removeListener(this);
     }
 
-    @Override
-    public String getStringFromId(int id)
-    {
-        return getResources().getString(id);
+    public YearlyAppComponent getComponent() {
+        Timber.d("getComponent");
+        if (!isInjected) {
+            //todo this is a test artefact that I should get rid off - is we reach this point it means
+            // we are in production code and not in the test - so we need to inject and register as listener
+            Timber.d("injecting component and registering as listener");
+            component.inject(this);
+            repo.addListener(this);
+            isInjected = true;
+        }
+        return component;
+    }
+
+    public void setComponent(YearlyAppComponent component) {
+        Timber.d("setComponent repo: %s fileAccessor: %s", repo == null ? "null" : repo.toString(), repoAccessor == null ? "null" : repoAccessor.toString());
+        this.component = component;
+        this.component.inject(this);
+        isInjected = true;
+        Timber.d("injected component repo: %s fileAccessor: %s", repo == null ? "null" : repo.toString(), repoAccessor == null ? "null" : repoAccessor.toString());
+    }
+
+    @PerApp
+    @Component(dependencies = PlatformComponent.class, modules = {
+            EventModelModule.class, EventViewModule.class, EventControllerModule.class})
+    public interface ApplicationComponent extends YearlyAppComponent {
+
     }
 
 

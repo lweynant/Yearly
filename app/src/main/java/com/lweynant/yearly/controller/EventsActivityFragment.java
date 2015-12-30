@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.lweynant.yearly.IRString;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.YearlyApp;
+import com.lweynant.yearly.YearlyAppComponent;
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.ui.EventViewFactory;
@@ -32,12 +33,16 @@ public class EventsActivityFragment extends BaseFragment implements EventsAdapte
 
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
-    private EventsAdapter eventsAdapter;
+    @Inject
+    EventsAdapter eventsAdapter;
 
     @Inject
     IClock clock;
     @Inject
     EventRepo repo;
+    @Inject
+    EventViewFactory viewFactory;
+
 
     public EventsActivityFragment() {
     }
@@ -53,12 +58,10 @@ public class EventsActivityFragment extends BaseFragment implements EventsAdapte
         recyclerView.setLayoutManager(layoutManager);
         //set the adapter
         YearlyApp app = (YearlyApp) getActivity().getApplication();
-        getComponent().inject(this);
         Timber.d("injected component");
         Timber.d("repo: %s", repo.toString());
-        EventViewFactory viewFactory = new EventViewFactory(app, clock);
 
-        eventsAdapter = new EventsAdapter(viewFactory, this);
+        eventsAdapter.setListener(this);
 
         recyclerView.setAdapter(eventsAdapter);
 
@@ -117,4 +120,8 @@ public class EventsActivityFragment extends BaseFragment implements EventsAdapte
         Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    protected void resolveDependencies(YearlyAppComponent component) {
+        component.inject(this);
+    }
 }
