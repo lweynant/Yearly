@@ -12,7 +12,7 @@ import android.widget.Toast;
 import com.lweynant.yearly.IRString;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.YearlyApp;
-import com.lweynant.yearly.YearlyAppComponent;
+import com.lweynant.yearly.BaseYearlyAppComponent;
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.ui.EventViewFactory;
@@ -116,7 +116,7 @@ public class EventsActivityFragment extends BaseFragment implements EventsAdapte
     }
 
     @Override
-    protected void resolveDependencies(YearlyAppComponent component) {
+    protected void injectDependencies(BaseYearlyAppComponent component) {
         component.inject(this);
     }
 }

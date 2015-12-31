@@ -4,24 +4,24 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
 import com.lweynant.yearly.YearlyApp;
-import com.lweynant.yearly.YearlyAppComponent;
+import com.lweynant.yearly.BaseYearlyAppComponent;
 
 import timber.log.Timber;
 
 public abstract class BaseFragment extends Fragment {
 
-    private YearlyAppComponent getComponent() {
+    private BaseYearlyAppComponent getComponent() {
         return ((YearlyApp) getActivity().getApplication()).getComponent();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Timber.d("onCreate - resolving dependencies");
+        Timber.d("onCreate - injecting dependencies");
         super.onCreate(savedInstanceState);
-        resolveDependencies(getComponent());
+        injectDependencies(getComponent());
     }
 
-    abstract protected void resolveDependencies(YearlyAppComponent component);
+    abstract protected void injectDependencies(BaseYearlyAppComponent component);
 
     @Override
     public void onDestroy() {

@@ -8,10 +8,6 @@ import dagger.Component;
 
 @Singleton
 @Component(modules = PlatformModule.class)
-public interface PlatformComponent {
-    public IClock clock();
+public interface PlatformComponent extends BasePlatformComponent {
 
-    public IUniqueIdGenerator uniqueIdGenerator();
-
-    public IJsonFileAccessor jsonFileAccessor();
 }

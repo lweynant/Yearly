@@ -12,7 +12,7 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.lweynant.yearly.AlarmGenerator;
 import com.lweynant.yearly.R;
-import com.lweynant.yearly.YearlyAppComponent;
+import com.lweynant.yearly.BaseYearlyAppComponent;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.model.EventRepo;
@@ -81,7 +81,7 @@ public class EventsActivity extends BaseActivity {
     }
 
     @Override
-    protected void resolveDependencies(YearlyAppComponent component) {
+    protected void injectDependencies(BaseYearlyAppComponent component) {
         component.inject(this);
     }
 

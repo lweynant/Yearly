@@ -13,6 +13,8 @@ import com.lweynant.yearly.util.IClock;
 
 import org.joda.time.LocalDate;
 
+import javax.inject.Inject;
+
 import rx.Observable;
 import rx.Subscription;
 import timber.log.Timber;
@@ -23,6 +25,8 @@ import timber.log.Timber;
  * <p>
  */
 public class EventNotificationService extends IntentService {
+    @Inject IClock clock;
+    @Inject EventRepo repo;
     // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
     private static final String ACTION_NOTIFY = "com.lweynant.yearly.action.ACTION-NOTIFY";
 
@@ -42,6 +46,11 @@ public class EventNotificationService extends IntentService {
         context.startService(intent);
     }
 
+    @Override public void onCreate() {
+        super.onCreate();
+        ((YearlyApp)getApplication()).getComponent().inject(this);
+    }
+
     @Override
     protected void onHandleIntent(Intent intent) {
         Timber.d("onHandleIntent");
@@ -57,9 +66,7 @@ public class EventNotificationService extends IntentService {
         Timber.d("handleActionNotification");
         YearlyApp app = (YearlyApp) getApplication();
 
-        final IClock clock = app.getComponent().clock();
         EventViewFactory viewFactory = new EventViewFactory(app, clock);
-        EventRepo repo = app.getComponent().eventRepo();
         Timber.d("retrieved repo from component %s", repo.toString());
 
         Observable<IEvent> eventsObservable = repo.getEvents();

@@ -16,8 +16,10 @@ import com.lweynant.yearly.model.EventModelModule;
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.IJsonFileAccessor;
 import com.lweynant.yearly.ui.EventViewModule;
+import com.lweynant.yearly.util.BasePlatformComponent;
 import com.lweynant.yearly.util.IClock;
 import com.lweynant.yearly.util.IUniqueIdGenerator;
+import com.lweynant.yearly.util.PlatformComponent;
 
 import org.joda.time.LocalDate;
 import org.junit.Before;
@@ -48,29 +50,36 @@ import static org.mockito.Mockito.when;
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class EventsActivityTest {
+    @Singleton
+    @Component(modules = MockPlatformModule.class)
+    public interface TestPlatformComponent extends BasePlatformComponent {
+
+    }
+
+    @PerApp
+    @Component(dependencies = TestPlatformComponent.class, modules = {EventViewModule.class, EventModelModule.class, EventControllerModule.class})
+    public interface TestComponentBase extends BaseYearlyAppComponent {
+        void inject(EventsActivityTest eventsActivityTest);
+    }
 
     @Rule
     public ActivityTestRule<EventsActivity> activityTestRule = new ActivityTestRule<EventsActivity>(EventsActivity.class,
             true,  //initialTouchMode
             false); //launchActivity. False we need to set the mock file accessor
-    @Inject
-    IJsonFileAccessor fileAccessor;
-    @Inject
-    EventRepo eventRepo;
-    @Inject
-    IClock clock;
-    @Inject
-    IUniqueIdGenerator idGenerator;
+    @Inject IJsonFileAccessor fileAccessor;
+    @Inject EventRepo eventRepo;
+    @Inject IClock clock;
+    @Inject IUniqueIdGenerator idGenerator;
 
     @Before
     public void setUp() throws IOException {
         Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
         YearlyApp app = (YearlyApp) instrumentation.getTargetContext().getApplicationContext();
-        TestPlatformModule clockComponent = DaggerEventsActivityTest_TestPlatformModule.builder()
+        TestPlatformComponent platformComponent = DaggerEventsActivityTest_TestPlatformComponent.builder()
                 .mockPlatformModule(new MockPlatformModule()).build();
 
-        TestComponent component = DaggerEventsActivityTest_TestComponent.builder()
-                .testPlatformModule(clockComponent)
+        TestComponentBase component = DaggerEventsActivityTest_TestComponentBase.builder()
+                .testPlatformComponent(platformComponent)
                 .eventViewModule(new EventViewModule(app))
                 .eventModelModule(new EventModelModule())
                 .build();
@@ -115,20 +124,5 @@ public class EventsActivityTest {
         onView(withText(R.string.title_activity_add_birthday)).check(matches(isDisplayed()));
     }
 
-    @Singleton
-    @Component(modules = MockPlatformModule.class)
-    public interface TestPlatformModule {
-        IClock clock();
-
-        IUniqueIdGenerator uniqueIdGenerator();
-
-        IJsonFileAccessor jsonFileAccessor();
-    }
-
-    @PerApp
-    @Component(dependencies = TestPlatformModule.class, modules = {EventViewModule.class, EventModelModule.class, EventControllerModule.class})
-    public interface TestComponent extends YearlyAppComponent {
-        void inject(EventsActivityTest eventsActivityTest);
-    }
 
 }

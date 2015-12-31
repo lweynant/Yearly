@@ -1,22 +1,15 @@
 package com.lweynant.yearly;
 
-import com.lweynant.yearly.controller.AddBirthdayActivityFragment;
-import com.lweynant.yearly.controller.EventsActivity;
-import com.lweynant.yearly.controller.EventsActivityFragment;
-import com.lweynant.yearly.model.EventRepo;
-import com.lweynant.yearly.util.IClock;
+import com.lweynant.yearly.controller.EventControllerModule;
+import com.lweynant.yearly.model.EventModelModule;
+import com.lweynant.yearly.ui.EventViewModule;
+import com.lweynant.yearly.util.PlatformComponent;
 
+import dagger.Component;
 
-public interface YearlyAppComponent {
-    void inject(YearlyApp app);
+@PerApp
+@Component(dependencies = PlatformComponent.class, modules = {
+        EventModelModule.class, EventViewModule.class, EventControllerModule.class})
+public interface YearlyAppComponent extends BaseYearlyAppComponent {
 
-    void inject(EventsActivity eventsActivity);
-
-    void inject(EventsActivityFragment eventsActivityFragment);
-
-    IClock clock();
-
-    void inject(AddBirthdayActivityFragment addBirthdayActivityFragment);
-
-    EventRepo eventRepo();
 }

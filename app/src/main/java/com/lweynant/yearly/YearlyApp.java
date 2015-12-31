@@ -30,6 +30,7 @@ import timber.log.Timber;
 
 public class YearlyApp extends Application implements IRString, IEventRepoListener {
 
+
     @Inject
     IClock clock;
     @Inject
@@ -37,7 +38,7 @@ public class YearlyApp extends Application implements IRString, IEventRepoListen
     @Inject
     IJsonFileAccessor repoAccessor;
     private boolean isInjected = false;
-    private YearlyAppComponent component = null;
+    private BaseYearlyAppComponent component = null;
 
     @Override
     public void onCreate() {
@@ -48,7 +49,7 @@ public class YearlyApp extends Application implements IRString, IEventRepoListen
         Timber.d("onCreate");
         JodaTimeAndroid.init(this);
         if (component == null) {
-            component = DaggerYearlyApp_ApplicationComponent.builder()
+            component = DaggerYearlyAppComponent.builder()
                     .platformComponent(DaggerPlatformComponent.builder().platformModule(new PlatformModule(this)).build())
                     .eventModelModule(new EventModelModule())
                     .eventViewModule(new EventViewModule(this))
@@ -72,7 +73,7 @@ public class YearlyApp extends Application implements IRString, IEventRepoListen
         repo.removeListener(this);
     }
 
-    public YearlyAppComponent getComponent() {
+    public BaseYearlyAppComponent getComponent() {
         Timber.d("getComponent");
         if (!isInjected) {
             //todo this is a test artefact that I should get rid off - is we reach this point it means
@@ -85,7 +86,7 @@ public class YearlyApp extends Application implements IRString, IEventRepoListen
         return component;
     }
 
-    public void setComponent(YearlyAppComponent component) {
+    public void setComponent(BaseYearlyAppComponent component) {
         Timber.d("setComponent repo: %s fileAccessor: %s", repo == null ? "null" : repo.toString(), repoAccessor == null ? "null" : repoAccessor.toString());
         this.component = component;
         this.component.inject(this);
@@ -110,10 +111,5 @@ public class YearlyApp extends Application implements IRString, IEventRepoListen
     }
 
 
-    @PerApp
-    @Component(dependencies = PlatformComponent.class, modules = {
-            EventModelModule.class, EventViewModule.class, EventControllerModule.class})
-    public interface ApplicationComponent extends YearlyAppComponent {
 
-    }
 }
