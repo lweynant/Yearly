@@ -28,6 +28,8 @@ import org.joda.time.LocalDate;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
@@ -39,7 +41,9 @@ public class EventsActivity extends BaseActivity {
     @Inject IUniqueIdGenerator idGenerator;
     @Inject EventRepo repo;
     @Inject IJsonFileAccessor fileAccessor;
-    private FloatingActionsMenu menuMultipleActions;
+    @Bind(R.id.multiple_actions) FloatingActionsMenu menuMultipleActions;
+    @Bind(R.id.action_add_event) FloatingActionButton addEventButton;
+    @Bind(R.id.action_add_birthday) FloatingActionButton addBirthdayButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,10 +53,9 @@ public class EventsActivity extends BaseActivity {
         setContentView(R.layout.activity_events);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        ButterKnife.bind(this);
 
-        menuMultipleActions = (FloatingActionsMenu) findViewById(R.id.multiple_actions);
-        final FloatingActionButton actionA = (FloatingActionButton) findViewById(R.id.action_add_event);
-        actionA.setOnClickListener(new View.OnClickListener() {
+        addEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 LocalDate date = LocalDate.now();
@@ -61,15 +64,14 @@ public class EventsActivity extends BaseActivity {
                 Snackbar.make(view, getResources().getString(R.string.adding_events_not_supported), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
-                //actionA.setTitle("Action A clicked");
+                //addEventButton.setTitle("Action A clicked");
                 if (menuMultipleActions.isExpanded()) {
                     menuMultipleActions.collapse();
                 }
             }
         });
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.action_add_birthday);
-        fab.setOnClickListener(new View.OnClickListener() {
+        addBirthdayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(EventsActivity.this, AddBirthdayActivity.class);

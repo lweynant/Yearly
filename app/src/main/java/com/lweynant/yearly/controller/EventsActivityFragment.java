@@ -23,6 +23,8 @@ import org.joda.time.LocalDate;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import timber.log.Timber;
 
 
@@ -35,20 +37,24 @@ public class EventsActivityFragment extends BaseFragment implements EventsAdapte
     @Inject IClock clock;
     @Inject EventRepo repo;
     @Inject EventViewFactory viewFactory;
-    private RecyclerView recyclerView;
+    @Bind(R.id.events_recycler_view) RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
 
 
     public EventsActivityFragment() {
     }
 
+    @Override
+    protected void injectDependencies(BaseYearlyAppComponent component) {
+        component.inject(this);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Timber.d("onCreateView");
         View view = inflater.inflate(R.layout.fragment_events, container, false);
-        recyclerView = (RecyclerView) view.findViewById(R.id.events_recycler_view);
+        ButterKnife.bind(this, view);
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         //set the adapter
@@ -115,8 +121,4 @@ public class EventsActivityFragment extends BaseFragment implements EventsAdapte
         Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    protected void injectDependencies(BaseYearlyAppComponent component) {
-        component.inject(this);
-    }
 }

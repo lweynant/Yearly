@@ -22,6 +22,8 @@ import com.lweynant.yearly.util.IUniqueIdGenerator;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import rx.Observable;
 import rx.subscriptions.CompositeSubscription;
 import timber.log.Timber;
@@ -37,13 +39,13 @@ public class AddBirthdayActivityFragment extends BaseFragment {
     @Inject @Named("birthday_builder") Intent resultIntent;
     @Inject IClock clock;
     @Inject IUniqueIdGenerator idGenerator;
-    private EditText dateEditText;
-    private EditText nameEditText;
-    private EditText lastNameEditText;
+    @Bind(R.id.edit_text_birthday_date) EditText dateEditText;
+    @Bind(R.id.edit_text_name) EditText nameEditText;
+    @Bind(R.id.edit_text_lastname) EditText lastNameEditText;
     private AlertDialog.Builder dialogBuilder;
-    private DatePicker datePicker;
     private AlertDialog datePickerDialog;
-    private CheckBox yearSelector;
+    DatePicker datePicker;
+    CheckBox yearSelector;
     private View fragmentView;
     private CompositeSubscription subscription;
 
@@ -66,13 +68,14 @@ public class AddBirthdayActivityFragment extends BaseFragment {
         resultIntent.putExtra(EXTRA_KEY_BIRTHDAY, birthdayBundle);
 
         fragmentView = inflater.inflate(R.layout.fragment_add_birthday, container, false);
-        nameEditText = (EditText) fragmentView.findViewById(R.id.edit_text_name);
-        lastNameEditText = (EditText) fragmentView.findViewById(R.id.edit_text_lastname);
+        ButterKnife.bind(this, fragmentView);
+
         dialogBuilder = new AlertDialog.Builder(getContext());
         dialogBuilder.setTitle(R.string.select_date);
         View dateSelectionView = inflater.inflate(R.layout.date_selection, null);
         datePicker = (DatePicker) dateSelectionView.findViewById(R.id.date_picker);
         yearSelector = (CheckBox) dateSelectionView.findViewById(R.id.checkbox_add_year);
+        //ButterKnife.bind(this, dateSelectionView);
         hideYear(yearSelector.isChecked());
         yearSelector.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,7 +114,6 @@ public class AddBirthdayActivityFragment extends BaseFragment {
             }
         });
         datePickerDialog = dialogBuilder.create();
-        dateEditText = (EditText) fragmentView.findViewById(R.id.edit_text_birthday_date);
         dateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
