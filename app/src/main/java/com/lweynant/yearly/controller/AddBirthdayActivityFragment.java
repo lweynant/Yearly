@@ -1,21 +1,18 @@
 package com.lweynant.yearly.controller;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.DatePicker;
 import android.widget.EditText;
 
 import com.jakewharton.rxbinding.widget.RxTextView;
-import com.lweynant.yearly.R;
 import com.lweynant.yearly.BaseYearlyAppComponent;
+import com.lweynant.yearly.R;
 import com.lweynant.yearly.model.BirthdayBuilder;
+import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.util.IClock;
 import com.lweynant.yearly.util.IUniqueIdGenerator;
 
@@ -29,7 +26,7 @@ import rx.subscriptions.CompositeSubscription;
 import timber.log.Timber;
 
 
-public class AddBirthdayActivityFragment extends BaseFragment {
+public class AddBirthdayActivityFragment extends BaseFragment implements DateSelector.OnClickListener {
 
     public static final String EXTRA_KEY_BIRTHDAY = "birthday";
 
@@ -42,12 +39,9 @@ public class AddBirthdayActivityFragment extends BaseFragment {
     @Bind(R.id.edit_text_birthday_date) EditText dateEditText;
     @Bind(R.id.edit_text_name) EditText nameEditText;
     @Bind(R.id.edit_text_lastname) EditText lastNameEditText;
-    private AlertDialog.Builder dialogBuilder;
-    private AlertDialog datePickerDialog;
-    DatePicker datePicker;
-    CheckBox yearSelector;
     private View fragmentView;
     private CompositeSubscription subscription;
+    @Inject DateSelector dateSelector;
 
     public AddBirthdayActivityFragment() {
     }
@@ -70,58 +64,14 @@ public class AddBirthdayActivityFragment extends BaseFragment {
         fragmentView = inflater.inflate(R.layout.fragment_add_birthday, container, false);
         ButterKnife.bind(this, fragmentView);
 
-        dialogBuilder = new AlertDialog.Builder(getContext());
-        dialogBuilder.setTitle(R.string.select_date);
-        View dateSelectionView = inflater.inflate(R.layout.date_selection, null);
-        datePicker = (DatePicker) dateSelectionView.findViewById(R.id.date_picker);
-        yearSelector = (CheckBox) dateSelectionView.findViewById(R.id.checkbox_add_year);
-        //ButterKnife.bind(this, dateSelectionView);
-        hideYear(yearSelector.isChecked());
-        yearSelector.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideYear(yearSelector.isChecked());
-            }
-        });
-        dialogBuilder.setView(dateSelectionView);
-        dialogBuilder.setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Timber.d("pressed ok");
-                int month = datePicker.getMonth() + 1;
-                int day = datePicker.getDayOfMonth();
-                String textDate;
-                if (yearSelector.isChecked()) {
-                    int year = datePicker.getYear();
-                    birthdayBuilder.setYear(year);
-                    textDate = getString(R.string.yyy_mm_dd, year, month, day);
-                } else {
-                    String[] months = getResources().getStringArray(R.array.months_day);
-                    textDate = String.format(months[month], day);
-                    birthdayBuilder.clearYear();
-                }
-                //noinspection ResourceType
-                birthdayBuilder.setMonth(month);
-                birthdayBuilder.setDay(day);
-                dateEditText.setText(textDate);
-                birthdayBuilder.archiveTo(birthdayBundle);
-            }
-        });
-        dialogBuilder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Timber.d("cancel");
-            }
-        });
-        datePickerDialog = dialogBuilder.create();
+        dateSelector.prepare(getContext(), this);
         dateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 fragmentView.requestFocus();
-                datePickerDialog.show();
+                dateSelector.show();
             }
         });
-
         return fragmentView;
     }
 
@@ -170,12 +120,6 @@ public class AddBirthdayActivityFragment extends BaseFragment {
         //todo add a save button in the toolbar
     }
 
-    @Override
-    public void onDestroyView() {
-        Timber.d("onDestroyView");
-        super.onDestroyView();
-    }
-
 
     @Override
     public void onDestroy() {
@@ -201,29 +145,24 @@ public class AddBirthdayActivityFragment extends BaseFragment {
     }
 
 
-    @Override
-    public void onStop() {
-        Timber.d("onStop");
-        super.onStop();
-    }
-
-    @Override
-    public void onPause() {
-        Timber.d("onPause");
-
-        super.onPause();
+    @Override public void onPositiveClick(int year, @Date.Month int month, int day, String date) {
+        birthdayBuilder.setYear(year);
+        handleSelection(month, day, date);
     }
 
 
-    private void hideYear(boolean checked) {
-        int year = getContext().getResources().getIdentifier("android:id/year", null, null);
-        if (year != 0) {
-            View yearPicker = datePicker.findViewById(year);
-            if (yearPicker != null) {
-                yearPicker.setVisibility(checked == true ? View.VISIBLE : View.GONE);
-            }
-        }
+    @Override public void onPositiveClick(@Date.Month int month, int day, String date) {
+        birthdayBuilder.clearYear();
+        handleSelection(month, day, date);
     }
 
+    @Override public void onNegativeClick() {
+
+    }
+
+    private void handleSelection(@Date.Month int month, int day, String date) {
+        birthdayBuilder.setMonth(month).setDay(day).archiveTo(birthdayBundle);
+        dateEditText.setText(date);
+    }
 
 }

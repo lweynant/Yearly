@@ -3,7 +3,10 @@ package com.lweynant.yearly.controller;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.lweynant.yearly.IComponentRegistry;
+import com.lweynant.yearly.IStringResources;
 import com.lweynant.yearly.ui.EventViewFactory;
+import com.lweynant.yearly.util.IClock;
 
 import javax.inject.Named;
 
@@ -16,6 +19,14 @@ public class EventControllerModule {
         return new EventsAdapter(viewFactory);
     }
 
+    @Provides DateFormatter providesDateFormatter(IStringResources rstring) {
+        return new DateFormatter(rstring);
+    }
+
+    @Provides
+    DateSelector providesDateSelector(IComponentRegistry componentRegistry, IClock clock) {
+        return new DateSelector(componentRegistry, clock);
+    }
     @Provides @Named("birthday_builder") Bundle providesBundle() {
         return new Bundle();
     }

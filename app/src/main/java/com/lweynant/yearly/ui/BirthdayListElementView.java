@@ -5,7 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.lweynant.yearly.IRString;
+import com.lweynant.yearly.IStringResources;
 import com.lweynant.yearly.model.IEvent;
 
 import org.joda.time.LocalDate;
@@ -15,7 +15,7 @@ public class BirthdayListElementView implements IEventListElementView {
     private final TextView textView;
     private final BirthdayStringResource stringResource;
 
-    public BirthdayListElementView(IRString rstring, ViewGroup parent) {
+    public BirthdayListElementView(IStringResources rstring, ViewGroup parent) {
         stringResource = new BirthdayStringResource(rstring);
         textView = (TextView) LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_list_item_1, parent, false);
     }

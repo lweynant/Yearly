@@ -16,10 +16,8 @@ import com.lweynant.yearly.model.EventModelModule;
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.IJsonFileAccessor;
 import com.lweynant.yearly.ui.EventViewModule;
-import com.lweynant.yearly.util.BasePlatformComponent;
 import com.lweynant.yearly.util.IClock;
 import com.lweynant.yearly.util.IUniqueIdGenerator;
-import com.lweynant.yearly.util.PlatformComponent;
 
 import org.joda.time.LocalDate;
 import org.junit.Before;
@@ -30,7 +28,6 @@ import org.junit.runner.RunWith;
 import java.io.IOException;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import dagger.Component;
 import timber.log.Timber;
@@ -50,16 +47,29 @@ import static org.mockito.Mockito.when;
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class EventsActivityTest {
-    @Singleton
-    @Component(modules = MockPlatformModule.class)
-    public interface TestPlatformComponent extends BasePlatformComponent {
 
-    }
 
-    @PerApp
-    @Component(dependencies = TestPlatformComponent.class, modules = {EventViewModule.class, EventModelModule.class, EventControllerModule.class})
-    public interface TestComponentBase extends BaseYearlyAppComponent {
-        void inject(EventsActivityTest eventsActivityTest);
+    @Before
+    public void setUp() throws IOException {
+        Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
+        YearlyApp app = (YearlyApp) instrumentation.getTargetContext().getApplicationContext();
+
+        TestPlatformComponent platformComponent = DaggerTestPlatformComponent.builder()
+                .mockPlatformModule(new MockPlatformModule()).build();
+        TestComponentBase component = DaggerEventsActivityTest_TestComponentBase.builder()
+                .testPlatformComponent(platformComponent)
+                .yearlyAppModule(new YearlyAppModule(app))
+                .eventViewModule(new EventViewModule())
+                .eventModelModule(new EventModelModule())
+                .build();
+        app.setComponent(component);
+        component.inject(this);
+        Timber.d("injected component, file accessor %s", fileAccessor.toString());
+        when(fileAccessor.read()).thenReturn(new JsonObject());
+        when(clock.now()).thenReturn(new LocalDate(2015, Date.JANUARY, 1));
+        when(clock.timestamp()).thenReturn("fake timestamp");
+        when(idGenerator.getUniqueId()).thenReturn("unique id");
+        activityTestRule.launchActivity(new Intent());
     }
 
     @Rule
@@ -71,26 +81,10 @@ public class EventsActivityTest {
     @Inject IClock clock;
     @Inject IUniqueIdGenerator idGenerator;
 
-    @Before
-    public void setUp() throws IOException {
-        Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
-        YearlyApp app = (YearlyApp) instrumentation.getTargetContext().getApplicationContext();
-        TestPlatformComponent platformComponent = DaggerEventsActivityTest_TestPlatformComponent.builder()
-                .mockPlatformModule(new MockPlatformModule()).build();
-
-        TestComponentBase component = DaggerEventsActivityTest_TestComponentBase.builder()
-                .testPlatformComponent(platformComponent)
-                .eventViewModule(new EventViewModule(app))
-                .eventModelModule(new EventModelModule())
-                .build();
-        app.setComponent(component);
-        component.inject(this);
-        Timber.d("injected component, file accessor %s", fileAccessor.toString());
-        when(fileAccessor.read()).thenReturn(new JsonObject());
-        when(clock.now()).thenReturn(new LocalDate(2015, Date.JANUARY, 1));
-        when(clock.timestamp()).thenReturn("fake timestamp");
-        when(idGenerator.getUniqueId()).thenReturn("unique id");
-        activityTestRule.launchActivity(new Intent());
+    @PerApp
+    @Component(dependencies = TestPlatformComponent.class, modules = {YearlyAppModule.class, EventViewModule.class, EventModelModule.class, EventControllerModule.class})
+    public interface TestComponentBase extends BaseYearlyAppComponent {
+        void inject(EventsActivityTest eventsActivityTest);
     }
 
     @Test

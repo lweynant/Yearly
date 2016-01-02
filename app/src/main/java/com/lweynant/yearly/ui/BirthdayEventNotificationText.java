@@ -1,6 +1,6 @@
 package com.lweynant.yearly.ui;
 
-import com.lweynant.yearly.IRString;
+import com.lweynant.yearly.IStringResources;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.util.IClock;
@@ -13,7 +13,7 @@ public class BirthdayEventNotificationText implements IEventNotificationText {
     private final IEvent event;
     private final BirthdayStringResource stringResource;
 
-    public BirthdayEventNotificationText(IEvent event, IRString rstring, IClock clock) {
+    public BirthdayEventNotificationText(IEvent event, IStringResources rstring, IClock clock) {
         this.stringResource = new BirthdayStringResource(rstring);
         this.clock = clock;
         this.event = event;

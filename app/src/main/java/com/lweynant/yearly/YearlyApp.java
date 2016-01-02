@@ -14,7 +14,6 @@ import com.lweynant.yearly.ui.EventViewModule;
 import com.lweynant.yearly.util.DaggerPlatformComponent;
 import com.lweynant.yearly.util.EventRepoSerializerToFileDecorator;
 import com.lweynant.yearly.util.IClock;
-import com.lweynant.yearly.util.PlatformComponent;
 import com.lweynant.yearly.util.PlatformModule;
 
 import net.danlew.android.joda.JodaTimeAndroid;
@@ -23,12 +22,11 @@ import org.joda.time.LocalDate;
 
 import javax.inject.Inject;
 
-import dagger.Component;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
-public class YearlyApp extends Application implements IRString, IEventRepoListener {
+public class YearlyApp extends Application implements IStringResources, IEventRepoListener, IComponentRegistry {
 
 
     @Inject
@@ -51,8 +49,9 @@ public class YearlyApp extends Application implements IRString, IEventRepoListen
         if (component == null) {
             component = DaggerYearlyAppComponent.builder()
                     .platformComponent(DaggerPlatformComponent.builder().platformModule(new PlatformModule(this)).build())
+                    .yearlyAppModule(new YearlyAppModule(this))
                     .eventModelModule(new EventModelModule())
-                    .eventViewModule(new EventViewModule(this))
+                    .eventViewModule(new EventViewModule())
                     .eventControllerModule(new EventControllerModule())
                     .build();
 
@@ -61,9 +60,8 @@ public class YearlyApp extends Application implements IRString, IEventRepoListen
     }
 
 
-    @Override
-    public String getStringFromId(int id) {
-        return getResources().getString(id);
+    @Override public String[] getStringArray(int id) {
+        return getResources().getStringArray(id);
     }
 
     @Override
@@ -73,7 +71,7 @@ public class YearlyApp extends Application implements IRString, IEventRepoListen
         repo.removeListener(this);
     }
 
-    public BaseYearlyAppComponent getComponent() {
+    @Override public BaseYearlyAppComponent getComponent() {
         Timber.d("getComponent");
         if (!isInjected) {
             //todo this is a test artefact that I should get rid off - is we reach this point it means

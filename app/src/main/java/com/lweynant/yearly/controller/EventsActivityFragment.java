@@ -9,10 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.lweynant.yearly.IRString;
+import com.lweynant.yearly.BaseYearlyAppComponent;
+import com.lweynant.yearly.IStringResources;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.YearlyApp;
-import com.lweynant.yearly.BaseYearlyAppComponent;
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.ui.EventViewFactory;
@@ -115,7 +115,7 @@ public class EventsActivityFragment extends BaseFragment implements EventsAdapte
 
     @Override
     public void onSelected(IEvent eventType) {
-        EventViewFactory factory = new EventViewFactory((IRString) getActivity().getApplication(), clock);
+        EventViewFactory factory = new EventViewFactory((IStringResources) getActivity().getApplication(), clock);
         IEventNotificationText notifText = factory.getEventNotificationText(eventType);
         String text = notifText.getOneLiner();
         Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
