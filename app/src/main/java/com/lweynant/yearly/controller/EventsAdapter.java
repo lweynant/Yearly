@@ -14,6 +14,7 @@ import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -31,9 +32,13 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
     private Subscription subscription;
     private EventViewFactory viewFactory;
     private String repoId;
+    private final List<IEvent> empyList = new ArrayList<>();
+    private String currentlyUpdatingRepoModifId;
+    //private boolean first = false;
 
 
     public EventsAdapter(EventViewFactory viewFactory) {
+        Timber.d("create EventsAdapter instance");
         this.viewFactory = viewFactory;
 
     }
@@ -55,72 +60,85 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
         }
     }
 
-    private void setEvents(List<IEvent> events) {
-        Timber.d("setEvents");
-        this.events = events;
-        notifyDataSetChanged();
+    protected void updateDataSet(List<IEvent> events, String modifId) {
+        synchronized (this) {
+            Timber.d("updateDataSet %s", modifId);
+            this.events = events;
+            if (subscription != null) subscription.unsubscribe();
+            notifyDataSetChanged();
+        }
     }
 
+    protected void dataSetUpdateCancelled(String currentlyUpdatingRepoModifId) {
+        Timber.d("dataSetUpdateCancelled %s", currentlyUpdatingRepoModifId);
+        if (subscription != null) subscription.unsubscribe();
+    }
     public void onDetach() {
-        if (subscription != null) {
+        if (subscription != null && !subscription.isUnsubscribed()) {
             subscription.unsubscribe();
         }
     }
 
-    @Override
-    public void onDataSetChanged(EventRepo repo) {
-        Timber.d("onDataSetChanged");
-        Observable<IEvent> eventsObservable = repo.getEvents();
-        if (subscription != null) {
-            subscription.unsubscribe();
+    @Override public void onDataSetChanged(EventRepo repo) {
+        synchronized (this) {
+            Timber.d("onDataSetChanged - getEvents from repo with modif id: %s", repo.getModificationId());
+            if (subscription != null && !subscription.isUnsubscribed()) {
+                Timber.d("we allready have a subscription - unsubscribe first.. %s", currentlyUpdatingRepoModifId);
+                subscription.unsubscribe();
+                dataSetUpdateCancelled(currentlyUpdatingRepoModifId);
+            }
+            currentlyUpdatingRepoModifId = repo.getModificationId();
+            Observable<IEvent> eventsObservable = repo.getEvents();
+            subscription = eventsObservable.subscribeOn(Schedulers.io())
+                    .toSortedList()
+                    .first()
+                    //.delay(first ? 5000 : 10, TimeUnit.MILLISECONDS)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<List<IEvent>>() {
+                        public List<IEvent> newEvents = empyList;
+                        private final String modifId = currentlyUpdatingRepoModifId;
+
+                        @Override
+                        public void onCompleted() {
+                            Timber.d("onCompleted %s", newEvents.toString());
+                            updateDataSet(newEvents, modifId);
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Timber.e(e, "onError");
+                            dataSetUpdateCancelled(modifId);
+                        }
+
+                        @Override
+                        public void onNext(List<IEvent> iEvents) {
+                            Timber.d("onNext");
+                            newEvents = iEvents;
+                        }
+                    });
         }
-        subscription = eventsObservable.subscribeOn(Schedulers.io())
-                .toSortedList()
-                .first()
-                        //.delay(2, TimeUnit.SECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<List<IEvent>>() {
-                    @Override
-                    public void onCompleted() {
-                        Timber.d("onCompleted");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e, "onError");
-                    }
-
-                    @Override
-                    public void onNext(List<IEvent> iEvents) {
-                        Timber.d("onNext");
-                        setEvents(iEvents);
-                    }
-                });
-
+        //first = false;
+        Timber.d("end of onDataSetChanged");
 
     }
 
-    @Override
-    public EventViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    @Override public EventViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         IEventListElementView view = viewFactory.getEventListElementView(parent, viewType);
         //View v = LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_list_item_1, parent, false);
         EventViewHolder eventViewHolder = new EventViewHolder(view, listener);
         return eventViewHolder;
     }
 
-    @Override
-    public void onBindViewHolder(EventViewHolder holder, int position) {
+    @Override public void onBindViewHolder(EventViewHolder holder, int position) {
         IEvent event = events.get(position);
         holder.bindEvent(event);
     }
 
-    @Override
-    public int getItemViewType(int position) {
+    @Override public int getItemViewType(int position) {
         return viewFactory.getEventListElementViewType(events.get(position));
     }
 
-    @Override
-    public int getItemCount() {
+    @Override public int getItemCount() {
         return events.size();
     }
 
@@ -147,8 +165,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
             return event;
         }
 
-        @Override
-        public void onClick(View v) {
+        @Override public void onClick(View v) {
             if (listener != null) {
                 listener.onSelected(event);
             }

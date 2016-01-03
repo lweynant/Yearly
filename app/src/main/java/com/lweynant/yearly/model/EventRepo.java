@@ -60,21 +60,26 @@ public class EventRepo {
         Timber.d("add event %s", event.toString());
         int before = cachedEvents.size();
         cachedEvents.add(event);
-        if (cachedEvents.size() != before) {
-            notifyListeners();
-        }
+//        if (cachedEvents.size() != before) {
+//            notifyListeners();
+//        }
         return this;
+    }
+    public void commit(){
+        Timber.d("commit");
+        notifyListeners();
     }
 
     public EventRepo remove(IEvent event) {
         Timber.d("remove event %s", event.toString());
         cachedEvents.remove(event);
-        notifyListeners();
+//        notifyListeners();
         return this;
     }
 
 
     public Observable<IEvent> getEvents() {
+        Timber.d("getEvents");
         if (!cachedEvents.isEmpty()) {
             return getEventsFromCache();
         } else {
@@ -136,15 +141,18 @@ public class EventRepo {
                         if (cachedEvents != null) {
                             for (IEvent event : cachedEvents) {
                                 if (!subscriber.isUnsubscribed()) {
+                                    Timber.d("call onNext for %s", event.toString());
                                     subscriber.onNext(event);
                                 } else {
                                     break;
                                 }
                             }
                         }
+                        Timber.d("call onCompleted");
                         subscriber.onCompleted();
 
                     } catch (Throwable t) {
+                        Timber.d("call onError %s", t.toString());
                         subscriber.onError(t);
                     }
                 }

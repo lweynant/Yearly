@@ -2,7 +2,10 @@ package com.lweynant.yearly;
 
 import android.app.Instrumentation;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
+import android.support.test.espresso.contrib.CountingIdlingResource;
+import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
@@ -10,6 +13,8 @@ import android.test.suitebuilder.annotation.LargeTest;
 import com.google.gson.JsonObject;
 import com.lweynant.yearly.controller.EventControllerModule;
 import com.lweynant.yearly.controller.EventsActivity;
+import com.lweynant.yearly.controller.EventsAdapter;
+import com.lweynant.yearly.controller.EventsAdapterModule;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.EventModelModule;
@@ -18,8 +23,10 @@ import com.lweynant.yearly.model.IJsonFileAccessor;
 import com.lweynant.yearly.ui.EventViewModule;
 import com.lweynant.yearly.util.IClock;
 import com.lweynant.yearly.util.IUniqueIdGenerator;
+import com.lweynant.yearly.util.UUID;
 
 import org.joda.time.LocalDate;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,6 +40,8 @@ import dagger.Component;
 import timber.log.Timber;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.Espresso.registerIdlingResources;
+import static android.support.test.espresso.Espresso.unregisterIdlingResources;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -64,12 +73,18 @@ public class EventsActivityTest {
                 .build();
         app.setComponent(component);
         component.inject(this);
+        registerIdlingResources(idlingResource);
         Timber.d("injected component, file accessor %s", fileAccessor.toString());
         when(fileAccessor.read()).thenReturn(new JsonObject());
         when(clock.now()).thenReturn(new LocalDate(2015, Date.JANUARY, 1));
         when(clock.timestamp()).thenReturn("fake timestamp");
-        when(idGenerator.getUniqueId()).thenReturn("unique id");
         activityTestRule.launchActivity(new Intent());
+    }
+
+
+    @After
+    public void tearDown() {
+        unregisterIdlingResources(idlingResource);
     }
 
     @Rule
@@ -80,33 +95,38 @@ public class EventsActivityTest {
     @Inject EventRepo eventRepo;
     @Inject IClock clock;
     @Inject IUniqueIdGenerator idGenerator;
+    @Inject EventsAdapter eventsAdapter;
+    @Inject CountingIdlingResource idlingResource;
 
     @PerApp
-    @Component(dependencies = TestPlatformComponent.class, modules = {YearlyAppModule.class, EventViewModule.class, EventModelModule.class, EventControllerModule.class})
+    @Component(dependencies = TestPlatformComponent.class, modules = {YearlyAppModule.class, TestEventsAdapterModule.class, EventViewModule.class, EventModelModule.class, EventControllerModule.class})
     public interface TestComponentBase extends BaseYearlyAppComponent {
         void inject(EventsActivityTest eventsActivityTest);
     }
 
     @Test
     public void testOneEventInList() {
-        eventRepo.add(new Birthday("John", Date.APRIL, 23, clock, idGenerator));
+        eventRepo.add(new Birthday("John", Date.APRIL, 23, clock, idGenerator))
+                 .commit();
         onView(withText(containsString("John"))).check(matches(isDisplayed()));
     }
 
     @Test
     public void testOneEventRemoveLast() throws IOException {
-        eventRepo.add(new Birthday("One", Date.APRIL, 23, clock, idGenerator));
+        eventRepo.add(new Birthday("One", Date.APRIL, 23, clock, idGenerator))
+                 .commit();
         onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("One")))));
-        onView(withText(containsString("One"))).perform(swipeLeft());
+        onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem((withText(containsString("One"))), swipeLeft()));
         onView(withId(R.id.events_recycler_view)).check(matches(not(hasDescendant(withText(containsString("One"))))));
     }
 
     @Test
     public void testTwoEventsRemoveLast() throws IOException {
-        eventRepo.add(new Birthday("One", Date.APRIL, 23, clock, idGenerator));
-        eventRepo.add(new Birthday("Two", Date.APRIL, 24, clock, idGenerator));
+        eventRepo.add(new Birthday("One", Date.APRIL, 23, clock, idGenerator))
+                 .add(new Birthday("Two", Date.APRIL, 24, clock, idGenerator))
+                 .commit();
         onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("Two")))));
-        onView(withText(containsString("Two"))).perform(swipeLeft());
+        onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem((withText(containsString("Two"))), swipeLeft()));
         onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("One")))));
         onView(withId(R.id.events_recycler_view)).check(matches(not(hasDescendant(withText(containsString("Two"))))));
     }

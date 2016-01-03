@@ -78,7 +78,7 @@ public class EventsActivityFragment extends BaseFragment implements EventsAdapte
                 if (direction == ItemTouchHelper.LEFT) {
                     Timber.d("removing event");
                     IEvent event = ((EventsAdapter.EventViewHolder) viewHolder).getEvent();
-                    repo.remove(event);
+                    repo.remove(event).commit();
                 }
 
             }

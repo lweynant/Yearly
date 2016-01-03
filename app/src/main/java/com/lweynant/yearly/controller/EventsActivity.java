@@ -60,7 +60,10 @@ public class EventsActivity extends BaseActivity {
             public void onClick(View view) {
                 LocalDate date = LocalDate.now();
                 //noinspection ResourceType
-                repo.add(new Birthday("Darth", "Vader", date.getMonthOfYear(), date.getDayOfMonth(), clock, idGenerator));
+                repo.add(new Birthday("Darth", "Vader", date.getMonthOfYear(), date.getDayOfMonth(), clock, idGenerator))
+                        .commit();
+
+
                 Snackbar.make(view, getResources().getString(R.string.adding_events_not_supported), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
@@ -100,7 +103,7 @@ public class EventsActivity extends BaseActivity {
                 Birthday bd = builder.build();
                 if (bd != null) {
                     Timber.d("adding birthday %s", bd);
-                    repo.add(bd);
+                    repo.add(bd).commit();
                     View view = findViewById(R.id.multiple_actions);
                     Snackbar.make(view, String.format(getResources().getString(R.string.add_birthday_for), bd.getName()), Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();

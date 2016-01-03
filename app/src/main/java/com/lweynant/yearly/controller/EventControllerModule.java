@@ -15,9 +15,7 @@ import dagger.Provides;
 
 @Module
 public class EventControllerModule {
-    @Provides EventsAdapter provideEventsAdapter(EventViewFactory viewFactory) {
-        return new EventsAdapter(viewFactory);
-    }
+
 
     @Provides DateFormatter providesDateFormatter(IStringResources rstring) {
         return new DateFormatter(rstring);

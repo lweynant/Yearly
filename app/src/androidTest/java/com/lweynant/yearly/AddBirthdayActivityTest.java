@@ -9,6 +9,7 @@ import android.support.test.runner.AndroidJUnit4;
 import com.lweynant.yearly.controller.AddBirthdayActivity;
 import com.lweynant.yearly.controller.DateFormatter;
 import com.lweynant.yearly.controller.EventControllerModule;
+import com.lweynant.yearly.controller.EventsAdapterModule;
 import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.EventModelModule;
 import com.lweynant.yearly.ui.EventViewModule;
@@ -39,7 +40,8 @@ import static org.mockito.Mockito.when;
 public class AddBirthdayActivityTest {
 
     @PerApp
-    @Component(dependencies = TestPlatformComponent.class, modules = {YearlyAppModule.class, EventViewModule.class, EventModelModule.class, EventControllerModule.class})
+    @Component(dependencies = TestPlatformComponent.class, modules = {YearlyAppModule.class,
+            EventsAdapterModule.class, EventViewModule.class, EventModelModule.class, EventControllerModule.class})
     public interface TestComponent extends BaseYearlyAppComponent {
         void inject(AddBirthdayActivityTest addBirthdayActivityTest);
     }

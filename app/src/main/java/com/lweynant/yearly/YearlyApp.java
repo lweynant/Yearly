@@ -3,6 +3,7 @@ package com.lweynant.yearly;
 import android.app.Application;
 
 import com.lweynant.yearly.controller.EventControllerModule;
+import com.lweynant.yearly.controller.EventsAdapterModule;
 import com.lweynant.yearly.model.EventModelModule;
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.EventRepoSerializer;
@@ -53,6 +54,7 @@ public class YearlyApp extends Application implements IStringResources, IEventRe
                     .eventModelModule(new EventModelModule())
                     .eventViewModule(new EventViewModule())
                     .eventControllerModule(new EventControllerModule())
+                    .eventsAdapterModule(new EventsAdapterModule())
                     .build();
 
         }
