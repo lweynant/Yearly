@@ -2,7 +2,6 @@ package com.lweynant.yearly;
 
 import android.app.Instrumentation;
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.contrib.CountingIdlingResource;
 import android.support.test.espresso.contrib.RecyclerViewActions;
@@ -11,20 +10,19 @@ import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
 
 import com.google.gson.JsonObject;
+import com.lweynant.yearly.controller.DateFormatter;
 import com.lweynant.yearly.controller.EventControllerModule;
 import com.lweynant.yearly.controller.EventsActivity;
 import com.lweynant.yearly.controller.EventsAdapter;
-import com.lweynant.yearly.controller.EventsAdapterModule;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.EventModelModule;
-import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.EventRepoTransaction;
+import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.IJsonFileAccessor;
 import com.lweynant.yearly.ui.EventViewModule;
 import com.lweynant.yearly.util.IClock;
 import com.lweynant.yearly.util.IUniqueIdGenerator;
-import com.lweynant.yearly.util.UUID;
 
 import org.joda.time.LocalDate;
 import org.junit.After;
@@ -41,15 +39,20 @@ import dagger.Component;
 import timber.log.Timber;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.Espresso.registerIdlingResources;
 import static android.support.test.espresso.Espresso.unregisterIdlingResources;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
+import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.contrib.PickerActions.setDate;
 import static android.support.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static com.lweynant.yearly.matcher.RecyclerViewMatcher.withRecyclerView;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.mockito.Mockito.when;
@@ -59,8 +62,26 @@ import static org.mockito.Mockito.when;
 public class EventsActivityTest {
 
 
-    @Before
-    public void setUp() throws IOException {
+    @PerApp
+    @Component(dependencies = TestPlatformComponent.class, modules = {YearlyAppModule.class, TestEventsAdapterModule.class, EventViewModule.class, EventModelModule.class, EventControllerModule.class})
+    public interface TestComponentBase extends BaseYearlyAppComponent {
+        void inject(EventsActivityTest eventsActivityTest);
+    }
+
+    @Inject IJsonFileAccessor fileAccessor;
+    @Inject EventRepoTransaction transaction;
+    @Inject IClock clock;
+    @Inject IUniqueIdGenerator idGenerator;
+    @Inject EventsAdapter eventsAdapter;
+    @Inject CountingIdlingResource idlingResource;
+    @Inject DateFormatter dateFormatter;
+    private LocalDate today;
+
+    @Rule public ActivityTestRule<EventsActivity> activityTestRule = new ActivityTestRule<EventsActivity>(EventsActivity.class,
+            true,  //initialTouchMode
+            false); //launchActivity. False we need to set the mock file accessor
+
+    @Before public void setUp() throws IOException {
         Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
         YearlyApp app = (YearlyApp) instrumentation.getTargetContext().getApplicationContext();
 
@@ -75,7 +96,8 @@ public class EventsActivityTest {
         component.inject(this);
         Timber.d("injected component, file accessor %s", fileAccessor.toString());
         when(fileAccessor.read()).thenReturn(new JsonObject());
-        when(clock.now()).thenReturn(new LocalDate(2015, Date.JANUARY, 1));
+        today = new LocalDate(2015, Date.JANUARY, 1);
+        when(clock.now()).thenReturn(today);
         when(clock.timestamp()).thenReturn("fake timestamp");
         app.setComponent(component);
         registerIdlingResources(idlingResource);
@@ -83,60 +105,98 @@ public class EventsActivityTest {
     }
 
 
-    @After
-    public void tearDown() {
+    @After public void tearDown() {
         unregisterIdlingResources(idlingResource);
     }
 
-    @Rule
-    public ActivityTestRule<EventsActivity> activityTestRule = new ActivityTestRule<EventsActivity>(EventsActivity.class,
-            true,  //initialTouchMode
-            false); //launchActivity. False we need to set the mock file accessor
-    @Inject IJsonFileAccessor fileAccessor;
-    @Inject EventRepoTransaction transaction;
-    @Inject IClock clock;
-    @Inject IUniqueIdGenerator idGenerator;
-    @Inject EventsAdapter eventsAdapter;
-    @Inject CountingIdlingResource idlingResource;
 
-    @PerApp
-    @Component(dependencies = TestPlatformComponent.class, modules = {YearlyAppModule.class, TestEventsAdapterModule.class, EventViewModule.class, EventModelModule.class, EventControllerModule.class})
-    public interface TestComponentBase extends BaseYearlyAppComponent {
-        void inject(EventsActivityTest eventsActivityTest);
-    }
 
-    @Test
-    public void testOneEventInList() {
-        transaction.add(new Birthday("John", Date.APRIL, 23, clock, idGenerator))
-                 .commit();
+    @Test public void testOneEventInList() {
+        initializeTheListWith(createBirthday("John"));
+
         onView(withText(containsString("John"))).check(matches(isDisplayed()));
     }
 
-    @Test
-    public void testOneEventRemoveLast() throws IOException {
-        transaction.add(new Birthday("One", Date.APRIL, 23, clock, idGenerator))
-                 .commit();
+
+    @Test public void testOrderInNonEmptyList() {
+        initializeTheListWith(createBirthday("Yesterday", today.minusDays(1)),
+                              createBirthday("Tomorrow", today.plusDays(1)),
+                              createBirthday("Today", today));
+
+        onView(withRecyclerView(R.id.events_recycler_view).atPosition(0)).check(matches(withText(containsString("Today"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPosition(1)).check(matches(withText(containsString("Tomorrow"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPosition(2)).check(matches(withText(containsString("Yesterday"))));
+    }
+
+
+    @Test public void testOneEventRemoveLast() throws IOException {
+        initializeTheListWith(createBirthday("One"));
+
         onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("One")))));
         onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem((withText(containsString("One"))), swipeLeft()));
         onView(withId(R.id.events_recycler_view)).check(matches(not(hasDescendant(withText(containsString("One"))))));
     }
 
-    @Test
-    public void testTwoEventsRemoveLast() throws IOException {
-        transaction.add(new Birthday("One", Date.APRIL, 23, clock, idGenerator))
-                 .add(new Birthday("Two", Date.APRIL, 24, clock, idGenerator))
-                 .commit();
+    @Test public void testTwoEventsRemoveLast() throws IOException {
+        initializeTheListWith(createBirthday("One"),
+                              createBirthday("Two"));
+
         onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("Two")))));
         onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem((withText(containsString("Two"))), swipeLeft()));
         onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("One")))));
         onView(withId(R.id.events_recycler_view)).check(matches(not(hasDescendant(withText(containsString("Two"))))));
     }
 
-    @Test
-    public void testPushAddBirthdayStartsNewActivity() throws IOException {
+    @Test public void testPushAddBirthdayStartsNewActivity() throws IOException {
         onView(withId(R.id.fab_expand_menu_button)).perform(click());
         onView(withId(R.id.action_add_birthday)).perform(click());
         onView(withText(R.string.title_activity_add_birthday)).check(matches(isDisplayed()));
+    }
+
+    @Test public void testAddBirthdayOnEmptyList() {
+        onView(withId(R.id.fab_expand_menu_button)).perform(click());
+        onView(withId(R.id.action_add_birthday)).perform(click());
+        enterBirthday("Joe", today);
+        onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("Joe")))));
+    }
+
+    @Test public void testAddBirthDayOnNonEmptyList() {
+        initializeTheListWith(createBirthday("Yesterday", today.minusDays(1)),
+                              createBirthday("Today", today));
+
+        onView(withId(R.id.fab_expand_menu_button)).perform(click());
+        onView(withId(R.id.action_add_birthday)).perform(click());
+        enterBirthday("Tomorrow", today.plusDays(1));
+        onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("Tomorrow")))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPosition(0)).check(matches(withText(containsString("Today"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPosition(1)).check(matches(withText(containsString("Tomorrow"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPosition(2)).check(matches(withText(containsString("Yesterday"))));
+    }
+
+    private void initializeTheListWith(IEvent ... birthdays) {
+        for (IEvent birthday: birthdays) {
+            transaction.add(birthday);
+        }
+        transaction.commit();
+    }
+
+    private IEvent createBirthday(String name) {
+        return new Birthday(name, Date.DECEMBER, 20, clock, idGenerator);
+    }
+
+    private IEvent createBirthday(String name, LocalDate date) {
+        //noinspection ResourceType
+        return new Birthday(name, date.getYear(), date.getMonthOfYear(), date.getDayOfMonth(), clock, idGenerator);
+    }
+
+    private void enterBirthday(String firstName, LocalDate date) {
+        onView(withId(R.id.edit_text_name)).perform(typeText(firstName), closeSoftKeyboard());
+        onView(withId(R.id.edit_text_birthday_date)).perform(click());
+        onView(withId(R.id.date_picker)).perform(setDate(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth()));
+        onView(withText(R.string.apply)).perform(click());
+        //noinspection ResourceType
+        onView(withId(R.id.edit_text_birthday_date)).check(matches(withText(dateFormatter.format(date.getMonthOfYear(), date.getDayOfMonth()))));
+        pressBack();
     }
 
 

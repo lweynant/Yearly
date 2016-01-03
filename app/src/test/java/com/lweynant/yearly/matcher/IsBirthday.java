@@ -1,4 +1,4 @@
-package com.lweynant.yearly.matchers;
+package com.lweynant.yearly.matcher;
 
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.Date;
