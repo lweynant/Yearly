@@ -17,6 +17,11 @@ public class EventModelModule {
         return new EventRepo(fileAccessor, clock, idGenerator);
     }
 
+
+    @Provides EventRepoTransaction providesEventRepoTransaction(EventRepo repoModifier){
+        return new EventRepoTransaction(repoModifier);
+    }
+
     @Provides
     BirthdayBuilder providesBirthdayBuilder(IClock clock, IUniqueIdGenerator idGenerator) {
         return new BirthdayBuilder(clock, idGenerator);

@@ -21,7 +21,7 @@ import rx.Subscriber;
 import timber.log.Timber;
 
 
-public class EventRepo {
+public class EventRepo implements IEventRepoModifier {
     private final IUniqueIdGenerator uniqueIdGenerator;
     public IJsonFileAccessor eventRepoFileAccessor = null;
     private IClock clock = null;
@@ -43,6 +43,39 @@ public class EventRepo {
         listeners.add(listener);
     }
 
+    public void removeListener(IEventRepoListener listener) {
+        listeners.remove(listener);
+    }
+
+    @Override public void commit(IEventRepoTransaction transaction) {
+        Timber.d("commit");
+        transaction.add().subscribe(event -> add(event));
+        transaction.remove().subscribe(event -> remove(event));
+        notifyListeners();
+    }
+
+    public Observable<IEvent> getEvents() {
+        Timber.d("getEvents");
+        if (!cachedEvents.isEmpty()) {
+            return getEventsFromCache();
+        } else {
+            return getEventsFromFile();
+        }
+    }
+
+    public Observable<NotificationTime> notificationTimeForFirstUpcomingEvent(final LocalDate from) {
+        Observable<NotificationTime> time = getEvents()
+                .map(event -> new NotificationTime(from, event))
+                .reduce((currentMin, x) -> NotificationTime.min(currentMin, x));
+        return time;
+    }
+
+
+    public String getModificationId() {
+        return modificationId;
+    }
+
+
     private void notifyListeners() {
         modificationId = uniqueIdGenerator.getUniqueId();
         Timber.d("notifyListeners that data set changed %s", modificationId);
@@ -56,36 +89,19 @@ public class EventRepo {
 
     }
 
-    public EventRepo add(IEvent event) {
+    private EventRepo add(IEvent event) {
         Timber.d("add event %s", event.toString());
-        int before = cachedEvents.size();
         cachedEvents.add(event);
-//        if (cachedEvents.size() != before) {
-//            notifyListeners();
-//        }
         return this;
     }
-    public void commit(){
-        Timber.d("commit");
-        notifyListeners();
-    }
 
-    public EventRepo remove(IEvent event) {
+
+    private EventRepo remove(IEvent event) {
         Timber.d("remove event %s", event.toString());
         cachedEvents.remove(event);
-//        notifyListeners();
         return this;
     }
 
-
-    public Observable<IEvent> getEvents() {
-        Timber.d("getEvents");
-        if (!cachedEvents.isEmpty()) {
-            return getEventsFromCache();
-        } else {
-            return getEventsFromFile();
-        }
-    }
 
     private Observable<IEvent> getEventsFromFile() {
         Timber.d("getEventsFromFile");
@@ -161,18 +177,5 @@ public class EventRepo {
         return observable;
     }
 
-    public Observable<NotificationTime> notificationTimeForFirstUpcomingEvent(final LocalDate from) {
-        Observable<NotificationTime> time = getEvents()
-                .map(event -> new NotificationTime(from, event))
-                .reduce((currentMin, x) -> NotificationTime.min(currentMin, x));
-        return time;
-    }
 
-    public void removeListener(IEventRepoListener listener) {
-        listeners.remove(listener);
-    }
-
-    public String getModificationId() {
-        return modificationId;
-    }
 }

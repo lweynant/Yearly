@@ -19,6 +19,7 @@ import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.EventModelModule;
 import com.lweynant.yearly.model.EventRepo;
+import com.lweynant.yearly.model.EventRepoTransaction;
 import com.lweynant.yearly.model.IJsonFileAccessor;
 import com.lweynant.yearly.ui.EventViewModule;
 import com.lweynant.yearly.util.IClock;
@@ -71,13 +72,13 @@ public class EventsActivityTest {
                 .eventViewModule(new EventViewModule())
                 .eventModelModule(new EventModelModule())
                 .build();
-        app.setComponent(component);
         component.inject(this);
-        registerIdlingResources(idlingResource);
         Timber.d("injected component, file accessor %s", fileAccessor.toString());
         when(fileAccessor.read()).thenReturn(new JsonObject());
         when(clock.now()).thenReturn(new LocalDate(2015, Date.JANUARY, 1));
         when(clock.timestamp()).thenReturn("fake timestamp");
+        app.setComponent(component);
+        registerIdlingResources(idlingResource);
         activityTestRule.launchActivity(new Intent());
     }
 
@@ -92,7 +93,7 @@ public class EventsActivityTest {
             true,  //initialTouchMode
             false); //launchActivity. False we need to set the mock file accessor
     @Inject IJsonFileAccessor fileAccessor;
-    @Inject EventRepo eventRepo;
+    @Inject EventRepoTransaction transaction;
     @Inject IClock clock;
     @Inject IUniqueIdGenerator idGenerator;
     @Inject EventsAdapter eventsAdapter;
@@ -106,14 +107,14 @@ public class EventsActivityTest {
 
     @Test
     public void testOneEventInList() {
-        eventRepo.add(new Birthday("John", Date.APRIL, 23, clock, idGenerator))
+        transaction.add(new Birthday("John", Date.APRIL, 23, clock, idGenerator))
                  .commit();
         onView(withText(containsString("John"))).check(matches(isDisplayed()));
     }
 
     @Test
     public void testOneEventRemoveLast() throws IOException {
-        eventRepo.add(new Birthday("One", Date.APRIL, 23, clock, idGenerator))
+        transaction.add(new Birthday("One", Date.APRIL, 23, clock, idGenerator))
                  .commit();
         onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("One")))));
         onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem((withText(containsString("One"))), swipeLeft()));
@@ -122,7 +123,7 @@ public class EventsActivityTest {
 
     @Test
     public void testTwoEventsRemoveLast() throws IOException {
-        eventRepo.add(new Birthday("One", Date.APRIL, 23, clock, idGenerator))
+        transaction.add(new Birthday("One", Date.APRIL, 23, clock, idGenerator))
                  .add(new Birthday("Two", Date.APRIL, 24, clock, idGenerator))
                  .commit();
         onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("Two")))));

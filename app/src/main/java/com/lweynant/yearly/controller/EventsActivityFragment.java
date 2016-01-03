@@ -14,6 +14,7 @@ import com.lweynant.yearly.IStringResources;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.YearlyApp;
 import com.lweynant.yearly.model.EventRepo;
+import com.lweynant.yearly.model.EventRepoTransaction;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.ui.EventViewFactory;
 import com.lweynant.yearly.ui.IEventNotificationText;
@@ -36,6 +37,7 @@ public class EventsActivityFragment extends BaseFragment implements EventsAdapte
     @Inject EventsAdapter eventsAdapter;
     @Inject IClock clock;
     @Inject EventRepo repo;
+    @Inject EventRepoTransaction transaction;
     @Inject EventViewFactory viewFactory;
     @Bind(R.id.events_recycler_view) RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
@@ -78,7 +80,7 @@ public class EventsActivityFragment extends BaseFragment implements EventsAdapte
                 if (direction == ItemTouchHelper.LEFT) {
                     Timber.d("removing event");
                     IEvent event = ((EventsAdapter.EventViewHolder) viewHolder).getEvent();
-                    repo.remove(event).commit();
+                    transaction.remove(event).commit();
                 }
 
             }
