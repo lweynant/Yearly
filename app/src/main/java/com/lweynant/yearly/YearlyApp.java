@@ -36,28 +36,20 @@ public class YearlyApp extends Application implements IStringResources, IEventRe
     EventRepo repo;
     @Inject
     IJsonFileAccessor repoAccessor;
-    private boolean isInjected = false;
-    private BaseYearlyAppComponent component = null;
+    private BaseYearlyAppComponent component;
 
     @Override
     public void onCreate() {
         super.onCreate();
         if (BuildConfig.DEBUG) {
+            //in integration tests onCreate will be called multiple times, we will
+            // therefor first remove all planted trees (uprootAll()
+            Timber.uprootAll();
             Timber.plant(new Timber.DebugTree());
         }
         Timber.d("onCreate");
         JodaTimeAndroid.init(this);
-        if (component == null) {
-            component = DaggerYearlyAppComponent.builder()
-                    .platformComponent(DaggerPlatformComponent.builder().platformModule(new PlatformModule(this)).build())
-                    .yearlyAppModule(new YearlyAppModule(this))
-                    .eventModelModule(new EventModelModule())
-                    .eventViewModule(new EventViewModule())
-                    .eventControllerModule(new EventControllerModule())
-                    .eventsAdapterModule(new EventsAdapterModule())
-                    .build();
-
-        }
+        component = null;
 
     }
 
@@ -68,20 +60,26 @@ public class YearlyApp extends Application implements IStringResources, IEventRe
 
     @Override
     public void onTerminate() {
-        super.onTerminate();
         Timber.d("onTerminate");
+        super.onTerminate();
         repo.removeListener(this);
     }
 
     @Override public BaseYearlyAppComponent getComponent() {
         Timber.d("getComponent");
-        if (!isInjected) {
-            //todo this is a test artefact that I should get rid off - is we reach this point it means
-            // we are in production code and not in the test - so we need to inject and register as listener
+        if (component == null) {
+            Timber.d("creating the production component");
+            component = DaggerYearlyAppComponent.builder()
+                    .platformComponent(DaggerPlatformComponent.builder().platformModule(new PlatformModule(this)).build())
+                    .yearlyAppModule(new YearlyAppModule(this))
+                    .eventModelModule(new EventModelModule())
+                    .eventViewModule(new EventViewModule())
+                    .eventControllerModule(new EventControllerModule())
+                    .eventsAdapterModule(new EventsAdapterModule())
+                    .build();
             Timber.d("injecting component and registering as listener");
             component.inject(this);
             repo.addListener(this);
-            isInjected = true;
         }
         return component;
     }
@@ -90,7 +88,6 @@ public class YearlyApp extends Application implements IStringResources, IEventRe
         Timber.d("setComponent repo: %s fileAccessor: %s", repo == null ? "null" : repo.toString(), repoAccessor == null ? "null" : repoAccessor.toString());
         this.component = component;
         this.component.inject(this);
-        isInjected = true;
         Timber.d("injected component repo: %s fileAccessor: %s", repo == null ? "null" : repo.toString(), repoAccessor == null ? "null" : repoAccessor.toString());
     }
 
@@ -106,8 +103,6 @@ public class YearlyApp extends Application implements IStringResources, IEventRe
         Observable<NotificationTime> nextAlarmObservable = repo.notificationTimeForFirstUpcomingEvent(now);
         nextAlarmObservable.subscribeOn(Schedulers.io())
                 .subscribe(new AlarmGenerator(this));
-
-
     }
 
 
