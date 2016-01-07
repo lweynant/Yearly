@@ -1,4 +1,4 @@
-package com.lweynant.yearly.util;
+package com.lweynant.yearly.platform;
 
 import com.google.gson.JsonObject;
 import com.lweynant.yearly.model.EventRepoSerializer;

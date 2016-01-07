@@ -5,7 +5,7 @@ import android.view.ViewGroup;
 import com.lweynant.yearly.IStringResources;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.IEvent;
-import com.lweynant.yearly.util.IClock;
+import com.lweynant.yearly.platform.IClock;
 
 public class EventViewFactory {
 

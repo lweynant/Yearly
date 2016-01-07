@@ -21,9 +21,9 @@ import com.lweynant.yearly.model.EventRepoTransaction;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.IJsonFileAccessor;
 import com.lweynant.yearly.model.NotificationTime;
-import com.lweynant.yearly.util.EventRepoSerializerToFileDecorator;
-import com.lweynant.yearly.util.IClock;
-import com.lweynant.yearly.util.IUniqueIdGenerator;
+import com.lweynant.yearly.platform.EventRepoSerializerToFileDecorator;
+import com.lweynant.yearly.platform.IClock;
+import com.lweynant.yearly.platform.IUniqueIdGenerator;
 
 import org.joda.time.LocalDate;
 

@@ -1,6 +1,6 @@
 package com.lweynant.yearly.model;
 
-import com.lweynant.yearly.util.UUID;
+import com.lweynant.yearly.platform.UUID;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

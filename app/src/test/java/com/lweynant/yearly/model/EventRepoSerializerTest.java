@@ -3,8 +3,8 @@ package com.lweynant.yearly.model;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.lweynant.yearly.util.IClock;
-import com.lweynant.yearly.util.IUniqueIdGenerator;
+import com.lweynant.yearly.platform.IClock;
+import com.lweynant.yearly.platform.IUniqueIdGenerator;
 
 import org.joda.time.LocalDate;
 import org.junit.Before;

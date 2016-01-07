@@ -1,6 +1,4 @@
-package com.lweynant.yearly.util;
-
-import com.lweynant.yearly.model.IJsonFileAccessor;
+package com.lweynant.yearly.platform;
 
 import javax.inject.Singleton;
 

@@ -11,7 +11,7 @@ import android.widget.DatePicker;
 import com.lweynant.yearly.IComponentRegistry;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.model.Date;
-import com.lweynant.yearly.util.IClock;
+import com.lweynant.yearly.platform.IClock;
 
 import org.joda.time.LocalDate;
 

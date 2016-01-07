@@ -5,8 +5,7 @@ import android.os.Bundle;
 
 import com.lweynant.yearly.IComponentRegistry;
 import com.lweynant.yearly.IStringResources;
-import com.lweynant.yearly.ui.EventViewFactory;
-import com.lweynant.yearly.util.IClock;
+import com.lweynant.yearly.platform.IClock;
 
 import javax.inject.Named;
 

@@ -10,7 +10,7 @@ import com.lweynant.yearly.controller.EventsActivity;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.ui.EventViewFactory;
 import com.lweynant.yearly.ui.IEventNotificationText;
-import com.lweynant.yearly.util.IClock;
+import com.lweynant.yearly.platform.IClock;
 
 import org.joda.time.LocalDate;
 

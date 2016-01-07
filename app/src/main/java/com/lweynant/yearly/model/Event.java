@@ -2,8 +2,8 @@ package com.lweynant.yearly.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.lweynant.yearly.util.IClock;
-import com.lweynant.yearly.util.IUniqueIdGenerator;
+import com.lweynant.yearly.platform.IClock;
+import com.lweynant.yearly.platform.IUniqueIdGenerator;
 
 import org.joda.time.Days;
 import org.joda.time.LocalDate;

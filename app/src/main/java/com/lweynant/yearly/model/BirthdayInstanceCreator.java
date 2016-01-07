@@ -1,8 +1,8 @@
 package com.lweynant.yearly.model;
 
 import com.google.gson.InstanceCreator;
-import com.lweynant.yearly.util.IClock;
-import com.lweynant.yearly.util.IUniqueIdGenerator;
+import com.lweynant.yearly.platform.IClock;
+import com.lweynant.yearly.platform.IUniqueIdGenerator;
 
 import java.lang.reflect.Type;
 

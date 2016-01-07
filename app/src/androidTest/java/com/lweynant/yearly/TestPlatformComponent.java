@@ -1,6 +1,6 @@
 package com.lweynant.yearly;
 
-import com.lweynant.yearly.util.BasePlatformComponent;
+import com.lweynant.yearly.platform.BasePlatformComponent;
 
 import javax.inject.Singleton;
 

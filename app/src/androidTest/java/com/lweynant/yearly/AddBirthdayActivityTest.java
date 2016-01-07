@@ -13,7 +13,7 @@ import com.lweynant.yearly.controller.EventsAdapterModule;
 import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.EventModelModule;
 import com.lweynant.yearly.ui.EventViewModule;
-import com.lweynant.yearly.util.IClock;
+import com.lweynant.yearly.platform.IClock;
 
 import org.joda.time.LocalDate;
 import org.junit.Before;
@@ -31,7 +31,6 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.contrib.PickerActions.setDate;
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.mockito.Mockito.when;

@@ -1,9 +1,9 @@
 package com.lweynant.yearly;
 
 import com.lweynant.yearly.model.IJsonFileAccessor;
-import com.lweynant.yearly.util.IClock;
-import com.lweynant.yearly.util.IUniqueIdGenerator;
-import com.lweynant.yearly.util.UUID;
+import com.lweynant.yearly.platform.IClock;
+import com.lweynant.yearly.platform.IUniqueIdGenerator;
+import com.lweynant.yearly.platform.UUID;
 
 import javax.inject.Singleton;
 
@@ -11,7 +11,6 @@ import dagger.Module;
 import dagger.Provides;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockingDetails;
 
 @Module
 public class MockPlatformModule {

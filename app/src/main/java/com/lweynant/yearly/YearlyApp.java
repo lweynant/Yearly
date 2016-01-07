@@ -12,10 +12,10 @@ import com.lweynant.yearly.model.IEventRepoListener;
 import com.lweynant.yearly.model.IJsonFileAccessor;
 import com.lweynant.yearly.model.NotificationTime;
 import com.lweynant.yearly.ui.EventViewModule;
-import com.lweynant.yearly.util.DaggerPlatformComponent;
-import com.lweynant.yearly.util.EventRepoSerializerToFileDecorator;
-import com.lweynant.yearly.util.IClock;
-import com.lweynant.yearly.util.PlatformModule;
+import com.lweynant.yearly.platform.DaggerPlatformComponent;
+import com.lweynant.yearly.platform.EventRepoSerializerToFileDecorator;
+import com.lweynant.yearly.platform.IClock;
+import com.lweynant.yearly.platform.PlatformModule;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 

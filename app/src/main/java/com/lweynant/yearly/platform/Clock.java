@@ -1,4 +1,4 @@
-package com.lweynant.yearly.util;
+package com.lweynant.yearly.platform;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;

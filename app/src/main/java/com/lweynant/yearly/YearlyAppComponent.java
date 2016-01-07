@@ -4,7 +4,7 @@ import com.lweynant.yearly.controller.EventControllerModule;
 import com.lweynant.yearly.controller.EventsAdapterModule;
 import com.lweynant.yearly.model.EventModelModule;
 import com.lweynant.yearly.ui.EventViewModule;
-import com.lweynant.yearly.util.PlatformComponent;
+import com.lweynant.yearly.platform.PlatformComponent;
 
 import dagger.Component;
 

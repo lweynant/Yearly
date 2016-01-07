@@ -3,7 +3,7 @@ package com.lweynant.yearly.model;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.lweynant.yearly.util.IClock;
+import com.lweynant.yearly.platform.IClock;
 
 import rx.Subscriber;
 import timber.log.Timber;

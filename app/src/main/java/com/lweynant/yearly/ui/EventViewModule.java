@@ -1,7 +1,7 @@
 package com.lweynant.yearly.ui;
 
 import com.lweynant.yearly.IStringResources;
-import com.lweynant.yearly.util.IClock;
+import com.lweynant.yearly.platform.IClock;
 
 import dagger.Module;
 import dagger.Provides;

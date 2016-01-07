@@ -1,4 +1,4 @@
-package com.lweynant.yearly.util;
+package com.lweynant.yearly.platform;
 
 public interface IUniqueIdGenerator {
     String getUniqueId();
