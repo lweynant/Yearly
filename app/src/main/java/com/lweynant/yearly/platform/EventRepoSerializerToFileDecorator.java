@@ -8,6 +8,7 @@ import com.lweynant.yearly.model.IJsonFileAccessor;
 import java.io.IOException;
 
 import rx.Subscriber;
+import timber.log.Timber;
 
 public class EventRepoSerializerToFileDecorator extends Subscriber<IEvent> {
     private final EventRepoSerializer serializer;
@@ -20,6 +21,7 @@ public class EventRepoSerializerToFileDecorator extends Subscriber<IEvent> {
 
     @Override
     public void onCompleted() {
+        Timber.d("onCompleted");
         serializer.onCompleted();
         if (serializer.isSerialized()) {
             JsonObject json = serializer.serialized();
@@ -34,12 +36,14 @@ public class EventRepoSerializerToFileDecorator extends Subscriber<IEvent> {
 
     @Override
     public void onError(Throwable e) {
+        Timber.d("onError %s", e.toString());
         serializer.onError(e);
         accessor = null;
     }
 
     @Override
     public void onNext(IEvent event) {
+        Timber.d("onNext");
         serializer.onNext(event);
     }
 
