@@ -11,8 +11,9 @@ import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.IEventRepoListener;
 import com.lweynant.yearly.model.IJsonFileAccessor;
 import com.lweynant.yearly.model.NotificationTime;
-import com.lweynant.yearly.ui.EventViewModule;
 import com.lweynant.yearly.platform.DaggerPlatformComponent;
+import com.lweynant.yearly.platform.IAlarm;
+import com.lweynant.yearly.ui.EventViewModule;
 import com.lweynant.yearly.platform.EventRepoSerializerToFileDecorator;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.PlatformModule;
@@ -30,12 +31,10 @@ import timber.log.Timber;
 public class YearlyApp extends Application implements IStringResources, IEventRepoListener, IComponentRegistry {
 
 
-    @Inject
-    IClock clock;
-    @Inject
-    EventRepo repo;
-    @Inject
-    IJsonFileAccessor repoAccessor;
+    @Inject IClock clock;
+    @Inject EventRepo repo;
+    @Inject IJsonFileAccessor repoAccessor;
+    @Inject IAlarm alarm;
     private BaseYearlyAppComponent component;
 
     @Override
@@ -69,7 +68,7 @@ public class YearlyApp extends Application implements IStringResources, IEventRe
         Timber.d("getComponent");
         if (component == null) {
             Timber.d("creating the production component");
-            component = DaggerYearlyAppComponent.builder()
+            YearlyAppComponent cmp = DaggerYearlyAppComponent.builder()
                     .platformComponent(DaggerPlatformComponent.builder().platformModule(new PlatformModule(this)).build())
                     .yearlyAppModule(new YearlyAppModule(this))
                     .eventModelModule(new EventModelModule())
@@ -78,8 +77,7 @@ public class YearlyApp extends Application implements IStringResources, IEventRe
                     .eventsAdapterModule(new EventsAdapterModule())
                     .build();
             Timber.d("injecting component and registering as listener");
-            component.inject(this);
-            repo.addListener(this);
+            setComponent(cmp);
         }
         return component;
     }
@@ -88,6 +86,7 @@ public class YearlyApp extends Application implements IStringResources, IEventRe
         Timber.d("setComponent repo: %s fileAccessor: %s", repo == null ? "null" : repo.toString(), repoAccessor == null ? "null" : repoAccessor.toString());
         this.component = component;
         this.component.inject(this);
+        repo.addListener(this);
         Timber.d("injected component repo: %s fileAccessor: %s", repo == null ? "null" : repo.toString(), repoAccessor == null ? "null" : repoAccessor.toString());
     }
 
@@ -98,11 +97,11 @@ public class YearlyApp extends Application implements IStringResources, IEventRe
         Timber.i("archive");
         events.subscribeOn(Schedulers.io())
                 .subscribe(new EventRepoSerializerToFileDecorator(repoAccessor, new EventRepoSerializer(clock)));
-        Timber.i("set next event");
-        LocalDate now = LocalDate.now();
+        Timber.i("set next alarm on %s", alarm);
+        LocalDate now = clock.now();
         Observable<NotificationTime> nextAlarmObservable = repo.notificationTimeForFirstUpcomingEvent(now);
         nextAlarmObservable.subscribeOn(Schedulers.io())
-                .subscribe(new AlarmGenerator(this));
+                .subscribe(new AlarmGenerator(alarm));
     }
 
 

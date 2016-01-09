@@ -12,6 +12,8 @@ import com.lweynant.yearly.controller.EventControllerModule;
 import com.lweynant.yearly.controller.EventsAdapterModule;
 import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.EventModelModule;
+import com.lweynant.yearly.model.NotificationTime;
+import com.lweynant.yearly.platform.IAlarm;
 import com.lweynant.yearly.ui.EventViewModule;
 import com.lweynant.yearly.platform.IClock;
 
@@ -33,10 +35,15 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.contrib.PickerActions.setDate;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(AndroidJUnit4.class)
 public class AddBirthdayActivityTest {
+
+    private LocalDate today;
 
     @PerApp
     @Component(dependencies = TestPlatformComponent.class, modules = {YearlyAppModule.class,
@@ -66,27 +73,24 @@ public class AddBirthdayActivityTest {
                 .build();
         app.setComponent(component);
         component.inject(this);
+        today = new LocalDate(2015, Date.JANUARY, 1);
+        when(clock.now()).thenReturn(today);
+        activityTestRule.launchActivity(new Intent());
     }
 
     @Test public void selectCurrentDay() {
-        when(clock.now()).thenReturn(new LocalDate(2015, Date.JANUARY, 1));
-        activityTestRule.launchActivity(new Intent());
         onView(withId(R.id.edit_text_birthday_date)).perform(click());
         onView(withText(R.string.apply)).perform(click());
         onView(withId(R.id.edit_text_birthday_date)).check(matches(withText(dateFormatter.format(Date.JANUARY, 1))));
     }
 
     @Test public void selectCurrentDayWithYear() {
-        when(clock.now()).thenReturn(new LocalDate(2015, Date.JANUARY, 1));
-        activityTestRule.launchActivity(new Intent());
         onView(withId(R.id.edit_text_birthday_date)).perform(click());
         onView(withId(R.id.checkbox_add_year)).perform(click());
         onView(withText(R.string.apply)).perform(click());
         onView(withId(R.id.edit_text_birthday_date)).check(matches(withText(dateFormatter.format(2015, Date.JANUARY, 1))));
     }
     @Test public void selectADay() {
-        when(clock.now()).thenReturn(new LocalDate(2015, Date.JANUARY, 1));
-        activityTestRule.launchActivity(new Intent());
         onView(withId(R.id.edit_text_birthday_date)).perform(click());
         onView(withId(R.id.date_picker)).perform(setDate(1966, Date.FEBRUARY, 8));
 
@@ -94,8 +98,6 @@ public class AddBirthdayActivityTest {
         onView(withId(R.id.edit_text_birthday_date)).check(matches(withText(dateFormatter.format(Date.FEBRUARY, 8))));
     }
     @Test public void selectADayWithYear() {
-        when(clock.now()).thenReturn(new LocalDate(2015, Date.JANUARY, 1));
-        activityTestRule.launchActivity(new Intent());
         onView(withId(R.id.edit_text_birthday_date)).perform(click());
         onView(withId(R.id.date_picker)).perform(setDate(1966, Date.FEBRUARY, 8));
         onView(withId(R.id.checkbox_add_year)).perform(click());

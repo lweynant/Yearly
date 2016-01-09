@@ -22,6 +22,7 @@ import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.IJsonFileAccessor;
 import com.lweynant.yearly.model.NotificationTime;
 import com.lweynant.yearly.platform.EventRepoSerializerToFileDecorator;
+import com.lweynant.yearly.platform.IAlarm;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IUniqueIdGenerator;
 
@@ -43,6 +44,7 @@ public class EventsActivity extends BaseActivity {
     @Inject EventRepo repo;
     @Inject EventRepoTransaction transaction;
     @Inject IJsonFileAccessor fileAccessor;
+    @Inject IAlarm alarm;
     @Bind(R.id.multiple_actions) FloatingActionsMenu menuMultipleActions;
     @Bind(R.id.action_add_event) FloatingActionButton addEventButton;
     @Bind(R.id.action_add_birthday) FloatingActionButton addBirthdayButton;
@@ -150,7 +152,7 @@ public class EventsActivity extends BaseActivity {
                 LocalDate now = LocalDate.now();
                 Observable<NotificationTime> nextAlarmObservable = repo.notificationTimeForFirstUpcomingEvent(now);
                 nextAlarmObservable.subscribeOn(Schedulers.io())
-                        .subscribe(new AlarmGenerator(this));
+                        .subscribe(new AlarmGenerator(alarm));
             }
         }
 

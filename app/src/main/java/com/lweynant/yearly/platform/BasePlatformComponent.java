@@ -8,4 +8,6 @@ public interface BasePlatformComponent {
     IUniqueIdGenerator uniqueIdGenerator();
 
     IJsonFileAccessor jsonFileAccessor();
+
+    IAlarm alarm();
 }

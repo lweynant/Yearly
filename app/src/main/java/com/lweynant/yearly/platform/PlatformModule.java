@@ -33,4 +33,8 @@ public class PlatformModule {
     @Singleton IUniqueIdGenerator provideUniqueIdGenerator() {
         return new UUID();
     }
+
+    @Provides @Singleton IAlarm provideAlarm() {
+        return new Alarm(context);
+    }
 }

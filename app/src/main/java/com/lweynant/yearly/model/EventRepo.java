@@ -78,7 +78,7 @@ public class EventRepo implements IEventRepoModifier {
 
     private void notifyListeners() {
         modificationId = uniqueIdGenerator.getUniqueId();
-        Timber.d("notifyListeners that data set changed %s", modificationId);
+        Timber.d("notifyListeners (%s) that data set changed %s", listeners.size(), modificationId);
         // since onChanged() is implemented by the listener, it could do anything, including
         // removing itself from {@link mObservers} - and that could cause problems if
         // an iterator is used on the ArrayList {@link listeners}.

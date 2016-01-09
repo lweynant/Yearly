@@ -20,6 +20,8 @@ import com.lweynant.yearly.model.EventModelModule;
 import com.lweynant.yearly.model.EventRepoTransaction;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.IJsonFileAccessor;
+import com.lweynant.yearly.model.NotificationTime;
+import com.lweynant.yearly.platform.IAlarm;
 import com.lweynant.yearly.ui.EventViewModule;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IUniqueIdGenerator;
@@ -55,6 +57,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static com.lweynant.yearly.matcher.RecyclerViewMatcher.withRecyclerView;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(AndroidJUnit4.class)
@@ -75,6 +79,7 @@ public class EventsActivityTest {
     @Inject EventsAdapter eventsAdapter;
     @Inject CountingIdlingResource idlingResource;
     @Inject DateFormatter dateFormatter;
+    @Inject IAlarm alarm;
     private LocalDate today;
 
     @Rule public ActivityTestRule<EventsActivity> activityTestRule = new ActivityTestRule<EventsActivity>(EventsActivity.class,
@@ -111,10 +116,20 @@ public class EventsActivityTest {
 
 
 
-    @Test public void testOneEventInList() {
-        initializeTheListWith(createBirthday("John"));
+    @Test public void testOneEventInListWithTodaysBirthday() {
+        initializeTheListWith(createBirthday("John", today));
 
         onView(withText(containsString("John"))).check(matches(isDisplayed()));
+        Timber.d("verify alarm %s", alarm);
+        //see #15 verify(alarm, times(1)).scheduleAlarm(today, NotificationTime.MORNING);
+    }
+    @Test public void testOneEventInListWithBirthdayInFuture() {
+        LocalDate birthday = today.plusDays(100);
+        IEvent event = createBirthday("John", birthday);
+        initializeTheListWith(event);
+
+        onView(withText(containsString("John"))).check(matches(isDisplayed()));
+        //see #15 verify(alarm, times(1)).scheduleAlarm(birthday.minusDays(event.getNbrOfDaysForNotification()), NotificationTime.MORNING);
     }
 
 
