@@ -104,7 +104,7 @@ public class EventsActivityFragment extends BaseFragment implements EventsAdapte
         super.onResume();
         repo.addListener(eventsAdapter);
 
-        eventsAdapter.checkWhetherDataNeedsToBeResorted(LocalDate.now(), repo);
+        eventsAdapter.checkWhetherDataNeedsToBeResorted(clock.now(), repo);
 
     }
 
