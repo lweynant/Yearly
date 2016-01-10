@@ -7,7 +7,6 @@ import com.lweynant.yearly.model.NotificationTime;
 import org.joda.time.LocalDate;
 
 import rx.Observable;
-import rx.Subscriber;
 import rx.Subscription;
 import timber.log.Timber;
 
@@ -21,11 +20,13 @@ public class AlarmGenerator  {
     }
     public void generate(Observable<IEvent> events, LocalDate now) {
         Timber.d("generate");
-        unsubscrbeFromPreviousSubscription();
+        unsubscribeFromPreviousSubscription();
         subscription = events
                 .map(event -> new NotificationTime(now, event))
                 .reduce((currentMin, x) -> NotificationTime.min(currentMin, x))
-                .subscribe(new AlarmSubscriber());
+                .subscribe(t -> alarm.scheduleAlarm(t.getAlarmDate(), t.getHour()),
+                           e -> { alarm.clear(); onError(e); },
+                           () -> onCompleted());
     }
 
 
@@ -37,37 +38,10 @@ public class AlarmGenerator  {
         Timber.d(e, "onError");
     }
 
-    private void unsubscrbeFromPreviousSubscription() {
+    private void unsubscribeFromPreviousSubscription() {
         if (subscription != null && !subscription.isUnsubscribed()) {
             Timber.d("unsubscribe from previous transcription");
             subscription.unsubscribe();
         }
     }
-
-    private class AlarmSubscriber extends Subscriber<NotificationTime> {
-
-
-        AlarmSubscriber() {
-
-        }
-        @Override public void onCompleted() {
-            Timber.d("onCompleted");
-            AlarmGenerator.this.onCompleted();
-        }
-
-        @Override public void onError(Throwable e) {
-            Timber.d("onError %s", e.toString());
-            AlarmGenerator.this.onError(e);
-            alarm.clear();
-        }
-
-        @Override public void onNext(NotificationTime notificationTime) {
-            Timber.d("onNext");
-            Timber.d("onNext set alarm on %s at %d", notificationTime.getAlarmDate(), notificationTime.getHour());
-
-            alarm.scheduleAlarm(notificationTime.getAlarmDate(), notificationTime.getHour());
-        }
-    }
-
-
 }
