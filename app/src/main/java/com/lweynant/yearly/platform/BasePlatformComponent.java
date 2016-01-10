@@ -12,4 +12,6 @@ public interface BasePlatformComponent {
     IAlarm alarm();
 
     AlarmGenerator alarmGenerator();
+
+    IEventNotification eventNotification();
 }

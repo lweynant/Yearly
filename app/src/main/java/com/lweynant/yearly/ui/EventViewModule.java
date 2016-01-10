@@ -9,7 +9,7 @@ import dagger.Provides;
 @Module
 public class EventViewModule {
 
-    @Provides EventViewFactory provideEventViewFactory(IStringResources rstring, IClock clock) {
+    @Provides IEventViewFactory provideEventViewFactory(IStringResources rstring, IClock clock) {
         return new EventViewFactory(rstring, clock);
     }
 }

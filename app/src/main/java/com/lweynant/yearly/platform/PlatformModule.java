@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.lweynant.yearly.model.EventRepoFileAccessor;
 import com.lweynant.yearly.model.IJsonFileAccessor;
+import com.lweynant.yearly.ui.EventViewFactory;
 
 import javax.inject.Singleton;
 
@@ -39,5 +40,8 @@ public class PlatformModule {
     }
     @Provides @Singleton AlarmGenerator providesAlarmGenerator(IAlarm alarm) {
         return new AlarmGenerator(alarm);
+    }
+    @Provides @Singleton IEventNotification provideEventNotification(IClock clock) {
+        return new EventNotification(context, clock);
     }
 }

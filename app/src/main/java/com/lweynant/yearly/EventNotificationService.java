@@ -4,19 +4,20 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 
-import com.lweynant.yearly.model.Event;
+import com.lweynant.yearly.controller.EventNotifier;
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.platform.AlarmGenerator;
 import com.lweynant.yearly.platform.IClock;
+import com.lweynant.yearly.platform.IEventNotification;
 import com.lweynant.yearly.ui.EventViewFactory;
+import com.lweynant.yearly.ui.IEventViewFactory;
 
 import org.joda.time.LocalDate;
 
 import javax.inject.Inject;
 
 import rx.Observable;
-import rx.Subscription;
 import timber.log.Timber;
 
 /**
@@ -28,6 +29,7 @@ public class EventNotificationService extends IntentService {
     @Inject IClock clock;
     @Inject EventRepo repo;
     @Inject AlarmGenerator alarmGenerator;
+    @Inject EventNotifier eventNotifier;
     // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
     private static final String ACTION_NOTIFY = "com.lweynant.yearly.action.ACTION-NOTIFY";
 
@@ -65,16 +67,9 @@ public class EventNotificationService extends IntentService {
 
     private void handleActionNotification() {
         Timber.d("handleActionNotification");
-        YearlyApp app = (YearlyApp) getApplication();
 
-        EventViewFactory viewFactory = new EventViewFactory(app, clock);
-        Timber.d("retrieved repo from component %s", repo.toString());
+        eventNotifier.notify(repo.getEvents());
 
-        Observable<IEvent> eventsObservable = repo.getEvents();
-        Subscription subscription = eventsObservable
-                .filter(event -> Event.shouldBeNotified(clock.now(), event))
-                .subscribe(new EventNotifier(viewFactory, this, clock));
-        subscription.unsubscribe();
         LocalDate tomorrow = clock.now().plusDays(1);
         Timber.d("schedule next alarm using date %s", tomorrow);
 

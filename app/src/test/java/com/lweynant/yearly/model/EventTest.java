@@ -26,14 +26,6 @@ public class EventTest {
     @Mock
     IUniqueIdGenerator uniqueIdGenerator;
 
-    @Test
-    public void testShouldEventBeNotified() throws Exception {
-        LocalDate eventDate = new LocalDate(2015, Date.JULY, 8);
-        LocalDate now = eventDate.minusDays(1);
-        when(clock.now()).thenReturn(now);
-        Event event = new Event(name, eventDate.getMonthOfYear(), eventDate.getDayOfMonth(), clock, uniqueIdGenerator);
-        boolean notify = Event.shouldBeNotified(now, event);
-    }
 
     @Test
     public void testID() throws Exception {

@@ -19,6 +19,7 @@ import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.ui.EventViewFactory;
 import com.lweynant.yearly.ui.IEventNotificationText;
+import com.lweynant.yearly.ui.IEventViewFactory;
 
 import javax.inject.Inject;
 
@@ -36,7 +37,7 @@ public class EventsActivityFragment extends BaseFragment implements EventsAdapte
     @Inject IClock clock;
     @Inject EventRepo repo;
     @Inject EventRepoTransaction transaction;
-    @Inject EventViewFactory viewFactory;
+    @Inject IEventViewFactory viewFactory;
     @Bind(R.id.events_recycler_view) RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
 
@@ -115,7 +116,7 @@ public class EventsActivityFragment extends BaseFragment implements EventsAdapte
 
     @Override
     public void onSelected(IEvent eventType) {
-        EventViewFactory factory = new EventViewFactory((IStringResources) getActivity().getApplication(), clock);
+        IEventViewFactory factory = new EventViewFactory((IStringResources) getActivity().getApplication(), clock);
         IEventNotificationText notifText = factory.getEventNotificationText(eventType);
         String text = notifText.getOneLiner();
         Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();

@@ -5,7 +5,10 @@ import android.os.Bundle;
 
 import com.lweynant.yearly.IComponentRegistry;
 import com.lweynant.yearly.IStringResources;
+import com.lweynant.yearly.PerApp;
 import com.lweynant.yearly.platform.IClock;
+import com.lweynant.yearly.platform.IEventNotification;
+import com.lweynant.yearly.ui.IEventViewFactory;
 
 import javax.inject.Named;
 
@@ -30,5 +33,10 @@ public class EventControllerModule {
 
     @Provides @Named("birthday_builder") Intent providesIntent() {
         return new Intent();
+    }
+
+    @Provides @PerApp
+    EventNotifier providesEventNotifier(IEventNotification eventNotification, IEventViewFactory viewFactory, IClock clock) {
+        return new EventNotifier(eventNotification, viewFactory, clock);
     }
 }

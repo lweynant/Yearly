@@ -35,11 +35,6 @@ public class Event implements IEvent {
         this.id = uniqueIdGenerator.hashCode(uuid);
     }
 
-    public static boolean shouldBeNotified(LocalDate from, IEvent event) {
-        int days = Days.daysBetween(from, event.getDate()).getDays();
-        return days >= 0 && days <= event.getNbrOfDaysForNotification();
-    }
-
     @Override
     public String toString() {
         return name + " - " + getDate().toString("dd-MM");

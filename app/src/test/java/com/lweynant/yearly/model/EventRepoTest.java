@@ -135,24 +135,6 @@ public class EventRepoTest {
     }
 
 
-    @Test
-    public void getEvents_Upcoming() throws Exception {
-        when(clock.now()).thenReturn(new LocalDate(2015, Date.JULY, 31));
-
-        IEvent event1 = new Event(name, Date.FEBRUARY, 8, clock, uniqueIdGenerator);
-        IEvent event2 = new Event(name, Date.AUGUST, 1, clock, uniqueIdGenerator);
-        IEvent event3 = new Event(name, Date.AUGUST, 2, clock, uniqueIdGenerator);
-        event3.setNbrOfDaysForNotification(2);
-        IEvent event4 = new Event(name, Date.NOVEMBER, 8, clock, uniqueIdGenerator);
-        transaction.add(event1).add(event2).add(event3).add(event4).commit();
-        Observable<IEvent> events = sut.getEvents();
-        List<IEvent> list = events
-                .filter(event -> Event.shouldBeNotified(clock.now(), event))
-                .toList().toBlocking().single();
-        assertThat(list, hasSize(2));
-        assertThat(list, containsInAnyOrder(event2, event3));
-
-    }
 
     @Test
     public void getEvents_SetAlarmForEventToday() throws Exception {

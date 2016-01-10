@@ -7,8 +7,8 @@ import android.view.ViewGroup;
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.IEventRepoListener;
-import com.lweynant.yearly.ui.EventViewFactory;
 import com.lweynant.yearly.ui.IEventListElementView;
+import com.lweynant.yearly.ui.IEventViewFactory;
 
 import org.joda.time.LocalDate;
 
@@ -28,14 +28,14 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
     private onEventTypeSelectedListener listener;
     private LocalDate sortedFrom = new LocalDate(1900, 1, 1);
     private Subscription subscription;
-    private EventViewFactory viewFactory;
+    private IEventViewFactory viewFactory;
     private String repoId;
     private final List<IEvent> empyList = new ArrayList<>();
     private String currentlyUpdatingRepoModifId;
     //private boolean first = false;
 
 
-    public EventsAdapter(EventViewFactory viewFactory) {
+    public EventsAdapter(IEventViewFactory viewFactory) {
         Timber.d("create EventsAdapter instance");
         this.viewFactory = viewFactory;
 

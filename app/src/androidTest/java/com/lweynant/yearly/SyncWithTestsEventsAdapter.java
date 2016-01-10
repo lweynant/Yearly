@@ -5,7 +5,7 @@ import android.support.test.espresso.contrib.CountingIdlingResource;
 import com.lweynant.yearly.controller.EventsAdapter;
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.IEvent;
-import com.lweynant.yearly.ui.EventViewFactory;
+import com.lweynant.yearly.ui.IEventViewFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,7 @@ public class SyncWithTestsEventsAdapter extends EventsAdapter {
     private final CountingIdlingResource idlingResource;
     private final List<String> updates = new ArrayList<String>();
 
-    public SyncWithTestsEventsAdapter(CountingIdlingResource idlingResource, EventViewFactory viewFactory) {
+    public SyncWithTestsEventsAdapter(CountingIdlingResource idlingResource, IEventViewFactory viewFactory) {
         super(viewFactory);
         this.idlingResource = idlingResource;
 
