@@ -12,17 +12,16 @@ import com.lweynant.yearly.model.IEventRepoListener;
 import com.lweynant.yearly.model.IJsonFileAccessor;
 import com.lweynant.yearly.platform.AlarmGenerator;
 import com.lweynant.yearly.platform.DaggerPlatformComponent;
-import com.lweynant.yearly.ui.EventViewModule;
 import com.lweynant.yearly.platform.EventRepoSerializerToFileDecorator;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.PlatformModule;
+import com.lweynant.yearly.ui.EventViewModule;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
 import javax.inject.Inject;
 
 import rx.Observable;
-import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class YearlyApp extends Application implements IStringResources, IEventRepoListener, IComponentRegistry {
@@ -90,12 +89,11 @@ public class YearlyApp extends Application implements IStringResources, IEventRe
     @Override
     public void onDataSetChanged(EventRepo repo) {
         Timber.d("onDataSetChanged");
-        Observable<IEvent> events = repo.getEvents();
+        Observable<IEvent> events = repo.getEventsSubscribedOnProperScheduler();
         Timber.i("archive");
-        events.subscribeOn(Schedulers.io())
-                .subscribe(new EventRepoSerializerToFileDecorator(repoAccessor, new EventRepoSerializer(clock)));
+        events.subscribe(new EventRepoSerializerToFileDecorator(repoAccessor, new EventRepoSerializer(clock)));
         Timber.i("set next alarm on %s", alarmGenerator);
-        alarmGenerator.generate(repo.notificationTimeForFirstUpcomingEvent(clock.now()));
+        alarmGenerator.generate(repo.getEventsSubscribedOnProperScheduler(), clock.now());
     }
 
 

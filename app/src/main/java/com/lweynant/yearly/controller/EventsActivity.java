@@ -10,9 +10,8 @@ import android.view.View;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.lweynant.yearly.platform.AlarmGenerator;
-import com.lweynant.yearly.R;
 import com.lweynant.yearly.BaseYearlyAppComponent;
+import com.lweynant.yearly.R;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.model.EventRepo;
@@ -20,6 +19,7 @@ import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.EventRepoTransaction;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.IJsonFileAccessor;
+import com.lweynant.yearly.platform.AlarmGenerator;
 import com.lweynant.yearly.platform.EventRepoSerializerToFileDecorator;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IUniqueIdGenerator;
@@ -31,7 +31,6 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import rx.Observable;
-import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 
@@ -142,12 +141,11 @@ public class EventsActivity extends BaseActivity {
         } else {
             if (id == R.id.action_archive) {
                 Timber.i("archive");
-                Observable<IEvent> events = repo.getEvents();
-                events.subscribeOn(Schedulers.io())
-                        .subscribe(new EventRepoSerializerToFileDecorator(fileAccessor, new EventRepoSerializer(clock)));
+                Observable<IEvent> events = repo.getEventsSubscribedOnProperScheduler();
+                events.subscribe(new EventRepoSerializerToFileDecorator(fileAccessor, new EventRepoSerializer(clock)));
             } else if (id == R.id.action_set_alarm) {
                 Timber.i("set alarm");
-                alarmGenerator.generate(repo.notificationTimeForFirstUpcomingEvent(clock.now()));
+                alarmGenerator.generate(repo.getEventsSubscribedOnProperScheduler(), clock.now());
             }
         }
 

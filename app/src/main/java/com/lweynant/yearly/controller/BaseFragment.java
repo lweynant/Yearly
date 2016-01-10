@@ -3,8 +3,8 @@ package com.lweynant.yearly.controller;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
-import com.lweynant.yearly.YearlyApp;
 import com.lweynant.yearly.BaseYearlyAppComponent;
+import com.lweynant.yearly.YearlyApp;
 
 import timber.log.Timber;
 

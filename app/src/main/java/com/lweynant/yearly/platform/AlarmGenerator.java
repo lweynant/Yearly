@@ -1,28 +1,58 @@
 package com.lweynant.yearly.platform;
 
 
+import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.NotificationTime;
+
+import org.joda.time.LocalDate;
 
 import rx.Observable;
 import rx.Subscriber;
-import rx.schedulers.Schedulers;
+import rx.Subscription;
 import timber.log.Timber;
 
 public class AlarmGenerator  {
 
-    private IAlarm alarm;
+    private final IAlarm alarm;
+    private Subscription subscription;
+    public AlarmGenerator(IAlarm alarm) {
+        Timber.d("create AlarmGenerator instance");
+        this.alarm = alarm;
+    }
+    public void generate(Observable<IEvent> events, LocalDate now) {
+        Timber.d("generate");
+        unsubscrbeFromPreviousSubscription();
+        subscription = events
+                .map(event -> new NotificationTime(now, event))
+                .reduce((currentMin, x) -> NotificationTime.min(currentMin, x))
+                .subscribe(new AlarmSubscriber());
+    }
+
+
+    protected void onCompleted() {
+        Timber.d("onCompleted");
+    }
+
+    protected void onError(Throwable e) {
+        Timber.d(e, "onError");
+    }
+
+    private void unsubscrbeFromPreviousSubscription() {
+        if (subscription != null && !subscription.isUnsubscribed()) {
+            Timber.d("unsubscribe from previous transcription");
+            subscription.unsubscribe();
+        }
+    }
 
     private class AlarmSubscriber extends Subscriber<NotificationTime> {
 
 
-        boolean scheduledAlarm = false;
         AlarmSubscriber() {
 
         }
         @Override public void onCompleted() {
             Timber.d("onCompleted");
             AlarmGenerator.this.onCompleted();
-            if (!scheduledAlarm) alarm.clear();
         }
 
         @Override public void onError(Throwable e) {
@@ -36,27 +66,8 @@ public class AlarmGenerator  {
             Timber.d("onNext set alarm on %s at %d", notificationTime.getAlarmDate(), notificationTime.getHour());
 
             alarm.scheduleAlarm(notificationTime.getAlarmDate(), notificationTime.getHour());
-            scheduledAlarm = true;
         }
     }
 
-    public AlarmGenerator(IAlarm alarm) {
-        Timber.d("create AlarmGenerator instance");
-        this.alarm = alarm;
-    }
-
-    public void generate(Observable<NotificationTime> nextAlarmObservable) {
-        nextAlarmObservable.subscribeOn(Schedulers.io())
-                .subscribe(new AlarmSubscriber());
-
-    }
-
-    protected void onCompleted() {
-        Timber.d("onCompleted");
-    }
-
-    protected void onError(Throwable e) {
-        Timber.d(e, "onError");
-    }
 
 }

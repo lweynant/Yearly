@@ -16,11 +16,9 @@ import com.lweynant.yearly.YearlyApp;
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.EventRepoTransaction;
 import com.lweynant.yearly.model.IEvent;
+import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.ui.EventViewFactory;
 import com.lweynant.yearly.ui.IEventNotificationText;
-import com.lweynant.yearly.platform.IClock;
-
-import org.joda.time.LocalDate;
 
 import javax.inject.Inject;
 

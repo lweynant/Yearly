@@ -8,8 +8,8 @@ import com.lweynant.yearly.model.Event;
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.platform.AlarmGenerator;
-import com.lweynant.yearly.ui.EventViewFactory;
 import com.lweynant.yearly.platform.IClock;
+import com.lweynant.yearly.ui.EventViewFactory;
 
 import org.joda.time.LocalDate;
 
@@ -78,7 +78,7 @@ public class EventNotificationService extends IntentService {
         LocalDate tomorrow = clock.now().plusDays(1);
         Timber.d("schedule next alarm using date %s", tomorrow);
 
-        alarmGenerator.generate(repo.notificationTimeForFirstUpcomingEvent(tomorrow));
+        alarmGenerator.generate(repo.getEvents(), tomorrow);
 
     }
 

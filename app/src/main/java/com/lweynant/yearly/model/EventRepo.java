@@ -7,8 +7,6 @@ import com.google.gson.JsonObject;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IUniqueIdGenerator;
 
-import org.joda.time.LocalDate;
-
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,7 +16,7 @@ import java.util.Set;
 
 import rx.Observable;
 import rx.Subscriber;
-import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 
@@ -63,13 +61,11 @@ public class EventRepo implements IEventRepoModifier {
             return getEventsFromFile();
         }
     }
-
-    public Observable<NotificationTime> notificationTimeForFirstUpcomingEvent(final LocalDate from) {
-        Observable<NotificationTime> time = getEvents()
-                .map(event -> new NotificationTime(from, event))
-                .reduce( (currentMin, x) -> NotificationTime.min(currentMin, x));
-        return time;
+    public Observable<IEvent> getEventsSubscribedOnProperScheduler() {
+        Timber.d("getEvents on proper scheduler");
+        return getEvents().subscribeOn(Schedulers.io());
     }
+
 
 
     public String getModificationId() {

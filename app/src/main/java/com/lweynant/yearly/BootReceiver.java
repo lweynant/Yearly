@@ -29,7 +29,7 @@ public class BootReceiver extends BroadcastReceiver {
             Timber.d("generating the alarm...");
             ((YearlyApp) context.getApplicationContext()).getComponent().inject(this);
 
-            alarmGenerator.generate(repo.notificationTimeForFirstUpcomingEvent(clock.now()));
+            alarmGenerator.generate(repo.getEventsSubscribedOnProperScheduler(), clock.now());
         }
     }
 }

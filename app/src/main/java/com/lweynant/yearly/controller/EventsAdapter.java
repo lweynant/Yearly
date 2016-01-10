@@ -14,13 +14,11 @@ import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 
@@ -88,8 +86,8 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
                 dataSetUpdateCancelled(currentlyUpdatingRepoModifId);
             }
             currentlyUpdatingRepoModifId = repo.getModificationId();
-            Observable<IEvent> eventsObservable = repo.getEvents();
-            subscription = eventsObservable.subscribeOn(Schedulers.io())
+            Observable<IEvent> eventsObservable = repo.getEventsSubscribedOnProperScheduler();
+            subscription = eventsObservable
                     .toSortedList()
                     .first()
                     //.delay(first ? 5000 : 10, TimeUnit.MILLISECONDS)

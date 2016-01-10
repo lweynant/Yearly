@@ -2,9 +2,11 @@ package com.lweynant.yearly;
 
 import android.support.test.espresso.contrib.CountingIdlingResource;
 
-import com.lweynant.yearly.model.NotificationTime;
+import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.platform.AlarmGenerator;
 import com.lweynant.yearly.platform.IAlarm;
+
+import org.joda.time.LocalDate;
 
 import rx.Observable;
 import timber.log.Timber;
@@ -17,11 +19,12 @@ public class SyncWithTestsAlarmGenerator extends AlarmGenerator {
         this.idlingResource = idlingResource;
     }
 
-    @Override public void generate(Observable<NotificationTime> nextAlarmObservable) {
+    @Override public void generate(Observable<IEvent> events, LocalDate now) {
         Timber.d("generate - increment idlingResource");
         idlingResource.increment();
-        super.generate(nextAlarmObservable);
+        super.generate(events, now);
     }
+
 
     @Override protected void onCompleted() {
         Timber.d("onCompleted - decrement idlingResource");
