@@ -18,6 +18,7 @@ import java.util.Set;
 
 import rx.Observable;
 import rx.Subscriber;
+import rx.functions.Func1;
 import timber.log.Timber;
 
 
@@ -66,7 +67,7 @@ public class EventRepo implements IEventRepoModifier {
     public Observable<NotificationTime> notificationTimeForFirstUpcomingEvent(final LocalDate from) {
         Observable<NotificationTime> time = getEvents()
                 .map(event -> new NotificationTime(from, event))
-                .reduce((currentMin, x) -> NotificationTime.min(currentMin, x));
+                .reduce( (currentMin, x) -> NotificationTime.min(currentMin, x));
         return time;
     }
 

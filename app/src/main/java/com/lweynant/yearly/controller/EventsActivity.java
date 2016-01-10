@@ -10,7 +10,7 @@ import android.view.View;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.lweynant.yearly.AlarmGenerator;
+import com.lweynant.yearly.platform.AlarmGenerator;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.BaseYearlyAppComponent;
 import com.lweynant.yearly.model.Birthday;
@@ -20,9 +20,7 @@ import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.EventRepoTransaction;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.IJsonFileAccessor;
-import com.lweynant.yearly.model.NotificationTime;
 import com.lweynant.yearly.platform.EventRepoSerializerToFileDecorator;
-import com.lweynant.yearly.platform.IAlarm;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IUniqueIdGenerator;
 
@@ -44,7 +42,7 @@ public class EventsActivity extends BaseActivity {
     @Inject EventRepo repo;
     @Inject EventRepoTransaction transaction;
     @Inject IJsonFileAccessor fileAccessor;
-    @Inject IAlarm alarm;
+    @Inject AlarmGenerator alarmGenerator;
     @Bind(R.id.multiple_actions) FloatingActionsMenu menuMultipleActions;
     @Bind(R.id.action_add_event) FloatingActionButton addEventButton;
     @Bind(R.id.action_add_birthday) FloatingActionButton addBirthdayButton;
@@ -149,10 +147,7 @@ public class EventsActivity extends BaseActivity {
                         .subscribe(new EventRepoSerializerToFileDecorator(fileAccessor, new EventRepoSerializer(clock)));
             } else if (id == R.id.action_set_alarm) {
                 Timber.i("set alarm");
-                LocalDate now = LocalDate.now();
-                Observable<NotificationTime> nextAlarmObservable = repo.notificationTimeForFirstUpcomingEvent(now);
-                nextAlarmObservable.subscribeOn(Schedulers.io())
-                        .subscribe(new AlarmGenerator(alarm));
+                alarmGenerator.generate(repo.notificationTimeForFirstUpcomingEvent(clock.now()));
             }
         }
 

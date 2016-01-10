@@ -10,4 +10,6 @@ public interface BasePlatformComponent {
     IJsonFileAccessor jsonFileAccessor();
 
     IAlarm alarm();
+
+    AlarmGenerator alarmGenerator();
 }

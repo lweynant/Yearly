@@ -10,17 +10,14 @@ import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.IEventRepoListener;
 import com.lweynant.yearly.model.IJsonFileAccessor;
-import com.lweynant.yearly.model.NotificationTime;
+import com.lweynant.yearly.platform.AlarmGenerator;
 import com.lweynant.yearly.platform.DaggerPlatformComponent;
-import com.lweynant.yearly.platform.IAlarm;
 import com.lweynant.yearly.ui.EventViewModule;
 import com.lweynant.yearly.platform.EventRepoSerializerToFileDecorator;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.PlatformModule;
 
 import net.danlew.android.joda.JodaTimeAndroid;
-
-import org.joda.time.LocalDate;
 
 import javax.inject.Inject;
 
@@ -34,8 +31,8 @@ public class YearlyApp extends Application implements IStringResources, IEventRe
     @Inject IClock clock;
     @Inject EventRepo repo;
     @Inject IJsonFileAccessor repoAccessor;
-    @Inject IAlarm alarm;
     private BaseYearlyAppComponent component;
+    @Inject AlarmGenerator alarmGenerator;
 
     @Override
     public void onCreate() {
@@ -97,11 +94,8 @@ public class YearlyApp extends Application implements IStringResources, IEventRe
         Timber.i("archive");
         events.subscribeOn(Schedulers.io())
                 .subscribe(new EventRepoSerializerToFileDecorator(repoAccessor, new EventRepoSerializer(clock)));
-        Timber.i("set next alarm on %s", alarm);
-        LocalDate now = clock.now();
-        Observable<NotificationTime> nextAlarmObservable = repo.notificationTimeForFirstUpcomingEvent(now);
-        nextAlarmObservable.subscribeOn(Schedulers.io())
-                .subscribe(new AlarmGenerator(alarm));
+        Timber.i("set next alarm on %s", alarmGenerator);
+        alarmGenerator.generate(repo.notificationTimeForFirstUpcomingEvent(clock.now()));
     }
 
 

@@ -37,4 +37,7 @@ public class PlatformModule {
     @Provides @Singleton IAlarm provideAlarm() {
         return new Alarm(context);
     }
+    @Provides @Singleton AlarmGenerator providesAlarmGenerator(IAlarm alarm) {
+        return new AlarmGenerator(alarm);
+    }
 }

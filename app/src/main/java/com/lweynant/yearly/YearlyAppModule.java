@@ -2,6 +2,9 @@ package com.lweynant.yearly;
 
 import android.content.Context;
 
+import com.lweynant.yearly.platform.IAlarm;
+import com.lweynant.yearly.platform.IClock;
+
 import dagger.Module;
 import dagger.Provides;
 
@@ -24,4 +27,6 @@ public class YearlyAppModule {
     @Provides @PerApp IStringResources providesRString() {
         return app;
     }
+
+
 }

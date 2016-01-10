@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.lweynant.yearly.AlarmReceiver;
-import com.lweynant.yearly.model.NotificationTime;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -23,22 +22,26 @@ public class Alarm  implements IAlarm {
         this.alarmSender = PendingIntent.getBroadcast(context, 0, intent, 0);
     }
 
-    public void scheduleAlarm(NotificationTime notificationTime) {
-        LocalDate alarmDate = notificationTime.getAlarmDate();
-        DateTime time = new DateTime(alarmDate.getYear(), alarmDate.getMonthOfYear(), alarmDate.getDayOfMonth(), notificationTime.getHour(), 0);
-        long triggerAtMillis = time.toDateTime().getMillis();
-
-        Timber.i("shedule an alarm on date: %s", time.toString());
-        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        am.set(AlarmManager.RTC, triggerAtMillis, alarmSender);
-    }
     @Override public void scheduleAlarm(LocalDate date, int hour) {
         DateTime time = new DateTime(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth(), hour, 0);
         long triggerAtMillis = time.toDateTime().getMillis();
 
         Timber.i("shedule an alarm on date: %s", time.toString());
-        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        AlarmManager am = getAlarmManager();
         am.set(AlarmManager.RTC, triggerAtMillis, alarmSender);
+    }
+
+    private AlarmManager getAlarmManager() {
+        return (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+    }
+
+    @Override public void clear() {
+        Timber.i("cancel the alarm");
+        try {
+            getAlarmManager().cancel(alarmSender);
+        } catch (Exception e) {
+            Timber.d("alarm was not cancelled");
+        }
     }
 
 }

@@ -57,13 +57,19 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static com.lweynant.yearly.matcher.RecyclerViewMatcher.withRecyclerView;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyByte;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class EventsActivityTest {
+
 
 
     @PerApp
@@ -81,6 +87,7 @@ public class EventsActivityTest {
     @Inject DateFormatter dateFormatter;
     @Inject IAlarm alarm;
     private LocalDate today;
+    private LocalDate tomorrow;
 
     @Rule public ActivityTestRule<EventsActivity> activityTestRule = new ActivityTestRule<EventsActivity>(EventsActivity.class,
             true,  //initialTouchMode
@@ -102,6 +109,7 @@ public class EventsActivityTest {
         Timber.d("injected component, file accessor %s", fileAccessor.toString());
         when(fileAccessor.read()).thenReturn(new JsonObject());
         today = new LocalDate(2015, Date.JANUARY, 1);
+        tomorrow =today.plusDays(1);
         when(clock.now()).thenReturn(today);
         when(clock.timestamp()).thenReturn("fake timestamp");
         app.setComponent(component);
@@ -121,7 +129,7 @@ public class EventsActivityTest {
 
         onView(withText(containsString("John"))).check(matches(isDisplayed()));
         Timber.d("verify alarm %s", alarm);
-        //see #15 verify(alarm, times(1)).scheduleAlarm(today, NotificationTime.MORNING);
+        verify(alarm, times(1)).scheduleAlarm(today, NotificationTime.MORNING);
     }
     @Test public void testOneEventInListWithBirthdayInFuture() {
         LocalDate birthday = today.plusDays(100);
@@ -129,7 +137,7 @@ public class EventsActivityTest {
         initializeTheListWith(event);
 
         onView(withText(containsString("John"))).check(matches(isDisplayed()));
-        //see #15 verify(alarm, times(1)).scheduleAlarm(birthday.minusDays(event.getNbrOfDaysForNotification()), NotificationTime.MORNING);
+        verify(alarm, times(1)).scheduleAlarm(birthday.minusDays(event.getNbrOfDaysForNotification()), NotificationTime.EVENING);
     }
 
 
@@ -141,6 +149,8 @@ public class EventsActivityTest {
         onView(withRecyclerView(R.id.events_recycler_view).atPosition(0)).check(matches(withText(containsString("Today"))));
         onView(withRecyclerView(R.id.events_recycler_view).atPosition(1)).check(matches(withText(containsString("Tomorrow"))));
         onView(withRecyclerView(R.id.events_recycler_view).atPosition(2)).check(matches(withText(containsString("Yesterday"))));
+        verify(alarm).scheduleAlarm(today, NotificationTime.MORNING);
+        verifyNoMoreInteractions(alarm);
     }
 
 
@@ -150,16 +160,17 @@ public class EventsActivityTest {
         onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("One")))));
         onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem((withText(containsString("One"))), swipeLeft()));
         onView(withId(R.id.events_recycler_view)).check(matches(not(hasDescendant(withText(containsString("One"))))));
+        verify(alarm, times(1)).clear();
     }
 
     @Test public void testTwoEventsRemoveLast() throws IOException {
-        initializeTheListWith(createBirthday("One"),
-                              createBirthday("Two"));
-
+        initializeTheListWith(createBirthday("One", tomorrow),
+                createBirthday("Two", today));
         onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("Two")))));
         onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem((withText(containsString("Two"))), swipeLeft()));
         onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("One")))));
         onView(withId(R.id.events_recycler_view)).check(matches(not(hasDescendant(withText(containsString("Two"))))));
+        verify(alarm).scheduleAlarm(today, NotificationTime.EVENING);//we notify One's birthday the day before in the evening
     }
 
     @Test public void testPushAddBirthdayStartsNewActivity() throws IOException {
@@ -173,11 +184,12 @@ public class EventsActivityTest {
         onView(withId(R.id.action_add_birthday)).perform(click());
         enterBirthday("Joe", today);
         onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("Joe")))));
+        verify(alarm).scheduleAlarm(today, NotificationTime.MORNING);
     }
 
     @Test public void testAddBirthDayOnNonEmptyList() {
         initializeTheListWith(createBirthday("Yesterday", today.minusDays(1)),
-                              createBirthday("Today", today));
+                createBirthday("Today", today));
 
         onView(withId(R.id.fab_expand_menu_button)).perform(click());
         onView(withId(R.id.action_add_birthday)).perform(click());
@@ -186,6 +198,7 @@ public class EventsActivityTest {
         onView(withRecyclerView(R.id.events_recycler_view).atPosition(0)).check(matches(withText(containsString("Today"))));
         onView(withRecyclerView(R.id.events_recycler_view).atPosition(1)).check(matches(withText(containsString("Tomorrow"))));
         onView(withRecyclerView(R.id.events_recycler_view).atPosition(2)).check(matches(withText(containsString("Yesterday"))));
+        verify(alarm, atLeastOnce()).scheduleAlarm(today, NotificationTime.MORNING);
     }
 
     private void initializeTheListWith(IEvent ... birthdays) {

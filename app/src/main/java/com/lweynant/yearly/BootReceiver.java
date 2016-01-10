@@ -5,19 +5,17 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.lweynant.yearly.model.EventRepo;
-import com.lweynant.yearly.model.NotificationTime;
-import com.lweynant.yearly.platform.IAlarm;
-
-import org.joda.time.LocalDate;
+import com.lweynant.yearly.platform.AlarmGenerator;
+import com.lweynant.yearly.platform.IClock;
 
 import javax.inject.Inject;
 
-import rx.Observable;
 import timber.log.Timber;
 
 public class BootReceiver extends BroadcastReceiver {
     @Inject EventRepo repo;
-    @Inject IAlarm alarm;
+    @Inject IClock clock;
+    @Inject AlarmGenerator alarmGenerator;
 
     public BootReceiver() {
     }
@@ -31,10 +29,7 @@ public class BootReceiver extends BroadcastReceiver {
             Timber.d("generating the alarm...");
             ((YearlyApp) context.getApplicationContext()).getComponent().inject(this);
 
-            Observable<NotificationTime> nextAlarmObservable = repo.notificationTimeForFirstUpcomingEvent(LocalDate.now());
-            nextAlarmObservable.subscribe(new AlarmGenerator(alarm));
-
-
+            alarmGenerator.generate(repo.notificationTimeForFirstUpcomingEvent(clock.now()));
         }
     }
 }

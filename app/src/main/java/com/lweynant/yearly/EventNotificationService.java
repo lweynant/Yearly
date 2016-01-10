@@ -7,8 +7,7 @@ import android.content.Intent;
 import com.lweynant.yearly.model.Event;
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.IEvent;
-import com.lweynant.yearly.model.NotificationTime;
-import com.lweynant.yearly.platform.IAlarm;
+import com.lweynant.yearly.platform.AlarmGenerator;
 import com.lweynant.yearly.ui.EventViewFactory;
 import com.lweynant.yearly.platform.IClock;
 
@@ -28,7 +27,7 @@ import timber.log.Timber;
 public class EventNotificationService extends IntentService {
     @Inject IClock clock;
     @Inject EventRepo repo;
-    @Inject IAlarm alarm;
+    @Inject AlarmGenerator alarmGenerator;
     // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
     private static final String ACTION_NOTIFY = "com.lweynant.yearly.action.ACTION-NOTIFY";
 
@@ -79,8 +78,7 @@ public class EventNotificationService extends IntentService {
         LocalDate tomorrow = clock.now().plusDays(1);
         Timber.d("schedule next alarm using date %s", tomorrow);
 
-        Observable<NotificationTime> nextAlarmObservable = repo.notificationTimeForFirstUpcomingEvent(tomorrow);
-        nextAlarmObservable.subscribe(new AlarmGenerator(alarm));
+        alarmGenerator.generate(repo.notificationTimeForFirstUpcomingEvent(tomorrow));
 
     }
 
