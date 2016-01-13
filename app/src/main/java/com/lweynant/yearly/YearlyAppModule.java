@@ -17,10 +17,6 @@ public class YearlyAppModule {
         return app;
     }
 
-    @Provides @PerApp Context providesContext() {
-        return app;
-    }
-
     @Provides @PerApp IStringResources providesRString() {
         return app;
     }

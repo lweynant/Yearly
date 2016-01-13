@@ -1,11 +1,11 @@
 package com.lweynant.yearly.platform;
 
 
+import android.app.Application;
 import android.content.Context;
 
 import com.lweynant.yearly.model.EventRepoFileAccessor;
 import com.lweynant.yearly.model.IJsonFileAccessor;
-import com.lweynant.yearly.ui.EventViewFactory;
 
 import javax.inject.Singleton;
 
@@ -16,8 +16,12 @@ import dagger.Provides;
 public class PlatformModule {
     private final Context context;
 
-    public PlatformModule(Context context) {
-        this.context = context;
+    public PlatformModule(Application application) {
+        //we pass the application and retrieve the context here, this way
+        // we are sure that we use the application context. We need the
+        // application context because this is singleton that outlives
+        // activities
+        this.context = application.getApplicationContext();
     }
 
     @Provides
