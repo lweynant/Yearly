@@ -36,12 +36,14 @@ public class EventNotifierTest {
     private EventNotifier sut;
     private Collection<IEvent> events;
     private LocalDate today;
+    private int nextId;
 
     @Before public void setUp() {
         events = new ArrayList<>();
         sut = new EventNotifier(eventNotification, viewFactory, clock);
         today = new LocalDate(2015, Date.JANUARY, 10);
         when(clock.now()).thenReturn(today);
+        nextId = 1;
     }
 
     @Test public void testEmptyList() {
@@ -51,31 +53,31 @@ public class EventNotifierTest {
 
     @Test public void testListWithOneEventForToday() {
         IEventNotificationText notificationText = createNotificationText("today's event");
-        IEvent event = createEvent(1, today, notificationText);
+        IEvent event = createEvent(today, notificationText);
         events.add(event);
         sut.notify(Observable.from(events));
-        verify(eventNotification).notify(1, notificationText);
+        verify(eventNotification).notify(event.getID(), notificationText);
     }
     @Test public void testNonEmptyListWithNEventsForNotification() {
         IEventNotificationText todaysText = createNotificationText("today's event");
-        IEvent todaysEvent = createEvent(1, today, todaysText);
+        IEvent todaysEvent = createEvent(today, todaysText);
         events.add(todaysEvent);
         IEventNotificationText tomorrowsText = createNotificationText("tomorrow's event");
-        IEvent tomorrowsEvent = createEvent(2, today.plusDays(1), tomorrowsText);
+        IEvent tomorrowsEvent = createEvent(today.plusDays(1), tomorrowsText);
         events.add(tomorrowsEvent);
-        events.add(createEvent(3, today.plusDays(30), createNotificationText("someday in future")));
+        events.add(createEvent(today.plusDays(30), createNotificationText("someday in future")));
 
         sut.notify(Observable.from(events));
-        verify(eventNotification).notify(1, todaysText);
-        verify(eventNotification).notify(2, tomorrowsText);
+        verify(eventNotification).notify(todaysEvent.getID(), todaysText);
+        verify(eventNotification).notify(tomorrowsEvent.getID(), tomorrowsText);
         verifyNoMoreInteractions(eventNotification);
     }
 
     @Test public void testNonEmptyListWithNoEventsUpForNotification() {
         IEventNotificationText notificationText = createNotificationText("today's event");
-        events.add(createEvent(1, today.plusDays(45), notificationText));
-        events.add(createEvent(2, today.plusDays(145), notificationText));
-        events.add(createEvent(3, today.plusDays(245), notificationText));
+        events.add(createEvent(today.plusDays(45), notificationText));
+        events.add(createEvent(today.plusDays(145), notificationText));
+        events.add(createEvent(today.plusDays(245), notificationText));
         sut.notify(Observable.from(events));
         verifyNoMoreInteractions(eventNotification);
     }
@@ -86,9 +88,10 @@ public class EventNotifierTest {
         return notificationText;
     }
 
-    private IEvent createEvent(int id, LocalDate date, IEventNotificationText notifText) {
+    private IEvent createEvent(LocalDate date, IEventNotificationText notifText) {
         IEvent event = mock(IEvent.class);
-        when(event.getID()).thenReturn(id);
+        when(event.getID()).thenReturn(nextId);
+        nextId += 1;
         when(event.getDate()).thenReturn(date);
         when(event.getNbrOfDaysForNotification()).thenReturn(1);
         when(viewFactory.getEventNotificationText(event)).thenReturn(notifText);
