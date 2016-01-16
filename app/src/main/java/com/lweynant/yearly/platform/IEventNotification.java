@@ -1,8 +1,8 @@
 package com.lweynant.yearly.platform;
 
 
-import com.lweynant.yearly.model.IEvent;
+import android.content.Intent;
 
 public interface IEventNotification {
-    void notify(int id, IEventNotificationText notifText);
+    void notify(int id, Intent intent, IEventNotificationText notifText);
 }

@@ -65,6 +65,7 @@ public class AddBirthdayActivityTest {
                 .yearlyAppModule(new YearlyAppModule(app))
                 .eventViewModule(new EventViewModule())
                 .eventModelModule(new EventModelModule())
+                .eventControllerModule(new EventControllerModule(app))
                 .build();
         app.setComponent(component);
         component.inject(this);

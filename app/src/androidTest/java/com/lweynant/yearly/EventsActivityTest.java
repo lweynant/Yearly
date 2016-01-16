@@ -101,6 +101,7 @@ public class EventsActivityTest {
                 .yearlyAppModule(new YearlyAppModule(app))
                 .eventViewModule(new EventViewModule())
                 .eventModelModule(new EventModelModule())
+                .eventControllerModule(new EventControllerModule(app))
                 .build();
         component.inject(this);
         Timber.d("injected component, file accessor %s", fileAccessor.toString());

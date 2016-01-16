@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 
 import com.lweynant.yearly.R;
-import com.lweynant.yearly.controller.EventsActivity;
 
 import timber.log.Timber;
 
@@ -19,7 +18,7 @@ public class EventNotification implements IEventNotification {
         this.context = context;
     }
 
-    @Override public void notify(int id, IEventNotificationText notifText) {
+    @Override public void notify(int id, Intent intent,  IEventNotificationText notifText) {
         Timber.d("notify: sending notification for %s using id %d", notifText.getText(), id);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
@@ -29,7 +28,6 @@ public class EventNotification implements IEventNotification {
         builder.setContentTitle(title);
         builder.setContentText(subTitle);
         builder.setAutoCancel(true);
-        Intent intent = new Intent(context, EventsActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(pendingIntent);
         NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);

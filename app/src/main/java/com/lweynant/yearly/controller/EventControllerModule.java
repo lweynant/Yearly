@@ -1,5 +1,6 @@
 package com.lweynant.yearly.controller;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,13 +8,12 @@ import android.os.Bundle;
 import com.lweynant.yearly.IComponentRegistry;
 import com.lweynant.yearly.IStringResources;
 import com.lweynant.yearly.PerApp;
-import com.lweynant.yearly.platform.IAlarm;
+import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IEventNotification;
 import com.lweynant.yearly.ui.IEventViewFactory;
 
 import javax.inject.Named;
-import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
@@ -21,6 +21,16 @@ import dagger.Provides;
 @Module
 public class EventControllerModule {
 
+    private final Context context;
+
+    public EventControllerModule(Application app) {
+        this.context = app.getApplicationContext();
+    }
+
+
+    @Provides IIntentFactory providesIntentFactory() {
+        return new IntentFactory(context);
+    }
 
     @Provides DateFormatter providesDateFormatter(IStringResources rstring) {
         return new DateFormatter(rstring);
@@ -39,8 +49,9 @@ public class EventControllerModule {
     }
 
     @Provides @PerApp
-    EventNotifier providesEventNotifier(IEventNotification eventNotification, IEventViewFactory viewFactory, IClock clock) {
-        return new EventNotifier(eventNotification, viewFactory, clock);
+    EventNotifier providesEventNotifier(IEventNotification eventNotification, IIntentFactory intentFactory, IEventViewFactory viewFactory, IClock clock) {
+
+        return new EventNotifier(eventNotification, intentFactory, viewFactory, clock);
     }
 
 }

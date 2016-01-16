@@ -68,7 +68,7 @@ public class YearlyApp extends Application implements IStringResources, IEventRe
                     .yearlyAppModule(new YearlyAppModule(this))
                     .eventModelModule(new EventModelModule())
                     .eventViewModule(new EventViewModule())
-                    .eventControllerModule(new EventControllerModule())
+                    .eventControllerModule(new EventControllerModule(this))
                     .syncControllerModule(new SyncControllerModule())
                     .build();
             Timber.d("injecting component and registering as listener");
