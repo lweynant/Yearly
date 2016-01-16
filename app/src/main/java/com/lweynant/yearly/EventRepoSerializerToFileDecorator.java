@@ -1,9 +1,9 @@
-package com.lweynant.yearly.platform;
+package com.lweynant.yearly;
 
 import com.google.gson.JsonObject;
 import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.IEvent;
-import com.lweynant.yearly.model.IJsonFileAccessor;
+import com.lweynant.yearly.platform.IJsonFileAccessor;
 
 import java.io.IOException;
 

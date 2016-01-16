@@ -2,6 +2,7 @@ package com.lweynant.yearly.model;
 
 import com.lweynant.yearly.PerApp;
 import com.lweynant.yearly.platform.IClock;
+import com.lweynant.yearly.platform.IJsonFileAccessor;
 import com.lweynant.yearly.platform.IUniqueIdGenerator;
 
 import dagger.Module;

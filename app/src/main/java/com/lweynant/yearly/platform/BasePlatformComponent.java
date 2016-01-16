@@ -1,6 +1,6 @@
 package com.lweynant.yearly.platform;
 
-import com.lweynant.yearly.model.IJsonFileAccessor;
+import com.lweynant.yearly.controller.AlarmGenerator;
 
 public interface BasePlatformComponent {
     IClock clock();
@@ -10,8 +10,6 @@ public interface BasePlatformComponent {
     IJsonFileAccessor jsonFileAccessor();
 
     IAlarm alarm();
-
-    AlarmGenerator alarmGenerator();
 
     IEventNotification eventNotification();
 }

@@ -6,6 +6,7 @@ import com.lweynant.yearly.IStringResources;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.platform.IClock;
+import com.lweynant.yearly.platform.IEventNotificationText;
 
 public class EventViewFactory implements IEventViewFactory {
 

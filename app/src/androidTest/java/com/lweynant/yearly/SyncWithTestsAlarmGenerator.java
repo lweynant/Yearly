@@ -3,7 +3,7 @@ package com.lweynant.yearly;
 import android.support.test.espresso.contrib.CountingIdlingResource;
 
 import com.lweynant.yearly.model.IEvent;
-import com.lweynant.yearly.platform.AlarmGenerator;
+import com.lweynant.yearly.controller.AlarmGenerator;
 import com.lweynant.yearly.platform.IAlarm;
 
 import org.joda.time.LocalDate;

@@ -1,5 +1,8 @@
 package com.lweynant.yearly.controller;
 
+import android.content.Context;
+import android.content.Intent;
+
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IEventNotification;
@@ -24,11 +27,11 @@ public class EventNotifier {
         this.clock = clock;
     }
 
-    public void notify(Observable<IEvent> events) {
+    public void notify(Observable<IEvent> events ) {
         Timber.d("notify");
         Subscription subscription = events
                 .filter(event -> shouldBeNotified(event))
-                .subscribe(event -> eventNotification.notify(event, viewFactory.getEventNotificationText(event)));
+                .subscribe(event -> eventNotification.notify(event.getID(), viewFactory.getEventNotificationText(event)));
         subscription.unsubscribe();
     }
 

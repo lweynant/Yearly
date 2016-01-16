@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.lweynant.yearly.model.EventRepo;
-import com.lweynant.yearly.platform.AlarmGenerator;
+import com.lweynant.yearly.controller.AlarmGenerator;
 import com.lweynant.yearly.platform.IClock;
 
 import javax.inject.Inject;

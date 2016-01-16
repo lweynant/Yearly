@@ -1,8 +1,9 @@
-package com.lweynant.yearly.platform;
+package com.lweynant.yearly.controller;
 
 
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.NotificationTime;
+import com.lweynant.yearly.platform.IAlarm;
 
 import org.joda.time.LocalDate;
 

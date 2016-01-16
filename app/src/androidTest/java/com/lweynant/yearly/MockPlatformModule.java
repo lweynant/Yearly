@@ -2,15 +2,13 @@ package com.lweynant.yearly;
 
 import android.support.test.espresso.contrib.CountingIdlingResource;
 
-import com.lweynant.yearly.model.IJsonFileAccessor;
-import com.lweynant.yearly.platform.AlarmGenerator;
-import com.lweynant.yearly.platform.EventNotification;
+import com.lweynant.yearly.platform.IJsonFileAccessor;
+import com.lweynant.yearly.controller.AlarmGenerator;
 import com.lweynant.yearly.platform.IAlarm;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IEventNotification;
 import com.lweynant.yearly.platform.IUniqueIdGenerator;
 import com.lweynant.yearly.platform.UUID;
-import com.lweynant.yearly.ui.EventViewFactory;
 
 import javax.inject.Singleton;
 
@@ -40,13 +38,6 @@ public class MockPlatformModule {
         return mock(IAlarm.class);
     }
 
-    @Provides @Singleton AlarmGenerator provideAlarmGenerator(CountingIdlingResource idlingResource, IAlarm alarm) {
-        return new SyncWithTestsAlarmGenerator(idlingResource, alarm);
-    }
-
-    @Provides @Singleton CountingIdlingResource providesCountingIdlingResource(){
-        return new CountingIdlingResource("yearly app idling resource");
-    }
 
     @Provides @Singleton IEventNotification provideEventNotification() {
         return mock(IEventNotification.class);

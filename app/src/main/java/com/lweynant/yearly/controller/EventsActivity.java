@@ -18,9 +18,8 @@ import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.EventRepoTransaction;
 import com.lweynant.yearly.model.IEvent;
-import com.lweynant.yearly.model.IJsonFileAccessor;
-import com.lweynant.yearly.platform.AlarmGenerator;
-import com.lweynant.yearly.platform.EventRepoSerializerToFileDecorator;
+import com.lweynant.yearly.EventRepoSerializerToFileDecorator;
+import com.lweynant.yearly.platform.IJsonFileAccessor;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IUniqueIdGenerator;
 

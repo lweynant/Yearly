@@ -3,16 +3,15 @@ package com.lweynant.yearly;
 import android.app.Application;
 
 import com.lweynant.yearly.controller.EventControllerModule;
-import com.lweynant.yearly.controller.EventsAdapterModule;
+import com.lweynant.yearly.controller.SyncControllerModule;
 import com.lweynant.yearly.model.EventModelModule;
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.IEventRepoListener;
-import com.lweynant.yearly.model.IJsonFileAccessor;
-import com.lweynant.yearly.platform.AlarmGenerator;
+import com.lweynant.yearly.platform.IJsonFileAccessor;
+import com.lweynant.yearly.controller.AlarmGenerator;
 import com.lweynant.yearly.platform.DaggerPlatformComponent;
-import com.lweynant.yearly.platform.EventRepoSerializerToFileDecorator;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.PlatformModule;
 import com.lweynant.yearly.ui.EventViewModule;
@@ -70,7 +69,7 @@ public class YearlyApp extends Application implements IStringResources, IEventRe
                     .eventModelModule(new EventModelModule())
                     .eventViewModule(new EventViewModule())
                     .eventControllerModule(new EventControllerModule())
-                    .eventsAdapterModule(new EventsAdapterModule())
+                    .syncControllerModule(new SyncControllerModule())
                     .build();
             Timber.d("injecting component and registering as listener");
             setComponent(cmp);

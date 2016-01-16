@@ -5,7 +5,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
-import com.lweynant.yearly.AlarmReceiver;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -16,9 +15,8 @@ public class Alarm  implements IAlarm {
     private final PendingIntent alarmSender;
     private Context context;
 
-    public Alarm(Context context) {
+    public Alarm(Context context, Intent intent) {
         this.context = context;
-        Intent intent = new Intent(context, AlarmReceiver.class);
         this.alarmSender = PendingIntent.getBroadcast(context, 0, intent, 0);
     }
 

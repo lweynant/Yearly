@@ -1,4 +1,4 @@
-package com.lweynant.yearly.model;
+package com.lweynant.yearly.platform;
 
 import com.google.gson.JsonObject;
 

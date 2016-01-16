@@ -18,7 +18,7 @@ import com.lweynant.yearly.model.EventRepoTransaction;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.ui.EventViewFactory;
-import com.lweynant.yearly.ui.IEventNotificationText;
+import com.lweynant.yearly.platform.IEventNotificationText;
 import com.lweynant.yearly.ui.IEventViewFactory;
 
 import javax.inject.Inject;

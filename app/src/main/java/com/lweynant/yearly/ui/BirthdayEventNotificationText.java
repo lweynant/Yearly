@@ -4,6 +4,7 @@ import com.lweynant.yearly.IStringResources;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.platform.IClock;
+import com.lweynant.yearly.platform.IEventNotificationText;
 
 import org.joda.time.Days;
 import org.joda.time.LocalDate;

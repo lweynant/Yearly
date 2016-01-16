@@ -3,9 +3,9 @@ package com.lweynant.yearly.platform;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 
-import com.lweynant.yearly.model.EventRepoFileAccessor;
-import com.lweynant.yearly.model.IJsonFileAccessor;
+import com.lweynant.yearly.AlarmReceiver;
 
 import javax.inject.Singleton;
 
@@ -24,9 +24,8 @@ public class PlatformModule {
         this.context = application.getApplicationContext();
     }
 
-    @Provides
-    @Singleton IJsonFileAccessor provideJsonFileAccessor() {
-        return new EventRepoFileAccessor(context);
+    @Provides @Singleton IJsonFileAccessor provideJsonFileAccessor() {
+        return new JsonFileAccessor(context, "events.json");
     }
 
     @Provides
@@ -40,12 +39,9 @@ public class PlatformModule {
     }
 
     @Provides @Singleton IAlarm provideAlarm() {
-        return new Alarm(context);
+        return new Alarm(context, new Intent(context, AlarmReceiver.class));
     }
-    @Provides @Singleton AlarmGenerator providesAlarmGenerator(IAlarm alarm) {
-        return new AlarmGenerator(alarm);
-    }
-    @Provides @Singleton IEventNotification provideEventNotification(IClock clock) {
-        return new EventNotification(context, clock);
+    @Provides @Singleton IEventNotification provideEventNotification() {
+        return new EventNotification(context);
     }
 }

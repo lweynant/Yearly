@@ -1,4 +1,4 @@
-package com.lweynant.yearly.ui;
+package com.lweynant.yearly.platform;
 
 public interface IEventNotificationText {
     public String getTitle();

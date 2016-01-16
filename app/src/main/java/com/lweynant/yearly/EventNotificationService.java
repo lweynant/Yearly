@@ -6,18 +6,13 @@ import android.content.Intent;
 
 import com.lweynant.yearly.controller.EventNotifier;
 import com.lweynant.yearly.model.EventRepo;
-import com.lweynant.yearly.model.IEvent;
-import com.lweynant.yearly.platform.AlarmGenerator;
+import com.lweynant.yearly.controller.AlarmGenerator;
 import com.lweynant.yearly.platform.IClock;
-import com.lweynant.yearly.platform.IEventNotification;
-import com.lweynant.yearly.ui.EventViewFactory;
-import com.lweynant.yearly.ui.IEventViewFactory;
 
 import org.joda.time.LocalDate;
 
 import javax.inject.Inject;
 
-import rx.Observable;
 import timber.log.Timber;
 
 /**

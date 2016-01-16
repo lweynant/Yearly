@@ -8,28 +8,19 @@ import android.support.v4.app.NotificationCompat;
 
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.controller.EventsActivity;
-import com.lweynant.yearly.model.IEvent;
-import com.lweynant.yearly.ui.EventViewFactory;
-import com.lweynant.yearly.ui.IEventNotificationText;
-
-import org.joda.time.LocalDate;
 
 import timber.log.Timber;
 
 public class EventNotification implements IEventNotification {
     private final Context context;
-    private final IClock clock;
 
-    public EventNotification(Context context, IClock clock) {
+    public EventNotification(Context context) {
         Timber.d("create EventNotification instance");
         this.context = context;
-        this.clock = clock;
     }
 
-    @Override public void notify(IEvent event, IEventNotificationText notifText) {
-        Timber.d("notify: sending notification for %s using id %d", event.toString(), event.getID());
-        LocalDate now = clock.now();
-        LocalDate eventDate = event.getDate();
+    @Override public void notify(int id, IEventNotificationText notifText) {
+        Timber.d("notify: sending notification for %s using id %d", notifText.getText(), id);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setSmallIcon(R.drawable.ic_cake_white_48dp);
@@ -42,6 +33,6 @@ public class EventNotification implements IEventNotification {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(pendingIntent);
         NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        nm.notify(event.getID(), builder.build());
+        nm.notify(id, builder.build());
     }
 }

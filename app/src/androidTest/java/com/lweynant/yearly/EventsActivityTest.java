@@ -19,7 +19,7 @@ import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.EventModelModule;
 import com.lweynant.yearly.model.EventRepoTransaction;
 import com.lweynant.yearly.model.IEvent;
-import com.lweynant.yearly.model.IJsonFileAccessor;
+import com.lweynant.yearly.platform.IJsonFileAccessor;
 import com.lweynant.yearly.model.NotificationTime;
 import com.lweynant.yearly.platform.IAlarm;
 import com.lweynant.yearly.platform.IClock;
@@ -70,7 +70,7 @@ public class EventsActivityTest {
 
 
     @PerApp
-    @Component(dependencies = TestPlatformComponent.class, modules = {YearlyAppModule.class, TestEventsAdapterModule.class, EventViewModule.class, EventModelModule.class, EventControllerModule.class})
+    @Component(dependencies = TestPlatformComponent.class, modules = {YearlyAppModule.class, TestSyncControllerModule.class, EventViewModule.class, EventModelModule.class, EventControllerModule.class})
     public interface TestComponentBase extends BaseYearlyAppComponent {
         void inject(EventsActivityTest eventsActivityTest);
     }

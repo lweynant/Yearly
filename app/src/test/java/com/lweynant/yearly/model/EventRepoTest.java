@@ -2,6 +2,7 @@ package com.lweynant.yearly.model;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.lweynant.yearly.platform.JsonFileAccessor;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IUniqueIdGenerator;
 
@@ -37,7 +38,7 @@ public class EventRepoTest {
     @Mock
     IUniqueIdGenerator uniqueIdGenerator;
     @Mock
-    EventRepoFileAccessor fileAccessor;
+    JsonFileAccessor fileAccessor;
     private EventRepo sut;
     private int nbrOfDaysForNotification;
     private String name;
