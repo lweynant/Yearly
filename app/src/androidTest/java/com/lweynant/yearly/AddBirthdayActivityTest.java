@@ -7,13 +7,13 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.lweynant.yearly.controller.AddBirthdayActivity;
+import com.lweynant.yearly.controller.ControllerModule;
 import com.lweynant.yearly.controller.DateFormatter;
-import com.lweynant.yearly.controller.EventControllerModule;
 import com.lweynant.yearly.controller.SyncControllerModule;
 import com.lweynant.yearly.model.Date;
-import com.lweynant.yearly.model.EventModelModule;
+import com.lweynant.yearly.model.ModelModule;
 import com.lweynant.yearly.platform.IClock;
-import com.lweynant.yearly.ui.EventViewModule;
+import com.lweynant.yearly.ui.ViewModule;
 
 import org.joda.time.LocalDate;
 import org.junit.Before;
@@ -42,7 +42,7 @@ public class AddBirthdayActivityTest {
 
     @PerApp
     @Component(dependencies = TestPlatformComponent.class, modules = {YearlyAppModule.class,
-            SyncControllerModule.class, EventViewModule.class, EventModelModule.class, EventControllerModule.class})
+            SyncControllerModule.class, ViewModule.class, ModelModule.class, ControllerModule.class})
     public interface TestComponent extends BaseYearlyAppComponent {
         void inject(AddBirthdayActivityTest addBirthdayActivityTest);
     }
@@ -63,9 +63,9 @@ public class AddBirthdayActivityTest {
         TestComponent component = DaggerAddBirthdayActivityTest_TestComponent.builder()
                 .testPlatformComponent(platformComponent)
                 .yearlyAppModule(new YearlyAppModule(app))
-                .eventViewModule(new EventViewModule())
-                .eventModelModule(new EventModelModule())
-                .eventControllerModule(new EventControllerModule(app))
+                .viewModule(new ViewModule())
+                .modelModule(new ModelModule())
+                .controllerModule(new ControllerModule(app))
                 .build();
         app.setComponent(component);
         component.inject(this);

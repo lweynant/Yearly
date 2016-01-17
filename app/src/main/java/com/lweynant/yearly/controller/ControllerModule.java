@@ -19,11 +19,11 @@ import dagger.Module;
 import dagger.Provides;
 
 @Module
-public class EventControllerModule {
+public class ControllerModule {
 
     private final Context context;
 
-    public EventControllerModule(Application app) {
+    public ControllerModule(Application app) {
         this.context = app.getApplicationContext();
     }
 
@@ -40,11 +40,11 @@ public class EventControllerModule {
     DateSelector providesDateSelector(IComponentRegistry componentRegistry, IClock clock) {
         return new DateSelector(componentRegistry, clock);
     }
-    @Provides @Named("birthday_builder") Bundle providesBundle() {
+    @Provides Bundle providesBundle() {
         return new Bundle();
     }
 
-    @Provides @Named("birthday_builder") Intent providesIntent() {
+    @Provides Intent providesIntent() {
         return new Intent();
     }
 

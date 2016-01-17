@@ -7,7 +7,7 @@ import dagger.Module;
 import dagger.Provides;
 
 @Module
-public class EventViewModule {
+public class ViewModule {
 
     @Provides IEventViewFactory provideEventViewFactory(IStringResources rstring, IClock clock) {
         return new EventViewFactory(rstring, clock);

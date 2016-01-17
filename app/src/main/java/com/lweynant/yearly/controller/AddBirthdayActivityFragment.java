@@ -32,8 +32,8 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
 
 
     @Inject BirthdayBuilder birthdayBuilder;
-    @Inject @Named("birthday_builder") Bundle birthdayBundle;
-    @Inject @Named("birthday_builder") Intent resultIntent;
+    @Inject Bundle birthdayBundle;
+    @Inject Intent resultIntent;
     @Inject IClock clock;
     @Inject IUniqueIdGenerator idGenerator;
     @Bind(R.id.edit_text_birthday_date) EditText dateEditText;

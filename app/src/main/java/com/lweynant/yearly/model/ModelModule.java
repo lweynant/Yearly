@@ -10,7 +10,7 @@ import dagger.Provides;
 
 
 @Module
-public class EventModelModule {
+public class ModelModule {
 
 
     @Provides @PerApp

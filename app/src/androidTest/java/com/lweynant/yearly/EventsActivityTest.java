@@ -10,13 +10,13 @@ import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
 
 import com.google.gson.JsonObject;
+import com.lweynant.yearly.controller.ControllerModule;
 import com.lweynant.yearly.controller.DateFormatter;
-import com.lweynant.yearly.controller.EventControllerModule;
 import com.lweynant.yearly.controller.EventsActivity;
 import com.lweynant.yearly.controller.EventsAdapter;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.Date;
-import com.lweynant.yearly.model.EventModelModule;
+import com.lweynant.yearly.model.ModelModule;
 import com.lweynant.yearly.model.EventRepoTransaction;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.platform.IEventNotification;
@@ -25,7 +25,7 @@ import com.lweynant.yearly.model.NotificationTime;
 import com.lweynant.yearly.platform.IAlarm;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IUniqueIdGenerator;
-import com.lweynant.yearly.ui.EventViewModule;
+import com.lweynant.yearly.ui.ViewModule;
 
 import org.joda.time.LocalDate;
 import org.junit.After;
@@ -71,7 +71,7 @@ public class EventsActivityTest {
 
 
     @PerApp
-    @Component(dependencies = TestPlatformComponent.class, modules = {YearlyAppModule.class, TestSyncControllerModule.class, EventViewModule.class, EventModelModule.class, EventControllerModule.class})
+    @Component(dependencies = TestPlatformComponent.class, modules = {YearlyAppModule.class, TestSyncControllerModule.class, ViewModule.class, ModelModule.class, ControllerModule.class})
     public interface TestComponentBase extends BaseYearlyAppComponent {
         void inject(EventsActivityTest eventsActivityTest);
     }
@@ -102,9 +102,9 @@ public class EventsActivityTest {
         TestComponentBase component = DaggerEventsActivityTest_TestComponentBase.builder()
                 .testPlatformComponent(platformComponent)
                 .yearlyAppModule(new YearlyAppModule(app))
-                .eventViewModule(new EventViewModule())
-                .eventModelModule(new EventModelModule())
-                .eventControllerModule(new EventControllerModule(app))
+                .viewModule(new ViewModule())
+                .modelModule(new ModelModule())
+                .controllerModule(new ControllerModule(app))
                 .build();
         component.inject(this);
         Timber.d("injected component, file accessor %s", fileAccessor.toString());

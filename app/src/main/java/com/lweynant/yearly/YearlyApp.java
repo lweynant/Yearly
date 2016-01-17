@@ -2,9 +2,9 @@ package com.lweynant.yearly;
 
 import android.app.Application;
 
-import com.lweynant.yearly.controller.EventControllerModule;
+import com.lweynant.yearly.controller.ControllerModule;
 import com.lweynant.yearly.controller.SyncControllerModule;
-import com.lweynant.yearly.model.EventModelModule;
+import com.lweynant.yearly.model.ModelModule;
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.IEvent;
@@ -14,7 +14,7 @@ import com.lweynant.yearly.controller.AlarmGenerator;
 import com.lweynant.yearly.platform.DaggerPlatformComponent;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.PlatformModule;
-import com.lweynant.yearly.ui.EventViewModule;
+import com.lweynant.yearly.ui.ViewModule;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
@@ -66,9 +66,9 @@ public class YearlyApp extends Application implements IStringResources, IEventRe
             YearlyAppComponent cmp = DaggerYearlyAppComponent.builder()
                     .platformComponent(DaggerPlatformComponent.builder().platformModule(new PlatformModule(this)).build())
                     .yearlyAppModule(new YearlyAppModule(this))
-                    .eventModelModule(new EventModelModule())
-                    .eventViewModule(new EventViewModule())
-                    .eventControllerModule(new EventControllerModule(this))
+                    .modelModule(new ModelModule())
+                    .viewModule(new ViewModule())
+                    .controllerModule(new ControllerModule(this))
                     .syncControllerModule(new SyncControllerModule())
                     .build();
             Timber.d("injecting component and registering as listener");
