@@ -96,7 +96,7 @@ public class EventsActivity extends BaseActivity {
         if (data != null) {
             Timber.d("inspecting the valid intent");
             BirthdayBuilder builder = new BirthdayBuilder(clock, idGenerator);
-            Bundle bundle = data.getBundleExtra(AddBirthdayActivityFragment.EXTRA_KEY_BIRTHDAY);
+            Bundle bundle = data.getBundleExtra(AddBirthdayContract.EXTRA_KEY_BIRTHDAY);
             if (bundle != null) {
                 Timber.d("we have a bundle");
                 builder.set(bundle);

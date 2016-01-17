@@ -13,13 +13,8 @@ public class YearlyAppModule {
         this.app = app;
     }
 
-    @Provides @PerApp IComponentRegistry providesComponentRegistry() {
-        return app;
-    }
-
     @Provides @PerApp IStringResources providesRString() {
         return app;
     }
-
 
 }

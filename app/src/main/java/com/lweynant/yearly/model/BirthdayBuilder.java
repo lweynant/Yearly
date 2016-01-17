@@ -77,7 +77,7 @@ public class BirthdayBuilder {
     }
 
     public BirthdayBuilder setYear(int year) {
-        Timber.d("setYear %d", year);
+        Timber.d("setDate %d", year);
         this.year = year;
         return this;
     }

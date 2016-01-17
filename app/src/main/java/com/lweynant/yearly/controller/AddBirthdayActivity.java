@@ -1,16 +1,21 @@
 package com.lweynant.yearly.controller;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.lweynant.yearly.BaseYearlyAppComponent;
 import com.lweynant.yearly.R;
+
+import javax.inject.Inject;
 
 import timber.log.Timber;
 
-public class AddBirthdayActivity extends AppCompatActivity {
+public class AddBirthdayActivity extends BaseActivity {
+    @Inject AddBirthdayContract.UserActionsListener userActionsListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,10 +36,15 @@ public class AddBirthdayActivity extends AppCompatActivity {
         setResult(RESULT_OK, new Intent());
     }
 
-    public boolean onOptionsItemSelected(MenuItem item) {
+    @Override protected void injectDependencies(BaseYearlyAppComponent component) {
+        component.inject(this);
+    }
+
+    @Override public boolean onOptionsItemSelected(MenuItem item) {
         Timber.d("onOptionsItemSelected");
         if (item.getItemId() == android.R.id.home) {
             Timber.d("item id is android.R.id.home");
+            saveBirthdayAndSetResult();
             finish();
             return true;
         } else {
@@ -42,34 +52,14 @@ public class AddBirthdayActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onResume() {
-        Timber.d("onResume");
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        Timber.d("onPause");
-        super.onPause();
-    }
-
-    @Override
-    protected void onStop() {
-        Timber.d("onStop");
-        super.onStop();
-    }
-
-    @Override
-    public void finish() {
-        Timber.d("finish");
-
-        super.finish();
-    }
-
-    @Override
-    public void onBackPressed() {
+    @Override public void onBackPressed() {
         Timber.d("onBackPressed");
+        saveBirthdayAndSetResult();
         super.onBackPressed();
+    }
+
+    private void saveBirthdayAndSetResult() {
+        Intent resultIntent = userActionsListener.saveBirthday();
+        setResult(Activity.RESULT_OK, resultIntent);
     }
 }

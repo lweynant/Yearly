@@ -23,7 +23,7 @@ import javax.inject.Inject;
 import rx.Observable;
 import timber.log.Timber;
 
-public class YearlyApp extends Application implements IStringResources, IEventRepoListener, IComponentRegistry {
+public class YearlyApp extends Application implements IStringResources, IEventRepoListener {
 
 
     @Inject IClock clock;
@@ -59,7 +59,7 @@ public class YearlyApp extends Application implements IStringResources, IEventRe
         repo.removeListener(this);
     }
 
-    @Override public BaseYearlyAppComponent getComponent() {
+    public BaseYearlyAppComponent getComponent() {
         Timber.d("getComponent");
         if (component == null) {
             Timber.d("creating the production component");

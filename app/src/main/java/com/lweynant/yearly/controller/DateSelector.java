@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 
-import com.lweynant.yearly.IComponentRegistry;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.platform.IClock;
@@ -23,16 +22,14 @@ import timber.log.Timber;
 
 public class DateSelector {
 
-    @Inject IClock clock;
-    @Inject DateFormatter dateFormatter;
     @Bind(R.id.date_picker) DatePicker datePicker;
     @Bind(R.id.checkbox_add_year) CheckBox yearSelector;
+    private final IClock clock;
     private OnClickListener listener;
     private AlertDialog.Builder dialogBuilder;
     private AlertDialog datePickerDialog;
-    public DateSelector(IComponentRegistry componentRegistry, IClock clock) {
+    public DateSelector(IClock clock) {
         this.clock = clock;
-        componentRegistry.getComponent().inject(this);
     }
 
     public void prepare(Context context, OnClickListener listener) {
@@ -61,13 +58,11 @@ public class DateSelector {
                 if (yearSelector.isChecked()) {
 
                     int year = datePicker.getYear();
-                    textDate = dateFormatter.format(year, month, day);
                     //noinspection ResourceType
-                    listener.onPositiveClick(year, month, day, textDate);
+                    listener.onPositiveClick(year, month, day);
                 } else {
-                    textDate = dateFormatter.format(month, day);
                     //noinspection ResourceType
-                    listener.onPositiveClick(month, day, textDate);
+                    listener.onPositiveClick(month, day);
                 }
             }
         });
@@ -96,9 +91,9 @@ public class DateSelector {
     }
 
     public interface OnClickListener {
-        void onPositiveClick(int year, @Date.Month int month, int day, String date);
+        void onPositiveClick(int year, @Date.Month int month, int day);
 
-        void onPositiveClick(@Date.Month int month, int day, String date);
+        void onPositiveClick(@Date.Month int month, int day);
 
         void onNegativeClick();
     }

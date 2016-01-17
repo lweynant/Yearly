@@ -1,7 +1,5 @@
 package com.lweynant.yearly.controller;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,13 +9,9 @@ import android.widget.EditText;
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.lweynant.yearly.BaseYearlyAppComponent;
 import com.lweynant.yearly.R;
-import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.model.Date;
-import com.lweynant.yearly.platform.IClock;
-import com.lweynant.yearly.platform.IUniqueIdGenerator;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -26,22 +20,17 @@ import rx.subscriptions.CompositeSubscription;
 import timber.log.Timber;
 
 
-public class AddBirthdayActivityFragment extends BaseFragment implements DateSelector.OnClickListener {
-
-    public static final String EXTRA_KEY_BIRTHDAY = "birthday";
 
 
-    @Inject BirthdayBuilder birthdayBuilder;
-    @Inject Bundle birthdayBundle;
-    @Inject Intent resultIntent;
-    @Inject IClock clock;
-    @Inject IUniqueIdGenerator idGenerator;
+public class AddBirthdayActivityFragment extends BaseFragment implements DateSelector.OnClickListener, AddBirthdayContract.View {
+
     @Bind(R.id.edit_text_birthday_date) EditText dateEditText;
     @Bind(R.id.edit_text_name) EditText nameEditText;
     @Bind(R.id.edit_text_lastname) EditText lastNameEditText;
     private View fragmentView;
     private CompositeSubscription subscription;
     @Inject DateSelector dateSelector;
+    @Inject AddBirthdayContract.UserActionsListener userActionsListener;
 
     public AddBirthdayActivityFragment() {
     }
@@ -51,15 +40,9 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
         component.inject(this);
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Timber.d("onCreateView");
-        if (savedInstanceState != null) {
-            birthdayBuilder.set(savedInstanceState);
-        }
-        birthdayBuilder.archiveTo(birthdayBundle);
-        resultIntent.putExtra(EXTRA_KEY_BIRTHDAY, birthdayBundle);
 
         fragmentView = inflater.inflate(R.layout.fragment_add_birthday, container, false);
         ButterKnife.bind(this, fragmentView);
@@ -75,9 +58,9 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
         return fragmentView;
     }
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    @Override public void onViewCreated(View view, Bundle savedInstanceState) {
         Timber.d("onViewCreated");
+        userActionsListener.restoreFromInstanceState(this, savedInstanceState);
         super.onViewCreated(view, savedInstanceState);
         subscription = new CompositeSubscription();
         Observable<CharSequence> nameObservable = RxTextView.textChangeEvents(nameEditText).skip(1)
@@ -101,13 +84,11 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
 
         subscription.add(nameObservable
                 .subscribe(n -> {
-                    birthdayBuilder.setName(n.toString());
-                    birthdayBuilder.archiveTo(birthdayBundle);
+                    userActionsListener.setName(n.toString());
                 }));
         subscription.add(lastNameObservable
                 .subscribe(n -> {
-                    birthdayBuilder.setLastName(n.toString());
-                    birthdayBuilder.archiveTo(birthdayBundle);
+                    userActionsListener.setLastName(n.toString());
                 }));
 
         subscription.add(enableSaveButton.distinctUntilChanged()
@@ -121,8 +102,7 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
     }
 
 
-    @Override
-    public void onDestroy() {
+    @Override public void onDestroy() {
         Timber.d("onDestroy");
         super.onDestroy();
         if (subscription != null) {
@@ -130,39 +110,25 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
         }
     }
 
-    @Override
-    public void onResume() {
-        Timber.d("onResume");
-        super.onResume();
-        getActivity().setResult(Activity.RESULT_OK, resultIntent);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
+    @Override public void onSaveInstanceState(Bundle outState) {
         Timber.d("onSaveInstanceState");
         super.onSaveInstanceState(outState);
-        birthdayBuilder.archiveTo(outState);
+        userActionsListener.saveInstanceState(outState);
     }
 
-
-    @Override public void onPositiveClick(int year, @Date.Month int month, int day, String date) {
-        birthdayBuilder.setYear(year);
-        handleSelection(month, day, date);
+    @Override public void onPositiveClick(int year, @Date.Month int month, int day) {
+        userActionsListener.setDate(year, month, day);
     }
 
-
-    @Override public void onPositiveClick(@Date.Month int month, int day, String date) {
-        birthdayBuilder.clearYear();
-        handleSelection(month, day, date);
+    @Override public void onPositiveClick(@Date.Month int month, int day) {
+        userActionsListener.setDate(month, day);
     }
 
     @Override public void onNegativeClick() {
 
     }
 
-    private void handleSelection(@Date.Month int month, int day, String date) {
-        birthdayBuilder.setMonth(month).setDay(day).archiveTo(birthdayBundle);
+    @Override public void showDate(String date) {
         dateEditText.setText(date);
     }
-
 }
