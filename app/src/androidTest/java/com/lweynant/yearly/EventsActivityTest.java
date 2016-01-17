@@ -19,6 +19,7 @@ import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.EventModelModule;
 import com.lweynant.yearly.model.EventRepoTransaction;
 import com.lweynant.yearly.model.IEvent;
+import com.lweynant.yearly.platform.IEventNotification;
 import com.lweynant.yearly.platform.IJsonFileAccessor;
 import com.lweynant.yearly.model.NotificationTime;
 import com.lweynant.yearly.platform.IAlarm;
@@ -83,6 +84,8 @@ public class EventsActivityTest {
     @Inject CountingIdlingResource idlingResource;
     @Inject DateFormatter dateFormatter;
     @Inject IAlarm alarm;
+    @Inject IEventNotification eventNotification;
+
     private LocalDate today;
     private LocalDate tomorrow;
 
@@ -153,12 +156,14 @@ public class EventsActivityTest {
 
 
     @Test public void testOneEventRemoveLast() throws IOException {
-        initializeTheListWith(createBirthday("One"));
+        IEvent onesBirthday = createBirthday("One");
+        initializeTheListWith(onesBirthday);
 
         onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("One")))));
         onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem((withText(containsString("One"))), swipeLeft()));
         onView(withId(R.id.events_recycler_view)).check(matches(not(hasDescendant(withText(containsString("One"))))));
         verify(alarm, times(1)).clear();
+        verify(eventNotification).cancel(onesBirthday.getID());
     }
 
     @Test public void testTwoEventsRemoveLast() throws IOException {

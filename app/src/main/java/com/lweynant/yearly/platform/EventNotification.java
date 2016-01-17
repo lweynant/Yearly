@@ -30,7 +30,16 @@ public class EventNotification implements IEventNotification {
         builder.setAutoCancel(true);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(pendingIntent);
-        NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager nm = getNotificationManager();
         nm.notify(id, builder.build());
+    }
+
+    private NotificationManager getNotificationManager() {
+        return (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+    }
+
+    @Override public void cancel(int id) {
+        NotificationManager nm = getNotificationManager();
+        nm.cancel(id);
     }
 }
