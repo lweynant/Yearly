@@ -3,7 +3,6 @@ package com.lweynant.yearly.controller;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
@@ -59,7 +58,10 @@ public class AddBirthdayActivity extends BaseActivity {
     }
 
     private void saveBirthdayAndSetResult() {
-        Intent resultIntent = userActionsListener.saveBirthday();
+        Bundle bundle = new Bundle();
+        userActionsListener.archiveBirthdayTo(bundle);
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra(AddBirthdayContract.EXTRA_KEY_BIRTHDAY, bundle);
         setResult(Activity.RESULT_OK, resultIntent);
     }
 }

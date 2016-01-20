@@ -53,9 +53,7 @@ public class ControllerModule {
     }
 
     @Provides @PerApp AddBirthdayContract.UserActionsListener providesAddBirthdayPresenter(BirthdayBuilder builder,
-                                                                                           DateFormatter dateFormatter,
-                                                                                           Bundle bundle,
-                                                                                           Intent resultIntent) {
-        return new AddBirthdayPresenter(builder, dateFormatter, bundle, resultIntent);
+                                                                                           DateFormatter dateFormatter) {
+        return new AddBirthdayPresenter(builder, dateFormatter);
     }
 }

@@ -28,7 +28,6 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
     @Bind(R.id.edit_text_name) EditText nameEditText;
     @Bind(R.id.edit_text_lastname) EditText lastNameEditText;
     private View fragmentView;
-    private CompositeSubscription subscription;
     @Inject DateSelector dateSelector;
     @Inject AddBirthdayContract.UserActionsListener userActionsListener;
 
@@ -60,55 +59,28 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
 
     @Override public void onViewCreated(View view, Bundle savedInstanceState) {
         Timber.d("onViewCreated");
-        userActionsListener.restoreFromInstanceState(this, savedInstanceState);
         super.onViewCreated(view, savedInstanceState);
-        subscription = new CompositeSubscription();
-        Observable<CharSequence> nameObservable = RxTextView.textChangeEvents(nameEditText).skip(1)
-                .map(e -> e.text());
-        Observable<CharSequence> lastNameObservable = RxTextView.textChangeEvents(lastNameEditText).skip(1)
-                .map(e -> e.text());
-        Observable<Boolean> validName = nameObservable
-                .doOnNext(t -> Timber.d("name text field %s", t))
-                .map(t -> t.length())
-                .map(l -> l > 0);
-
-
-        Observable<Boolean> validDate = RxTextView.textChangeEvents(dateEditText).skip(1)
-                .map(e -> e.text())
-                .doOnNext(t -> Timber.d("date text field %s", t))
-                .map(t -> t.length())
-                .map(l -> l > 0);
-
-
-        Observable<Boolean> enableSaveButton = Observable.combineLatest(validName, validDate, (a, b) -> a && b);
-
-        subscription.add(nameObservable
-                .subscribe(n -> {
-                    userActionsListener.setName(n.toString());
-                }));
-        subscription.add(lastNameObservable
-                .subscribe(n -> {
-                    userActionsListener.setLastName(n.toString());
-                }));
-
-        subscription.add(enableSaveButton.distinctUntilChanged()
-                .subscribe(enabled -> enableSaveButton(enabled)));
-
+        userActionsListener.restoreFromInstanceState(this, savedInstanceState);
     }
 
-    private void enableSaveButton(Boolean enabled) {
+    @Override public void onResume() {
+        super.onResume();
+        userActionsListener.setInputObservables(RxTextView.textChangeEvents(nameEditText).skip(1).map(e -> e.text()),
+                                                RxTextView.textChangeEvents(lastNameEditText).skip(1).map(e -> e.text()),
+                                                RxTextView.textChangeEvents(dateEditText).skip(1).map(e -> e.text()));
+    }
+
+    @Override public void onPause() {
+        super.onPause();
+        userActionsListener.clearInputObservables();
+    }
+
+    @Override public void enableSaveButton(Boolean enabled) {
         Timber.d("enableSaveButton %s", enabled ? "true" : "false");
         //todo add a save button in the toolbar
     }
 
 
-    @Override public void onDestroy() {
-        Timber.d("onDestroy");
-        super.onDestroy();
-        if (subscription != null) {
-            subscription.unsubscribe();
-        }
-    }
 
     @Override public void onSaveInstanceState(Bundle outState) {
         Timber.d("onSaveInstanceState");
