@@ -1,8 +1,9 @@
-package com.lweynant.yearly.controller;
+package com.lweynant.yearly.controller.add_event;
 
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.lweynant.yearly.controller.DateFormatter;
 import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.model.Date;
 

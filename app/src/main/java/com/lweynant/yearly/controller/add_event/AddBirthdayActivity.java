@@ -1,4 +1,4 @@
-package com.lweynant.yearly.controller;
+package com.lweynant.yearly.controller.add_event;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -8,6 +8,7 @@ import android.view.MenuItem;
 
 import com.lweynant.yearly.BaseYearlyAppComponent;
 import com.lweynant.yearly.R;
+import com.lweynant.yearly.controller.BaseActivity;
 
 import javax.inject.Inject;
 

@@ -12,6 +12,8 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.lweynant.yearly.BaseYearlyAppComponent;
 import com.lweynant.yearly.R;
+import com.lweynant.yearly.controller.add_event.AddBirthdayActivity;
+import com.lweynant.yearly.controller.add_event.AddBirthdayContract;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.model.EventRepo;

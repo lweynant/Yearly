@@ -6,7 +6,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.lweynant.yearly.controller.AddBirthdayActivity;
+import com.lweynant.yearly.controller.add_event.AddBirthdayActivity;
 import com.lweynant.yearly.controller.ControllerModule;
 import com.lweynant.yearly.controller.DateFormatter;
 import com.lweynant.yearly.controller.SyncControllerModule;

@@ -1,7 +1,7 @@
 package com.lweynant.yearly;
 
-import com.lweynant.yearly.controller.AddBirthdayActivity;
-import com.lweynant.yearly.controller.AddBirthdayActivityFragment;
+import com.lweynant.yearly.controller.add_event.AddBirthdayActivity;
+import com.lweynant.yearly.controller.add_event.AddBirthdayActivityFragment;
 import com.lweynant.yearly.controller.DateSelector;
 import com.lweynant.yearly.controller.EventsActivity;
 import com.lweynant.yearly.controller.EventsActivityFragment;
@@ -21,4 +21,5 @@ public interface BaseYearlyAppComponent {
     void inject(BootReceiver bootReceiver);
 
     void inject(AddBirthdayActivity addBirthdayActivity);
+
 }

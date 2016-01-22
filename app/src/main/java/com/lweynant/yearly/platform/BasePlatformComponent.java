@@ -1,6 +1,5 @@
 package com.lweynant.yearly.platform;
 
-import com.lweynant.yearly.controller.AlarmGenerator;
 
 public interface BasePlatformComponent {
     IClock clock();

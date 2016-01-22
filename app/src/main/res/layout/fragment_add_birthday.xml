@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:rstring="com.lweynant.yearly.controller.AddBirthdayActivityFragment"
+    tools:rstring="com.lweynant.yearly.controller.add_event.AddBirthdayActivityFragment"
     tools:showIn="@layout/activity_add_birthday">
 
     <android.support.design.widget.TextInputLayout

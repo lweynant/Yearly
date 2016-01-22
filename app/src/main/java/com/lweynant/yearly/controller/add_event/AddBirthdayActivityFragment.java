@@ -1,4 +1,4 @@
-package com.lweynant.yearly.controller;
+package com.lweynant.yearly.controller.add_event;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,6 +9,9 @@ import android.widget.EditText;
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.lweynant.yearly.BaseYearlyAppComponent;
 import com.lweynant.yearly.R;
+import com.lweynant.yearly.controller.BaseFragment;
+import com.lweynant.yearly.controller.DateSelector;
+import com.lweynant.yearly.controller.add_event.AddBirthdayContract;
 import com.lweynant.yearly.model.Date;
 
 import javax.inject.Inject;

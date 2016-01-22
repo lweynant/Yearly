@@ -4,6 +4,8 @@ import android.os.Bundle;
 
 import com.lweynant.yearly.IStringResources;
 import com.lweynant.yearly.R;
+import com.lweynant.yearly.controller.add_event.AddBirthdayContract;
+import com.lweynant.yearly.controller.add_event.AddBirthdayPresenter;
 import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.platform.IClock;

@@ -41,7 +41,7 @@
         </receiver>
 
         <activity
-            android:name=".controller.AddBirthdayActivity"
+            android:name=".controller.add_event.AddBirthdayActivity"
             android:label="@string/title_activity_add_birthday"
             android:parentActivityName=".controller.EventsActivity"
             android:theme="@style/AppTheme.NoActionBar">
