@@ -35,10 +35,7 @@ public class ControllerModule {
         return new DateFormatter(rstring);
     }
 
-    @Provides DateSelector providesDateSelector(IClock clock) {
-        return new DateSelector(clock);
-    }
-    @Provides Bundle providesBundle() {
+   @Provides Bundle providesBundle() {
         return new Bundle();
     }
 

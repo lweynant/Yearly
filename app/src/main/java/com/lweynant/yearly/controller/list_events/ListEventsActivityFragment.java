@@ -1,4 +1,4 @@
-package com.lweynant.yearly.controller;
+package com.lweynant.yearly.controller.list_events;
 
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,6 +13,8 @@ import com.lweynant.yearly.BaseYearlyAppComponent;
 import com.lweynant.yearly.IStringResources;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.YearlyApp;
+import com.lweynant.yearly.controller.BaseFragment;
+import com.lweynant.yearly.controller.EventsAdapter;
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.EventRepoTransaction;
 import com.lweynant.yearly.model.IEvent;
@@ -32,7 +34,7 @@ import timber.log.Timber;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class EventsActivityFragment extends BaseFragment implements EventsAdapter.onEventTypeSelectedListener {
+public class ListEventsActivityFragment extends BaseFragment implements EventsAdapter.onEventTypeSelectedListener {
 
     @Inject EventsAdapter eventsAdapter;
     @Inject IClock clock;
@@ -45,7 +47,7 @@ public class EventsActivityFragment extends BaseFragment implements EventsAdapte
     private RecyclerView.LayoutManager layoutManager;
 
 
-    public EventsActivityFragment() {
+    public ListEventsActivityFragment() {
     }
 
     @Override
@@ -57,7 +59,7 @@ public class EventsActivityFragment extends BaseFragment implements EventsAdapte
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Timber.d("onCreateView");
-        View view = inflater.inflate(R.layout.fragment_events, container, false);
+        View view = inflater.inflate(R.layout.fragment_list_events, container, false);
         ButterKnife.bind(this, view);
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);

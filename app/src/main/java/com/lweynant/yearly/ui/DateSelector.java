@@ -1,4 +1,4 @@
-package com.lweynant.yearly.controller;
+package com.lweynant.yearly.ui;
 
 import android.content.Context;
 import android.content.DialogInterface;

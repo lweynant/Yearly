@@ -6,8 +6,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:rstring=".EventsActivityFragment"
-    tools:showIn="@layout/activity_events">
+    tools:rstring=".list_events.EventsActivityFragment"
+    tools:showIn="@layout/activity_list_events">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/events_recycler_view"

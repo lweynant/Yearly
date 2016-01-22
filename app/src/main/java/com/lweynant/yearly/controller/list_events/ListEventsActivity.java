@@ -1,4 +1,4 @@
-package com.lweynant.yearly.controller;
+package com.lweynant.yearly.controller.list_events;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +12,8 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.lweynant.yearly.BaseYearlyAppComponent;
 import com.lweynant.yearly.R;
+import com.lweynant.yearly.controller.AlarmGenerator;
+import com.lweynant.yearly.controller.BaseActivity;
 import com.lweynant.yearly.controller.add_event.AddBirthdayActivity;
 import com.lweynant.yearly.controller.add_event.AddBirthdayContract;
 import com.lweynant.yearly.model.Birthday;
@@ -35,7 +37,7 @@ import rx.Observable;
 import timber.log.Timber;
 
 
-public class EventsActivity extends BaseActivity {
+public class ListEventsActivity extends BaseActivity {
 
     @Inject IClock clock;
     @Inject IUniqueIdGenerator idGenerator;
@@ -52,7 +54,7 @@ public class EventsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         Timber.d("onCreate");
         Timber.d("injected component");
-        setContentView(R.layout.activity_events);
+        setContentView(R.layout.activity_list_events);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ButterKnife.bind(this);
@@ -79,7 +81,7 @@ public class EventsActivity extends BaseActivity {
         addBirthdayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(EventsActivity.this, AddBirthdayActivity.class);
+                Intent intent = new Intent(ListEventsActivity.this, AddBirthdayActivity.class);
                 Timber.d("startActivityForResult");
                 startActivityForResult(intent, 0);
                 menuMultipleActions.collapse();

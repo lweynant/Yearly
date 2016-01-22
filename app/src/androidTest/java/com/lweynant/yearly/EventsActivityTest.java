@@ -12,8 +12,8 @@ import android.test.suitebuilder.annotation.LargeTest;
 import com.google.gson.JsonObject;
 import com.lweynant.yearly.controller.ControllerModule;
 import com.lweynant.yearly.controller.DateFormatter;
-import com.lweynant.yearly.controller.EventsActivity;
 import com.lweynant.yearly.controller.EventsAdapter;
+import com.lweynant.yearly.controller.list_events.ListEventsActivity;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.ModelModule;
@@ -89,7 +89,7 @@ public class EventsActivityTest {
     private LocalDate today;
     private LocalDate tomorrow;
 
-    @Rule public ActivityTestRule<EventsActivity> activityTestRule = new ActivityTestRule<EventsActivity>(EventsActivity.class,
+    @Rule public ActivityTestRule<ListEventsActivity> activityTestRule = new ActivityTestRule<ListEventsActivity>(ListEventsActivity.class,
             true,  //initialTouchMode
             false); //launchActivity. False we need to set the mock file accessor
 

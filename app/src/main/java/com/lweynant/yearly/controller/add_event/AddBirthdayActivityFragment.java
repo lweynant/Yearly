@@ -10,7 +10,7 @@ import com.jakewharton.rxbinding.widget.RxTextView;
 import com.lweynant.yearly.BaseYearlyAppComponent;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.controller.BaseFragment;
-import com.lweynant.yearly.controller.DateSelector;
+import com.lweynant.yearly.ui.DateSelector;
 import com.lweynant.yearly.controller.add_event.AddBirthdayContract;
 import com.lweynant.yearly.model.Date;
 

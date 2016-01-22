@@ -12,4 +12,8 @@ public class ViewModule {
     @Provides IEventViewFactory provideEventViewFactory(IStringResources rstring, IClock clock) {
         return new EventViewFactory(rstring, clock);
     }
+    @Provides DateSelector providesDateSelector(IClock clock) {
+        return new DateSelector(clock);
+    }
+
 }
