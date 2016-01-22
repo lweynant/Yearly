@@ -35,13 +35,6 @@ public class ControllerModule {
         return new DateFormatter(rstring);
     }
 
-   @Provides Bundle providesBundle() {
-        return new Bundle();
-    }
-
-    @Provides Intent providesIntent() {
-        return new Intent();
-    }
 
     @Provides @PerApp EventNotifier providesEventNotifier(IEventNotification eventNotification,
                                                           IIntentFactory intentFactory,
