@@ -13,6 +13,7 @@ import com.lweynant.yearly.ui.IEventViewFactory;
 import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import rx.Observable;
@@ -138,6 +139,14 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
 
     @Override public int getItemCount() {
         return events.size();
+    }
+
+    public void replaceData(List<IEvent> events) {
+        synchronized (this) {
+            Timber.d("updateDataSet");
+            this.events = events;
+            notifyDataSetChanged();
+        }
     }
 
     public interface onEventTypeSelectedListener {

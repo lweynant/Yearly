@@ -24,6 +24,9 @@ import com.lweynant.yearly.ui.EventViewFactory;
 import com.lweynant.yearly.platform.IEventNotificationText;
 import com.lweynant.yearly.ui.IEventViewFactory;
 
+import java.util.Collection;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import butterknife.Bind;
@@ -34,14 +37,14 @@ import timber.log.Timber;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class ListEventsActivityFragment extends BaseFragment implements EventsAdapter.onEventTypeSelectedListener {
+public class ListEventsActivityFragment extends BaseFragment implements EventsAdapter.onEventTypeSelectedListener, ListEventsContract.View {
 
     @Inject EventsAdapter eventsAdapter;
     @Inject IClock clock;
     @Inject EventRepo repo;
-    @Inject EventRepoTransaction transaction;
     @Inject IEventViewFactory viewFactory;
-    @Inject IEventNotification eventNotification;
+    @Inject ListEventsContract.UserActionsListener userActionsListener;
+
     @Bind(R.id.events_recycler_view) RecyclerView recyclerView;
 
     private RecyclerView.LayoutManager layoutManager;
@@ -61,6 +64,7 @@ public class ListEventsActivityFragment extends BaseFragment implements EventsAd
         Timber.d("onCreateView");
         View view = inflater.inflate(R.layout.fragment_list_events, container, false);
         ButterKnife.bind(this, view);
+        userActionsListener.setView(this);
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         //set the adapter
@@ -84,8 +88,7 @@ public class ListEventsActivityFragment extends BaseFragment implements EventsAd
                 if (direction == ItemTouchHelper.LEFT) {
                     Timber.d("removing event");
                     IEvent event = ((EventsAdapter.EventViewHolder) viewHolder).getEvent();
-                    transaction.remove(event).commit();
-                    eventNotification.cancel(event.getID());
+                    userActionsListener.removeEvent(event);
                 }
 
             }
@@ -108,6 +111,7 @@ public class ListEventsActivityFragment extends BaseFragment implements EventsAd
         Timber.d("onResume");
         super.onResume();
         repo.addListener(eventsAdapter);
+        userActionsListener.loadEvents();
 
         eventsAdapter.checkWhetherDataNeedsToBeResorted(clock.now(), repo);
 
@@ -120,12 +124,24 @@ public class ListEventsActivityFragment extends BaseFragment implements EventsAd
         repo.removeListener(eventsAdapter);
     }
 
-    @Override
-    public void onSelected(IEvent eventType) {
-        IEventViewFactory factory = new EventViewFactory((IStringResources) getActivity().getApplication(), clock);
-        IEventNotificationText notifText = factory.getEventNotificationText(eventType);
-        String text = notifText.getOneLiner();
-        Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
+    @Override public void onSelected(IEvent eventType) {
+        userActionsListener.openEventDetails(eventType);
     }
 
+    //view interface
+    @Override public void showEventDetailsUI(IEvent event) {
+        IEventViewFactory factory = new EventViewFactory((IStringResources) getActivity().getApplication(), clock);
+        IEventNotificationText notifText = factory.getEventNotificationText(event);
+        String text = notifText.getOneLiner();
+        Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
+
+    }
+
+    @Override public void setProgressIndicator(boolean active) {
+
+    }
+
+    @Override public void showEvents(List<IEvent> events) {
+        eventsAdapter.replaceData(events);
+    }
 }
