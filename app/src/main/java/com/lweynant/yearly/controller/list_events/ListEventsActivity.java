@@ -11,6 +11,7 @@ import android.view.View;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.lweynant.yearly.BaseYearlyAppComponent;
+import com.lweynant.yearly.EventRepoSerializerToFileDecorator;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.controller.AlarmGenerator;
 import com.lweynant.yearly.controller.BaseActivity;
@@ -22,9 +23,8 @@ import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.EventRepoTransaction;
 import com.lweynant.yearly.model.IEvent;
-import com.lweynant.yearly.EventRepoSerializerToFileDecorator;
-import com.lweynant.yearly.platform.IJsonFileAccessor;
 import com.lweynant.yearly.platform.IClock;
+import com.lweynant.yearly.platform.IJsonFileAccessor;
 import com.lweynant.yearly.platform.IUniqueIdGenerator;
 
 import org.joda.time.LocalDate;
@@ -37,14 +37,16 @@ import rx.Observable;
 import timber.log.Timber;
 
 
-public class ListEventsActivity extends BaseActivity {
+public class ListEventsActivity extends BaseActivity implements ListEventsContract.ActivityView {
 
+    private static final int REQUEST_ADD_BIRTHDAY = 1;
     @Inject IClock clock;
     @Inject IUniqueIdGenerator idGenerator;
     @Inject EventRepo repo;
     @Inject EventRepoTransaction transaction;
     @Inject IJsonFileAccessor fileAccessor;
     @Inject AlarmGenerator alarmGenerator;
+    @Inject ListEventsContract.UserActionsListener userActionsListener;
     @Bind(R.id.multiple_actions) FloatingActionsMenu menuMultipleActions;
     @Bind(R.id.action_add_event) FloatingActionButton addEventButton;
     @Bind(R.id.action_add_birthday) FloatingActionButton addBirthdayButton;
@@ -58,32 +60,23 @@ public class ListEventsActivity extends BaseActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ButterKnife.bind(this);
+        userActionsListener.setActivityView(this);
 
         addEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LocalDate date = LocalDate.now();
-                //noinspection ResourceType
-                transaction.add(new Birthday("Darth", "Vader", date.getMonthOfYear(), date.getDayOfMonth(), clock, idGenerator))
-                        .commit();
+                LocalDate date = clock.now();
+                userActionsListener.addNewEvent();
 
-
-                Snackbar.make(view, getResources().getString(R.string.adding_events_not_supported), Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-
-                //addEventButton.setTitle("Action A clicked");
-                if (menuMultipleActions.isExpanded()) {
-                    menuMultipleActions.collapse();
-                }
+                menuMultipleActions.collapse();
             }
         });
 
         addBirthdayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(ListEventsActivity.this, AddBirthdayActivity.class);
-                Timber.d("startActivityForResult");
-                startActivityForResult(intent, 0);
+                userActionsListener.addNewBirthday();
+
                 menuMultipleActions.collapse();
             }
         });
@@ -97,7 +90,7 @@ public class ListEventsActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Timber.d("onActivityResult %d", resultCode);
-        if (data != null) {
+        if (requestCode == REQUEST_ADD_BIRTHDAY && data != null) {
             Timber.d("inspecting the valid intent");
             BirthdayBuilder builder = new BirthdayBuilder(clock, idGenerator);
             Bundle bundle = data.getBundleExtra(AddBirthdayContract.EXTRA_KEY_BIRTHDAY);
@@ -153,5 +146,26 @@ public class ListEventsActivity extends BaseActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override public void showEventAdded(IEvent event) {
+        View view = findViewById(R.id.multiple_actions);
+        Snackbar.make(view, String.format(getResources().getString(R.string.add_birthday_for), event.getName()), Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
+
+    }
+
+    @Override public void showAddNewBirthdayUI() {
+        Intent intent = new Intent(ListEventsActivity.this, AddBirthdayActivity.class);
+        Timber.d("startActivityForResult");
+        startActivityForResult(intent, REQUEST_ADD_BIRTHDAY);
+    }
+
+    @Override public void showAddNewEventUI() {
+        //TOOD start new activity for now we simply add an event
+        LocalDate date = clock.now();
+        //noinspection ResourceType
+        userActionsListener.addEvent(new Birthday("Darth", "Vader",
+                date.getMonthOfYear(), date.getDayOfMonth(), clock, idGenerator));
     }
 }

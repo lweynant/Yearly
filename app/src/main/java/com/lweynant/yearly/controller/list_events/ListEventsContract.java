@@ -1,12 +1,20 @@
 package com.lweynant.yearly.controller.list_events;
 
+import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.IEvent;
 
-import java.util.Collection;
 import java.util.List;
 
 public interface ListEventsContract {
-    interface View {
+    interface ActivityView {
+
+        void showEventAdded(IEvent event);
+
+        void showAddNewBirthdayUI();
+
+        void showAddNewEventUI();
+    }
+    interface FragmentView {
 
         void showEventDetailsUI(IEvent event);
 
@@ -16,12 +24,21 @@ public interface ListEventsContract {
     }
     interface UserActionsListener {
 
-        void setView(View view);
+        void setFragmentView(FragmentView fragmentView);
+
+        void setActivityView(ActivityView activityView);
 
         void removeEvent(IEvent event);
 
-        void openEventDetails(IEvent event);
+        void openEventDetails(IEvent requestedEvent);
 
-        void loadEvents();
+        void loadEvents(boolean forceUpdate);
+
+        void addNewBirthday();
+
+        void addNewEvent();
+
+        //this is a temporary function
+        void addEvent(IEvent event);
     }
 }

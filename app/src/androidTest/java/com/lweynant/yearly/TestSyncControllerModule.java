@@ -5,8 +5,10 @@ import android.support.test.espresso.contrib.CountingIdlingResource;
 import com.lweynant.yearly.controller.AlarmGenerator;
 import com.lweynant.yearly.controller.EventsAdapter;
 import com.lweynant.yearly.controller.list_events.ListEventsContract;
+import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.EventRepoTransaction;
 import com.lweynant.yearly.platform.IAlarm;
+import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IEventNotification;
 import com.lweynant.yearly.ui.IEventViewFactory;
 
@@ -15,9 +17,6 @@ import dagger.Provides;
 
 @Module
 public class TestSyncControllerModule {
-    @Provides @PerApp EventsAdapter provideEventsAdapter(CountingIdlingResource idlingResource, IEventViewFactory viewFactory) {
-        return new SyncWithTestsEventsAdapter(idlingResource, viewFactory);
-    }
     @Provides @PerApp
     AlarmGenerator provideAlarmGenerator(CountingIdlingResource idlingResource, IAlarm alarm) {
         return new SyncWithTestsAlarmGenerator(idlingResource, alarm);
@@ -28,7 +27,11 @@ public class TestSyncControllerModule {
     }
 
     @Provides @PerApp
-    ListEventsContract.UserActionsListener provedesEventsListPresenter(CountingIdlingResource idlingResource, EventRepoTransaction transaction, IEventNotification eventNotification) {
-        return new SyncWithTestsListEventsPresenter(idlingResource, transaction, eventNotification);
+    ListEventsContract.UserActionsListener provedesEventsListPresenter(CountingIdlingResource idlingResource,
+                                                                       EventRepo eventRepo,
+                                                                       EventRepoTransaction transaction,
+                                                                       IEventNotification eventNotification,
+                                                                       IClock clock) {
+        return new SyncWithTestsListEventsPresenter(idlingResource, eventRepo, transaction, eventNotification, clock);
     }
 }

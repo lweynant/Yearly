@@ -87,7 +87,7 @@ public class YearlyApp extends Application implements IStringResources, IEventRe
 
     @Override
     public void onDataSetChanged(EventRepo repo) {
-        Timber.d("onDataSetChanged");
+        Timber.d("startLoadingData");
         Observable<IEvent> events = repo.getEventsSubscribedOnProperScheduler();
         Timber.i("archive");
         events.subscribe(new EventRepoSerializerToFileDecorator(repoAccessor, new EventRepoSerializer(clock)));

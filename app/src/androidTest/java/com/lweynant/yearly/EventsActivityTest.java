@@ -14,8 +14,10 @@ import com.lweynant.yearly.controller.ControllerModule;
 import com.lweynant.yearly.controller.DateFormatter;
 import com.lweynant.yearly.controller.EventsAdapter;
 import com.lweynant.yearly.controller.list_events.ListEventsActivity;
+import com.lweynant.yearly.controller.list_events.ListEventsContract;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.Date;
+import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.ModelModule;
 import com.lweynant.yearly.model.EventRepoTransaction;
 import com.lweynant.yearly.model.IEvent;
@@ -85,6 +87,8 @@ public class EventsActivityTest {
     @Inject DateFormatter dateFormatter;
     @Inject IAlarm alarm;
     @Inject IEventNotification eventNotification;
+    @Inject EventRepo repo;
+    @Inject ListEventsContract.UserActionsListener presenter;
 
     private LocalDate today;
     private LocalDate tomorrow;
@@ -115,7 +119,7 @@ public class EventsActivityTest {
         when(clock.timestamp()).thenReturn("fake timestamp");
         app.setComponent(component);
         registerIdlingResources(idlingResource);
-        activityTestRule.launchActivity(new Intent());
+
     }
 
 
@@ -127,6 +131,7 @@ public class EventsActivityTest {
 
     @Test public void testOneEventInListWithTodaysBirthday() {
         initializeTheListWith(createBirthday("John", today));
+        activityTestRule.launchActivity(new Intent());
 
         onView(withText(containsString("John"))).check(matches(isDisplayed()));
         Timber.d("verify alarm %s", alarm);
@@ -136,6 +141,7 @@ public class EventsActivityTest {
         LocalDate birthday = today.plusDays(100);
         IEvent event = createBirthday("John", birthday);
         initializeTheListWith(event);
+        activityTestRule.launchActivity(new Intent());
 
         onView(withText(containsString("John"))).check(matches(isDisplayed()));
         verify(alarm, times(1)).scheduleAlarm(birthday.minusDays(event.getNbrOfDaysForNotification()), NotificationTime.EVENING);
@@ -146,6 +152,7 @@ public class EventsActivityTest {
         initializeTheListWith(createBirthday("Yesterday", today.minusDays(1)),
                               createBirthday("Tomorrow", today.plusDays(1)),
                               createBirthday("Today", today));
+        activityTestRule.launchActivity(new Intent());
 
         onView(withRecyclerView(R.id.events_recycler_view).atPosition(0)).check(matches(withText(containsString("Today"))));
         onView(withRecyclerView(R.id.events_recycler_view).atPosition(1)).check(matches(withText(containsString("Tomorrow"))));
@@ -158,6 +165,7 @@ public class EventsActivityTest {
     @Test public void testOneEventRemoveLast() throws IOException {
         IEvent onesBirthday = createBirthday("One");
         initializeTheListWith(onesBirthday);
+        activityTestRule.launchActivity(new Intent());
 
         onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("One")))));
         onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem((withText(containsString("One"))), swipeLeft()));
@@ -169,6 +177,8 @@ public class EventsActivityTest {
     @Test public void testTwoEventsRemoveLast() throws IOException {
         initializeTheListWith(createBirthday("One", tomorrow),
                 createBirthday("Two", today));
+        activityTestRule.launchActivity(new Intent());
+
         onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("Two")))));
         onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem((withText(containsString("Two"))), swipeLeft()));
         onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("One")))));
@@ -177,12 +187,14 @@ public class EventsActivityTest {
     }
 
     @Test public void testPushAddBirthdayStartsNewActivity() throws IOException {
+        activityTestRule.launchActivity(new Intent());
         onView(withId(R.id.fab_expand_menu_button)).perform(click());
         onView(withId(R.id.action_add_birthday)).perform(click());
         onView(withText(R.string.title_activity_add_birthday)).check(matches(isDisplayed()));
     }
 
     @Test public void testAddBirthdayOnEmptyList() {
+        activityTestRule.launchActivity(new Intent());
         onView(withId(R.id.fab_expand_menu_button)).perform(click());
         onView(withId(R.id.action_add_birthday)).perform(click());
         enterBirthday("Joe", today);
@@ -193,6 +205,7 @@ public class EventsActivityTest {
     @Test public void testAddBirthDayOnNonEmptyList() {
         initializeTheListWith(createBirthday("Yesterday", today.minusDays(1)),
                 createBirthday("Today", today));
+        activityTestRule.launchActivity(new Intent());
 
         onView(withId(R.id.fab_expand_menu_button)).perform(click());
         onView(withId(R.id.action_add_birthday)).perform(click());
@@ -209,6 +222,7 @@ public class EventsActivityTest {
             transaction.add(birthday);
         }
         transaction.commit();
+        //presenter.loadEvents(true);
     }
 
     private IEvent createBirthday(String name) {

@@ -16,15 +16,12 @@ import com.lweynant.yearly.YearlyApp;
 import com.lweynant.yearly.controller.BaseFragment;
 import com.lweynant.yearly.controller.EventsAdapter;
 import com.lweynant.yearly.model.EventRepo;
-import com.lweynant.yearly.model.EventRepoTransaction;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.platform.IClock;
-import com.lweynant.yearly.platform.IEventNotification;
 import com.lweynant.yearly.ui.EventViewFactory;
 import com.lweynant.yearly.platform.IEventNotificationText;
 import com.lweynant.yearly.ui.IEventViewFactory;
 
-import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -37,7 +34,7 @@ import timber.log.Timber;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class ListEventsActivityFragment extends BaseFragment implements EventsAdapter.onEventTypeSelectedListener, ListEventsContract.View {
+public class ListEventsActivityFragment extends BaseFragment implements EventsAdapter.onEventTypeSelectedListener, ListEventsContract.FragmentView {
 
     @Inject EventsAdapter eventsAdapter;
     @Inject IClock clock;
@@ -64,7 +61,7 @@ public class ListEventsActivityFragment extends BaseFragment implements EventsAd
         Timber.d("onCreateView");
         View view = inflater.inflate(R.layout.fragment_list_events, container, false);
         ButterKnife.bind(this, view);
-        userActionsListener.setView(this);
+        userActionsListener.setFragmentView(this);
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         //set the adapter
@@ -102,7 +99,6 @@ public class ListEventsActivityFragment extends BaseFragment implements EventsAd
     @Override
     public void onDetach() {
         Timber.d("onDetach");
-        eventsAdapter.onDetach();
         super.onDetach();
     }
 
@@ -110,10 +106,8 @@ public class ListEventsActivityFragment extends BaseFragment implements EventsAd
     public void onResume() {
         Timber.d("onResume");
         super.onResume();
-        repo.addListener(eventsAdapter);
-        userActionsListener.loadEvents();
+        userActionsListener.loadEvents(false);
 
-        eventsAdapter.checkWhetherDataNeedsToBeResorted(clock.now(), repo);
 
     }
 
@@ -121,11 +115,10 @@ public class ListEventsActivityFragment extends BaseFragment implements EventsAd
     public void onPause() {
         Timber.d("onPause");
         super.onPause();
-        repo.removeListener(eventsAdapter);
     }
 
-    @Override public void onSelected(IEvent eventType) {
-        userActionsListener.openEventDetails(eventType);
+    @Override public void onSelected(IEvent event) {
+        userActionsListener.openEventDetails(event);
     }
 
     //view interface

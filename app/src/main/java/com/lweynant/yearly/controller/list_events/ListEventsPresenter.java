@@ -1,10 +1,9 @@
 package com.lweynant.yearly.controller.list_events;
 
-import com.lweynant.yearly.controller.EventsAdapter;
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.EventRepoTransaction;
 import com.lweynant.yearly.model.IEvent;
-import com.lweynant.yearly.model.IEventRepoListener;
+import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IEventNotification;
 
 import org.joda.time.LocalDate;
@@ -22,7 +21,8 @@ import timber.log.Timber;
 public class ListEventsPresenter  implements ListEventsContract.UserActionsListener{
 
 
-    private ListEventsContract.View view;
+    private ListEventsContract.FragmentView fragmentView;
+    private final EventRepo eventRepo;
     private EventRepoTransaction transaction;
     private IEventNotification eventNotification;
     private Subscription subscription;
@@ -30,51 +30,78 @@ public class ListEventsPresenter  implements ListEventsContract.UserActionsListe
     private final List<IEvent> empyList = new ArrayList<>();
     private LocalDate sortedFrom = new LocalDate(1900, 1, 1);
     private String repoId;
+    private IClock clock;
+    private ListEventsContract.ActivityView activityView;
 
-    public ListEventsPresenter(EventRepoTransaction transaction,
-                               IEventNotification eventNotification) {
+    public ListEventsPresenter(EventRepo eventRepo, EventRepoTransaction transaction,
+                               IEventNotification eventNotification,
+                               IClock clock) {
+        this.eventRepo = eventRepo;
         this.transaction = transaction;
         this.eventNotification = eventNotification;
+        this.clock = clock;
     }
 
-    @Override public void setView(ListEventsContract.View view) {
-        this.view = view;
+    @Override public void setFragmentView(ListEventsContract.FragmentView fragmentView) {
+        this.fragmentView = fragmentView;
+    }
+
+    @Override public void setActivityView(ListEventsContract.ActivityView activityView) {
+        this.activityView = activityView;
     }
 
     @Override public void removeEvent(IEvent event) {
         transaction.remove(event).commit();
         eventNotification.cancel(event.getID());
+        updateData(true, eventRepo);
     }
 
-    @Override public void openEventDetails(IEvent event) {
-        view.showEventDetailsUI(event);
+    @Override public void openEventDetails(IEvent requestedEvent) {
+        fragmentView.showEventDetailsUI(requestedEvent);
     }
 
-    @Override public void loadEvents() {
-        view.setProgressIndicator(true);
-
-
+    @Override public void loadEvents(boolean forceUpdate) {
+        fragmentView.setProgressIndicator(true);
+        updateData(forceUpdate, eventRepo);
     }
-    private void checkWhetherDataNeedsToBeResorted(LocalDate now, EventRepo repo) {
-        Timber.d("checkWhetherDataNeedsToBeResorted");
-        if (sortedFrom.isEqual(now) && repo.getModificationId().equals(repoId)) {
+
+    @Override public void addEvent(IEvent event) {
+        transaction.add(event)
+                .commit();
+        updateData(true, eventRepo);
+        activityView.showEventAdded(event);
+    }
+
+    @Override public void addNewBirthday() {
+        activityView.showAddNewBirthdayUI();
+    }
+
+    @Override public void addNewEvent() {
+        activityView.showAddNewEventUI();
+    }
+
+    private void updateData(boolean forceUpdate, EventRepo repo) {
+        Timber.d("updateData");
+        if (!forceUpdate && sortedFrom.isEqual(clock.now()) && repo.getModificationId().equals(repoId)) {
             Timber.d("we sorted repo on same day, so nothing to do");
             return;
         } else {
-            Timber.d("sort on new date %s and/or id %s", now.toString(), repo.getModificationId());
-            onDataSetChanged(repo);
-            sortedFrom = now;
+            Timber.d("sort on new date %s and/or id %s", clock.now().toString(), repo.getModificationId());
+            startLoadingData(repo);
+            sortedFrom = clock.now();
             repoId = repo.getModificationId();
+
         }
     }
 
-    public void onDataSetChanged(EventRepo repo) {
+
+    protected void startLoadingData(EventRepo repo) {
         synchronized (this) {
-            Timber.d("onDataSetChanged - getEvents from repo with modif id: %s", repo.getModificationId());
+            Timber.d("startLoadingData - getEvents from repo with modif id: %s", repo.getModificationId());
             if (subscription != null && !subscription.isUnsubscribed()) {
                 Timber.d("we allready have a subscription - unsubscribe first.. %s", currentlyUpdatingRepoModifId);
                 subscription.unsubscribe();
-                dataSetUpdateCancelled(currentlyUpdatingRepoModifId);
+                onDataLoadCancelled(currentlyUpdatingRepoModifId);
             }
             currentlyUpdatingRepoModifId = repo.getModificationId();
             Observable<IEvent> eventsObservable = repo.getEventsSubscribedOnProperScheduler();
@@ -90,13 +117,13 @@ public class ListEventsPresenter  implements ListEventsContract.UserActionsListe
                         @Override
                         public void onCompleted() {
                             Timber.d("onCompleted %s", newEvents.toString());
-                            updateDataSet(newEvents, modifId);
+                            onDataLoaded(newEvents, modifId);
                         }
 
                         @Override
                         public void onError(Throwable e) {
                             Timber.e(e, "onError");
-                            dataSetUpdateCancelled(modifId);
+                            onDataLoadCancelled(modifId);
                         }
 
                         @Override
@@ -107,20 +134,22 @@ public class ListEventsPresenter  implements ListEventsContract.UserActionsListe
                     });
         }
         //first = false;
-        Timber.d("end of onDataSetChanged");
+        Timber.d("end of startLoadingData");
 
     }
-    protected void updateDataSet(List<IEvent> events, String modifId) {
+    protected void onDataLoaded(List<IEvent> events, String modifId) {
         synchronized (this) {
-            Timber.d("updateDataSet %s", modifId);
+            Timber.d("onDataLoaded %s", modifId);
             if (subscription != null) subscription.unsubscribe();
-            view.setProgressIndicator(false);
-            view.showEvents(events);
+            if (fragmentView != null) {
+                fragmentView.setProgressIndicator(false);
+                fragmentView.showEvents(events);
+            }
         }
     }
 
-    protected void dataSetUpdateCancelled(String currentlyUpdatingRepoModifId) {
-        Timber.d("dataSetUpdateCancelled %s", currentlyUpdatingRepoModifId);
+    protected void onDataLoadCancelled(String currentlyUpdatingRepoModifId) {
+        Timber.d("onDataLoadCancelled %s", currentlyUpdatingRepoModifId);
         if (subscription != null) subscription.unsubscribe();
     }
 

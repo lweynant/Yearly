@@ -25,9 +25,9 @@ public class AddBirthdayActivity extends BaseActivity {
         setSupportActionBar(toolbar);
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
+//        fab.setOnClickListener(new FragmentView.OnClickListener() {
 //            @Override
-//            public void onClick(View view) {
+//            public void onClick(FragmentView view) {
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
 //            }

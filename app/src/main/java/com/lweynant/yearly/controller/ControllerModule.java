@@ -38,7 +38,9 @@ public class ControllerModule {
         return new DateFormatter(rstring);
     }
 
-
+    @Provides EventsAdapter provideEventsAdapter(IEventViewFactory viewFactory) {
+        return new EventsAdapter(viewFactory);
+    }
     @Provides @PerApp EventNotifier providesEventNotifier(IEventNotification eventNotification,
                                                           IIntentFactory intentFactory,
                                                           IEventViewFactory viewFactory,
