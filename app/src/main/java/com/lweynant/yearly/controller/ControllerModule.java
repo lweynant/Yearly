@@ -2,20 +2,16 @@ package com.lweynant.yearly.controller;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
 
 import com.lweynant.yearly.IStringResources;
 import com.lweynant.yearly.PerApp;
 import com.lweynant.yearly.controller.add_event.AddBirthdayContract;
 import com.lweynant.yearly.controller.add_event.AddBirthdayPresenter;
-import com.lweynant.yearly.controller.list_events.EventsLoader;
+import com.lweynant.yearly.controller.list_events.EventsAdapter;
 import com.lweynant.yearly.controller.list_events.IEventsLoader;
 import com.lweynant.yearly.controller.list_events.ListEventsContract;
 import com.lweynant.yearly.controller.list_events.ListEventsPresenter;
 import com.lweynant.yearly.model.BirthdayBuilder;
-import com.lweynant.yearly.model.EventRepo;
-import com.lweynant.yearly.model.EventRepoTransaction;
 import com.lweynant.yearly.model.IEventRepoTransaction;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IEventNotification;

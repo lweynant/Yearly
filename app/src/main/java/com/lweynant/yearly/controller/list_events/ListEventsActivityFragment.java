@@ -12,9 +12,7 @@ import android.widget.Toast;
 import com.lweynant.yearly.BaseYearlyAppComponent;
 import com.lweynant.yearly.IStringResources;
 import com.lweynant.yearly.R;
-import com.lweynant.yearly.YearlyApp;
 import com.lweynant.yearly.controller.BaseFragment;
-import com.lweynant.yearly.controller.EventsAdapter;
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.platform.IClock;
@@ -34,7 +32,7 @@ import timber.log.Timber;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class ListEventsActivityFragment extends BaseFragment implements EventsAdapter.onEventTypeSelectedListener, ListEventsContract.FragmentView {
+public class ListEventsActivityFragment extends BaseFragment implements EventsAdapter.EventSelectionListener, ListEventsContract.FragmentView {
 
     @Inject EventsAdapter eventsAdapter;
     @Inject IClock clock;
