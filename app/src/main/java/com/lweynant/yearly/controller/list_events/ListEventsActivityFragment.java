@@ -65,7 +65,6 @@ public class ListEventsActivityFragment extends BaseFragment implements EventsAd
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         //set the adapter
-        YearlyApp app = (YearlyApp) getActivity().getApplication();
         Timber.d("injected component");
         Timber.d("repo: %s", repo.toString());
 

@@ -49,8 +49,8 @@ public class EventRepo implements IEventRepoModifier {
 
     @Override public void commit(IEventRepoTransaction transaction) {
         Timber.d("commit");
-        transaction.add().subscribe(event -> add(event));
-        transaction.remove().subscribe(event -> remove(event));
+        transaction.added().subscribe(event -> add(event));
+        transaction.removed().subscribe(event -> remove(event));
         notifyListeners();
     }
 
@@ -88,14 +88,14 @@ public class EventRepo implements IEventRepoModifier {
     }
 
     private EventRepo add(IEvent event) {
-        Timber.d("add event %s", event.toString());
+        Timber.d("added event %s", event.toString());
         cachedEvents.add(event);
         return this;
     }
 
 
     private EventRepo remove(IEvent event) {
-        Timber.d("remove event %s", event.toString());
+        Timber.d("removed event %s", event.toString());
         cachedEvents.remove(event);
         return this;
     }

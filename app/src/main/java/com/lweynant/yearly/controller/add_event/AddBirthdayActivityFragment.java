@@ -80,7 +80,7 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
 
     @Override public void enableSaveButton(Boolean enabled) {
         Timber.d("enableSaveButton %s", enabled ? "true" : "false");
-        //todo add a save button in the toolbar
+        //todo added a save button in the toolbar
     }
 
 

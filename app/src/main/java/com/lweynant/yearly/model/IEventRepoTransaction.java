@@ -3,7 +3,13 @@ package com.lweynant.yearly.model;
 import rx.Observable;
 
 public interface IEventRepoTransaction {
-    Observable<IEvent> add();
+    IEventRepoTransaction add(IEvent event);
 
-    Observable<IEvent> remove();
+    IEventRepoTransaction remove(IEvent event);
+
+    void commit();
+
+    Observable<IEvent> added();
+
+    Observable<IEvent> removed();
 }

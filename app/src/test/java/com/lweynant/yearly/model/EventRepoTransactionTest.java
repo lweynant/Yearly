@@ -60,14 +60,14 @@ public class EventRepoTransactionTest {
     }
 
     @Test public void testAddOnEmptyTransaction() {
-        List<IEvent> list = sut.add().toList().toBlocking().first();
+        List<IEvent> list = sut.added().toList().toBlocking().first();
         assertThat(list, hasSize(0));
     }
 
     @Test public void testAddOnTransactionWithOneEventAdded() {
         IEvent event = createAnEvent();
         sut.add(event);
-        List<IEvent> list = sut.add().toList().toBlocking().first();
+        List<IEvent> list = sut.added().toList().toBlocking().first();
         assertThat(list, contains(event));
     }
 
@@ -75,25 +75,25 @@ public class EventRepoTransactionTest {
         IEvent event1 = createAnEvent();
         IEvent event2 = createAnEvent();
         sut.add(event1).add(event2);
-        List<IEvent> list = sut.add().toList().toBlocking().first();
+        List<IEvent> list = sut.added().toList().toBlocking().first();
         assertThat(list, containsInAnyOrder(event1, event2));
     }
 
     @Test public void testAddOnCommittedTransaction() {
         sut.add(createAnEvent()).add(createAnEvent()).add(createAnEvent()).remove(createAnEvent());
         sut.commit();
-        List<IEvent> list = sut.add().toList().toBlocking().first();
+        List<IEvent> list = sut.added().toList().toBlocking().first();
         assertThat(list, hasSize(0));
     }
 
     @Test public void testRemoveOnEmptyTransaction() {
-        List<IEvent> list = sut.remove().toList().toBlocking().first();
+        List<IEvent> list = sut.removed().toList().toBlocking().first();
         assertThat(list, hasSize(0));
     }
     @Test public void testRemoveOnTransactionWithOneEventRevoved() {
         IEvent event = createAnEvent();
         sut.remove(event);
-        List<IEvent> list = sut.remove().toList().toBlocking().first();
+        List<IEvent> list = sut.removed().toList().toBlocking().first();
         assertThat(list, contains(event));
     }
 
@@ -101,14 +101,14 @@ public class EventRepoTransactionTest {
         IEvent event1 = createAnEvent();
         IEvent event2 = createAnEvent();
         sut.remove(event1).remove(event2);
-        List<IEvent> list = sut.remove().toList().toBlocking().first();
+        List<IEvent> list = sut.removed().toList().toBlocking().first();
         assertThat(list, containsInAnyOrder(event1, event2));
     }
 
     @Test public void testRemoveOnCommittedTransaction() {
         sut.remove(createAnEvent()).remove(createAnEvent()).add(createAnEvent()).remove(createAnEvent());
         sut.commit();
-        List<IEvent> list = sut.remove().toList().toBlocking().first();
+        List<IEvent> list = sut.removed().toList().toBlocking().first();
         assertThat(list, hasSize(0));
     }
 

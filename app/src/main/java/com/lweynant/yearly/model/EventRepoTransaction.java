@@ -16,23 +16,23 @@ public class EventRepoTransaction implements IEventRepoTransaction {
         this.repoModifier = repoModifier;
     }
 
-    public EventRepoTransaction add(IEvent event){
-        Timber.d("add %s", event.toString());
+    @Override public EventRepoTransaction add(IEvent event){
+        Timber.d("added %s", event.toString());
         addEvent(event);
         return this;
     }
 
-    public EventRepoTransaction remove(IEvent event) {
-        Timber.d("remove %s", event.toString());
+    @Override public EventRepoTransaction remove(IEvent event) {
+        Timber.d("removed %s", event.toString());
         removeEvent(event);
         return this;
     }
 
-    @Override public Observable<IEvent> add() {
+    @Override public Observable<IEvent> added() {
         return Observable.from(added);
     }
 
-    @Override public Observable<IEvent> remove() {
+    @Override public Observable<IEvent> removed() {
         return Observable.from(removed);
     }
 
@@ -41,7 +41,7 @@ public class EventRepoTransaction implements IEventRepoTransaction {
         removed.add(event);
     }
 
-    public void commit(){
+    @Override public void commit(){
         Timber.d("commit");
         if (hasEvents()) {
             repoModifier.commit(this);

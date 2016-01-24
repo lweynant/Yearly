@@ -19,7 +19,7 @@ public class ModelModule {
     }
 
 
-    @Provides EventRepoTransaction providesEventRepoTransaction(EventRepo repoModifier){
+    @Provides IEventRepoTransaction providesEventRepoTransaction(EventRepo repoModifier){
         return new EventRepoTransaction(repoModifier);
     }
 

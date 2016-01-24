@@ -23,6 +23,7 @@ import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.EventRepoTransaction;
 import com.lweynant.yearly.model.IEvent;
+import com.lweynant.yearly.model.IEventRepoTransaction;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IJsonFileAccessor;
 import com.lweynant.yearly.platform.IUniqueIdGenerator;
@@ -43,7 +44,7 @@ public class ListEventsActivity extends BaseActivity implements ListEventsContra
     @Inject IClock clock;
     @Inject IUniqueIdGenerator idGenerator;
     @Inject EventRepo repo;
-    @Inject EventRepoTransaction transaction;
+    @Inject IEventRepoTransaction transaction;
     @Inject IJsonFileAccessor fileAccessor;
     @Inject AlarmGenerator alarmGenerator;
     @Inject ListEventsContract.UserActionsListener userActionsListener;
@@ -162,7 +163,7 @@ public class ListEventsActivity extends BaseActivity implements ListEventsContra
     }
 
     @Override public void showAddNewEventUI() {
-        //TOOD start new activity for now we simply add an event
+        //TOOD start new activity for now we simply added an event
         LocalDate date = clock.now();
         //noinspection ResourceType
         userActionsListener.addEvent(new Birthday("Darth", "Vader",

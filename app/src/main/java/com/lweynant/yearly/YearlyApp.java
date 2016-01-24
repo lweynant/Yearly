@@ -37,7 +37,7 @@ public class YearlyApp extends Application implements IStringResources, IEventRe
         super.onCreate();
         if (BuildConfig.DEBUG) {
             //in integration tests onCreate will be called multiple times, we will
-            // therefor first remove all planted trees (uprootAll()
+            // therefor first removed all planted trees (uprootAll()
             Timber.uprootAll();
             Timber.plant(new Timber.DebugTree());
         }
