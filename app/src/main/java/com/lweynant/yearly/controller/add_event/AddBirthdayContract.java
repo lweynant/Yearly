@@ -1,10 +1,7 @@
 package com.lweynant.yearly.controller.add_event;
 
-import android.content.Intent;
 import android.os.Bundle;
 
-import com.jakewharton.rxbinding.widget.TextViewTextChangeEvent;
-import com.lweynant.yearly.BaseYearlyAppComponent;
 import com.lweynant.yearly.model.Date;
 
 import rx.Observable;
@@ -12,15 +9,20 @@ import rx.Observable;
 public interface AddBirthdayContract {
     String EXTRA_KEY_BIRTHDAY = "birthday";
 
-    interface View {
+
+    interface FragmentView {
 
         void showDate(String date);
 
         void enableSaveButton(Boolean enabled);
+
+        void showSavedBirthday(String name);
+
+        void showNothingSaved();
     }
     interface UserActionsListener {
 
-        void restoreFromInstanceState(AddBirthdayContract.View view, Bundle savedInstanceState);
+        void restoreFromInstanceState(FragmentView fragmentView, Bundle savedInstanceState);
 
         void saveInstanceState(Bundle outState);
 
@@ -28,12 +30,12 @@ public interface AddBirthdayContract {
 
         void setDate(@Date.Month int month, int day);
 
-        void archiveBirthdayTo(Bundle bundle);
-
         void setInputObservables(Observable<CharSequence> nameChangeEvents,
                                  Observable<CharSequence> lastNameChangeEvents,
                                  Observable<CharSequence> dateChangeEvents);
 
         void clearInputObservables();
+
+        void saveBirthday();
     }
 }

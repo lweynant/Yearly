@@ -1,6 +1,5 @@
 package com.lweynant.yearly.controller.add_event;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -44,7 +43,7 @@ public class AddBirthdayActivity extends BaseActivity {
         Timber.d("onOptionsItemSelected");
         if (item.getItemId() == android.R.id.home) {
             Timber.d("item id is android.R.id.home");
-            saveBirthdayAndSetResult();
+            userActionsListener.saveBirthday();
             finish();
             return true;
         } else {
@@ -54,15 +53,8 @@ public class AddBirthdayActivity extends BaseActivity {
 
     @Override public void onBackPressed() {
         Timber.d("onBackPressed");
-        saveBirthdayAndSetResult();
+        userActionsListener.saveBirthday();
         super.onBackPressed();
     }
 
-    private void saveBirthdayAndSetResult() {
-        Bundle bundle = new Bundle();
-        userActionsListener.archiveBirthdayTo(bundle);
-        Intent resultIntent = new Intent();
-        resultIntent.putExtra(AddBirthdayContract.EXTRA_KEY_BIRTHDAY, bundle);
-        setResult(Activity.RESULT_OK, resultIntent);
-    }
 }

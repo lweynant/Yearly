@@ -1,5 +1,7 @@
 package com.lweynant.yearly.controller.add_event;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,22 +12,19 @@ import com.jakewharton.rxbinding.widget.RxTextView;
 import com.lweynant.yearly.BaseYearlyAppComponent;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.controller.BaseFragment;
-import com.lweynant.yearly.ui.DateSelector;
-import com.lweynant.yearly.controller.add_event.AddBirthdayContract;
 import com.lweynant.yearly.model.Date;
+import com.lweynant.yearly.ui.DateSelector;
 
 import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import rx.Observable;
-import rx.subscriptions.CompositeSubscription;
 import timber.log.Timber;
 
 
 
 
-public class AddBirthdayActivityFragment extends BaseFragment implements DateSelector.OnClickListener, AddBirthdayContract.View {
+public class AddBirthdayActivityFragment extends BaseFragment implements DateSelector.OnClickListener, AddBirthdayContract.FragmentView {
 
     @Bind(R.id.edit_text_birthday_date) EditText dateEditText;
     @Bind(R.id.edit_text_name) EditText nameEditText;
@@ -83,6 +82,15 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
         //todo added a save button in the toolbar
     }
 
+    @Override public void showSavedBirthday(String name) {
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra(AddBirthdayContract.EXTRA_KEY_BIRTHDAY, name);
+        getActivity().setResult(Activity.RESULT_OK, resultIntent);
+    }
+
+    @Override public void showNothingSaved() {
+        getActivity().setResult(Activity.RESULT_CANCELED);
+    }
 
 
     @Override public void onSaveInstanceState(Bundle outState) {

@@ -1,29 +1,31 @@
 package com.lweynant.yearly.controller.add_event;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import com.lweynant.yearly.controller.DateFormatter;
+import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.model.Date;
+import com.lweynant.yearly.model.IEventRepoTransaction;
 
 import rx.Observable;
 import rx.subscriptions.CompositeSubscription;
-import timber.log.Timber;
 
 public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsListener {
+    private IEventRepoTransaction transaction;
     private final DateFormatter dateFormatter;
-    private AddBirthdayContract.View view;
+    private AddBirthdayContract.FragmentView fragmentView;
 
     private BirthdayBuilder birthdayBuilder;
     private CompositeSubscription subcription;
 
-    public AddBirthdayPresenter(BirthdayBuilder birthdayBuilder, DateFormatter dateFormatter) {
+    public AddBirthdayPresenter(BirthdayBuilder birthdayBuilder, IEventRepoTransaction transaction,  DateFormatter dateFormatter) {
         this.birthdayBuilder = birthdayBuilder;
+        this.transaction = transaction;
         this.dateFormatter = dateFormatter;
     }
-    @Override public void restoreFromInstanceState(AddBirthdayContract.View view,  Bundle savedInstanceState) {
-        this.view = view;
+    @Override public void restoreFromInstanceState(AddBirthdayContract.FragmentView fragmentView,  Bundle savedInstanceState) {
+        this.fragmentView = fragmentView;
         if (savedInstanceState != null) {
             birthdayBuilder.set(savedInstanceState);
         }
@@ -35,11 +37,6 @@ public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsList
 
     private void setLastName(String name) {
         birthdayBuilder.setLastName(name.toString());
-    }
-
-    @Override public void archiveBirthdayTo(Bundle bundle) {
-        Timber.d("archiveBirthdayTo");
-        birthdayBuilder.archiveTo(bundle);
     }
 
     @Override
@@ -72,12 +69,24 @@ public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsList
                 }));
 
         subcription.add(enableSaveButton.distinctUntilChanged()
-                .subscribe(enabled -> view.enableSaveButton(enabled)));
+                .subscribe(enabled -> fragmentView.enableSaveButton(enabled)));
 
     }
 
     @Override public void clearInputObservables() {
         subcription.unsubscribe();
+    }
+
+    @Override public void saveBirthday() {
+        //save to repo
+        Birthday birthday = birthdayBuilder.build();
+        if (birthday != null) {
+            transaction.add(birthday).commit();
+            fragmentView.showSavedBirthday(birthday.getName());
+        }
+        else {
+            fragmentView.showNothingSaved();
+        }
     }
 
 
@@ -87,12 +96,12 @@ public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsList
 
     @Override public void setDate(int year, @Date.Month int month, int day) {
         birthdayBuilder.setYear(year).setMonth(month).setDay(day);
-        view.showDate(dateFormatter.format(year, month, day));
+        fragmentView.showDate(dateFormatter.format(year, month, day));
     }
 
     @Override public void setDate(@Date.Month int month, int day) {
         birthdayBuilder.clearYear().setMonth(month).setDay(day);
-        view.showDate(dateFormatter.format(month, day));
+        fragmentView.showDate(dateFormatter.format(month, day));
     }
 
 }

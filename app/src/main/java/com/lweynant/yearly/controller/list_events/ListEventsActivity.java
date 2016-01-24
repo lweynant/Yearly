@@ -1,5 +1,6 @@
 package com.lweynant.yearly.controller.list_events;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -18,10 +19,8 @@ import com.lweynant.yearly.controller.BaseActivity;
 import com.lweynant.yearly.controller.add_event.AddBirthdayActivity;
 import com.lweynant.yearly.controller.add_event.AddBirthdayContract;
 import com.lweynant.yearly.model.Birthday;
-import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.EventRepoSerializer;
-import com.lweynant.yearly.model.EventRepoTransaction;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.IEventRepoTransaction;
 import com.lweynant.yearly.platform.IClock;
@@ -91,28 +90,17 @@ public class ListEventsActivity extends BaseActivity implements ListEventsContra
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Timber.d("onActivityResult %d", resultCode);
-        if (requestCode == REQUEST_ADD_BIRTHDAY && data != null) {
-            Timber.d("inspecting the valid intent");
-            BirthdayBuilder builder = new BirthdayBuilder(clock, idGenerator);
-            Bundle bundle = data.getBundleExtra(AddBirthdayContract.EXTRA_KEY_BIRTHDAY);
-            if (bundle != null) {
-                Timber.d("we have a bundle");
-                builder.set(bundle);
-                Birthday bd = builder.build();
-                if (bd != null) {
-                    Timber.d("adding birthday %s", bd);
-                    transaction.add(bd).commit();
-                    View view = findViewById(R.id.multiple_actions);
-                    Snackbar.make(view, String.format(getResources().getString(R.string.add_birthday_for), bd.getName()), Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                } else {
-                    Timber.d("nothing added");
-                }
+        if (requestCode == REQUEST_ADD_BIRTHDAY && resultCode == Activity.RESULT_OK) {
+            String name = data.getStringExtra(AddBirthdayContract.EXTRA_KEY_BIRTHDAY);
+            if (name != null) {
+                Timber.d("adding birthday %s", name);
+                View view = findViewById(R.id.multiple_actions);
+                Snackbar.make(view, String.format(getResources().getString(R.string.add_birthday_for), name), Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            } else {
+                Timber.d("nothing added");
             }
-        } else {
-            Timber.d("onActivityResult with null data...");
         }
-
         super.onActivityResult(requestCode, resultCode, data);
     }
 
