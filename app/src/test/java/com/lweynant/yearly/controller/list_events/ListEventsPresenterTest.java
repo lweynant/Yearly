@@ -46,6 +46,12 @@ public class ListEventsPresenterTest {
         verify(eventsLoader).loadEvents(forceUpdate, sut);
     }
 
+    @Test public void testCancelLoadingEvents() {
+        sut.cancelLoadingEvents();
+
+        verify(eventsLoader).cancelLoadingEvents();
+    }
+
     @Test public void testRemoveEvent() {
         int id = 67;
         IEvent event = createEvent(id);

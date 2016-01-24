@@ -25,11 +25,21 @@ public class EventsLoader implements IEventsLoader {
     private Subscription subscription;
     private Callback callback;
     private String currentlyUpdatingRepoModifId;
+    private List<IEvent> events;
     //private boolean first = true;
 
     public EventsLoader(EventRepo repo, IClock clock) {
         this.repo = repo;
         this.clock = clock;
+        events = empyList;
+    }
+
+    @Override public void cancelLoadingEvents() {
+        synchronized (this) {
+            if (subscription != null && !subscription.isUnsubscribed()) {
+                subscription.unsubscribe();
+            }
+        }
     }
 
     @Override public void loadEvents(boolean forceUpdate, Callback callback) {
@@ -39,8 +49,10 @@ public class EventsLoader implements IEventsLoader {
 
     private void updateData(boolean forceUpdate) {
         Timber.d("updateData");
-        if (!forceUpdate && sortedFrom.isEqual(clock.now()) && repo.getModificationId().equals(repoId)) {
+        onEventsLoadingStarted(repo.getModificationId());
+        if (!forceUpdate && events != empyList && sortedFrom.isEqual(clock.now()) && repo.getModificationId().equals(repoId)) {
             Timber.d("we sorted repo on same day, so nothing to do");
+            onEventsLoadingFinished(events, currentlyUpdatingRepoModifId);
             return;
         } else {
             Timber.d("sort on new date %s and/or id %s", clock.now().toString(), repo.getModificationId());
@@ -54,13 +66,12 @@ public class EventsLoader implements IEventsLoader {
 
     private void startLoadingData(String modifId) {
         synchronized (this) {
-            callback.onEventsLoadingStarted(repo.getModificationId());
 
             Timber.d("startLoadingData - getEvents from repo with modif id: %s", modifId);
             if (subscription != null && !subscription.isUnsubscribed()) {
                 Timber.d("we allready have a subscription - unsubscribe first.. %s", currentlyUpdatingRepoModifId);
                 subscription.unsubscribe();
-                callback.onEventsLoadingCancelled(currentlyUpdatingRepoModifId);
+                onEventsLoadingCancelled(currentlyUpdatingRepoModifId);
             }
             currentlyUpdatingRepoModifId = repo.getModificationId();
             Observable<IEvent> eventsObservable = repo.getEventsSubscribedOnProperScheduler();
@@ -97,14 +108,20 @@ public class EventsLoader implements IEventsLoader {
 
     }
 
+    private void onEventsLoadingStarted(String modificationId) {
+        callback.onEventsLoadingStarted(modificationId);
+    }
+
+
     private void onEventsLoadingCancelled(String modifId) {
         if (subscription != null) subscription.unsubscribe();
+        events = empyList;
         callback.onEventsLoadingCancelled(modifId);
-
     }
 
     private void onEventsLoadingFinished(List<IEvent> newEvents, String modifId) {
         if (subscription != null) subscription.unsubscribe();
+        events = newEvents;
         callback.onEventsLoadingFinished(newEvents, modifId);
     }
 

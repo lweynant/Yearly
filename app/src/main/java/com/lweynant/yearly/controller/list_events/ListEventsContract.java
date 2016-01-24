@@ -34,11 +34,14 @@ public interface ListEventsContract {
 
         void loadEvents(boolean forceUpdate);
 
+        void cancelLoadingEvents();
+
         void addNewBirthday();
 
         void addNewEvent();
 
         //this is a temporary function
         void addEvent(IEvent event);
+
     }
 }

@@ -22,6 +22,11 @@ public class SyncWithTestsEventsLoader implements IEventsLoader, IEventsLoader.C
         this.idlingResource = idlingResource;
         this.loader = loader;
     }
+
+    @Override public void cancelLoadingEvents() {
+        loader.cancelLoadingEvents();
+    }
+
     @Override public void loadEvents(boolean forceUpdate, Callback callback) {
         this.callback = callback;
         loader.loadEvents(forceUpdate, this);

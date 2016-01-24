@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface IEventsLoader {
 
+    void cancelLoadingEvents();
+
     public interface Callback {
         public void onEventsLoadingStarted(String modifId);
         public void onEventsLoadingFinished(List<IEvent> events, String modifId);

@@ -48,6 +48,10 @@ public class ListEventsPresenter implements ListEventsContract.UserActionsListen
         eventsLoader.loadEvents(forceUpdate, this);
     }
 
+    @Override public void cancelLoadingEvents() {
+        eventsLoader.cancelLoadingEvents();
+    }
+
     @Override public void addEvent(IEvent event) {
         transaction.add(event)
                 .commit();

@@ -112,6 +112,7 @@ public class ListEventsActivityFragment extends BaseFragment implements EventsAd
     public void onPause() {
         Timber.d("onPause");
         super.onPause();
+        userActionsListener.cancelLoadingEvents();
     }
 
     @Override public void onSelected(IEvent event) {
