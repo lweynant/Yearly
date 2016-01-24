@@ -17,7 +17,7 @@ public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsList
     private AddBirthdayContract.FragmentView fragmentView;
 
     private BirthdayBuilder birthdayBuilder;
-    private CompositeSubscription subcription;
+    private final CompositeSubscription subcription = new CompositeSubscription();
 
     public AddBirthdayPresenter(BirthdayBuilder birthdayBuilder, IEventRepoTransaction transaction,  DateFormatter dateFormatter) {
         this.birthdayBuilder = birthdayBuilder;
@@ -43,7 +43,6 @@ public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsList
     public void setInputObservables(Observable<CharSequence> nameChangeEvents,
                                     Observable<CharSequence> lastNameChangeEvents,
                                     Observable<CharSequence> dateChangeEvents) {
-        subcription = new CompositeSubscription();
         Observable<Boolean> validName = nameChangeEvents
                 //.doOnNext(t -> System.out.print(String.format("-'%s'-", t.toString())))
                 .map(t -> t.length())
@@ -73,9 +72,6 @@ public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsList
 
     }
 
-    @Override public void clearInputObservables() {
-        subcription.unsubscribe();
-    }
 
     @Override public void saveBirthday() {
         //save to repo
@@ -92,6 +88,7 @@ public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsList
 
     @Override public void saveInstanceState(Bundle outState) {
         birthdayBuilder.archiveTo(outState);
+        subcription.unsubscribe();
     }
 
     @Override public void setDate(int year, @Date.Month int month, int day) {

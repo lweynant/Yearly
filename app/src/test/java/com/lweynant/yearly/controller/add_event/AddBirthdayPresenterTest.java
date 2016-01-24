@@ -5,6 +5,7 @@ import android.os.Bundle;
 import com.lweynant.yearly.IStringResources;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.controller.DateFormatter;
+import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.IEventRepoTransaction;
@@ -35,77 +36,85 @@ public class AddBirthdayPresenterTest {
     @Mock IClock clock;
     @Mock IUniqueIdGenerator idGenerator;
     @Mock DateFormatter dateFormatter;
-    @Mock Bundle birthdayBundle;
     private AddBirthdayPresenter sut;
     @Mock AddBirthdayContract.FragmentView fragmentView;
     @Mock IStringResources rstring;
 
     String[] months = new String[] {"%1$d", "%1$d jan", "%1$d feb", "%1$d mar", "%1$d apr", "%1$d mei", "%1$d jun", "%1$d jul", "%1$d aug", "%1$d sep", "%1$d okt", "%1$d nov", "%1$d dec" };
     @Mock IEventRepoTransaction transaction;
+    @Mock BirthdayBuilder birthdayBuilder;
 
 
     @Before public void setUp() {
-        //transaction has fluent interface - make sure we return itself
+        //transaction and birthday builder have fluent interface - make sure we return itself
         when(transaction.add(anyObject())).thenReturn(transaction);
+        when(birthdayBuilder.setDay(anyInt())).thenReturn(birthdayBuilder);
+        //noinspection ResourceType
+        when(birthdayBuilder.setMonth(anyInt())).thenReturn(birthdayBuilder);
+        when(birthdayBuilder.setYear(anyInt())).thenReturn(birthdayBuilder);
+        when(birthdayBuilder.clearYear()).thenReturn(birthdayBuilder);
+        when(birthdayBuilder.setName(anyString())).thenReturn(birthdayBuilder);
+        when(birthdayBuilder.setLastName(anyString())).thenReturn(birthdayBuilder);
+
         when(rstring.getStringArray(R.array.months_day)).thenReturn(months);
         when(rstring.getString(eq(R.string.yyy_mm_dd), anyInt(), anyInt(), anyInt() )).thenReturn("formatted date");
-        sut = new AddBirthdayPresenter(new BirthdayBuilder(clock, idGenerator), transaction, new DateFormatter(rstring));
+        sut = new AddBirthdayPresenter(birthdayBuilder, transaction, new DateFormatter(rstring));
         sut.restoreFromInstanceState(fragmentView, null);
     }
 
-    @Test public void noInputs() {
-        sut.setInputObservables(Observable.empty(), Observable.empty(), Observable.empty());
+    @Test public void setName() {
+        sut.setInputObservables(Observable.just("Joe"), Observable.empty(), Observable.empty());
 
-        sut.saveBirthday();
-        verify(fragmentView).showNothingSaved();
-        verifyZeroInteractions(transaction);
+        verify(birthdayBuilder).setName("Joe");
+
     }
+    @Test public void setLastName() {
+        sut.setInputObservables(Observable.empty(), Observable.just("Doe"), Observable.empty());
 
-    @Test public void onlyName() {
-        sut.setInputObservables(Observable.just("j", "jo", "joe"), Observable.empty(), Observable.empty());
-
-        sut.saveBirthday();
-
-        verify(fragmentView).showNothingSaved();
-        verifyZeroInteractions(transaction);
-    }
-
-    @Test public void onlyLastName() {
-        sut.setInputObservables(Observable.empty(), Observable.just("D", "Do", "Doe"), Observable.empty());
-
-        sut.saveBirthday();
-
-        verify(fragmentView).showNothingSaved();
-        verifyZeroInteractions(transaction);
+        verify(birthdayBuilder).setLastName("Doe");
     }
 
     @Test public void onlyDateWithoutYear() {
         sut.setDate(Date.DECEMBER, 23);
 
-        sut.saveBirthday();
-
-        verify(fragmentView).showNothingSaved();
-        verifyZeroInteractions(transaction);
+        verify(birthdayBuilder).setMonth(Date.DECEMBER);
+        verify(birthdayBuilder).setDay(23);
+        verify(birthdayBuilder).clearYear();
     }
 
     @Test public void onlyDateWithYear() {
         sut.setDate(2015, Date.DECEMBER, 23);
 
+        verify(birthdayBuilder).setMonth(Date.DECEMBER);
+        verify(birthdayBuilder).setDay(23);
+        verify(birthdayBuilder).setYear(2015);
+
+    }
+
+    @Test public void saveBirthday() {
+        Birthday birthday = createBirthday("Joe");
+        when(birthdayBuilder.build()).thenReturn(birthday);
+
+        sut.saveBirthday();
+
+        verify(fragmentView).showSavedBirthday("Joe");
+        verify(transaction).add(birthday);
+        verify(transaction).commit();
+    }
+
+    @Test public void saveNothing() {
+        when(birthdayBuilder.build()).thenReturn(null);
+
         sut.saveBirthday();
 
         verify(fragmentView).showNothingSaved();
         verifyZeroInteractions(transaction);
     }
 
-    @Test public void minimalValidData() {
-        sut.setInputObservables(Observable.just("Joe"), Observable.empty(), Observable.empty());
-        sut.setDate(Date.APRIL, 24);
-
-        sut.saveBirthday();
-
-        verify(fragmentView).showSavedBirthday("Joe");
-        verify(transaction).add(anyObject());
-        verify(transaction).commit();
+    private Birthday createBirthday(String name) {
+        Birthday bd = mock(Birthday.class);
+        when(bd.getName()).thenReturn(name);
+        return bd;
     }
 
     @Test public void showDateWithoutYear() {
@@ -142,33 +151,17 @@ public class AddBirthdayPresenterTest {
     }
 
     @Test public void restoreFromState() {
-        Bundle state = createBundle("Joe", Date.APRIL, 25);
+        Bundle state = mock(Bundle.class);
         sut.restoreFromInstanceState(fragmentView, state);
 
-        sut.saveBirthday();
-
-        verify(fragmentView).showSavedBirthday("Joe");
-        verify(transaction).add(anyObject());
-        verify(transaction).commit();
+        verify(birthdayBuilder).set(state);
     }
     @Test public void saveInstanceState() {
-        Bundle state = createBundle("Fred", Date.MARCH, 25);
-        sut.restoreFromInstanceState(fragmentView, state);
-
+        Bundle birthdayBundle = mock(Bundle.class);
         sut.saveInstanceState(birthdayBundle);
-        verify(birthdayBundle).putString(BirthdayBuilder.KEY_NAME, "Joe");
-        verify(birthdayBundle).putInt(BirthdayBuilder.KEY_DAY, 25);
-        verify(birthdayBundle).putInt(BirthdayBuilder.KEY_MONTH, Date.APRIL);
+
+        verify(birthdayBuilder).archiveTo(birthdayBundle);
     }
 
-    private Bundle createBundle(String name, int month, int day) {
-        Bundle bundle = mock(Bundle.class);
-        when(bundle.containsKey(BirthdayBuilder.KEY_NAME)).thenReturn(true);
-        when(bundle.getString(BirthdayBuilder.KEY_NAME)).thenReturn("Joe");
-        when(bundle.containsKey(BirthdayBuilder.KEY_MONTH)).thenReturn(true);
-        when(bundle.getInt(BirthdayBuilder.KEY_MONTH)).thenReturn(Date.APRIL);
-        when(bundle.containsKey(BirthdayBuilder.KEY_DAY)).thenReturn(true);
-        when(bundle.getInt(BirthdayBuilder.KEY_DAY)).thenReturn(25);
-        return bundle;
-    }
+
 }

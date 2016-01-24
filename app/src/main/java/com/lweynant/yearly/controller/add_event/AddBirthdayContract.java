@@ -34,8 +34,6 @@ public interface AddBirthdayContract {
                                  Observable<CharSequence> lastNameChangeEvents,
                                  Observable<CharSequence> dateChangeEvents);
 
-        void clearInputObservables();
-
         void saveBirthday();
     }
 }

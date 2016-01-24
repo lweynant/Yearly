@@ -72,11 +72,6 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
                                                 RxTextView.textChangeEvents(dateEditText).skip(1).map(e -> e.text()));
     }
 
-    @Override public void onPause() {
-        super.onPause();
-        userActionsListener.clearInputObservables();
-    }
-
     @Override public void enableSaveButton(Boolean enabled) {
         Timber.d("enableSaveButton %s", enabled ? "true" : "false");
         //todo added a save button in the toolbar
