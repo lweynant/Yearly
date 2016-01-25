@@ -21,7 +21,7 @@ import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 
-public class EventRepo implements IEventRepoModifier {
+public class EventRepo implements IEventRepoModifier, IEventRepo {
     private final IUniqueIdGenerator uniqueIdGenerator;
     public IJsonFileAccessor eventRepoFileAccessor = null;
     private IClock clock = null;
@@ -39,11 +39,11 @@ public class EventRepo implements IEventRepoModifier {
     }
 
 
-    public void addListener(IEventRepoListener listener) {
+    @Override public void addListener(IEventRepoListener listener) {
         listeners.add(listener);
     }
 
-    public void removeListener(IEventRepoListener listener) {
+    @Override public void removeListener(IEventRepoListener listener) {
         listeners.remove(listener);
     }
 
@@ -54,7 +54,7 @@ public class EventRepo implements IEventRepoModifier {
         notifyListeners();
     }
 
-    public Observable<IEvent> getEvents() {
+    @Override public Observable<IEvent> getEvents() {
         Timber.d("getEvents");
         if (!cachedEvents.isEmpty()) {
             return getEventsFromCache();
@@ -62,14 +62,14 @@ public class EventRepo implements IEventRepoModifier {
             return getEventsFromFile();
         }
     }
-    public Observable<IEvent> getEventsSubscribedOnProperScheduler() {
+    @Override public Observable<IEvent> getEventsSubscribedOnProperScheduler() {
         Timber.d("getEvents on proper scheduler");
         return getEvents().subscribeOn(Schedulers.io());
     }
 
 
 
-    public String getModificationId() {
+    @Override public String getModificationId() {
         return modificationId;
     }
 
@@ -87,14 +87,14 @@ public class EventRepo implements IEventRepoModifier {
 
     }
 
-    private EventRepo add(IEvent event) {
+    private IEventRepo add(IEvent event) {
         Timber.d("added event %s", event.toString());
         cachedEvents.add(event);
         return this;
     }
 
 
-    private EventRepo remove(IEvent event) {
+    private IEventRepo remove(IEvent event) {
         Timber.d("removed event %s", event.toString());
         cachedEvents.remove(event);
         return this;

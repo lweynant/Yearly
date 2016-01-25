@@ -1,14 +1,13 @@
 package com.lweynant.yearly.controller.list_events;
 
-import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.IEvent;
+import com.lweynant.yearly.model.IEventRepo;
 import com.lweynant.yearly.platform.IClock;
 
 import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -17,7 +16,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import timber.log.Timber;
 
 public class EventsLoader implements IEventsLoader {
-    private EventRepo repo;
+    private IEventRepo repo;
     private final List<IEvent> empyList = new ArrayList<>();
     private LocalDate sortedFrom = new LocalDate(1900, 1, 1);
     private String repoId;
@@ -28,7 +27,7 @@ public class EventsLoader implements IEventsLoader {
     private List<IEvent> events;
     //private boolean first = true;
 
-    public EventsLoader(EventRepo repo, IClock clock) {
+    public EventsLoader(IEventRepo repo, IClock clock) {
         this.repo = repo;
         this.clock = clock;
         events = empyList;

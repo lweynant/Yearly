@@ -5,8 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.lweynant.yearly.controller.EventNotifier;
-import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.controller.AlarmGenerator;
+import com.lweynant.yearly.model.IEventRepo;
 import com.lweynant.yearly.platform.IClock;
 
 import org.joda.time.LocalDate;
@@ -22,7 +22,7 @@ import timber.log.Timber;
  */
 public class EventNotificationService extends IntentService {
     @Inject IClock clock;
-    @Inject EventRepo repo;
+    @Inject IEventRepo repo;
     @Inject AlarmGenerator alarmGenerator;
     @Inject EventNotifier eventNotifier;
     // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS

@@ -12,14 +12,20 @@ import dagger.Provides;
 @Module
 public class ModelModule {
 
-
-    @Provides @PerApp
-    EventRepo provideEventRepo(IJsonFileAccessor fileAccessor, IClock clock, IUniqueIdGenerator idGenerator) {
+    @Provides @PerApp EventRepo provideEventRepo(IJsonFileAccessor fileAccessor, IClock clock, IUniqueIdGenerator idGenerator) {
         return new EventRepo(fileAccessor, clock, idGenerator);
     }
 
+    //EventRepo implements 2 interfaces, we make sure that both map to the same instance:
+    @Provides IEventRepo provideIEventRepo(EventRepo repo) {
+        return repo;
+    }
+    @Provides IEventRepoModifier provideIEventRepoModifier(EventRepo repo) {
+        return repo;
+    }
 
-    @Provides IEventRepoTransaction providesEventRepoTransaction(EventRepo repoModifier){
+
+    @Provides IEventRepoTransaction providesEventRepoTransaction(IEventRepoModifier repoModifier){
         return new EventRepoTransaction(repoModifier);
     }
 

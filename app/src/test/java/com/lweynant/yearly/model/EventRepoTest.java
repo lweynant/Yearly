@@ -195,7 +195,7 @@ public class EventRepoTest {
         assertThat(names, containsInAnyOrder("event 1", "event 2", "event 3", "event 4"));
 
         when(fileAccessor.read()).thenReturn(json);
-        EventRepo repo = new EventRepo(fileAccessor, clock, uniqueIdGenerator);
+        IEventRepo repo = new EventRepo(fileAccessor, clock, uniqueIdGenerator);
         List<String> list = repo
                 .getEvents()
                 .map(event -> event.getName())

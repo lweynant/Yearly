@@ -5,7 +5,7 @@ import android.support.test.espresso.contrib.CountingIdlingResource;
 import com.lweynant.yearly.controller.AlarmGenerator;
 import com.lweynant.yearly.controller.list_events.EventsLoader;
 import com.lweynant.yearly.controller.list_events.IEventsLoader;
-import com.lweynant.yearly.model.EventRepo;
+import com.lweynant.yearly.model.IEventRepo;
 import com.lweynant.yearly.platform.IAlarm;
 import com.lweynant.yearly.platform.IClock;
 
@@ -24,7 +24,7 @@ public class TestSyncControllerModule {
     }
 
     @Provides IEventsLoader providesEventLoader(CountingIdlingResource idlingResource,
-                                                EventRepo repo, IClock clock) {
+                                                IEventRepo repo, IClock clock) {
         return new SyncWithTestsEventsLoader(idlingResource, new EventsLoader(repo, clock));
     }
 }

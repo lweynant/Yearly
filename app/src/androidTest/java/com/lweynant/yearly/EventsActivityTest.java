@@ -17,7 +17,7 @@ import com.lweynant.yearly.controller.list_events.ListEventsActivity;
 import com.lweynant.yearly.controller.list_events.ListEventsContract;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.Date;
-import com.lweynant.yearly.model.EventRepo;
+import com.lweynant.yearly.model.IEventRepo;
 import com.lweynant.yearly.model.IEventRepoTransaction;
 import com.lweynant.yearly.model.ModelModule;
 import com.lweynant.yearly.model.IEvent;
@@ -87,7 +87,7 @@ public class EventsActivityTest {
     @Inject DateFormatter dateFormatter;
     @Inject IAlarm alarm;
     @Inject IEventNotification eventNotification;
-    @Inject EventRepo repo;
+    @Inject IEventRepo repo;
     @Inject ListEventsContract.UserActionsListener presenter;
 
     private LocalDate today;

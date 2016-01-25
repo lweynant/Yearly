@@ -13,8 +13,8 @@ import com.lweynant.yearly.BaseYearlyAppComponent;
 import com.lweynant.yearly.IStringResources;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.controller.BaseFragment;
-import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.IEvent;
+import com.lweynant.yearly.model.IEventRepo;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.ui.EventViewFactory;
 import com.lweynant.yearly.platform.IEventNotificationText;
@@ -36,7 +36,7 @@ public class ListEventsActivityFragment extends BaseFragment implements EventsAd
 
     @Inject EventsAdapter eventsAdapter;
     @Inject IClock clock;
-    @Inject EventRepo repo;
+    @Inject IEventRepo repo;
     @Inject IEventViewFactory viewFactory;
     @Inject ListEventsContract.UserActionsListener userActionsListener;
 

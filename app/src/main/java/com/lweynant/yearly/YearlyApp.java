@@ -4,8 +4,8 @@ import android.app.Application;
 
 import com.lweynant.yearly.controller.ControllerModule;
 import com.lweynant.yearly.controller.SyncControllerModule;
+import com.lweynant.yearly.model.IEventRepo;
 import com.lweynant.yearly.model.ModelModule;
-import com.lweynant.yearly.model.EventRepo;
 import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.IEventRepoListener;
@@ -27,7 +27,7 @@ public class YearlyApp extends Application implements IStringResources, IEventRe
 
 
     @Inject IClock clock;
-    @Inject EventRepo repo;
+    @Inject IEventRepo repo;
     @Inject IJsonFileAccessor repoAccessor;
     private BaseYearlyAppComponent component;
     @Inject AlarmGenerator alarmGenerator;
@@ -86,7 +86,7 @@ public class YearlyApp extends Application implements IStringResources, IEventRe
     }
 
     @Override
-    public void onDataSetChanged(EventRepo repo) {
+    public void onDataSetChanged(IEventRepo repo) {
         Timber.d("startLoadingData");
         Observable<IEvent> events = repo.getEventsSubscribedOnProperScheduler();
         Timber.i("archive");
