@@ -1,7 +1,7 @@
 package com.lweynant.yearly.controller;
 
 import com.lweynant.yearly.PerApp;
-import com.lweynant.yearly.controller.list_events.EventsLoader;
+import com.lweynant.yearly.controller.list_events.SortedEventsLoader;
 import com.lweynant.yearly.controller.list_events.IEventsLoader;
 import com.lweynant.yearly.model.IEventRepo;
 import com.lweynant.yearly.platform.IAlarm;
@@ -18,6 +18,6 @@ public class SyncControllerModule {
         return new AlarmGenerator(alarm);
     }
     @Provides IEventsLoader providesEventLoader(IEventRepo repo, IClock clock) {
-        return new EventsLoader(repo, AndroidSchedulers.mainThread(),  clock);
+        return new SortedEventsLoader(repo, AndroidSchedulers.mainThread(),  clock);
     }
 }

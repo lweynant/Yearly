@@ -28,11 +28,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class EventsLoaderTest {
+public class SortedEventsLoaderTest {
 
     @Mock IEventRepo repo;
     @Mock IClock clock;
-    private EventsLoader sut;
+    private SortedEventsLoader sut;
     private LocalDate today;
     @Mock IEventsLoader.Callback callback;
 
@@ -40,7 +40,7 @@ public class EventsLoaderTest {
         today = new LocalDate(2015, Date.FEBRUARY, 8);
         when(clock.now()).thenReturn(today);
         Scheduler s = Schedulers.immediate();
-        sut = new EventsLoader(repo, s, clock);
+        sut = new SortedEventsLoader(repo, s, clock);
     }
 
     @Test public void loadEmptyRepo() {

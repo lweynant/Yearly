@@ -17,7 +17,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.subscriptions.CompositeSubscription;
 import timber.log.Timber;
 
-public class EventsLoader implements IEventsLoader {
+public class SortedEventsLoader implements IEventsLoader {
     private IEventRepo repo;
     private final List<IEvent> empyList = new ArrayList<>();
     private LocalDate sortedFrom = new LocalDate(1900, 1, 1);
@@ -30,7 +30,7 @@ public class EventsLoader implements IEventsLoader {
     private final Scheduler mainThread;
     //private boolean first = true;
 
-    public EventsLoader(IEventRepo repo, Scheduler mainThread, IClock clock) {
+    public SortedEventsLoader(IEventRepo repo, Scheduler mainThread, IClock clock) {
         this.repo = repo;
         this.clock = clock;
         events = empyList;
