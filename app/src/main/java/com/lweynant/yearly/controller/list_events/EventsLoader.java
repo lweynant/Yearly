@@ -10,9 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
+import rx.Scheduler;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.subscriptions.CompositeSubscription;
 import timber.log.Timber;
 
 public class EventsLoader implements IEventsLoader {
@@ -25,25 +27,30 @@ public class EventsLoader implements IEventsLoader {
     private Callback callback;
     private String currentlyUpdatingRepoModifId;
     private List<IEvent> events;
+    private final Scheduler mainThread;
     //private boolean first = true;
 
-    public EventsLoader(IEventRepo repo, IClock clock) {
+    public EventsLoader(IEventRepo repo, Scheduler mainThread, IClock clock) {
         this.repo = repo;
         this.clock = clock;
         events = empyList;
+        this.mainThread = mainThread;
     }
 
     @Override public void cancelLoadingEvents() {
         synchronized (this) {
             if (subscription != null && !subscription.isUnsubscribed()) {
                 subscription.unsubscribe();
+                onEventsLoadingCancelled(currentlyUpdatingRepoModifId);
             }
         }
     }
 
     @Override public void loadEvents(boolean forceUpdate, Callback callback) {
-        this.callback = callback;
-        updateData(forceUpdate);
+        synchronized (this) {
+            this.callback = callback;
+            updateData(forceUpdate);
+        }
     }
 
     private void updateData(boolean forceUpdate) {
@@ -64,8 +71,6 @@ public class EventsLoader implements IEventsLoader {
 
 
     private void startLoadingData(String modifId) {
-        synchronized (this) {
-
             Timber.d("startLoadingData - getEvents from repo with modif id: %s", modifId);
             if (subscription != null && !subscription.isUnsubscribed()) {
                 Timber.d("we allready have a subscription - unsubscribe first.. %s", currentlyUpdatingRepoModifId);
@@ -74,11 +79,12 @@ public class EventsLoader implements IEventsLoader {
             }
             currentlyUpdatingRepoModifId = repo.getModificationId();
             Observable<IEvent> eventsObservable = repo.getEventsSubscribedOnProperScheduler();
+
             subscription = eventsObservable
                     .toSortedList()
                     .first()
                      //       .delay(first ? 5000 : 10, TimeUnit.MILLISECONDS)
-                    .observeOn(AndroidSchedulers.mainThread())
+                    .observeOn(mainThread)
                     .subscribe(new Subscriber<List<IEvent>>() {
                         public List<IEvent> newEvents = empyList;
                         private final String modifId = currentlyUpdatingRepoModifId;
@@ -101,7 +107,6 @@ public class EventsLoader implements IEventsLoader {
                             newEvents = iEvents;
                         }
                     });
-        }
         //first = false;
         Timber.d("end of startLoadingData");
 

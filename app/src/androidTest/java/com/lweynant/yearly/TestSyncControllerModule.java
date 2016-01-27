@@ -11,6 +11,7 @@ import com.lweynant.yearly.platform.IClock;
 
 import dagger.Module;
 import dagger.Provides;
+import rx.android.schedulers.AndroidSchedulers;
 
 @Module
 public class TestSyncControllerModule {
@@ -25,6 +26,6 @@ public class TestSyncControllerModule {
 
     @Provides IEventsLoader providesEventLoader(CountingIdlingResource idlingResource,
                                                 IEventRepo repo, IClock clock) {
-        return new SyncWithTestsEventsLoader(idlingResource, new EventsLoader(repo, clock));
+        return new SyncWithTestsEventsLoader(idlingResource, new EventsLoader(repo, AndroidSchedulers.mainThread(), clock));
     }
 }

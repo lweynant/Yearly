@@ -9,6 +9,7 @@ import com.lweynant.yearly.platform.IClock;
 
 import dagger.Module;
 import dagger.Provides;
+import rx.android.schedulers.AndroidSchedulers;
 
 @Module
 public class SyncControllerModule {
@@ -17,6 +18,6 @@ public class SyncControllerModule {
         return new AlarmGenerator(alarm);
     }
     @Provides IEventsLoader providesEventLoader(IEventRepo repo, IClock clock) {
-        return new EventsLoader(repo, clock);
+        return new EventsLoader(repo, AndroidSchedulers.mainThread(),  clock);
     }
 }
