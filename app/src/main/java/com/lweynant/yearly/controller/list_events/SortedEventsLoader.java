@@ -13,120 +13,111 @@ import rx.Observable;
 import rx.Scheduler;
 import rx.Subscriber;
 import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.subscriptions.CompositeSubscription;
 import timber.log.Timber;
 
 public class SortedEventsLoader implements IEventsLoader {
-    private IEventRepo repo;
-    private final List<IEvent> empyList = new ArrayList<>();
-    private LocalDate sortedFrom = new LocalDate(1900, 1, 1);
-    private String repoId;
-    private IClock clock;
+    private final IEventRepo repo;
+    private final List<IEvent> emptyList = new ArrayList<>();
+    private final IClock clock;
+    private final Scheduler mainThread;
+    private LocalDate sortedFrom;
     private Subscription subscription;
     private Callback callback;
     private String currentlyUpdatingRepoModifId;
-    private List<IEvent> events;
-    private final Scheduler mainThread;
-    //private boolean first = true;
+    private List<IEvent> cachedEvents;
+    private String repoIdFromCachedEvents;
 
     public SortedEventsLoader(IEventRepo repo, Scheduler mainThread, IClock clock) {
         this.repo = repo;
         this.clock = clock;
-        events = empyList;
         this.mainThread = mainThread;
+        this.cachedEvents = emptyList;
     }
 
     @Override public void cancelLoadingEvents() {
         synchronized (this) {
-            if (subscription != null && !subscription.isUnsubscribed()) {
-                subscription.unsubscribe();
-                onEventsLoadingCancelled(currentlyUpdatingRepoModifId);
-            }
+            cancelOngoingLoadEvents();
         }
     }
 
     @Override public void loadEvents(boolean forceUpdate, Callback callback) {
         synchronized (this) {
             this.callback = callback;
-            updateData(forceUpdate);
-        }
-    }
-
-    private void updateData(boolean forceUpdate) {
-        Timber.d("updateData");
-        onEventsLoadingStarted(repo.getModificationId());
-        if (!forceUpdate && events != empyList && sortedFrom.isEqual(clock.now()) && repo.getModificationId().equals(repoId)) {
-            Timber.d("we sorted repo on same day, so nothing to do");
-            onEventsLoadingFinished(events, currentlyUpdatingRepoModifId);
-            return;
-        } else {
-            Timber.d("sort on new date %s and/or id %s", clock.now().toString(), repo.getModificationId());
-            startLoadingData(repo.getModificationId());
-            sortedFrom = clock.now();
-            repoId = repo.getModificationId();
-
-        }
-    }
-
-
-    private void startLoadingData(String modifId) {
-            Timber.d("startLoadingData - getEvents from repo with modif id: %s", modifId);
-            if (subscription != null && !subscription.isUnsubscribed()) {
-                Timber.d("we allready have a subscription - unsubscribe first.. %s", currentlyUpdatingRepoModifId);
-                subscription.unsubscribe();
-                onEventsLoadingCancelled(currentlyUpdatingRepoModifId);
+            cancelOngoingLoadEvents();
+            onEventsLoadingStarted();
+            if (canUseCachedEvents(forceUpdate)) {
+                onEventsLoadingFinished(cachedEvents);
+            } else {
+                startLoadingData();
             }
-            currentlyUpdatingRepoModifId = repo.getModificationId();
+        }
+    }
+
+    private void cancelOngoingLoadEvents() {
+        if (subscription != null && !subscription.isUnsubscribed()) {
+            Timber.d("we allready have a subscription - unsubscribe first.. %s", currentlyUpdatingRepoModifId);
+            subscription.unsubscribe();
+            onEventsLoadingCancelled();
+        }
+    }
+
+
+    private boolean canUseCachedEvents(boolean forceUpdate) {
+        return !forceUpdate && cachedEvents != emptyList
+                && clock.now().isEqual(sortedFrom)
+                && repo.getModificationId().equals(repoIdFromCachedEvents);
+    }
+
+
+    private void startLoadingData() {
+            Timber.d("startLoadingData - getEvents from repo with modif id: %s", repo.getModificationId());
             Observable<IEvent> eventsObservable = repo.getEventsSubscribedOnProperScheduler();
 
             subscription = eventsObservable
                     .toSortedList()
                     .first()
-                     //       .delay(first ? 5000 : 10, TimeUnit.MILLISECONDS)
                     .observeOn(mainThread)
                     .subscribe(new Subscriber<List<IEvent>>() {
-                        public List<IEvent> newEvents = empyList;
-                        private final String modifId = currentlyUpdatingRepoModifId;
+                        public List<IEvent> newEvents = emptyList;
 
                         @Override
                         public void onCompleted() {
-                            Timber.d("onCompleted %s", newEvents.toString());
-                            onEventsLoadingFinished(newEvents, modifId);
+                            onEventsLoadingFinished(newEvents);
                         }
 
                         @Override
                         public void onError(Throwable e) {
-                            Timber.e(e, "onError");
-                            onEventsLoadingCancelled(modifId);
+                            onEventsLoadingCancelled();
                         }
 
                         @Override
                         public void onNext(List<IEvent> iEvents) {
-                            Timber.d("onNext");
                             newEvents = iEvents;
                         }
                     });
-        //first = false;
-        Timber.d("end of startLoadingData");
-
     }
 
-    private void onEventsLoadingStarted(String modificationId) {
-        callback.onEventsLoadingStarted(modificationId);
+    private void onEventsLoadingStarted() {
+        currentlyUpdatingRepoModifId = repo.getModificationId();
+        callback.onEventsLoadingStarted(currentlyUpdatingRepoModifId);
     }
 
 
-    private void onEventsLoadingCancelled(String modifId) {
+    private void onEventsLoadingCancelled() {
         if (subscription != null) subscription.unsubscribe();
-        events = empyList;
-        callback.onEventsLoadingCancelled(modifId);
+        cachedEvents = emptyList;
+        repoIdFromCachedEvents = null;
+        callback.onEventsLoadingCancelled(currentlyUpdatingRepoModifId);
+        currentlyUpdatingRepoModifId = null;
     }
 
-    private void onEventsLoadingFinished(List<IEvent> newEvents, String modifId) {
+    private void onEventsLoadingFinished(List<IEvent> newEvents) {
         if (subscription != null) subscription.unsubscribe();
-        events = newEvents;
-        callback.onEventsLoadingFinished(newEvents, modifId);
+        cachedEvents = newEvents;
+        repoIdFromCachedEvents = repo.getModificationId();
+        currentlyUpdatingRepoModifId = null;
+        sortedFrom = clock.now();
+        callback.onEventsLoadingFinished(newEvents, repoIdFromCachedEvents);
     }
 
 }
