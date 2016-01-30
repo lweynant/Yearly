@@ -12,7 +12,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import rx.Observable;
@@ -55,8 +57,7 @@ public class SortedEventsLoaderTest {
 
     @Test public void loadRepoWithOneEvent() {
         when(repo.getModificationId()).thenReturn("modif id");
-        List<IEvent> events = new ArrayList<>();
-        events.add(mock(IEvent.class));
+        List<IEvent> events = Arrays.asList(mock(IEvent.class));
 
         when(repo.getEventsSubscribedOnProperScheduler()).thenReturn(Observable.from(events));
         sut.loadEvents(false, callback);
@@ -66,7 +67,6 @@ public class SortedEventsLoaderTest {
     }
     @Test public void loadRepoWithNEvent() {
         when(repo.getModificationId()).thenReturn("modif id");
-        List<IEvent> events = new ArrayList<>();
         IEvent first = mock(IEvent.class);
         IEvent second = mock(IEvent.class);
         IEvent third = mock(IEvent.class);
@@ -79,18 +79,13 @@ public class SortedEventsLoaderTest {
         when(third.compareTo(second)).thenReturn(1);
 
         //pass the events not sorted:
-        events.add(second);
-        events.add(first);
-        events.add(third);
+        List<IEvent> events = Arrays.asList(second, first, third);
 
         when(repo.getEventsSubscribedOnProperScheduler()).thenReturn(Observable.from(events));
         sut.loadEvents(false, callback);
 
         //verify we received them in order
-        List<IEvent> sortedEvents = new ArrayList<>();
-        sortedEvents.add(first);
-        sortedEvents.add(second);
-        sortedEvents.add(third);
+        List<IEvent> sortedEvents = Arrays.asList(first, second, third);
         verify(callback).onEventsLoadingStarted("modif id");
         verify(callback).onEventsLoadingFinished(sortedEvents, "modif id");
     }
@@ -117,8 +112,7 @@ public class SortedEventsLoaderTest {
 
     @Test public void secondLoadRepoIsCachedIfNotModified() {
         when(repo.getModificationId()).thenReturn("modif id");
-        List<IEvent> events = new ArrayList<>();
-        events.add(mock(IEvent.class));
+        List<IEvent> events = Arrays.asList(mock(IEvent.class));
 
         when(repo.getEventsSubscribedOnProperScheduler()).thenReturn(Observable.from(events));
         sut.loadEvents(false, callback);
@@ -138,8 +132,7 @@ public class SortedEventsLoaderTest {
     }
     @Test public void secondLoadRepoIsNotCachedNotModified() {
         when(repo.getModificationId()).thenReturn("modif id");
-        List<IEvent> events = new ArrayList<>();
-        events.add(mock(IEvent.class));
+        List<IEvent> events = Arrays.asList(mock(IEvent.class));
 
         when(repo.getEventsSubscribedOnProperScheduler()).thenReturn(Observable.from(events));
         sut.loadEvents(false, callback);
@@ -157,8 +150,7 @@ public class SortedEventsLoaderTest {
     }
     @Test public void secondLoadRepoIsNotCachedIfDateChanges() {
         when(repo.getModificationId()).thenReturn("modif id");
-        List<IEvent> events = new ArrayList<>();
-        events.add(mock(IEvent.class));
+        List<IEvent> events = Arrays.asList(mock(IEvent.class));
 
         when(clock.now()).thenReturn(today);
         when(repo.getEventsSubscribedOnProperScheduler()).thenReturn(Observable.from(events));
@@ -178,8 +170,7 @@ public class SortedEventsLoaderTest {
     }
     @Test public void secondLoadRepoIsNotCachedForceUpdateIsTrue() {
         when(repo.getModificationId()).thenReturn("modif id");
-        List<IEvent> events = new ArrayList<>();
-        events.add(mock(IEvent.class));
+        List<IEvent> events = Arrays.asList(mock(IEvent.class));
 
         when(repo.getEventsSubscribedOnProperScheduler()).thenReturn(Observable.from(events));
         sut.loadEvents(false, callback);
@@ -205,8 +196,7 @@ public class SortedEventsLoaderTest {
         reset(callback, repo);
 
         //now we do a second loadEvents (the first one should now be cancelled)
-        List<IEvent> events = new ArrayList<>();
-        events.add(mock(IEvent.class));
+        List<IEvent> events = Arrays.asList(mock(IEvent.class));
 
         when(repo.getModificationId()).thenReturn("second modif id");
         when(repo.getEventsSubscribedOnProperScheduler()).thenReturn(Observable.from(events));
