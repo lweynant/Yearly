@@ -112,7 +112,7 @@ public class BirthdayTest {
         assertThatJson(json).node(Birthday.KEY_NAME).isEqualTo("Mine");
         assertThatJson(json).node(Birthday.KEY_MONTH).isEqualTo(Date.FEBRUARY);
         assertThatJson(json).node(Birthday.KEY_DAY).isEqualTo(8);
-        assertThatJson(json).node(Birthday.KEY_YEAR_OF_BIRTH).isAbsent();
+        assertThatJson(json).node(Birthday.KEY_YEAR).isAbsent();
         assertThatJson(json).node(Birthday.KEY_TYPE).isEqualTo(Birthday.class.getCanonicalName());
         assertThatJson(json).node(Birthday.KEY_NBR_DAYS_FOR_NOTIFICATION).isEqualTo(2);
     }
@@ -125,7 +125,7 @@ public class BirthdayTest {
         assertThatJson(json).node(Birthday.KEY_NAME).isEqualTo("Mine");
         assertThatJson(json).node(Birthday.KEY_MONTH).isEqualTo(Date.FEBRUARY);
         assertThatJson(json).node(Birthday.KEY_DAY).isEqualTo(8);
-        assertThatJson(json).node(Birthday.KEY_YEAR_OF_BIRTH).isEqualTo(1966);
+        assertThatJson(json).node(Birthday.KEY_YEAR).isEqualTo(1966);
         assertThatJson(json).node(Birthday.KEY_TYPE).isEqualTo(Birthday.class.getCanonicalName());
     }
 
@@ -138,7 +138,7 @@ public class BirthdayTest {
         assertThatJson(json).node(Birthday.KEY_LAST_NAME).isEqualTo("Last");
         assertThatJson(json).node(Birthday.KEY_MONTH).isEqualTo(Date.FEBRUARY);
         assertThatJson(json).node(Birthday.KEY_DAY).isEqualTo(8);
-        assertThatJson(json).node(Birthday.KEY_YEAR_OF_BIRTH).isAbsent();
+        assertThatJson(json).node(Birthday.KEY_YEAR).isAbsent();
         assertThatJson(json).node(Birthday.KEY_TYPE).isEqualTo(Birthday.class.getCanonicalName());
         assertThatJson(json).node(Birthday.KEY_NBR_DAYS_FOR_NOTIFICATION).isEqualTo(2);
     }
@@ -152,7 +152,7 @@ public class BirthdayTest {
         assertThatJson(json).node(Birthday.KEY_LAST_NAME).isEqualTo("Last");
         assertThatJson(json).node(Birthday.KEY_MONTH).isEqualTo(Date.FEBRUARY);
         assertThatJson(json).node(Birthday.KEY_DAY).isEqualTo(8);
-        assertThatJson(json).node(Birthday.KEY_YEAR_OF_BIRTH).isEqualTo(1966);
+        assertThatJson(json).node(Birthday.KEY_YEAR).isEqualTo(1966);
         assertThatJson(json).node(Birthday.KEY_TYPE).isEqualTo(Birthday.class.getCanonicalName());
     }
 

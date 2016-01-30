@@ -58,7 +58,7 @@ public class IsBirthday extends TypeSafeMatcher<Birthday> {
             if (year == INVALID_YEAR) {
                 return true;
             } else {
-                return actual.getYear() == year;
+                return actual.getYearOfOrigin() == year;
             }
         } else {
             return false;
