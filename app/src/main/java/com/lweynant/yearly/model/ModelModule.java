@@ -35,11 +35,11 @@ public class ModelModule {
     @Provides IValidator providesEventValidator(ValidatorFactory factory) {
         return factory.create();
     }
-    @Provides IKeyValueStore providesKeyValueStore(ValidatorFactory factory) {
-        return new KeyValueStore(factory);
+    @Provides IKeyValueArchiver providesKeyValueStore(ValidatorFactory factory) {
+        return new KeyValueArchiver(factory);
     }
     @Provides BirthdayBuilder providesBirthdayBuilder(IValidator validator,
-                                                      IKeyValueStore keyValueStore,
+                                                      IKeyValueArchiver keyValueStore,
                                                       IClock clock, IUniqueIdGenerator idGenerator) {
         return new BirthdayBuilder(validator, keyValueStore, clock, idGenerator);
     }

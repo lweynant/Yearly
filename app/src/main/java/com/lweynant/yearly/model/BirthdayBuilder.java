@@ -8,19 +8,19 @@ import com.lweynant.yearly.platform.IUniqueIdGenerator;
 
 
 public class BirthdayBuilder {
-    public static final String KEY_NAME = IKeyValueStore.KEY_NAME;
-    public static final String KEY_YEAR = IKeyValueStore.KEY_YEAR;
-    public static final String KEY_MONTH = IKeyValueStore.KEY_MONTH;
-    public static final String KEY_DAY = IKeyValueStore.KEY_DAY;
+    public static final String KEY_NAME = IKeyValueArchiver.KEY_NAME;
+    public static final String KEY_YEAR = IKeyValueArchiver.KEY_YEAR;
+    public static final String KEY_MONTH = IKeyValueArchiver.KEY_MONTH;
+    public static final String KEY_DAY = IKeyValueArchiver.KEY_DAY;
 
     public static final String KEY_LAST_NAME = "last_name";
     private final IClock clock;
     private final IUniqueIdGenerator uniquedIdGenerator;
     private IValidator validator;
     private String lastName;
-    private IKeyValueStore storage;
+    private IKeyValueArchiver storage;
 
-    public BirthdayBuilder(IValidator validator, IKeyValueStore storage,
+    public BirthdayBuilder(IValidator validator, IKeyValueArchiver storage,
                            IClock clock, IUniqueIdGenerator uniqueIdGenerator) {
         this.validator = validator;
         this.storage = storage;

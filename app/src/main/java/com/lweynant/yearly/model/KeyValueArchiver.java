@@ -2,10 +2,10 @@ package com.lweynant.yearly.model;
 
 import android.os.Bundle;
 
-public class KeyValueStore implements IKeyValueStore {
+public class KeyValueArchiver implements IKeyValueArchiver {
     private final ValidatorFactory validatorFactory;
 
-    KeyValueStore(ValidatorFactory validatorFactory) {
+    KeyValueArchiver(ValidatorFactory validatorFactory) {
         this.validatorFactory = validatorFactory;
     }
     @Override public void writeValidatorToBundle(IValidator validator, Bundle bundle) {

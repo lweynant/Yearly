@@ -34,7 +34,7 @@ public class BirthdayBuilderTest {
 
     @Before public void setUp() throws Exception {
         when(clock.now()).thenReturn(new LocalDate(2000, Date.JANUARY, 1));
-        sut = new BirthdayBuilder(new Validator(), new KeyValueStore(new ValidatorFactory()), clock, uniqueIdGenerator);
+        sut = new BirthdayBuilder(new Validator(), new KeyValueArchiver(new ValidatorFactory()), clock, uniqueIdGenerator);
     }
 
     @Test public void testBuilderNothingSet() throws Exception {

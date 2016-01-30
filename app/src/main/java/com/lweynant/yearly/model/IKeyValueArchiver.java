@@ -2,7 +2,7 @@ package com.lweynant.yearly.model;
 
 import android.os.Bundle;
 
-public interface IKeyValueStore {
+public interface IKeyValueArchiver {
     String KEY_NAME = "name";
     String KEY_YEAR = "year";
     String KEY_MONTH = "month";
