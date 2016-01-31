@@ -28,13 +28,15 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class BirthdayBuilderTest {
 
+    private final Validator validator = new Validator();
     private BirthdayBuilder sut;
     @Mock private IClock clock;
     @Mock private IUniqueIdGenerator uniqueIdGenerator;
+    @Mock private IKeyValueArchiver archiver;
 
     @Before public void setUp() throws Exception {
         when(clock.now()).thenReturn(new LocalDate(2000, Date.JANUARY, 1));
-        sut = new BirthdayBuilder(new Validator(), new KeyValueArchiver(new ValidatorFactory()), clock, uniqueIdGenerator);
+        sut = new BirthdayBuilder(validator, archiver, clock, uniqueIdGenerator);
     }
 
     @Test public void testBuilderNothingSet() throws Exception {
@@ -90,56 +92,42 @@ public class BirthdayBuilderTest {
         assertThat(bd, is(birthday("Joe", Date.FEBRUARY, 15)));
     }
 
-    @Test public void testArchiveMinimalBirthdayToBundle() throws Exception {
+    @Test public void testArchiveBirthdayWithoutLastNameToBundle() throws Exception {
         sut.setName("Joe").setMonth(Date.DECEMBER).setDay(20);
         Bundle bundle = mock(Bundle.class);
         sut.archiveTo(bundle);
-        verify(bundle, times(1)).putString(BirthdayBuilder.KEY_NAME, "Joe");
-        verify(bundle, times(1)).putInt(BirthdayBuilder.KEY_MONTH, Date.DECEMBER);
-        verify(bundle, times(1)).putInt(BirthdayBuilder.KEY_DAY, 20);
-        verify(bundle, times(1)).remove(BirthdayBuilder.KEY_YEAR);
+        verify(archiver).writeValidatorToBundle(validator, bundle);
         verify(bundle, times(1)).remove(BirthdayBuilder.KEY_LAST_NAME);
         verifyNoMoreInteractions(bundle);
     }
 
-    @Test public void testArchiveCompleteBirthdayToBundle() throws Exception {
+    @Test public void testArchiveBirthdayWithLastNameToBundle() throws Exception {
         sut.setName("Joe").setLastName("Doe").setYear(1966).setMonth(Date.DECEMBER).setDay(20);
         Bundle bundle = mock(Bundle.class);
         sut.archiveTo(bundle);
-        verify(bundle, times(1)).putString(BirthdayBuilder.KEY_NAME, "Joe");
+
+        verify(archiver).writeValidatorToBundle(validator, bundle);
         verify(bundle, times(1)).putString(BirthdayBuilder.KEY_LAST_NAME, "Doe");
-        verify(bundle, times(1)).putInt(BirthdayBuilder.KEY_YEAR, 1966);
-        verify(bundle, times(1)).putInt(BirthdayBuilder.KEY_MONTH, Date.DECEMBER);
-        verify(bundle, times(1)).putInt(BirthdayBuilder.KEY_DAY, 20);
         verifyNoMoreInteractions(bundle);
     }
 
-    @Test public void testArchiveEmptyToBundle() {
-        Bundle bundle = mock(Bundle.class);
-        sut.archiveTo(bundle);
-        verify(bundle, times(1)).remove(BirthdayBuilder.KEY_NAME);
-        verify(bundle, times(1)).remove(BirthdayBuilder.KEY_LAST_NAME);
-        verify(bundle, times(1)).remove(BirthdayBuilder.KEY_YEAR);
-        verify(bundle, times(1)).remove(BirthdayBuilder.KEY_MONTH);
-        verify(bundle, times(1)).remove(BirthdayBuilder.KEY_DAY);
-        verifyNoMoreInteractions(bundle);
-    }
 
-    @Test public void testSetFromEmptyBundle() throws Exception {
+    @Test public void testSetFromBundleWithoutLastName() throws Exception {
         Bundle bundle = mock(Bundle.class);
+        when(archiver.readValidatorFromBundle(bundle)).thenReturn(validator);
         sut.set(bundle);
+
+        verify(archiver).readValidatorFromBundle(bundle);
         Birthday bd = sut.build();
         assertNull(bd);
     }
 
     @Test public void testSetFromMinimalBundle() throws Exception {
         Bundle bundle = mock(Bundle.class);
-        when(bundle.containsKey(BirthdayBuilder.KEY_NAME)).thenReturn(true);
-        when(bundle.getString(BirthdayBuilder.KEY_NAME)).thenReturn("Fred");
-        when(bundle.containsKey(BirthdayBuilder.KEY_MONTH)).thenReturn(true);
-        when(bundle.getInt(BirthdayBuilder.KEY_MONTH)).thenReturn(Date.APRIL);
-        when(bundle.containsKey(BirthdayBuilder.KEY_DAY)).thenReturn(true);
-        when(bundle.getInt(BirthdayBuilder.KEY_DAY)).thenReturn(21);
+        when(archiver.readValidatorFromBundle(bundle)).thenReturn(validator);
+        validator.setName("Fred");
+        validator.setMonth(Date.APRIL);
+        validator.setDay(21);
         sut.set(bundle);
         Birthday bd = sut.build();
         assertThat(bd, is(birthday("Fred", Date.APRIL, 21)));
@@ -147,16 +135,14 @@ public class BirthdayBuilderTest {
 
     @Test public void testSetFromCompleteBundle() throws Exception {
         Bundle bundle = mock(Bundle.class);
-        when(bundle.containsKey(BirthdayBuilder.KEY_NAME)).thenReturn(true);
-        when(bundle.getString(BirthdayBuilder.KEY_NAME)).thenReturn("Fred");
+        when(archiver.readValidatorFromBundle(bundle)).thenReturn(validator);
+        validator.setName("Fred");
+        validator.setYear(1500);
+        validator.setMonth(Date.APRIL);
+        validator.setDay(21);
+
         when(bundle.containsKey(BirthdayBuilder.KEY_LAST_NAME)).thenReturn(true);
         when(bundle.getString(BirthdayBuilder.KEY_LAST_NAME)).thenReturn("Flinstone");
-        when(bundle.containsKey(BirthdayBuilder.KEY_YEAR)).thenReturn(true);
-        when(bundle.getInt(BirthdayBuilder.KEY_YEAR)).thenReturn(1500);
-        when(bundle.containsKey(BirthdayBuilder.KEY_MONTH)).thenReturn(true);
-        when(bundle.getInt(BirthdayBuilder.KEY_MONTH)).thenReturn(Date.APRIL);
-        when(bundle.containsKey(BirthdayBuilder.KEY_DAY)).thenReturn(true);
-        when(bundle.getInt(BirthdayBuilder.KEY_DAY)).thenReturn(21);
         sut.set(bundle);
         Birthday bd = sut.build();
         assertThat(bd, is(birthday("Fred", "Flinstone", 1500, Date.APRIL, 21)));
