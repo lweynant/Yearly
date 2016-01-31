@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class BirthdayBuilderTest {
 
-    private final Validator validator = new Validator();
+    @Mock private IValidator validator;
     private BirthdayBuilder sut;
     @Mock private IClock clock;
     @Mock private IUniqueIdGenerator uniqueIdGenerator;
@@ -44,56 +44,81 @@ public class BirthdayBuilderTest {
         assertNull(bd);
     }
 
-    @Test public void testBuilderOnlyNameSet() throws Exception {
+    @Test public void testSetName() throws Exception {
         sut.setName("John");
-        Birthday bd = sut.build();
-        assertNull(bd);
+        verify(validator).setName("John");
     }
 
-    @Test public void testBuilderOnlyDaySet() throws Exception {
+    @Test public void testSetDay() throws Exception {
         sut.setDay(9);
-        Birthday bd = sut.build();
-        assertNull(bd);
+        verify(validator).setDay(9);
+    }
+    @Test public void testSetMonth() {
+        sut.setMonth(Date.APRIL);
+        verify(validator).setMonth(Date.APRIL);
+    }
+    @Test public void testSetYear() {
+        sut.setYear(1000);
+        verify(validator).setYear(1000);
+    }
+    @Test public void testClearYear() {
+        sut.clearYear();
+        verify(validator).clearYear();
+    }
+    @Test public void testSetLastName() {
+        sut.setLastName("Flinstone");
+
+        //verify
+        when(validator.validString("Flinstone")).thenReturn(true);
+        Bundle bundle = mock(Bundle.class);
+        sut.archiveTo(bundle);
+        verify(bundle).putString(Birthday.KEY_LAST_NAME, "Flinstone");
     }
 
     @Test public void testBuildMinimalValidBirthday() throws Exception {
-        sut.setName("name");
-        sut.setMonth(Date.APRIL).setDay(20);
+        stubValidator("name", Date.APRIL, 20);
         Birthday bd = sut.build();
         assertThat(bd, instanceOf(Birthday.class));
         assertThat(bd, is(birthday("name", Date.APRIL, 20)));
     }
 
+    private void stubValidator(String name, int month, int day) {
+        when(validator.validName()).thenReturn(true);
+        when(validator.getName()).thenReturn(name);
+        when(validator.validMonth()).thenReturn(true);
+        when(validator.getMonth()).thenReturn(month);
+        when(validator.validDay()).thenReturn(true);
+        when(validator.getDay()).thenReturn(day);
+    }
+
     @Test public void testBuildTwiceGivesOtherInstance() throws Exception {
-        sut.setName("name");
-        sut.setMonth(Date.APRIL).setDay(20);
+        stubValidator("name", Date.APRIL, 20);
         Birthday bd = sut.build();
         Birthday other = sut.build();
         assertThat(bd, not(sameInstance(other)));
     }
 
     @Test public void testBuildValidBirthDayWithLastName() throws Exception {
-        sut.setName("Joe").setLastName("Doe").setMonth(Date.APRIL).setDay(22);
+        stubValidator("Joe", Date.APRIL, 22);
+        sut.setLastName("Doe");
         Birthday bd = sut.build();
         assertThat(bd, is(birthday("Joe", "Doe", Date.APRIL, 22)));
     }
 
     @Test public void testBuildValidBirthDayWithYear() throws Exception {
-        sut.setName("Joe");
-        sut.setYear(2009).setMonth(Date.FEBRUARY).setDay(15);
+        stubValidator("Joe", 2009, Date.FEBRUARY, 15);
         Birthday bd = sut.build();
         assertThat(bd, is(birthday("Joe", 2009, Date.FEBRUARY, 15)));
     }
-    @Test public void testBuildValidBirthDayWithClearYear() throws Exception {
-        sut.setName("Joe");
-        sut.setYear(2009).setMonth(Date.FEBRUARY).setDay(15);
-        sut.clearYear();
-        Birthday bd = sut.build();
-        assertThat(bd, is(birthday("Joe", Date.FEBRUARY, 15)));
+
+    private void stubValidator(String name, int year, int month, int day) {
+        stubValidator(name, month, day);
+        when(validator.validYear()).thenReturn(true);
+        when(validator.getYear()).thenReturn(year);
     }
 
     @Test public void testArchiveBirthdayWithoutLastNameToBundle() throws Exception {
-        sut.setName("Joe").setMonth(Date.DECEMBER).setDay(20);
+        stubValidator("Joe", 2009, Date.FEBRUARY, 15);
         Bundle bundle = mock(Bundle.class);
         sut.archiveTo(bundle);
         verify(archiver).writeValidatorToBundle(validator, bundle);
@@ -102,8 +127,10 @@ public class BirthdayBuilderTest {
     }
 
     @Test public void testArchiveBirthdayWithLastNameToBundle() throws Exception {
-        sut.setName("Joe").setLastName("Doe").setYear(1966).setMonth(Date.DECEMBER).setDay(20);
+        stubValidator("Joe", 2009, Date.FEBRUARY, 15);
+        sut.setLastName("Doe");
         Bundle bundle = mock(Bundle.class);
+        when(validator.validString("Doe")).thenReturn(true);
         sut.archiveTo(bundle);
 
         verify(archiver).writeValidatorToBundle(validator, bundle);
@@ -125,9 +152,7 @@ public class BirthdayBuilderTest {
     @Test public void testSetFromMinimalBundle() throws Exception {
         Bundle bundle = mock(Bundle.class);
         when(archiver.readValidatorFromBundle(bundle)).thenReturn(validator);
-        validator.setName("Fred");
-        validator.setMonth(Date.APRIL);
-        validator.setDay(21);
+        stubValidator("Fred", Date.APRIL, 21);
         sut.set(bundle);
         Birthday bd = sut.build();
         assertThat(bd, is(birthday("Fred", Date.APRIL, 21)));
@@ -136,10 +161,7 @@ public class BirthdayBuilderTest {
     @Test public void testSetFromCompleteBundle() throws Exception {
         Bundle bundle = mock(Bundle.class);
         when(archiver.readValidatorFromBundle(bundle)).thenReturn(validator);
-        validator.setName("Fred");
-        validator.setYear(1500);
-        validator.setMonth(Date.APRIL);
-        validator.setDay(21);
+        stubValidator("Fred", 1500, Date.APRIL, 21);
 
         when(bundle.containsKey(BirthdayBuilder.KEY_LAST_NAME)).thenReturn(true);
         when(bundle.getString(BirthdayBuilder.KEY_LAST_NAME)).thenReturn("Flinstone");
