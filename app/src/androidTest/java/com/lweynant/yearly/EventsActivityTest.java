@@ -235,7 +235,7 @@ public class EventsActivityTest {
     }
 
     private void enterBirthday(String firstName, LocalDate date) {
-        onView(withId(R.id.edit_text_name)).perform(typeText(firstName), closeSoftKeyboard());
+        onView(withId(R.id.edit_text_first_name)).perform(typeText(firstName), closeSoftKeyboard());
         onView(withId(R.id.edit_text_birthday_date)).perform(click());
         onView(withId(R.id.date_picker)).perform(setDate(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth()));
         onView(withText(R.string.apply)).perform(click());

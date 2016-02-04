@@ -2,6 +2,8 @@ package com.lweynant.yearly;
 
 import com.lweynant.yearly.controller.add_event.AddBirthdayActivity;
 import com.lweynant.yearly.controller.add_event.AddBirthdayActivityFragment;
+import com.lweynant.yearly.controller.add_event.AddEventActivity;
+import com.lweynant.yearly.controller.add_event.AddEventActivityFragment;
 import com.lweynant.yearly.controller.list_events.ListEventsActivity;
 import com.lweynant.yearly.controller.list_events.ListEventsActivityFragment;
 
@@ -21,4 +23,7 @@ public interface BaseYearlyAppComponent {
 
     void inject(AddBirthdayActivity addBirthdayActivity);
 
+    void inject(AddEventActivityFragment addEventActivityFragment);
+
+    void inject(AddEventActivity addEventActivity);
 }
