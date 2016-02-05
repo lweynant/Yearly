@@ -2,6 +2,7 @@ package com.lweynant.yearly.ui;
 
 import com.lweynant.yearly.IStringResources;
 import com.lweynant.yearly.R;
+import com.lweynant.yearly.utils.CaseFormat;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IEventNotificationText;
@@ -37,14 +38,20 @@ public class BirthdayEventNotificationText implements IEventNotificationText {
         } else {
             Days d = Days.daysBetween(now, eventDate);
             int days = d.getDays();
-            subTitle = String.format(stringResource.getStringFromId(R.string.in_x_days), days);
+            if (days == 2) {
+                subTitle = stringResource.getStringFromId(R.string.day_after_tomorrow);
+            }
+            else {
+                subTitle = String.format(stringResource.getStringFromId(R.string.in_x_days), days);
+            }
         }
-        return subTitle;
+        return CaseFormat.capitalizeFirstLetter(subTitle + ", "
+                + eventDate.dayOfWeek().getAsText() + " " + eventDate.getDayOfMonth() + " " + eventDate.monthOfYear().getAsText());
     }
 
     @Override
     public String getOneLiner() {
-        return stringResource.getFormattedTitle(event) + " " + getText();
+        return stringResource.getFormattedTitle(event) + " " + CaseFormat.uncapitalizeFirstLetter(getText());
     }
 
 
