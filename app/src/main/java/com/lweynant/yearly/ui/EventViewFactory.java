@@ -36,7 +36,7 @@ public class EventViewFactory implements IEventViewFactory {
 
     @Override public IEventNotificationText getEventNotificationText(IEvent event) {
         if (event.getType().equals(Birthday.class.getCanonicalName())) {
-            return new BirthdayEventNotificationText(event, rstring, clock);
+            return new BirthdayEventNotificationText(event, new BirthdayStringResource(rstring), clock);
         }
         return null;
     }

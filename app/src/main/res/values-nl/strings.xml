@@ -37,4 +37,6 @@
     <string name="apply">Instellen</string>
     <string name="yyy_mm_dd">%3$d/%2$d/%1$d</string>
     <string name="mm_dd">%2$d/%1$d</string>
+    <string name="on">op</string>
+    <string name="day_after_tomorrow">overmorgen</string>
 </resources>

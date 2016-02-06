@@ -40,6 +40,8 @@
     <string name="title_activity_add_event">AddEventActivity</string>
     <string name="event_name">event</string>
     <string name="event_date">date</string>
+    <string name="on">on</string>
+    <string name="day_after_tomorrow">day after tomorrow</string>
 
 
 </resources>
