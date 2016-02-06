@@ -1,5 +1,7 @@
 package com.lweynant.yearly.ui;
 
+import android.text.TextUtils;
+
 import com.lweynant.yearly.IStringResources;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.utils.CaseFormat;
@@ -10,20 +12,22 @@ import com.lweynant.yearly.platform.IEventNotificationText;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 
+import java.util.Arrays;
+
 public class BirthdayEventNotificationText implements IEventNotificationText {
     private final IClock clock;
     private final IEvent event;
     private final BirthdayStringResource stringResource;
 
-    public BirthdayEventNotificationText(IEvent event, IStringResources rstring, IClock clock) {
-        this.stringResource = new BirthdayStringResource(rstring);
+    public BirthdayEventNotificationText(IEvent event, BirthdayStringResource rstring, IClock clock) {
+        this.stringResource = rstring;
         this.clock = clock;
         this.event = event;
     }
 
     @Override
     public String getTitle() {
-        return stringResource.getFormattedTitle(event);
+        return CaseFormat.capitalizeFirstLetter(stringResource.getFormattedTitle(event));
     }
 
     @Override
@@ -45,8 +49,10 @@ public class BirthdayEventNotificationText implements IEventNotificationText {
                 subTitle = String.format(stringResource.getStringFromId(R.string.in_x_days), days);
             }
         }
-        return CaseFormat.capitalizeFirstLetter(subTitle + ", "
-                + eventDate.dayOfWeek().getAsText() + " " + eventDate.getDayOfMonth() + " " + eventDate.monthOfYear().getAsText());
+        String text = subTitle + " " + eventDate.dayOfWeek().getAsText() + " " +
+                eventDate.getDayOfMonth() + " " + eventDate.monthOfYear().getAsText();
+        //String text = TextUtils.join(" ", Arrays.asList(subTitle, eventDate.dayOfWeek().getAsText(), eventDate.getDayOfMonth(), eventDate.monthOfYear().getAsText()));
+        return CaseFormat.capitalizeFirstLetter(text);
     }
 
     @Override
