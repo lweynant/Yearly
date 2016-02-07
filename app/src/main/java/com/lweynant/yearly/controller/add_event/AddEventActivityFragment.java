@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import com.jakewharton.rxbinding.widget.RxTextView;
 import com.lweynant.yearly.BaseYearlyAppComponent;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.controller.BaseFragment;
@@ -59,7 +60,14 @@ public class AddEventActivityFragment extends BaseFragment implements DateSelect
     @Override public void onResume() {
         Timber.d("onResume");
         super.onResume();
+        userActionListener.setInputObservables(RxTextView.textChangeEvents(nameEditText).skip(1).map(e -> e.text()),
+                RxTextView.textChangeEvents(dateEditText).skip(1).map(e -> e.text()));
 
+    }
+
+    @Override public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        userActionListener.saveInstanceState(outState);
     }
 
     @Override public void onPositiveClick(int year, @Date.Month int month, int day) {
@@ -75,5 +83,17 @@ public class AddEventActivityFragment extends BaseFragment implements DateSelect
 
     @Override public void showDate(String date) {
         dateEditText.setText(date);
+    }
+
+    @Override public void showSavedEvent(String name) {
+
+    }
+
+    @Override public void showNothingSaved() {
+
+    }
+
+    @Override public void enableSaveButton(Boolean enabled) {
+
     }
 }

@@ -55,8 +55,7 @@ public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsList
                 .map(l -> l > 0);
 
 
-        Observable<Boolean> enableSaveButton = Observable.combineLatest(validName, validDate, (a, b) -> a && b)
-                .doOnNext(b -> System.out.print(b));
+        Observable<Boolean> enableSaveButton = Observable.combineLatest(validName, validDate, (a, b) -> a && b);
 
         subcription.add(nameChangeEvents
                 .subscribe(n -> {

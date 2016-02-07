@@ -43,4 +43,9 @@ public class ModelModule {
                                                       IClock clock, IUniqueIdGenerator idGenerator) {
         return new BirthdayBuilder(validator, keyValueStore, clock, idGenerator);
     }
+    @Provides EventBuilder providesEventBuilder(IValidator validator,
+                                                IKeyValueArchiver keyValueStore,
+                                                IClock clock, IUniqueIdGenerator idGenerator) {
+        return new EventBuilder(validator, keyValueStore, clock, idGenerator);
+    }
 }

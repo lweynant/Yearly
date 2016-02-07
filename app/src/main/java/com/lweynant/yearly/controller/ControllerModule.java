@@ -14,6 +14,7 @@ import com.lweynant.yearly.controller.list_events.IEventsLoader;
 import com.lweynant.yearly.controller.list_events.ListEventsContract;
 import com.lweynant.yearly.controller.list_events.ListEventsPresenter;
 import com.lweynant.yearly.model.BirthdayBuilder;
+import com.lweynant.yearly.model.EventBuilder;
 import com.lweynant.yearly.model.IEventRepoTransaction;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IEventNotification;
@@ -57,8 +58,10 @@ public class ControllerModule {
         return new AddBirthdayPresenter(builder, transaction, dateFormatter);
     }
 
-    @Provides @PerApp AddEventContract.UserActionListener providesAddEventPresenter(DateFormatter dateFormatter) {
-        return new AddEventPresenter(dateFormatter);
+    @Provides @PerApp AddEventContract.UserActionListener providesAddEventPresenter(EventBuilder builder,
+                                                                                    IEventRepoTransaction transaction,
+                                                                                    DateFormatter dateFormatter) {
+        return new AddEventPresenter(builder, transaction, dateFormatter);
     }
     @Provides @PerApp ListEventsContract.UserActionsListener providesEventsListPresenter(IEventsLoader eventsLoader,
                                                                                          IEventRepoTransaction transaction,
