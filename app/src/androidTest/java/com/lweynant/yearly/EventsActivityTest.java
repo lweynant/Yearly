@@ -201,6 +201,14 @@ public class EventsActivityTest {
         onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("Joe")))));
         verify(alarm).scheduleAlarm(today, NotificationTime.MORNING);
     }
+    @Test public void testAddEventOnEmptyList() {
+        activityTestRule.launchActivity(new Intent());
+        onView(withId(R.id.fab_expand_menu_button)).perform(click());
+        onView(withId(R.id.action_add_event)).perform(click());
+        enterEvent("Marriage", today);
+        onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("Marriage")))));
+        verify(alarm).scheduleAlarm(today, NotificationTime.MORNING);
+    }
 
     @Test public void testAddBirthDayOnNonEmptyList() {
         initializeTheListWith(createBirthday("Yesterday", today.minusDays(1)),
@@ -241,6 +249,15 @@ public class EventsActivityTest {
         onView(withText(R.string.apply)).perform(click());
         //noinspection ResourceType
         onView(withId(R.id.edit_text_birthday_date)).check(matches(withText(dateFormatter.format(date.getMonthOfYear(), date.getDayOfMonth()))));
+        pressBack();
+    }
+    private void enterEvent(String eventName, LocalDate date) {
+        onView(withId(R.id.edit_text_event_name)).perform(typeText(eventName), closeSoftKeyboard());
+        onView(withId(R.id.edit_text_event_date)).perform(click());
+        onView(withId(R.id.date_picker)).perform(setDate(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth()));
+        onView(withText(R.string.apply)).perform(click());
+        //noinspection ResourceType
+        onView(withId(R.id.edit_text_event_date)).check(matches(withText(dateFormatter.format(date.getMonthOfYear(), date.getDayOfMonth()))));
         pressBack();
     }
 

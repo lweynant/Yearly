@@ -18,6 +18,8 @@ import com.lweynant.yearly.controller.AlarmGenerator;
 import com.lweynant.yearly.controller.BaseActivity;
 import com.lweynant.yearly.controller.add_event.AddBirthdayActivity;
 import com.lweynant.yearly.controller.add_event.AddBirthdayContract;
+import com.lweynant.yearly.controller.add_event.AddEventActivity;
+import com.lweynant.yearly.controller.add_event.AddEventContract;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.IEvent;
@@ -40,6 +42,7 @@ import timber.log.Timber;
 public class ListEventsActivity extends BaseActivity implements ListEventsContract.ActivityView {
 
     private static final int REQUEST_ADD_BIRTHDAY = 1;
+    private static final int REQUEST_ADD_EVENT = 2;
     @Inject IClock clock;
     @Inject IUniqueIdGenerator idGenerator;
     @Inject IEventRepo repo;
@@ -65,7 +68,6 @@ public class ListEventsActivity extends BaseActivity implements ListEventsContra
         addEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LocalDate date = clock.now();
                 userActionsListener.addNewEvent();
 
                 menuMultipleActions.collapse();
@@ -90,7 +92,10 @@ public class ListEventsActivity extends BaseActivity implements ListEventsContra
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Timber.d("onActivityResult %d", resultCode);
-        if (requestCode == REQUEST_ADD_BIRTHDAY && resultCode == Activity.RESULT_OK) {
+        if (resultCode == Activity.RESULT_CANCELED) {
+            Timber.d("nothing added");
+        }
+        else if (requestCode == REQUEST_ADD_BIRTHDAY) {
             String name = data.getStringExtra(AddBirthdayContract.EXTRA_KEY_BIRTHDAY);
             if (name != null) {
                 Timber.d("adding birthday %s", name);
@@ -99,6 +104,14 @@ public class ListEventsActivity extends BaseActivity implements ListEventsContra
                         .setAction("Action", null).show();
             } else {
                 Timber.d("nothing added");
+            }
+        }
+        else if (requestCode == REQUEST_ADD_EVENT) {
+            String name = data.getStringExtra(AddEventContract.EXTRA_KEY_EVENT);
+            if (name!= null) {
+                Timber.d("adding event %s", name);
+                View view = findViewById(R.id.multiple_actions);
+                Snackbar.make(view, String.format(getResources().getString(R.string.add_event_for), name), Snackbar.LENGTH_LONG);
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -151,10 +164,8 @@ public class ListEventsActivity extends BaseActivity implements ListEventsContra
     }
 
     @Override public void showAddNewEventUI() {
-        //TOOD start new activity for now we simply added an event
-        LocalDate date = clock.now();
-        //noinspection ResourceType
-        userActionsListener.addEvent(new Birthday("Darth", "Vader",
-                date.getMonthOfYear(), date.getDayOfMonth(), clock, idGenerator));
+        Timber.d("showAddNewEventUI");
+        Intent intent = new Intent(ListEventsActivity.this, AddEventActivity.class);
+        startActivityForResult(intent, REQUEST_ADD_EVENT);
     }
 }

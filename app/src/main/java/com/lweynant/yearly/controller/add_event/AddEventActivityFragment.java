@@ -1,5 +1,7 @@
 package com.lweynant.yearly.controller.add_event;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -86,11 +88,13 @@ public class AddEventActivityFragment extends BaseFragment implements DateSelect
     }
 
     @Override public void showSavedEvent(String name) {
-
+        Intent intent = new Intent();
+        intent.putExtra(AddEventContract.EXTRA_KEY_EVENT, name);
+        getActivity().setResult(Activity.RESULT_OK, intent);
     }
 
     @Override public void showNothingSaved() {
-
+        getActivity().setResult(Activity.RESULT_CANCELED);
     }
 
     @Override public void enableSaveButton(Boolean enabled) {

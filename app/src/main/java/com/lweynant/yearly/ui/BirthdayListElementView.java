@@ -13,7 +13,7 @@ import org.joda.time.LocalDate;
 public class BirthdayListElementView implements IEventListElementView {
 
     private final TextView textView;
-    private final BirthdayStringResource stringResource;
+    private final IEventStringResource stringResource;
 
     public BirthdayListElementView(IStringResources rstring, ViewGroup parent) {
         stringResource = new BirthdayStringResource(rstring);

@@ -52,12 +52,6 @@ public class ListEventsPresenter implements ListEventsContract.UserActionsListen
         eventsLoader.cancelLoadingEvents();
     }
 
-    @Override public void addEvent(IEvent event) {
-        transaction.add(event)
-                .commit();
-        eventsLoader.loadEvents(true, this);
-        activityView.showEventAdded(event);
-    }
 
     @Override public void addNewBirthday() {
         activityView.showAddNewBirthdayUI();

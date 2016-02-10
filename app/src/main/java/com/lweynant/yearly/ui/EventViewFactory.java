@@ -4,6 +4,7 @@ import android.view.ViewGroup;
 
 import com.lweynant.yearly.IStringResources;
 import com.lweynant.yearly.model.Birthday;
+import com.lweynant.yearly.model.Event;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IEventNotificationText;
@@ -24,6 +25,9 @@ public class EventViewFactory implements IEventViewFactory {
         if (eventType == BIRTHDAY_LIST_ELEMENT_VIEW_TYPE) {
             return new BirthdayListElementView(rstring, parent);
         }
+        else if (eventType == EVENT_LIST_ELEMENT_VIEW_TYPE) {
+            return new EventListElementView(rstring, parent);
+        }
         return null;
     }
 
@@ -36,7 +40,10 @@ public class EventViewFactory implements IEventViewFactory {
 
     @Override public IEventNotificationText getEventNotificationText(IEvent event) {
         if (event.getType().equals(Birthday.class.getCanonicalName())) {
-            return new BirthdayEventNotificationText(event, new BirthdayStringResource(rstring), clock);
+            return new BirthdayNotificationText(event, new BirthdayStringResource(rstring), clock);
+        }
+        else if (event.getType().equals(Event.class.getCanonicalName())) {
+            return new EventNotificationText(event, new EventStringResource(rstring), clock);
         }
         return null;
     }

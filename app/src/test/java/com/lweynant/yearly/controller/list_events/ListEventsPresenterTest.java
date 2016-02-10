@@ -70,16 +70,6 @@ public class ListEventsPresenterTest {
         verify(fragmentView).showEventDetailsUI(event);
     }
 
-    @Test public void testAddEvent() {
-        IEvent event = createEvent();
-        sut.addEvent(event);
-
-        verify(transaction).add(event);
-        verify(transaction).commit();
-        verify(eventsLoader).loadEvents(true, sut);
-        verify(activityView).showEventAdded(event);
-    }
-
     @Test public void testAddNewBirthday() {
         sut.addNewBirthday();
 

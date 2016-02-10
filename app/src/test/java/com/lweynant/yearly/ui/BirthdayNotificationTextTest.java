@@ -17,12 +17,12 @@ import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class BirthdayEventNotificationTextTest {
+public class BirthdayNotificationTextTest {
 
     @Mock private IEvent event;
-    @Mock private BirthdayStringResource rstring;
+    @Mock private IEventStringResource rstring;
     @Mock private IClock clock;
-    private BirthdayEventNotificationText sut;
+    private BirthdayNotificationText sut;
     private LocalDate today;
     private LocalDate tomorrow;
     private LocalDate dayAfterTomorrow;
@@ -32,7 +32,7 @@ public class BirthdayEventNotificationTextTest {
         tomorrow = today.plusDays(1);
         dayAfterTomorrow = tomorrow.plusDays(1);
         when(clock.now()).thenReturn(today);
-        sut = new BirthdayEventNotificationText(event, rstring, clock);
+        sut = new BirthdayNotificationText(event, rstring, clock);
 
     }
     @Test public void getTitle_FirstLetterIsCapitalized() {

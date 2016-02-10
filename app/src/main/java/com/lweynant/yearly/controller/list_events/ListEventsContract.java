@@ -40,8 +40,5 @@ public interface ListEventsContract {
 
         void addNewEvent();
 
-        //this is a temporary function
-        void addEvent(IEvent event);
-
     }
 }

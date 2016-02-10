@@ -1,36 +1,25 @@
 package com.lweynant.yearly.ui;
 
-import android.text.TextUtils;
-
-import com.lweynant.yearly.IStringResources;
 import com.lweynant.yearly.R;
-import com.lweynant.yearly.utils.CaseFormat;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IEventNotificationText;
+import com.lweynant.yearly.utils.CaseFormat;
 
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 
-import java.util.Arrays;
+public abstract class NotificationText  implements IEventNotificationText {
+    protected final IClock clock;
+    protected final IEvent event;
+    protected final IEventStringResource stringResource;
 
-public class BirthdayEventNotificationText implements IEventNotificationText {
-    private final IClock clock;
-    private final IEvent event;
-    private final BirthdayStringResource stringResource;
-
-    public BirthdayEventNotificationText(IEvent event, BirthdayStringResource rstring, IClock clock) {
+    public NotificationText(IEvent event, IEventStringResource rstring, IClock clock) {
+        this.event = event;
         this.stringResource = rstring;
         this.clock = clock;
-        this.event = event;
     }
 
-    @Override
-    public String getTitle() {
-        return CaseFormat.capitalizeFirstLetter(stringResource.getFormattedTitle(event));
-    }
-
-    @Override
     public String getText() {
         LocalDate eventDate = event.getDate();
         LocalDate now = clock.now();
@@ -55,10 +44,7 @@ public class BirthdayEventNotificationText implements IEventNotificationText {
         return CaseFormat.capitalizeFirstLetter(text);
     }
 
-    @Override
     public String getOneLiner() {
         return stringResource.getFormattedTitle(event) + " " + CaseFormat.uncapitalizeFirstLetter(getText());
     }
-
-
 }

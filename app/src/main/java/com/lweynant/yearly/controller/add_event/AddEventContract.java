@@ -8,6 +8,8 @@ import com.lweynant.yearly.model.IEvent;
 import rx.Observable;
 
 public interface AddEventContract {
+    String EXTRA_KEY_EVENT = "event";
+
     interface FragmentView {
         void showDate(String date);
 

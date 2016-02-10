@@ -38,10 +38,11 @@
     <string name="yyy_mm_dd">%1$d/%2$d/%3$d</string>
     <string name="mm_dd">%1$d/%2$d</string>
     <string name="title_activity_add_event">AddEventActivity</string>
-    <string name="event_name">event</string>
-    <string name="event_date">date</string>
+    <string name="event_name">Event name</string>
+    <string name="event_date">Date</string>
     <string name="on">on</string>
     <string name="day_after_tomorrow">day after tomorrow</string>
+    <string name="add_event_for">add event %1$s</string>
 
 
 </resources>

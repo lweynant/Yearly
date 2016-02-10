@@ -39,4 +39,7 @@
     <string name="mm_dd">%2$d/%1$d</string>
     <string name="on">op</string>
     <string name="day_after_tomorrow">overmorgen</string>
+    <string name="add_event_for">Event %1$s toegevoegd</string>
+    <string name="event_date">Datum</string>
+    <string name="event_name">Naam gebeurtenis</string>
 </resources>
