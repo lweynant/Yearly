@@ -29,10 +29,14 @@ import dagger.Component;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.contrib.PickerActions.setDate;
+import static android.support.test.espresso.matcher.ViewMatchers.isRoot;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static com.lweynant.yearly.action.OrientationChangeAction.orientationLandscape;
 import static org.mockito.Mockito.when;
 
 @RunWith(AndroidJUnit4.class)
@@ -102,5 +106,18 @@ public class AddBirthdayActivityTest {
         onView(withId(R.id.edit_text_birthday_date)).check(matches(withText(dateFormatter.format(1966, Date.FEBRUARY, 8))));
     }
 
+    @Test public void configChangeSavesName() {
+        onView(withId(R.id.edit_text_first_name)).perform(typeText("John"), closeSoftKeyboard());
+        onView(isRoot()).perform(orientationLandscape());
+        onView(withId(R.id.edit_text_first_name)).check(matches(withText("John")));
+    }
+    @Test public void configChangeSavesDate() throws InterruptedException {
+        onView(withId(R.id.edit_text_birthday_date)).perform(click());
+        onView(withText(R.string.apply)).perform(click());
+        onView(isRoot()).perform(orientationLandscape());
+        //noinspection ResourceType
+        onView(withId(R.id.edit_text_birthday_date))
+                .check(matches(withText(dateFormatter.format(today.getMonthOfYear(), today.getDayOfMonth()))));
+    }
 
 }

@@ -55,8 +55,10 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.contrib.PickerActions.setDate;
 import static android.support.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.isRoot;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static com.lweynant.yearly.action.OrientationChangeAction.orientationLandscape;
 import static com.lweynant.yearly.matcher.RecyclerViewMatcher.withRecyclerView;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
@@ -159,6 +161,20 @@ public class EventsActivityTest {
         onView(withRecyclerView(R.id.events_recycler_view).atPosition(2)).check(matches(withText(containsString("Yesterday"))));
         verify(alarm).scheduleAlarm(today, NotificationTime.MORNING);
         verifyNoMoreInteractions(alarm);
+    }
+    @Test public void testListRemainsAfterOrientationChange() {
+        initializeTheListWith(createBirthday("Yesterday", today.minusDays(1)),
+                              createBirthday("Tomorrow", today.plusDays(1)),
+                              createBirthday("Today", today));
+        activityTestRule.launchActivity(new Intent());
+
+        onView(withRecyclerView(R.id.events_recycler_view).atPosition(0)).check(matches(withText(containsString("Today"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPosition(1)).check(matches(withText(containsString("Tomorrow"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPosition(2)).check(matches(withText(containsString("Yesterday"))));
+        onView(isRoot()).perform(orientationLandscape());
+        onView(withRecyclerView(R.id.events_recycler_view).atPosition(0)).check(matches(withText(containsString("Today"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPosition(1)).check(matches(withText(containsString("Tomorrow"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPosition(2)).check(matches(withText(containsString("Yesterday"))));
     }
 
 
