@@ -111,7 +111,8 @@ public class ListEventsActivity extends BaseActivity implements ListEventsContra
             if (name!= null) {
                 Timber.d("adding event %s", name);
                 View view = findViewById(R.id.multiple_actions);
-                Snackbar.make(view, String.format(getResources().getString(R.string.add_event_for), name), Snackbar.LENGTH_LONG);
+                Snackbar.make(view, String.format(getResources().getString(R.string.add_event_for), name), Snackbar.LENGTH_LONG)
+                      .setAction("Action", null).show();
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
