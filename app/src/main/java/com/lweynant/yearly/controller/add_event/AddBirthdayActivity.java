@@ -2,18 +2,20 @@ package com.lweynant.yearly.controller.add_event;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.lweynant.yearly.BaseYearlyAppComponent;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.controller.BaseActivity;
+import com.lweynant.yearly.controller.SingleFragmentActivity;
 
 import javax.inject.Inject;
 
 import timber.log.Timber;
 
-public class AddBirthdayActivity extends BaseActivity {
+public class AddBirthdayActivity extends SingleFragmentActivity {
     @Inject AddBirthdayContract.UserActionsListener userActionsListener;
 
     @Override
@@ -33,6 +35,10 @@ public class AddBirthdayActivity extends BaseActivity {
 //        });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setResult(RESULT_OK, new Intent());
+    }
+
+    @Override protected Fragment createFragment() {
+        return AddBirthdayActivityFragment.newInstance(new Bundle());
     }
 
     @Override protected void injectDependencies(BaseYearlyAppComponent component) {

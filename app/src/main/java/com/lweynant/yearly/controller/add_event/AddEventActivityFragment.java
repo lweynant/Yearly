@@ -35,8 +35,17 @@ public class AddEventActivityFragment extends BaseFragment implements DateSelect
     @Inject DateSelector dateSelector;
     @Inject AddEventContract.UserActionListener userActionListener;
 
+
+    public static AddEventActivityFragment newInstance(Bundle args) {
+        AddEventActivityFragment fragment = new AddEventActivityFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     public AddEventActivityFragment() {
     }
+
+
 
     @Override protected void injectDependencies(BaseYearlyAppComponent component) {
         component.inject(this);

@@ -33,6 +33,11 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
     @Inject DateSelector dateSelector;
     @Inject AddBirthdayContract.UserActionsListener userActionsListener;
 
+    public static AddBirthdayActivityFragment newInstance(Bundle args) {
+        AddBirthdayActivityFragment fragment = new AddBirthdayActivityFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
     public AddBirthdayActivityFragment() {
     }
 
