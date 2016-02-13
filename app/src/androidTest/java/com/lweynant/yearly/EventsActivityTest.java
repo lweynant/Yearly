@@ -18,7 +18,7 @@ import com.lweynant.yearly.controller.list_events.ListEventsContract;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.IEventRepo;
-import com.lweynant.yearly.model.IEventRepoTransaction;
+import com.lweynant.yearly.model.ITransaction;
 import com.lweynant.yearly.model.ModelModule;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.platform.IEventNotification;
@@ -81,7 +81,7 @@ public class EventsActivityTest {
     }
 
     @Inject IJsonFileAccessor fileAccessor;
-    @Inject IEventRepoTransaction transaction;
+    @Inject ITransaction transaction;
     @Inject IClock clock;
     @Inject IUniqueIdGenerator idGenerator;
     @Inject EventsAdapter eventsAdapter;

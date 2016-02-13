@@ -1,8 +1,7 @@
 package com.lweynant.yearly.controller.list_events;
 
-import com.lweynant.yearly.model.EventRepoTransaction;
 import com.lweynant.yearly.model.IEvent;
-import com.lweynant.yearly.model.IEventRepoTransaction;
+import com.lweynant.yearly.model.ITransaction;
 import com.lweynant.yearly.platform.IEventNotification;
 
 import java.util.List;
@@ -15,11 +14,11 @@ public class ListEventsPresenter implements ListEventsContract.UserActionsListen
 
     private ListEventsContract.FragmentView fragmentView;
     private IEventsLoader eventsLoader;
-    private IEventRepoTransaction transaction;
+    private ITransaction transaction;
     private IEventNotification eventNotification;
     private ListEventsContract.ActivityView activityView;
 
-    public ListEventsPresenter(IEventsLoader eventsLoader, IEventRepoTransaction transaction,
+    public ListEventsPresenter(IEventsLoader eventsLoader, ITransaction transaction,
                                IEventNotification eventNotification) {
         this.eventsLoader = eventsLoader;
         this.transaction = transaction;

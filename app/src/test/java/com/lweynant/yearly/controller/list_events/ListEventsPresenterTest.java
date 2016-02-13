@@ -1,8 +1,7 @@
 package com.lweynant.yearly.controller.list_events;
 
-import com.lweynant.yearly.model.EventRepoTransaction;
 import com.lweynant.yearly.model.IEvent;
-import com.lweynant.yearly.model.IEventRepoTransaction;
+import com.lweynant.yearly.model.ITransaction;
 import com.lweynant.yearly.platform.IEventNotification;
 
 import org.junit.Before;
@@ -24,7 +23,7 @@ import static org.mockito.Mockito.when;
 public class ListEventsPresenterTest {
 
     @Mock IEventsLoader eventsLoader;
-    @Mock IEventRepoTransaction transaction;
+    @Mock ITransaction transaction;
     @Mock IEventNotification eventNotification;
     private ListEventsPresenter sut;
     @Mock ListEventsContract.ActivityView activityView;

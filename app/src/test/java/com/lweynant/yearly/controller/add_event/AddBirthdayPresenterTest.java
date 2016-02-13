@@ -8,7 +8,7 @@ import com.lweynant.yearly.controller.DateFormatter;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.model.Date;
-import com.lweynant.yearly.model.IEventRepoTransaction;
+import com.lweynant.yearly.model.ITransaction;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IUniqueIdGenerator;
 
@@ -41,7 +41,7 @@ public class AddBirthdayPresenterTest {
     @Mock IStringResources rstring;
 
     String[] months = new String[] {"%1$d", "%1$d jan", "%1$d feb", "%1$d mar", "%1$d apr", "%1$d mei", "%1$d jun", "%1$d jul", "%1$d aug", "%1$d sep", "%1$d okt", "%1$d nov", "%1$d dec" };
-    @Mock IEventRepoTransaction transaction;
+    @Mock ITransaction transaction;
     @Mock BirthdayBuilder birthdayBuilder;
 
 

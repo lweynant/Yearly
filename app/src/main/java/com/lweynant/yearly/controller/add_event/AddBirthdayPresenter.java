@@ -6,20 +6,20 @@ import com.lweynant.yearly.controller.DateFormatter;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.model.Date;
-import com.lweynant.yearly.model.IEventRepoTransaction;
+import com.lweynant.yearly.model.ITransaction;
 
 import rx.Observable;
 import rx.subscriptions.CompositeSubscription;
 
 public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsListener {
-    private IEventRepoTransaction transaction;
+    private ITransaction transaction;
     private final DateFormatter dateFormatter;
     private AddBirthdayContract.FragmentView fragmentView;
 
     private BirthdayBuilder birthdayBuilder;
     private final CompositeSubscription subcription = new CompositeSubscription();
 
-    public AddBirthdayPresenter(BirthdayBuilder birthdayBuilder, IEventRepoTransaction transaction,  DateFormatter dateFormatter) {
+    public AddBirthdayPresenter(BirthdayBuilder birthdayBuilder, ITransaction transaction,  DateFormatter dateFormatter) {
         this.birthdayBuilder = birthdayBuilder;
         this.transaction = transaction;
         this.dateFormatter = dateFormatter;

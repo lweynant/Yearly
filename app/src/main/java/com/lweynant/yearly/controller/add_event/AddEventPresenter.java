@@ -6,7 +6,7 @@ import com.lweynant.yearly.controller.DateFormatter;
 import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.EventBuilder;
 import com.lweynant.yearly.model.IEvent;
-import com.lweynant.yearly.model.IEventRepoTransaction;
+import com.lweynant.yearly.model.ITransaction;
 
 import rx.Observable;
 import rx.subscriptions.CompositeSubscription;
@@ -15,11 +15,11 @@ public class AddEventPresenter implements AddEventContract.UserActionListener{
 
     private AddEventContract.FragmentView fragmentView;
     private EventBuilder builder;
-    private IEventRepoTransaction transaction;
+    private ITransaction transaction;
     private DateFormatter dateFormatter;
     private CompositeSubscription subcription = new CompositeSubscription();
 
-    public AddEventPresenter(EventBuilder builder, IEventRepoTransaction transaction, DateFormatter dateFormatter){
+    public AddEventPresenter(EventBuilder builder, ITransaction transaction, DateFormatter dateFormatter){
         this.builder = builder;
         this.transaction = transaction;
         this.dateFormatter = dateFormatter;

@@ -20,16 +20,13 @@ import com.lweynant.yearly.controller.add_event.AddBirthdayActivity;
 import com.lweynant.yearly.controller.add_event.AddBirthdayContract;
 import com.lweynant.yearly.controller.add_event.AddEventActivity;
 import com.lweynant.yearly.controller.add_event.AddEventContract;
-import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.IEventRepo;
-import com.lweynant.yearly.model.IEventRepoTransaction;
+import com.lweynant.yearly.model.ITransaction;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IJsonFileAccessor;
 import com.lweynant.yearly.platform.IUniqueIdGenerator;
-
-import org.joda.time.LocalDate;
 
 import javax.inject.Inject;
 
@@ -46,7 +43,7 @@ public class ListEventsActivity extends BaseActivity implements ListEventsContra
     @Inject IClock clock;
     @Inject IUniqueIdGenerator idGenerator;
     @Inject IEventRepo repo;
-    @Inject IEventRepoTransaction transaction;
+    @Inject ITransaction transaction;
     @Inject IJsonFileAccessor fileAccessor;
     @Inject AlarmGenerator alarmGenerator;
     @Inject ListEventsContract.UserActionsListener userActionsListener;

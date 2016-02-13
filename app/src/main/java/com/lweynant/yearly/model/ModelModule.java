@@ -25,8 +25,8 @@ public class ModelModule {
     }
 
 
-    @Provides IEventRepoTransaction providesEventRepoTransaction(IEventRepoModifier repoModifier){
-        return new EventRepoTransaction(repoModifier);
+    @Provides ITransaction providesEventRepoTransaction(IEventRepoModifier repoModifier){
+        return new Transaction(repoModifier);
     }
 
     @Provides @PerApp ValidatorFactory providesValidatorFactory() {

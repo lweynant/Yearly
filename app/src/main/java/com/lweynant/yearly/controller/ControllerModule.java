@@ -15,7 +15,7 @@ import com.lweynant.yearly.controller.list_events.ListEventsContract;
 import com.lweynant.yearly.controller.list_events.ListEventsPresenter;
 import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.model.EventBuilder;
-import com.lweynant.yearly.model.IEventRepoTransaction;
+import com.lweynant.yearly.model.ITransaction;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IEventNotification;
 import com.lweynant.yearly.ui.IEventViewFactory;
@@ -53,18 +53,18 @@ public class ControllerModule {
     }
 
     @Provides @PerApp AddBirthdayContract.UserActionsListener providesAddBirthdayPresenter(BirthdayBuilder builder,
-                                                                                           IEventRepoTransaction transaction,
+                                                                                           ITransaction transaction,
                                                                                            DateFormatter dateFormatter) {
         return new AddBirthdayPresenter(builder, transaction, dateFormatter);
     }
 
     @Provides @PerApp AddEventContract.UserActionListener providesAddEventPresenter(EventBuilder builder,
-                                                                                    IEventRepoTransaction transaction,
+                                                                                    ITransaction transaction,
                                                                                     DateFormatter dateFormatter) {
         return new AddEventPresenter(builder, transaction, dateFormatter);
     }
     @Provides @PerApp ListEventsContract.UserActionsListener providesEventsListPresenter(IEventsLoader eventsLoader,
-                                                                                         IEventRepoTransaction transaction,
+                                                                                         ITransaction transaction,
                                                                                          IEventNotification eventNotification) {
         return new ListEventsPresenter(eventsLoader,  transaction, eventNotification);
     }

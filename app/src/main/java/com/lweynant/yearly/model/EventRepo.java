@@ -47,13 +47,13 @@ public class EventRepo implements IEventRepoModifier, IEventRepo {
         listeners.remove(listener);
     }
 
-    @Override public void commit(IEventRepoTransaction transaction) {
+    @Override public void commit(ITransaction transaction) {
         Timber.d("commit");
         transaction.committed().subscribe(iTransactionItem -> handle(iTransactionItem));
         notifyListeners();
     }
 
-    private void handle(IEventRepoTransaction.ITransactionItem transactionItem) {
+    private void handle(ITransaction.ITransactionItem transactionItem) {
         switch (transactionItem.action()){
             case ADD:
                 add(transactionItem.event());

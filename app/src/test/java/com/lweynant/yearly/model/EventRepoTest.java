@@ -8,7 +8,6 @@ import com.lweynant.yearly.platform.IUniqueIdGenerator;
 
 import org.joda.time.LocalDate;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -43,7 +42,7 @@ public class EventRepoTest {
     private EventRepo sut;
     private int nbrOfDaysForNotification;
     private String name;
-    private EventRepoTransaction transaction;
+    private Transaction transaction;
 
     @Before
     public void setUp() throws Exception {
@@ -54,7 +53,7 @@ public class EventRepoTest {
         when(fileAccessor.read()).thenReturn(new JsonObject());
         nbrOfDaysForNotification = 1;
         sut = new EventRepo(fileAccessor, clock, uniqueIdGenerator);
-        transaction = new EventRepoTransaction(sut);
+        transaction = new Transaction(sut);
         name = "event name";
 
     }

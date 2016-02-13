@@ -2,13 +2,13 @@ package com.lweynant.yearly.model;
 
 import rx.Observable;
 
-public interface IEventRepoTransaction {
+public interface ITransaction {
     enum Action {
         ADD,
         REMOVE
     }
     interface ITransactionItem {
-        IEventRepoTransaction.Action action();
+        ITransaction.Action action();
         IEvent event();
     }
     class AddTransactionItem implements ITransactionItem {
@@ -44,9 +44,9 @@ public interface IEventRepoTransaction {
     }
 
 
-    IEventRepoTransaction add(IEvent event);
+    ITransaction add(IEvent event);
 
-    IEventRepoTransaction remove(IEvent event);
+    ITransaction remove(IEvent event);
 
     void commit();
 

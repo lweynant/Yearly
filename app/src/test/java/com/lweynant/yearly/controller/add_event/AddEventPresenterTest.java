@@ -6,7 +6,7 @@ import com.lweynant.yearly.controller.DateFormatter;
 import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.EventBuilder;
 import com.lweynant.yearly.model.IEvent;
-import com.lweynant.yearly.model.IEventRepoTransaction;
+import com.lweynant.yearly.model.ITransaction;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +30,7 @@ public class AddEventPresenterTest {
     @Mock AddEventContract.FragmentView fragmentView;
     @Mock DateFormatter dateFormatter;
     @Mock EventBuilder eventBuilder;
-    @Mock IEventRepoTransaction repoTransaction;
+    @Mock ITransaction repoTransaction;
     private AddEventPresenter sut;
 
     @Before public void setUp() {

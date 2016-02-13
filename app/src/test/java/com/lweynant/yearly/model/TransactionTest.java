@@ -1,7 +1,6 @@
 package com.lweynant.yearly.model;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -21,13 +20,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public class EventRepoTransactionTest {
+public class TransactionTest {
 
     @Mock IEventRepoModifier repoModifier;
-    private EventRepoTransaction sut;
+    private Transaction sut;
 
     @Before public void setUp() {
-        sut = new EventRepoTransaction(repoModifier);
+        sut = new Transaction(repoModifier);
     }
 
 
@@ -62,7 +61,7 @@ public class EventRepoTransactionTest {
     }
 
     @Test public void testAddedOnEmptyTransaction() {
-        List<IEventRepoTransaction.ITransactionItem> list = sut.committed().toList().toBlocking().first();
+        List<ITransaction.ITransactionItem> list = sut.committed().toList().toBlocking().first();
         assertThat(list, hasSize(0));
     }
 
@@ -73,7 +72,7 @@ public class EventRepoTransactionTest {
         assertThat(list, contains(event));
     }
 
-    private List<IEvent> getEventsList(Observable<IEventRepoTransaction.ITransactionItem> committed) {
+    private List<IEvent> getEventsList(Observable<ITransaction.ITransactionItem> committed) {
         return committed.map(t -> t.event()).toList().toBlocking().first();
     }
 
