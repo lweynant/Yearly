@@ -8,6 +8,7 @@ import com.lweynant.yearly.platform.IUniqueIdGenerator;
 
 import org.joda.time.LocalDate;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -46,7 +47,8 @@ public class EventRepoTest {
 
     @Before
     public void setUp() throws Exception {
-        when(clock.now()).thenReturn(new LocalDate(2015, 1, 23));
+        LocalDate today = new LocalDate(2015, 1, 23);
+        when(clock.now()).thenReturn(today);
         when(clock.timestamp()).thenReturn("timestamp");
         when(uniqueIdGenerator.getUniqueId()).thenReturn("initial id");
         when(fileAccessor.read()).thenReturn(new JsonObject());
@@ -92,7 +94,7 @@ public class EventRepoTest {
 
     @Test
     public void getEvents_FromRepoWith1Event() throws Exception {
-        IEvent event = new Event(name, Date.AUGUST, 1, clock, uniqueIdGenerator);
+        IEvent event = createEvent(name, Date.AUGUST, 1);
         transaction.add(event).commit();
         Observable<IEvent> events = sut.getEvents();
         List<IEvent> list = events.toList().toBlocking().single();
@@ -104,9 +106,9 @@ public class EventRepoTest {
     public void getEvents_FromRepoWithNEvent() throws Exception {
         when(clock.now()).thenReturn(new LocalDate(2015, Date.APRIL, 23));
 
-        IEvent event1 = new Event(name, Date.FEBRUARY, 8, clock, uniqueIdGenerator);
-        IEvent event2 = new Event(name, Date.AUGUST, 1, clock, uniqueIdGenerator);
-        IEvent event3 = new Event(name, Date.NOVEMBER, 8, clock, uniqueIdGenerator);
+        IEvent event1 = createEvent(name, Date.FEBRUARY, 8);
+        IEvent event2 = createEvent(name, Date.AUGUST, 1);
+        IEvent event3 = createEvent(name, Date.NOVEMBER, 8);
         transaction.add(event1).add(event2).add(event3).commit();
         Observable<IEvent> events = sut.getEvents();
         List<IEvent> list = events.toSortedList().toBlocking().single();
@@ -117,7 +119,7 @@ public class EventRepoTest {
 
     @Test
     public void getEvents_RemoveEvent_EmptyList() throws Exception {
-        IEvent event = new Event(name, Date.AUGUST, 4, clock, uniqueIdGenerator);
+        IEvent event = createEvent(name, Date.AUGUST, 4);
         transaction.add(event).commit();
         transaction.remove(event).commit();
         List<IEvent> events = sut.getEvents().toList().toBlocking().single();
@@ -126,14 +128,24 @@ public class EventRepoTest {
 
     @Test
     public void getEvents_RemoveEvent() throws Exception {
-        IEvent event1 = new Event(name, Date.AUGUST, 4, clock, uniqueIdGenerator);
-        IEvent event2 = new Event(name, Date.AUGUST, 4, clock, uniqueIdGenerator);
+        IEvent event1 = createEvent(name, Date.AUGUST, 4);
+        IEvent event2 = createEvent(name, Date.AUGUST, 4);
         transaction.add(event1).add(event2).commit();
         transaction.remove(event1).commit();
         List<IEvent> events = sut.getEvents().toList().toBlocking().single();
         assertThat(events, hasSize(1));
         assertThat(events, contains(event2));
     }
+//    @Test
+//    public void getEvents_ReplaceEvent() throws Exception {
+//        IEvent event = createEvent(name, Date.AUGUST, 4);
+//        IEvent newEvent = createEvent(event, name, Date.FEBRUARY, 4);
+//        transaction.add(event).commit();
+//        transaction.replace(newEvent).commit();
+//        List<IEvent> events = sut.getEvents().toList().toBlocking().single();
+//        assertThat(events, hasSize(1));
+//        assertThat(events, contains(newEvent));
+//    }
 
 
 
@@ -141,8 +153,8 @@ public class EventRepoTest {
     public void getEvents_SetAlarmForEventToday() throws Exception {
         LocalDate now = new LocalDate(2015, Date.FEBRUARY, 8);
         when(clock.now()).thenReturn(now);
-        IEvent event1 = new Event(name, Date.JANUARY, 5, clock, uniqueIdGenerator);
-        IEvent event2 = new Event(name, Date.AUGUST, 8, clock, uniqueIdGenerator);
+        IEvent event1 = createEvent(name, Date.JANUARY, 5);
+        IEvent event2 = createEvent(name, Date.AUGUST, 8);
         @SuppressWarnings("ResourceType")
         IEvent event3 = new Event(name, now.getMonthOfYear(), now.getDayOfMonth(), clock, uniqueIdGenerator);
         transaction.add(event1).add(event2).add(event3).commit();
@@ -156,11 +168,11 @@ public class EventRepoTest {
         LocalDate now = new LocalDate(2015, Date.JULY, 31);
         when(clock.now()).thenReturn(now);
 
-        IEvent event1 = new Event(name, Date.FEBRUARY, 8, clock, uniqueIdGenerator);
-        IEvent event2 = new Event(name, Date.AUGUST, 1, clock, uniqueIdGenerator);
-        IEvent event3 = new Event(name, Date.AUGUST, 2, clock, uniqueIdGenerator);
+        IEvent event1 = createEvent(name, Date.FEBRUARY, 8);
+        IEvent event2 = createEvent(name, Date.AUGUST, 1);
+        IEvent event3 = createEvent(name, Date.AUGUST, 2);
         event3.setNbrOfDaysForNotification(2);
-        IEvent event4 = new Event(name, Date.NOVEMBER, 8, clock, uniqueIdGenerator);
+        IEvent event4 = createEvent(name, Date.NOVEMBER, 8);
         transaction.add(event1).add(event2).add(event3).add(event4).commit();
         Observable<IEvent> events = sut.getEvents();
         NotificationTime notificationTime = getFirstUpComingEventTimeBeforeNotification(events, now);
@@ -220,6 +232,12 @@ public class EventRepoTest {
     private IEvent createAnEvent(String name) {
         return new Event(name, Date.DECEMBER, 23, clock, uniqueIdGenerator);
     }
+    private IEvent createEvent(String name, @Date.Month int month, int day) {
+        return new Event(name, month, day, clock, uniqueIdGenerator);
+    }
+//    private IEvent createEvent(IUniqueIdGenerator id, String name, @Date.Month int month, int day) {
+//        return new Event(id, name, month, day, clock, uniqueIdGenerator);
+//    }
 
     private JsonObject serialize(Observable<IEvent> events) {
         EventRepoSerializer serializer = new EventRepoSerializer(clock);

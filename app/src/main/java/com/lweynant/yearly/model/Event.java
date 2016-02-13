@@ -28,6 +28,15 @@ public class Event implements IEvent {
     @Expose @SerializedName(KEY_NBR_DAYS_FOR_NOTIFICATION) private int nbrDaysForNotification = 1;
     private final IClock clock;
 
+    public Event(IEventID id, String name, @Date.Month int month, int day, IClock clock) {
+        this.name = name;
+        this.day = day;
+        this.month = month;
+        this.clock = clock;
+        this.type = getClass().getCanonicalName();
+        this.uuid = id.getStringID();
+        this.id = getID();
+    }
     public Event(String name, @Date.Month int month, int day, IClock clock, IUniqueIdGenerator uniqueIdGenerator) {
         this.name = name;
         this.day = day;
@@ -75,6 +84,10 @@ public class Event implements IEvent {
 
     @Override public int getID() {
         return id;
+    }
+
+    @Override public String getStringID() {
+        return uuid;
     }
 
     @Override public String getType() {

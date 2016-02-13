@@ -49,9 +49,18 @@ public class EventRepo implements IEventRepoModifier, IEventRepo {
 
     @Override public void commit(IEventRepoTransaction transaction) {
         Timber.d("commit");
-        transaction.added().subscribe(event -> add(event));
-        transaction.removed().subscribe(event -> remove(event));
+        transaction.committed().subscribe(iTransactionItem -> handle(iTransactionItem));
         notifyListeners();
+    }
+
+    private void handle(IEventRepoTransaction.ITransactionItem transactionItem) {
+        switch (transactionItem.action()){
+            case ADD:
+                add(transactionItem.event());
+                break;
+            case REMOVE:
+                remove(transactionItem.event());
+        }
     }
 
     @Override public Observable<IEvent> getEvents() {

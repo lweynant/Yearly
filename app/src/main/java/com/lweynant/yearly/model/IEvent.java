@@ -2,7 +2,7 @@ package com.lweynant.yearly.model;
 
 import org.joda.time.LocalDate;
 
-public interface IEvent extends Comparable<IEvent> {
+public interface IEvent extends Comparable<IEvent>, IEventID {
 
 
     public String getName();
@@ -17,7 +17,6 @@ public interface IEvent extends Comparable<IEvent> {
 
     void setNbrOfDaysForNotification(int days);
 
-    int getID();
-
     String getType();
+
 }

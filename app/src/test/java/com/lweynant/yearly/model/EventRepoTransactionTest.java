@@ -1,12 +1,15 @@
 package com.lweynant.yearly.model;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
+
+import rx.Observable;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
@@ -38,7 +41,6 @@ public class EventRepoTransactionTest {
         sut.commit();
         verify(repoModifier, times(1)).commit(sut);
     }
-
     @Test public void testCommitTwiceAfterAdd() {
         sut.add(createAnEvent());
         sut.commit();
@@ -59,41 +61,41 @@ public class EventRepoTransactionTest {
         verify(repoModifier, times(1)).commit(sut);
     }
 
-    @Test public void testAddOnEmptyTransaction() {
-        List<IEvent> list = sut.added().toList().toBlocking().first();
+    @Test public void testAddedOnEmptyTransaction() {
+        List<IEventRepoTransaction.ITransactionItem> list = sut.committed().toList().toBlocking().first();
         assertThat(list, hasSize(0));
     }
 
-    @Test public void testAddOnTransactionWithOneEventAdded() {
+    @Test public void testAddedOnTransactionWithOneEventAdded() {
         IEvent event = createAnEvent();
         sut.add(event);
-        List<IEvent> list = sut.added().toList().toBlocking().first();
+        List<IEvent> list = getEventsList(sut.committed());
         assertThat(list, contains(event));
     }
 
-    @Test public void testAddOnTransactionWithNEventAdded() {
+    private List<IEvent> getEventsList(Observable<IEventRepoTransaction.ITransactionItem> committed) {
+        return committed.map(t -> t.event()).toList().toBlocking().first();
+    }
+
+    @Test public void testAddedOnTransactionWithNEventAdded() {
         IEvent event1 = createAnEvent();
         IEvent event2 = createAnEvent();
         sut.add(event1).add(event2);
-        List<IEvent> list = sut.added().toList().toBlocking().first();
+        List<IEvent> list = getEventsList(sut.committed());
         assertThat(list, containsInAnyOrder(event1, event2));
     }
 
-    @Test public void testAddOnCommittedTransaction() {
+    @Test public void testAddedOnCommittedTransaction() {
         sut.add(createAnEvent()).add(createAnEvent()).add(createAnEvent()).remove(createAnEvent());
         sut.commit();
-        List<IEvent> list = sut.added().toList().toBlocking().first();
+        List<IEvent> list = getEventsList(sut.committed());
         assertThat(list, hasSize(0));
     }
 
-    @Test public void testRemoveOnEmptyTransaction() {
-        List<IEvent> list = sut.removed().toList().toBlocking().first();
-        assertThat(list, hasSize(0));
-    }
     @Test public void testRemoveOnTransactionWithOneEventRevoved() {
         IEvent event = createAnEvent();
         sut.remove(event);
-        List<IEvent> list = sut.removed().toList().toBlocking().first();
+        List<IEvent> list = getEventsList(sut.committed());
         assertThat(list, contains(event));
     }
 
@@ -101,16 +103,30 @@ public class EventRepoTransactionTest {
         IEvent event1 = createAnEvent();
         IEvent event2 = createAnEvent();
         sut.remove(event1).remove(event2);
-        List<IEvent> list = sut.removed().toList().toBlocking().first();
+        List<IEvent> list = getEventsList(sut.committed());
         assertThat(list, containsInAnyOrder(event1, event2));
     }
 
     @Test public void testRemoveOnCommittedTransaction() {
         sut.remove(createAnEvent()).remove(createAnEvent()).add(createAnEvent()).remove(createAnEvent());
         sut.commit();
-        List<IEvent> list = sut.removed().toList().toBlocking().first();
+        List<IEvent> list = getEventsList(sut.committed());
         assertThat(list, hasSize(0));
     }
+
+//    @Test public void testReplacedOnTransactionWithOneEventReplaced() {
+//        IEvent event = createAnEvent();
+//        sut.replace(event);
+//        List<IEvent> list = sut.replaced().toList().toBlocking().first();
+//        assertThat(list, contains(event));
+//    }
+//    @Test public void testReplacedOnTransactionWithNEventsReplaced() {
+//        IEvent event1 = createAnEvent();
+//        IEvent event2 = createAnEvent();
+//        sut.replace(event1).replace(event2);
+//        List<IEvent> list = sut.replaced().toList().toBlocking().first();
+//        assertThat(list, containsInAnyOrder(event1, event2));
+//    }
 
     private IEvent createAnEvent() {
         return mock(IEvent.class);
