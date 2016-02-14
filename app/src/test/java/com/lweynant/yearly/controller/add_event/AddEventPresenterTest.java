@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import com.lweynant.yearly.controller.DateFormatter;
 import com.lweynant.yearly.model.Date;
+import com.lweynant.yearly.model.Event;
 import com.lweynant.yearly.model.EventBuilder;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.ITransaction;
@@ -70,7 +71,7 @@ public class AddEventPresenterTest {
     }
 
     @Test public void saveEvent() {
-        IEvent event = createEvent("An Event");
+        Event event = createEvent("An Event");
         when(eventBuilder.build()).thenReturn(event);
         sut.saveEvent();
 
@@ -112,8 +113,8 @@ public class AddEventPresenterTest {
         verify(fragmentView).enableSaveButton(true);
     }
 
-    private IEvent createEvent(String name) {
-        IEvent event = mock(IEvent.class);
+    private Event createEvent(String name) {
+        Event event = mock(Event.class);
         when(event.getName()).thenReturn(name);
         return event;
     }
