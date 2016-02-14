@@ -1,5 +1,7 @@
 package com.lweynant.yearly.model;
 
+import android.support.test.espresso.core.deps.guava.collect.HashBasedTable;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -11,8 +13,10 @@ import com.lweynant.yearly.platform.IUniqueIdGenerator;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import rx.Observable;
@@ -25,7 +29,7 @@ public class EventRepo implements IEventRepoModifier, IEventRepo {
     private final IUniqueIdGenerator uniqueIdGenerator;
     public IJsonFileAccessor eventRepoFileAccessor = null;
     private IClock clock = null;
-    private Set<IEvent> cachedEvents = Collections.synchronizedSet(new HashSet<>());
+    private Map<String, IEvent> cachedEvents = Collections.synchronizedMap(new HashMap<String, IEvent>());
     private List<IEventRepoListener> listeners = new ArrayList<>();
     private String modificationId;
 
@@ -60,6 +64,11 @@ public class EventRepo implements IEventRepoModifier, IEventRepo {
                 break;
             case REMOVE:
                 remove(transactionItem.event());
+                break;
+            case UPDATE:
+                remove(transactionItem.event());
+                add(transactionItem.event());
+                break;
         }
     }
 
@@ -98,14 +107,14 @@ public class EventRepo implements IEventRepoModifier, IEventRepo {
 
     private IEventRepo add(IEvent event) {
         Timber.d("added event %s", event.toString());
-        cachedEvents.add(event);
+        cachedEvents.put(event.getStringID(), event);
         return this;
     }
 
 
     private IEventRepo remove(IEvent event) {
         Timber.d("removed event %s", event.toString());
-        cachedEvents.remove(event);
+        cachedEvents.remove(event.getStringID());
         return this;
     }
 
@@ -116,7 +125,7 @@ public class EventRepo implements IEventRepoModifier, IEventRepo {
             @Override
             public void call(Subscriber<? super IEvent> subscriber) {
                 cachedEvents.clear();
-                Set<IEvent> cache = new HashSet<IEvent>();
+                Map<String, IEvent> cache = new HashMap<String, IEvent>();
                 try {
                     try {
                         JsonObject jsonObject = eventRepoFileAccessor.read();
@@ -131,7 +140,7 @@ public class EventRepo implements IEventRepoModifier, IEventRepo {
                                 Event event = gson.fromJson(eventObj, Birthday.class);
                                 if (!subscriber.isUnsubscribed()) {
                                     Timber.d("calling onNext for %s", event.toString());
-                                    cache.add(event);
+                                    cache.put(event.getStringID(), event);
                                     subscriber.onNext(event);
                                 } else {
                                     break;
@@ -140,7 +149,7 @@ public class EventRepo implements IEventRepoModifier, IEventRepo {
                         }
                         Timber.d("calling onCompleted");
                         subscriber.onCompleted();
-                        cachedEvents = Collections.synchronizedSet(cache);
+                        cachedEvents = Collections.synchronizedMap(cache);
                     } catch (FileNotFoundException e) {
                         Timber.d("file not found, so we assume we have empty list");
                         subscriber.onCompleted();
@@ -162,7 +171,7 @@ public class EventRepo implements IEventRepoModifier, IEventRepo {
                 synchronized (cachedEvents) {
                     try {
                         if (cachedEvents != null) {
-                            for (IEvent event : cachedEvents) {
+                            for (IEvent event : cachedEvents.values()) {
                                 if (!subscriber.isUnsubscribed()) {
                                     Timber.d("call onNext for %s", event.toString());
                                     subscriber.onNext(event);

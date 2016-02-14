@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.lweynant.yearly.platform.JsonFileAccessor;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IUniqueIdGenerator;
+import com.lweynant.yearly.platform.UUID;
 
 import org.joda.time.LocalDate;
 import org.junit.Before;
@@ -135,16 +136,27 @@ public class EventRepoTest {
         assertThat(events, hasSize(1));
         assertThat(events, contains(event2));
     }
-//    @Test
-//    public void getEvents_ReplaceEvent() throws Exception {
-//        IEvent event = createEvent(name, Date.AUGUST, 4);
-//        IEvent newEvent = createEvent(event, name, Date.FEBRUARY, 4);
-//        transaction.add(event).commit();
-//        transaction.replace(newEvent).commit();
-//        List<IEvent> events = sut.getEvents().toList().toBlocking().single();
-//        assertThat(events, hasSize(1));
-//        assertThat(events, contains(newEvent));
-//    }
+    @Test
+    public void getEvents_RemoveEventAsDifferentInstance() throws Exception {
+        IEvent event1 = createEvent(name, Date.AUGUST, 4);
+        IEvent event2 = createEvent(name, Date.AUGUST, 4);
+        IEvent event1Copy = new Event(event1, name, Date.AUGUST, 4, clock);
+        transaction.add(event1).add(event2).commit();
+        transaction.remove(event1Copy).commit();
+        List<IEvent> events = sut.getEvents().toList().toBlocking().single();
+        assertThat(events, hasSize(1));
+        assertThat(events, contains(event2));
+    }
+    @Test
+    public void getEvents_ReplaceEvent() throws Exception {
+        IEvent event = createEvent(name, Date.AUGUST, 4);
+        IEvent newEvent = createEvent(event, name, Date.FEBRUARY, 4);
+        transaction.add(event).commit();
+        transaction.update(newEvent).commit();
+        List<IEvent> events = sut.getEvents().toList().toBlocking().single();
+        assertThat(events, hasSize(1));
+        assertThat(events, contains(newEvent));
+    }
 
 
 
@@ -229,14 +241,15 @@ public class EventRepoTest {
     }
 
     private IEvent createAnEvent(String name) {
-        return new Event(name, Date.DECEMBER, 23, clock, uniqueIdGenerator);
+        return new Event(name, Date.DECEMBER, 23, clock, new UUID());
     }
     private IEvent createEvent(String name, @Date.Month int month, int day) {
-        return new Event(name, month, day, clock, uniqueIdGenerator);
+        return new Event(name, month, day, clock, new UUID());
     }
-//    private IEvent createEvent(IUniqueIdGenerator id, String name, @Date.Month int month, int day) {
-//        return new Event(id, name, month, day, clock, uniqueIdGenerator);
-//    }
+    private IEvent createEvent(IEventID id, String name, int month, int day) {
+        return new Event(id, name, month, day, clock);
+    }
+
 
     private JsonObject serialize(Observable<IEvent> events) {
         EventRepoSerializer serializer = new EventRepoSerializer(clock);
