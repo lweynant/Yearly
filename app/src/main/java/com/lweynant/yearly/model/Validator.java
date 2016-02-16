@@ -8,6 +8,8 @@ public class Validator implements IValidator {
     private int dayOfMonth;
     private @Date.Month int month;
     private Integer year;
+    private String stringID;
+    private Integer id;
 
     public Validator() {
     }
@@ -66,6 +68,23 @@ public class Validator implements IValidator {
 
     @Override public boolean validString(String string) {
         return string != null && !string.isEmpty();
+    }
+
+    @Override public boolean validID() {
+        return id != null && validString(stringID);
+    }
+
+    @Override public void setID(String stringId, int id) {
+        this.stringID = stringId;
+        this.id = id;
+    }
+
+    @Override public int getID() {
+        return id;
+    }
+
+    @Override public String getStringID() {
+        return stringID;
     }
 
 }

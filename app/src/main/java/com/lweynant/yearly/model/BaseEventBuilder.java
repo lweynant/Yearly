@@ -58,4 +58,9 @@ public abstract class BaseEventBuilder<T extends BaseEventBuilder, E extends IEv
         validator = archiver.readValidatorFromBundle(bundle);
         return getThis();
     }
+
+    public T setID(String stringID, int ID) {
+        validator.setID(stringID, ID);
+        return getThis();
+    }
 }

@@ -22,6 +22,14 @@ public class ValidatorTest {
         assertThat(sut.validYear(), is(false));
         assertThat(sut.validMonth(), is(false));
         assertThat(sut.validDay(), is(false));
+        assertThat(sut.validID(), is(false));
+    }
+
+    @Test public void setValidId() {
+        sut.setID("id", 23);
+        assertThat(sut.validID(), is(true));
+        assertThat(sut.getID(), is(23));
+        assertThat(sut.getStringID(), is("id"));
     }
 
     @Test public void testSetValidName() {

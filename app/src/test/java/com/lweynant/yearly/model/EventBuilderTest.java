@@ -50,6 +50,12 @@ public class EventBuilderTest {
         verify(validator).setName("Joe");
     }
 
+    @Test public void setID() {
+        EventBuilder builder = sut.setID("ID", 333);
+        assertThat(builder, is(sut));
+        verify(validator).setID("ID", 333);
+    }
+
     @Test public void setYear() {
         EventBuilder builder = sut.setYear(1000);
         assertThat(builder, is(sut));
@@ -79,6 +85,14 @@ public class EventBuilderTest {
         assertThat(event, instanceOf(Event.class));
         assertThat(event, is(event("name", Date.APRIL, 20)));
     }
+    @Test public void buildMinimalValidEventWithID() throws Exception {
+        stubValidator("ID", 333, "name", Date.APRIL, 20);
+        IEvent event = sut.build();
+        assertThat(event, instanceOf(Event.class));
+        assertThat(event, is(event("ID", 333, "name", Date.APRIL, 20)));
+    }
+
+
     @Test public void buildTwiceGivesOtherInstance() throws Exception {
         stubValidator("name", Date.APRIL, 20);
         IEvent event = sut.build();
@@ -152,6 +166,12 @@ public class EventBuilderTest {
         assertThat(event, is(event("Joe", Date.APRIL, 23)));
     }
 
+    private void stubValidator(String stringID, int ID, String name, int month, int day) {
+        when(validator.validID()).thenReturn(true);
+        when(validator.getID()).thenReturn(ID);
+        when(validator.getStringID()).thenReturn(stringID);
+        stubValidator(name, month, day);
+    }
 
     private void stubValidator(IValidator validator, String name, int month, int day) {
         when(validator.validName()).thenReturn(true);

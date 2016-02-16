@@ -17,6 +17,8 @@ public class IsBirthday extends TypeSafeMatcher<Birthday> {
     private final @Date.Month int month;
     private final int day;
     private final String lastName;
+    private final String stringID;
+    private final Integer id;
 
     private IsBirthday(String name, int year, @Date.Month int month, int day) {
         this(name, null, year, month, day);
@@ -28,9 +30,24 @@ public class IsBirthday extends TypeSafeMatcher<Birthday> {
         this.month = month;
         this.day = day;
         this.lastName = lastName;
-
+        this.id = null;
+        this.stringID = null;
     }
 
+    public IsBirthday(String stringID, int id, String name, int year, int month, int day) {
+        this.stringID = stringID;
+        this.id = id;
+        this.name = name;
+        this.lastName = null;
+        this.year = year;
+        this.month = month;
+        this.day = day;
+    }
+
+    @Factory
+    public static <T> Matcher<Birthday> birthday(String stringID, int id, String name, @Date.Month int month, int day) {
+        return new IsBirthday(stringID, id, name, INVALID_YEAR, month, day);
+    }
     @Factory
     public static <T> Matcher<Birthday> birthday(String name, @Date.Month int month, int day) {
         return new IsBirthday(name, INVALID_YEAR, month, day);
@@ -53,6 +70,10 @@ public class IsBirthday extends TypeSafeMatcher<Birthday> {
 
     @Override
     protected boolean matchesSafely(Birthday actual) {
+        if (id != null) {
+            if (actual.getID() != id || actual.getStringID() != stringID) return false;
+        }
+
         LocalDate actualDate = actual.getDate();
         if (actual.getName().equals(name) && sameLastName(actual) && actualDate.getMonthOfYear() == month && actualDate.getDayOfMonth() == day) {
             if (year == INVALID_YEAR) {
@@ -72,10 +93,15 @@ public class IsBirthday extends TypeSafeMatcher<Birthday> {
 
     @Override
     public void describeTo(Description description) {
+        String prefix = "";
+        if (id != null) {
+            prefix += "(" + stringID + ", "+ Integer.toString(id) + ")";
+        }
+
         if (year == INVALID_YEAR) {
-            description.appendText(String.format("<%s %s - %02d-%02d>", name, getValidLastName(lastName), day, month));
+            description.appendText(String.format("%s<%s %s - %02d-%02d>", prefix, name, getValidLastName(lastName), day, month));
         } else {
-            description.appendText(String.format("<%s %s - %02d-%02d-%04d>", name, getValidLastName(lastName), day, month, year));
+            description.appendText(String.format("%s<%s %s - %02d-%02d-%04d>", prefix, name, getValidLastName(lastName), day, month, year));
         }
     }
 

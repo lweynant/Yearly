@@ -9,12 +9,19 @@ public class KeyValueArchiver implements IKeyValueArchiver {
         this.validatorFactory = validatorFactory;
     }
     @Override public void writeValidatorToBundle(IValidator validator, Bundle bundle) {
+        if (validator.validID()) {
+            bundle.putString(KEY_STRING_ID, validator.getStringID());
+            bundle.putInt(KEY_ID, validator.getID());
+        } else {
+            bundle.remove(KEY_ID);
+            bundle.remove(KEY_STRING_ID);
+        }
+
         if (validator.validName()) {
             bundle.putString(KEY_NAME, validator.getName());
         } else {
             bundle.remove(KEY_NAME);
         }
-
         if (validator.validYear()) {
             bundle.putInt(KEY_YEAR, validator.getYear());
         } else {
@@ -46,6 +53,9 @@ public class KeyValueArchiver implements IKeyValueArchiver {
         }
         if (bundle.containsKey(KEY_DAY)) {
             validator.setDay(bundle.getInt(KEY_DAY));
+        }
+        if (bundle.containsKey(KEY_ID) && bundle.containsKey(KEY_STRING_ID)){
+            validator.setID(bundle.getString(KEY_STRING_ID), bundle.getInt(KEY_ID));
         }
         return validator;
     }

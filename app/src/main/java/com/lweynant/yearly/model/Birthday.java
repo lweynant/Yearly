@@ -12,6 +12,11 @@ public class Birthday extends Event {
 
     @Expose @SerializedName(KEY_LAST_NAME) private final String lastName;
 
+    public Birthday(IEventID id, String name, String lastName, Integer year, @Date.Month int month, int day, IClock clock) {
+        super(id, name, year, month, day, clock);
+        super.setNbrOfDaysForNotification(2);
+        this.lastName = lastName;
+    }
     public Birthday(String name, String lastName, Integer year, @Date.Month int month, int day, IClock clock, IUniqueIdGenerator uniqueIdGenerator) {
         super(name, year, month, day, clock, uniqueIdGenerator);
         super.setNbrOfDaysForNotification(2);

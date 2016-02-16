@@ -15,7 +15,11 @@ public class EventBuilder extends BaseEventBuilder<EventBuilder, Event> {
     public Event build() {
         Event event = null;
         if (isValidEvent()) {
-            event = new Event(validator.getName(), validator.getYear(), validator.getMonth(), validator.getDay(), clock, idGenerator);
+            if (validator.validID()){
+                event = new Event(validator,validator.getName(), validator.getYear(), validator.getMonth(), validator.getDay(), clock);
+            }else {
+                event = new Event(validator.getName(), validator.getYear(), validator.getMonth(), validator.getDay(), clock, idGenerator);
+            }
         }
         return event;
     }

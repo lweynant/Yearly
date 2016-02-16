@@ -22,20 +22,20 @@ public class BirthdayBuilder extends BaseEventBuilder<BirthdayBuilder, Birthday>
 
     @Override public Birthday build() {
         if (isValidEvent()) {
-            if (validator.validYear()) {
-                return new Birthday(validator.getName(),
+            if (validator.validID()) {
+                return new Birthday(validator, validator.getName(),
+                        lastName,
+                        validator.getYear(),
+                        validator.getMonth(),
+                        validator.getDay(),
+                        clock);
+            }
+            return new Birthday(validator.getName(),
                         lastName,
                         validator.getYear(),
                         validator.getMonth(),
                         validator.getDay(),
                         clock, idGenerator);
-            } else {
-                return new Birthday(validator.getName(),
-                        lastName,
-                        validator.getMonth(),
-                        validator.getDay(),
-                        clock, idGenerator);
-            }
         }
         return null;
     }

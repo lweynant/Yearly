@@ -140,7 +140,7 @@ public class EventRepoTest {
     public void getEvents_RemoveEventAsDifferentInstance() throws Exception {
         IEvent event1 = createEvent(name, Date.AUGUST, 4);
         IEvent event2 = createEvent(name, Date.AUGUST, 4);
-        IEvent event1Copy = new Event(event1, name, Date.AUGUST, 4, clock);
+        IEvent event1Copy = new Event(event1, name, null, Date.AUGUST, 4, clock);
         transaction.add(event1).add(event2).commit();
         transaction.remove(event1Copy).commit();
         List<IEvent> events = sut.getEvents().toList().toBlocking().single();
@@ -247,7 +247,7 @@ public class EventRepoTest {
         return new Event(name, month, day, clock, new UUID());
     }
     private IEvent createEvent(IEventID id, String name, int month, int day) {
-        return new Event(id, name, month, day, clock);
+        return new Event(id, name, null, month, day, clock);
     }
 
 
