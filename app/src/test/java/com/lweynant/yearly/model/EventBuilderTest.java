@@ -5,6 +5,7 @@ import android.os.Bundle;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IUniqueIdGenerator;
 
+import org.hamcrest.CoreMatchers;
 import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
@@ -78,6 +79,14 @@ public class EventBuilderTest {
         EventBuilder builder = sut.setDay(23);
         assertThat(builder, is(sut));
         verify(validator).setDay(23);
+    }
+    @Test public void canBuildOnEmptySUT() {
+        boolean canBuild = sut.canBuild();
+        assertThat(canBuild, is(false));
+    }
+    @Test public void canBuildOnValidValidator() {
+        stubValidator("name", Date.APRIL, 20);
+        assertThat(sut.canBuild(), is(true));
     }
     @Test public void buildMinimalValidEvent() throws Exception {
         stubValidator("name", Date.APRIL, 20);

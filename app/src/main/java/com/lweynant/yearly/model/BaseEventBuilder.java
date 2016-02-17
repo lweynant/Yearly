@@ -63,4 +63,6 @@ public abstract class BaseEventBuilder<T extends BaseEventBuilder, E extends IEv
         validator.setID(stringID, ID);
         return getThis();
     }
+
+    public abstract boolean canBuild();
 }

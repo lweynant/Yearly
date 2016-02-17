@@ -87,6 +87,13 @@ public class BirthdayBuilderTest {
         assertThat(bd, instanceOf(Birthday.class));
         assertThat(bd, is(birthday("ID", 333, "name", Date.APRIL, 20)));
     }
+    @Test public void canBuildOnEmptySUT() {
+        assertThat(sut.canBuild(), is(false));
+    }
+    @Test public void canBuildOnMinimalValidEvent() {
+        stubValidator("name", Date.AUGUST, 2);
+        assertThat(sut.canBuild(), is(true));
+    }
 
     private void stubValidator(String stringID, int id, String name, int month, int day) {
         when(validator.validID()).thenReturn(true);

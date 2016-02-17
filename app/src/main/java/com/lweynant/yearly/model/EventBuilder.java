@@ -14,7 +14,7 @@ public class EventBuilder extends BaseEventBuilder<EventBuilder, Event> {
     }
     public Event build() {
         Event event = null;
-        if (isValidEvent()) {
+        if (canBuild()) {
             if (validator.validID()){
                 event = new Event(validator,validator.getName(), validator.getYear(), validator.getMonth(), validator.getDay(), clock);
             }else {
@@ -22,6 +22,10 @@ public class EventBuilder extends BaseEventBuilder<EventBuilder, Event> {
             }
         }
         return event;
+    }
+
+    @Override public boolean canBuild() {
+        return isValidEvent();
     }
 
 }

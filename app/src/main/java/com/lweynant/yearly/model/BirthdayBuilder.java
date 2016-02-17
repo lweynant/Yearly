@@ -19,9 +19,12 @@ public class BirthdayBuilder extends BaseEventBuilder<BirthdayBuilder, Birthday>
     @Override public BirthdayBuilder getThis() {
         return this;
     }
+    @Override public boolean canBuild() {
+        return isValidEvent();
+    }
 
     @Override public Birthday build() {
-        if (isValidEvent()) {
+        if (canBuild()) {
             if (validator.validID()) {
                 return new Birthday(validator, validator.getName(),
                         lastName,
@@ -56,6 +59,8 @@ public class BirthdayBuilder extends BaseEventBuilder<BirthdayBuilder, Birthday>
         }
         return this;
     }
+
+
     public BirthdayBuilder setLastName(String lastName) {
         this.lastName = lastName;
         return this;
