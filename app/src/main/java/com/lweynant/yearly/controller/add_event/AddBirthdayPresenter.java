@@ -24,7 +24,7 @@ public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsList
         this.transaction = transaction;
         this.dateFormatter = dateFormatter;
     }
-    @Override public void restoreFromInstanceState(AddBirthdayContract.FragmentView fragmentView,  Bundle savedInstanceState) {
+    @Override public void restoreFromSavedInstanceState(AddBirthdayContract.FragmentView fragmentView, Bundle savedInstanceState) {
         this.fragmentView = fragmentView;
         if (savedInstanceState != null) {
             birthdayBuilder.set(savedInstanceState);

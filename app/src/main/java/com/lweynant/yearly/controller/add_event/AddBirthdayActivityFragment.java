@@ -46,6 +46,20 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
         component.inject(this);
     }
 
+    @Override public void onCreate(Bundle savedInstanceState) {
+        Timber.d("onCreate");
+        super.onCreate(savedInstanceState);
+        Bundle bundle;
+        if (savedInstanceState == null) {
+            Timber.d("first time created, use arguments");
+            bundle = getArguments();
+        }
+        else {
+            bundle = savedInstanceState;
+        }
+        userActionsListener.restoreFromSavedInstanceState(this, bundle);
+    }
+
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Timber.d("onCreateView");
@@ -67,7 +81,6 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
     @Override public void onViewCreated(View view, Bundle savedInstanceState) {
         Timber.d("onViewCreated");
         super.onViewCreated(view, savedInstanceState);
-        userActionsListener.restoreFromInstanceState(this, savedInstanceState);
     }
 
     @Override public void onResume() {

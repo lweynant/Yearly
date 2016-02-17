@@ -17,7 +17,7 @@ public abstract class BaseEventBuilder<T extends BaseEventBuilder, E extends IEv
         this.validator = validator;
         this.clock = clock;
     }
-    public abstract T getThis();
+    protected abstract T getThis();
 
     public abstract E build();
 

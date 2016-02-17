@@ -7,8 +7,7 @@ import com.lweynant.yearly.model.Date;
 import rx.Observable;
 
 public interface AddBirthdayContract {
-    String EXTRA_KEY_BIRTHDAY = "birthday";
-
+    String EXTRA_KEY_BIRTHDAY = AddBirthdayContract.class.getCanonicalName();
 
     interface FragmentView {
 
@@ -22,17 +21,17 @@ public interface AddBirthdayContract {
     }
     interface UserActionsListener {
 
-        void restoreFromInstanceState(FragmentView fragmentView, Bundle savedInstanceState);
+        void restoreFromSavedInstanceState(FragmentView fragmentView, Bundle savedInstanceState);
 
-        void saveInstanceState(Bundle outState);
+        void setInputObservables(Observable<CharSequence> nameChangeEvents,
+                                 Observable<CharSequence> lastNameChangeEvents,
+                                 Observable<CharSequence> dateChangeEvents);
 
         void setDate(int year, @Date.Month int month, int day);
 
         void setDate(@Date.Month int month, int day);
 
-        void setInputObservables(Observable<CharSequence> nameChangeEvents,
-                                 Observable<CharSequence> lastNameChangeEvents,
-                                 Observable<CharSequence> dateChangeEvents);
+        void saveInstanceState(Bundle outState);
 
         void saveBirthday();
     }

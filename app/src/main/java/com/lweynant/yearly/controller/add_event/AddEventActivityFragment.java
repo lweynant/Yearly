@@ -2,7 +2,6 @@ package com.lweynant.yearly.controller.add_event;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,12 +50,25 @@ public class AddEventActivityFragment extends BaseFragment implements DateSelect
         component.inject(this);
     }
 
+    @Override public void onCreate(Bundle savedInstanceState) {
+        Timber.d("onCreate");
+        super.onCreate(savedInstanceState);
+        Bundle state;
+        if (savedInstanceState == null) {
+            Timber.d("first time created, use arguments");
+            state = getArguments();
+        }
+        else {
+            state = savedInstanceState;
+        }
+        userActionListener.restoreFromSavedInstanceState(this, state);
+    }
+
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Timber.d("onCreateView");
         fragmentView = inflater.inflate(R.layout.fragment_add_event, container, false);
         ButterKnife.bind(this, fragmentView);
-        userActionListener.restoreFromInstanceState(this, savedInstanceState);
         dateSelector.prepare(getContext(), this);
         dateEditText.setOnClickListener(new View.OnClickListener() {
             @Override

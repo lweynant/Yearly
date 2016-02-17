@@ -25,21 +25,14 @@ public class AddEventPresenter implements AddEventContract.UserActionListener{
         this.dateFormatter = dateFormatter;
     }
 
-    @Override
-    public void restoreFromInstanceState(AddEventContract.FragmentView fragmentView, Bundle savedInstanceState) {
+    @Override public void restoreFromSavedInstanceState(AddEventContract.FragmentView fragmentView, Bundle savedInstanceState) {
         this.fragmentView = fragmentView;
         if (savedInstanceState != null) {
             builder.set(savedInstanceState);
         }
     }
 
-    @Override public void setDate(int year, @Date.Month int month, int day) {
-        fragmentView.showDate(dateFormatter.format(year, month, day));
-        builder.setYear(year).setMonth(month).setDay(day);
-    }
-
-    @Override
-    public void setInputObservables(Observable<CharSequence> nameChangeEvents, Observable<CharSequence> dateChangeEvents) {
+    @Override public void setInputObservables(Observable<CharSequence> nameChangeEvents, Observable<CharSequence> dateChangeEvents) {
         Observable<Boolean> validName = nameChangeEvents
                 //.doOnNext(t -> System.out.print(String.format("-'%s'-", t.toString())))
                 .map(t -> t.length())
@@ -64,6 +57,14 @@ public class AddEventPresenter implements AddEventContract.UserActionListener{
 
     }
 
+    @Override public void saveInstanceState(Bundle outState) {
+        builder.archiveTo(outState);
+    }
+
+    @Override public void setDate(int year, @Date.Month int month, int day) {
+        fragmentView.showDate(dateFormatter.format(year, month, day));
+        builder.setYear(year).setMonth(month).setDay(day);
+    }
 
     @Override public void setDate(@Date.Month int month, int day) {
         fragmentView.showDate(dateFormatter.format(month, day));
@@ -79,9 +80,5 @@ public class AddEventPresenter implements AddEventContract.UserActionListener{
         else {
             fragmentView.showNothingSaved();
         }
-    }
-
-    @Override public void saveInstanceState(Bundle outState) {
-        builder.archiveTo(outState);
     }
 }

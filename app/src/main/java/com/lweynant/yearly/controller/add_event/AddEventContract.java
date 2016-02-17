@@ -8,9 +8,10 @@ import com.lweynant.yearly.model.IEvent;
 import rx.Observable;
 
 public interface AddEventContract {
-    String EXTRA_KEY_EVENT = "event";
+    String EXTRA_KEY_EVENT = AddEventContract.class.getCanonicalName();
 
     interface FragmentView {
+
         void showDate(String date);
 
         void showSavedEvent(String name);
@@ -20,17 +21,18 @@ public interface AddEventContract {
         void enableSaveButton(Boolean enabled);
     }
     interface UserActionListener {
-        void restoreFromInstanceState(FragmentView fragmentView, Bundle savedInstanceState);
 
-        void setDate(int year, @Date.Month int month, int day);
+        void restoreFromSavedInstanceState(FragmentView fragmentView, Bundle savedInstanceState);
 
         void setInputObservables(Observable<CharSequence> nameChangeEvents,
                                  Observable<CharSequence> dateChangeEvents);
 
+        void setDate(int year, @Date.Month int month, int day);
+
         void setDate(@Date.Month int month, int day);
 
-        void saveEvent();
-
         void saveInstanceState(Bundle outState);
+
+        void saveEvent();
     }
 }

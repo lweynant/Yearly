@@ -59,7 +59,7 @@ public class AddBirthdayPresenterTest {
         when(rstring.getStringArray(R.array.months_day)).thenReturn(months);
         when(rstring.getString(eq(R.string.yyy_mm_dd), anyInt(), anyInt(), anyInt() )).thenReturn("formatted date");
         sut = new AddBirthdayPresenter(birthdayBuilder, transaction, new DateFormatter(rstring));
-        sut.restoreFromInstanceState(fragmentView, null);
+        sut.restoreFromSavedInstanceState(fragmentView, null);
     }
 
     @Test public void setName() {
@@ -152,7 +152,7 @@ public class AddBirthdayPresenterTest {
 
     @Test public void restoreFromState() {
         Bundle state = mock(Bundle.class);
-        sut.restoreFromInstanceState(fragmentView, state);
+        sut.restoreFromSavedInstanceState(fragmentView, state);
 
         verify(birthdayBuilder).set(state);
     }

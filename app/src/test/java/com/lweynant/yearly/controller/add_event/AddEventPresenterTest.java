@@ -44,7 +44,7 @@ public class AddEventPresenterTest {
         when(eventBuilder.setDay(anyInt())).thenReturn(eventBuilder);
         when(repoTransaction.add(anyObject())).thenReturn(repoTransaction);
         sut = new AddEventPresenter(eventBuilder, repoTransaction, dateFormatter);
-        sut.restoreFromInstanceState(fragmentView, null);
+        sut.restoreFromSavedInstanceState(fragmentView, null);
     }
 
     @Test public void setDate() {
@@ -88,13 +88,13 @@ public class AddEventPresenterTest {
         verify(fragmentView).showNothingSaved();
     }
     @Test public void restoreInstanceState_NullBundle() {
-        sut.restoreFromInstanceState(fragmentView, null);
+        sut.restoreFromSavedInstanceState(fragmentView, null);
 
         verifyZeroInteractions(eventBuilder);
     }
     @Test public void restoreInstanceState() {
         Bundle bundle = mock(Bundle.class);
-        sut.restoreFromInstanceState(fragmentView, bundle);
+        sut.restoreFromSavedInstanceState(fragmentView, bundle);
 
         verify(eventBuilder).set(bundle);
     }
