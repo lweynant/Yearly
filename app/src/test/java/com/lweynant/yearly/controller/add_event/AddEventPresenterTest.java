@@ -54,10 +54,10 @@ public class AddEventPresenterTest {
         today = new LocalDate(2016, Date.FEBRUARY, 20);
         when(clock.now()).thenReturn(today);
         sut = new AddEventPresenter(eventBuilder, repoTransaction, dateFormatter, clock);
-        sut.initialize(fragmentView, emptyBundle, null);
     }
 
     @Test public void setDate() {
+        sut.initialize(fragmentView, emptyBundle, null);
         when(dateFormatter.format(Date.APRIL, 24)).thenReturn("24 april");
         sut.setDate(Date.APRIL, 24);
         verify(fragmentView).showDate("24 april");
@@ -67,6 +67,7 @@ public class AddEventPresenterTest {
     }
 
     @Test public void setDateWithYear() {
+        sut.initialize(fragmentView, emptyBundle, null);
         when(dateFormatter.format(2016, Date.JUNE, 30)).thenReturn("30 juni 2016");
         sut.setDate(2016, Date.JUNE, 30);
         verify(fragmentView).showDate("30 juni 2016");
@@ -81,6 +82,7 @@ public class AddEventPresenterTest {
     }
 
     @Test public void saveEvent() {
+        sut.initialize(fragmentView, emptyBundle, null);
         Event event = createEvent("An Event");
         when(eventBuilder.build()).thenReturn(event);
         sut.saveEvent();
@@ -91,6 +93,7 @@ public class AddEventPresenterTest {
     }
 
     @Test public void saveEvent_NoValidInput() {
+        sut.initialize(fragmentView, emptyBundle, null);
         when(eventBuilder.build()).thenReturn(null);
         sut.saveEvent();
 
@@ -118,17 +121,25 @@ public class AddEventPresenterTest {
     }
 
     @Test public void enableSaveButtonWhenAllInputIsValid() {
+        sut.initialize(fragmentView, emptyBundle, null);
         sut.setInputObservables(Observable.just("Event"), Observable.just("valid date"));
 
         verify(fragmentView).enableSaveButton(true);
     }
 
+    @Test public void initializeWithEmptyArgAndNullSavedInstanceState() {
+        when(dateFormatter.format(today.getMonthOfYear(), today.getDayOfMonth())).thenReturn("the date");
+        Bundle emptyArgs = mock(Bundle.class);
+        sut.initialize(fragmentView, emptyArgs, null);
+
+        verify(fragmentView).initialize(null, null, today.getYear(), today.getMonthOfYear(), today.getDayOfMonth());
+    }
     @Test public void initializeWithValidEventArgAndNullSavedInstanceState() {
         when(dateFormatter.format(Date.APRIL, 23)).thenReturn("the date");
         Bundle args = createArgsFor("Events name", Date.APRIL, 23);
         sut.initialize(fragmentView, args, null);
 
-        verify(fragmentView).setInitialNameAndDate(("Events name"), ("the date"), today.getYear(), Date.APRIL, 23);
+        verify(fragmentView).initialize(("Events name"), ("the date"), today.getYear(), Date.APRIL, 23);
     }
     @Test public void initializeWithValidEventArgAndSomeSavedInstanceState() {
         when(dateFormatter.format(Date.APRIL, 23)).thenReturn("the date");
@@ -136,7 +147,7 @@ public class AddEventPresenterTest {
         Bundle state = createStateFor("New name", Date.AUGUST, 23);
         sut.initialize(fragmentView, args, state);
 
-        verify(fragmentView).setInitialNameAndDate(null, null, today.getYear(), Date.AUGUST, 23);
+        verify(fragmentView).initialize(null, null, today.getYear(), Date.AUGUST, 23);
     }
 
     private Bundle createStateFor(String name, int month, int day) {

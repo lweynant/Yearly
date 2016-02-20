@@ -14,7 +14,7 @@ public interface AddEventContract {
 
     interface FragmentView {
 
-        void setInitialNameAndDate(String name, String formattedDate, int selectedYear, int selectedMonth, int selectedDay);
+        void initialize(String name, String formattedDate, int selectedYear, @Date.Month int selectedMonth, int selectedDay);
 
         void showDate(String formattedDate);
 

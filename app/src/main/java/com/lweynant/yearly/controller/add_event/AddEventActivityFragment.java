@@ -98,14 +98,14 @@ public class AddEventActivityFragment extends BaseFragment implements DateSelect
         userActionListener.saveInstanceState(outState);
     }
 
-    @Override public void setInitialNameAndDate(String name, String formattedDate, int selectedYear, int selectedMonth, int selectedDay) {
+    @Override public void initialize(String name, String formattedDate, int selectedYear, int selectedMonth, int selectedDay) {
         this.initialName = name;
         this.initialFormattedDate = formattedDate;
         this.selectedYear = selectedYear;
         this.selectedMonth = selectedMonth;
         this.selectedDay = selectedDay;
     }
-    
+
     @Override public void onPositiveClick(int year, @Date.Month int month, int day) {
         userActionListener.setDate(year, month, day);
     }

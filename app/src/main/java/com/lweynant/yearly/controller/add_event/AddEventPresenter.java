@@ -41,7 +41,7 @@ public class AddEventPresenter implements AddEventContract.UserActionListener{
             int selectedYear = readIntFromBundle(savedInstanceState, IKeyValueArchiver.KEY_YEAR, now.getYear());
             int selectedMonth = readIntFromBundle(savedInstanceState, IKeyValueArchiver.KEY_MONTH, now.getMonthOfYear());
             int selectedDay = readIntFromBundle(savedInstanceState, IKeyValueArchiver.KEY_DAY, now.getDayOfMonth());
-            fragmentView.setInitialNameAndDate(null, null, selectedYear, selectedMonth, selectedDay);
+            fragmentView.initialize(null, null, selectedYear, selectedMonth, selectedDay);
         }
         else{
             builder.set(args);
@@ -51,10 +51,10 @@ public class AddEventPresenter implements AddEventContract.UserActionListener{
                 LocalDate date = event.getDate();
                 //noinspection ResourceType
                 String formattedDate = dateFormatter.format(date.getMonthOfYear(), date.getDayOfMonth());
-                fragmentView.setInitialNameAndDate(event.getName(),formattedDate, date.getYear(), date.getMonthOfYear(), date.getDayOfMonth());
+                fragmentView.initialize(event.getName(), formattedDate, date.getYear(), date.getMonthOfYear(), date.getDayOfMonth());
             }
             else {
-                fragmentView.setInitialNameAndDate(null, null, now.getYear(), now.getMonthOfYear(), now.getDayOfMonth());
+                fragmentView.initialize(null, null, now.getYear(), now.getMonthOfYear(), now.getDayOfMonth());
             }
         }
     }
