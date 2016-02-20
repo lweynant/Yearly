@@ -17,6 +17,7 @@ import com.lweynant.yearly.ui.ViewModule;
 
 import org.joda.time.LocalDate;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -115,6 +116,17 @@ public class AddEventActivityTest {
         onView(withId(R.id.edit_text_event_date)).perform(click());
         onView(withId(R.id.date_picker)).perform(setDate(1966, Date.FEBRUARY, 8));
 
+        onView(withText(R.string.apply)).perform(click());
+        onView(withId(R.id.edit_text_event_date)).check(matches(withText(dateFormatter.format(Date.FEBRUARY, 8))));
+    }
+    @Test public void selectADayAfterBeforeAndAfterConfig() {
+        onView(withId(R.id.edit_text_event_date)).perform(click());
+        onView(withId(R.id.date_picker)).perform(setDate(1966, Date.FEBRUARY, 8));
+
+        onView(withText(R.string.apply)).perform(click());
+        onView(withId(R.id.edit_text_event_date)).check(matches(withText(dateFormatter.format(Date.FEBRUARY, 8))));
+        onView(isRoot()).perform(orientationLandscape());
+        onView(withId(R.id.edit_text_event_date)).perform(click());
         onView(withText(R.string.apply)).perform(click());
         onView(withId(R.id.edit_text_event_date)).check(matches(withText(dateFormatter.format(Date.FEBRUARY, 8))));
     }

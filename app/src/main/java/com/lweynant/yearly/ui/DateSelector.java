@@ -32,14 +32,13 @@ public class DateSelector {
         this.clock = clock;
     }
 
-    public void prepare(Context context, OnClickListener listener) {
+    public void prepare(Context context, OnClickListener listener, int year, @Date.Month int month, int day) {
         this.listener = listener;
         dialogBuilder = new AlertDialog.Builder(context);
         dialogBuilder.setTitle(R.string.select_date);
         View dateSelectionView = LayoutInflater.from(context).inflate(R.layout.date_selection, null);
         ButterKnife.bind(this, dateSelectionView);
-        LocalDate date = clock.now();
-        datePicker.init(date.getYear(), date.getMonthOfYear() - 1, date.getDayOfMonth(), null);
+        datePicker.init(year, month - 1, day, null);
         hideYear(context, yearSelector.isChecked());
         yearSelector.setOnClickListener(new View.OnClickListener() {
             @Override

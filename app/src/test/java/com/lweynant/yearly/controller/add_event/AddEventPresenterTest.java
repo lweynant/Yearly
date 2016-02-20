@@ -6,9 +6,11 @@ import com.lweynant.yearly.controller.DateFormatter;
 import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.Event;
 import com.lweynant.yearly.model.EventBuilder;
-import com.lweynant.yearly.model.IEvent;
+import com.lweynant.yearly.model.IKeyValueArchiver;
 import com.lweynant.yearly.model.ITransaction;
+import com.lweynant.yearly.platform.IClock;
 
+import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,7 +22,9 @@ import rx.Observable;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -32,9 +36,13 @@ public class AddEventPresenterTest {
     @Mock DateFormatter dateFormatter;
     @Mock EventBuilder eventBuilder;
     @Mock ITransaction repoTransaction;
+    @Mock IClock clock;
     private AddEventPresenter sut;
+    private Bundle emptyBundle;
+    private LocalDate today;
 
     @Before public void setUp() {
+        emptyBundle = new Bundle();
         //builder and transactions are fluent interfaces we need to mock them
         when(eventBuilder.setName(anyString())).thenReturn(eventBuilder);
         when(eventBuilder.clearYear()).thenReturn(eventBuilder);
@@ -43,8 +51,10 @@ public class AddEventPresenterTest {
         when(eventBuilder.setMonth(anyInt())).thenReturn(eventBuilder);
         when(eventBuilder.setDay(anyInt())).thenReturn(eventBuilder);
         when(repoTransaction.add(anyObject())).thenReturn(repoTransaction);
-        sut = new AddEventPresenter(eventBuilder, repoTransaction, dateFormatter);
-        sut.restoreFromSavedInstanceState(fragmentView, null);
+        today = new LocalDate(2016, Date.FEBRUARY, 20);
+        when(clock.now()).thenReturn(today);
+        sut = new AddEventPresenter(eventBuilder, repoTransaction, dateFormatter, clock);
+        sut.initialize(fragmentView, emptyBundle, null);
     }
 
     @Test public void setDate() {
@@ -88,13 +98,13 @@ public class AddEventPresenterTest {
         verify(fragmentView).showNothingSaved();
     }
     @Test public void restoreInstanceState_NullBundle() {
-        sut.restoreFromSavedInstanceState(fragmentView, null);
+        sut.initialize(fragmentView, emptyBundle, null);
 
-        verifyZeroInteractions(eventBuilder);
+        verify(eventBuilder, never()).set(null);
     }
     @Test public void restoreInstanceState() {
         Bundle bundle = mock(Bundle.class);
-        sut.restoreFromSavedInstanceState(fragmentView, bundle);
+        sut.initialize(fragmentView, emptyBundle, bundle);
 
         verify(eventBuilder).set(bundle);
     }
@@ -111,6 +121,58 @@ public class AddEventPresenterTest {
         sut.setInputObservables(Observable.just("Event"), Observable.just("valid date"));
 
         verify(fragmentView).enableSaveButton(true);
+    }
+
+    @Test public void initializeWithValidEventArgAndNullSavedInstanceState() {
+        when(dateFormatter.format(Date.APRIL, 23)).thenReturn("the date");
+        Bundle args = createArgsFor("Events name", Date.APRIL, 23);
+        sut.initialize(fragmentView, args, null);
+
+        verify(fragmentView).setInitialNameAndDate(("Events name"), ("the date"), today.getYear(), Date.APRIL, 23);
+    }
+    @Test public void initializeWithValidEventArgAndSomeSavedInstanceState() {
+        when(dateFormatter.format(Date.APRIL, 23)).thenReturn("the date");
+        Bundle args = createArgsFor("Events name", Date.APRIL, 23);
+        Bundle state = createStateFor("New name", Date.AUGUST, 23);
+        sut.initialize(fragmentView, args, state);
+
+        verify(fragmentView).setInitialNameAndDate(null, null, today.getYear(), Date.AUGUST, 23);
+    }
+
+    private Bundle createStateFor(String name, int month, int day) {
+        Bundle bundle = mock(Bundle.class);
+        when(bundle.containsKey(IKeyValueArchiver.KEY_NAME)).thenReturn(true);
+        when(bundle.getString(IKeyValueArchiver.KEY_NAME)).thenReturn(name);
+        when(bundle.containsKey(IKeyValueArchiver.KEY_MONTH)).thenReturn(true);
+        when(bundle.getInt(IKeyValueArchiver.KEY_MONTH)).thenReturn(month);
+        when(bundle.containsKey(IKeyValueArchiver.KEY_DAY)).thenReturn(true);
+        when(bundle.getInt(IKeyValueArchiver.KEY_DAY)).thenReturn(day);
+        return bundle;
+    }
+
+    private Bundle createArgsFor(String name, int month, int day) {
+        Bundle args = mock(Bundle.class);
+        when(args.containsKey(IKeyValueArchiver.KEY_NAME)).thenReturn(true);
+        when(args.getString(IKeyValueArchiver.KEY_NAME)).thenReturn(name);
+        when(args.containsKey(IKeyValueArchiver.KEY_MONTH)).thenReturn(true);
+        when(args.getInt(IKeyValueArchiver.KEY_MONTH)).thenReturn(month);
+        when(args.containsKey(IKeyValueArchiver.KEY_DAY)).thenReturn(true);
+        when(args.getInt(IKeyValueArchiver.KEY_MONTH)).thenReturn(day);
+        //prepare the builder to accept these args
+        when(eventBuilder.canBuild()).thenReturn(true);
+        Event event = createEvent(name, month, day);
+        when(eventBuilder.build()).thenReturn(event);
+
+
+        return args;
+    }
+
+    private Event createEvent(String name, int month, int day) {
+        Event event = mock(Event.class);
+        when(event.getName()).thenReturn(name);
+        LocalDate date = new LocalDate(2016, month, day);
+        when(event.getDate()).thenReturn(date);
+        return event;
     }
 
     private Event createEvent(String name) {

@@ -13,7 +13,10 @@ import com.lweynant.yearly.BaseYearlyAppComponent;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.controller.BaseFragment;
 import com.lweynant.yearly.model.Date;
+import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.ui.DateSelector;
+
+import org.joda.time.LocalDate;
 
 import javax.inject.Inject;
 
@@ -33,6 +36,12 @@ public class AddEventActivityFragment extends BaseFragment implements DateSelect
     private View fragmentView;
     @Inject DateSelector dateSelector;
     @Inject AddEventContract.UserActionListener userActionListener;
+    @Inject IClock clock;
+    private String initialName;
+    private String initialFormattedDate;
+    private int selectedYear;
+    private int selectedMonth;
+    private int selectedDay;
 
 
     public static AddEventActivityFragment newInstance(Bundle args) {
@@ -53,15 +62,7 @@ public class AddEventActivityFragment extends BaseFragment implements DateSelect
     @Override public void onCreate(Bundle savedInstanceState) {
         Timber.d("onCreate");
         super.onCreate(savedInstanceState);
-        Bundle state;
-        if (savedInstanceState == null) {
-            Timber.d("first time created, use arguments");
-            state = getArguments();
-        }
-        else {
-            state = savedInstanceState;
-        }
-        userActionListener.restoreFromSavedInstanceState(this, state);
+        userActionListener.initialize(this, getArguments(), savedInstanceState);
     }
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -69,7 +70,11 @@ public class AddEventActivityFragment extends BaseFragment implements DateSelect
         Timber.d("onCreateView");
         fragmentView = inflater.inflate(R.layout.fragment_add_event, container, false);
         ButterKnife.bind(this, fragmentView);
-        dateSelector.prepare(getContext(), this);
+        if (initialFormattedDate != null){
+            dateEditText.setText(initialFormattedDate);
+            nameEditText.setText(initialName);
+        }
+        dateSelector.prepare(getContext(), this, selectedYear, selectedMonth, selectedDay);
         dateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,6 +98,14 @@ public class AddEventActivityFragment extends BaseFragment implements DateSelect
         userActionListener.saveInstanceState(outState);
     }
 
+    @Override public void setInitialNameAndDate(String name, String formattedDate, int selectedYear, int selectedMonth, int selectedDay) {
+        this.initialName = name;
+        this.initialFormattedDate = formattedDate;
+        this.selectedYear = selectedYear;
+        this.selectedMonth = selectedMonth;
+        this.selectedDay = selectedDay;
+    }
+    
     @Override public void onPositiveClick(int year, @Date.Month int month, int day) {
         userActionListener.setDate(year, month, day);
     }
@@ -104,8 +117,8 @@ public class AddEventActivityFragment extends BaseFragment implements DateSelect
     @Override public void onNegativeClick() {
     }
 
-    @Override public void showDate(String date) {
-        dateEditText.setText(date);
+    @Override public void showDate(String formattedDate) {
+        dateEditText.setText(formattedDate);
     }
 
     @Override public void showSavedEvent(String name) {

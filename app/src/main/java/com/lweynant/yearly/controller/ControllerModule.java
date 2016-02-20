@@ -60,8 +60,9 @@ public class ControllerModule {
 
     @Provides @PerApp AddEventContract.UserActionListener providesAddEventPresenter(EventBuilder builder,
                                                                                     ITransaction transaction,
-                                                                                    DateFormatter dateFormatter) {
-        return new AddEventPresenter(builder, transaction, dateFormatter);
+                                                                                    DateFormatter dateFormatter,
+                                                                                    IClock clock) {
+        return new AddEventPresenter(builder, transaction, dateFormatter, clock);
     }
     @Provides @PerApp ListEventsContract.UserActionsListener providesEventsListPresenter(IEventsLoader eventsLoader,
                                                                                          ITransaction transaction,

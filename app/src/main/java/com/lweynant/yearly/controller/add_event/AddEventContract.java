@@ -5,6 +5,8 @@ import android.os.Bundle;
 import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.IEvent;
 
+import org.joda.time.LocalDate;
+
 import rx.Observable;
 
 public interface AddEventContract {
@@ -12,7 +14,9 @@ public interface AddEventContract {
 
     interface FragmentView {
 
-        void showDate(String date);
+        void setInitialNameAndDate(String name, String formattedDate, int selectedYear, int selectedMonth, int selectedDay);
+
+        void showDate(String formattedDate);
 
         void showSavedEvent(String name);
 
@@ -22,7 +26,7 @@ public interface AddEventContract {
     }
     interface UserActionListener {
 
-        void restoreFromSavedInstanceState(FragmentView fragmentView, Bundle savedInstanceState);
+        void initialize(FragmentView fragmentView, Bundle args, Bundle savedInstanceState);
 
         void setInputObservables(Observable<CharSequence> nameChangeEvents,
                                  Observable<CharSequence> dateChangeEvents);

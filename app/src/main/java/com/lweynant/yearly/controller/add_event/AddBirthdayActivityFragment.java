@@ -13,7 +13,10 @@ import com.lweynant.yearly.BaseYearlyAppComponent;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.controller.BaseFragment;
 import com.lweynant.yearly.model.Date;
+import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.ui.DateSelector;
+
+import org.joda.time.LocalDate;
 
 import javax.inject.Inject;
 
@@ -30,6 +33,7 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
     @Bind(R.id.edit_text_first_name) EditText nameEditText;
     @Bind(R.id.edit_text_lastname) EditText lastNameEditText;
     private View fragmentView;
+    @Inject IClock clock;
     @Inject DateSelector dateSelector;
     @Inject AddBirthdayContract.UserActionsListener userActionsListener;
 
@@ -67,7 +71,9 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
         fragmentView = inflater.inflate(R.layout.fragment_add_birthday, container, false);
         ButterKnife.bind(this, fragmentView);
 
-        dateSelector.prepare(getContext(), this);
+        LocalDate now = clock.now();
+        //noinspection ResourceType
+        dateSelector.prepare(getContext(), this, now.getYear(), now.getMonthOfYear(), now.getDayOfMonth());
         dateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -1,6 +1,7 @@
 package com.lweynant.yearly.model;
 
 import org.joda.time.LocalDate;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -45,4 +46,5 @@ public class DateTest {
         LocalDate date = new LocalDate(2015, Date.FEBRUARY, 20);
         assertThat(date.toString("dd/MM"), is("20/02"));
     }
+
 }
