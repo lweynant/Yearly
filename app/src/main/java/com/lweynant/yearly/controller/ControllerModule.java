@@ -54,8 +54,9 @@ public class ControllerModule {
 
     @Provides @PerApp AddBirthdayContract.UserActionsListener providesAddBirthdayPresenter(BirthdayBuilder builder,
                                                                                            ITransaction transaction,
-                                                                                           DateFormatter dateFormatter) {
-        return new AddBirthdayPresenter(builder, transaction, dateFormatter);
+                                                                                           DateFormatter dateFormatter,
+                                                                                           IClock clock) {
+        return new AddBirthdayPresenter(builder, transaction, dateFormatter, clock);
     }
 
     @Provides @PerApp AddEventContract.UserActionListener providesAddEventPresenter(EventBuilder builder,

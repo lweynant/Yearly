@@ -36,7 +36,6 @@ public class AddEventActivityFragment extends BaseFragment implements DateSelect
     private View fragmentView;
     @Inject DateSelector dateSelector;
     @Inject AddEventContract.UserActionListener userActionListener;
-    @Inject IClock clock;
     private String initialName;
     private String initialFormattedDate;
     private int selectedYear;

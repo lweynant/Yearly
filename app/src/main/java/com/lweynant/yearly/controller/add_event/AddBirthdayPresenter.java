@@ -6,7 +6,12 @@ import com.lweynant.yearly.controller.DateFormatter;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.model.Date;
+import com.lweynant.yearly.model.Event;
+import com.lweynant.yearly.model.IKeyValueArchiver;
 import com.lweynant.yearly.model.ITransaction;
+import com.lweynant.yearly.platform.IClock;
+
+import org.joda.time.LocalDate;
 
 import rx.Observable;
 import rx.subscriptions.CompositeSubscription;
@@ -14,22 +19,49 @@ import rx.subscriptions.CompositeSubscription;
 public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsListener {
     private ITransaction transaction;
     private final DateFormatter dateFormatter;
+    private IClock clock;
     private AddBirthdayContract.FragmentView fragmentView;
 
     private BirthdayBuilder birthdayBuilder;
     private final CompositeSubscription subcription = new CompositeSubscription();
 
-    public AddBirthdayPresenter(BirthdayBuilder birthdayBuilder, ITransaction transaction,  DateFormatter dateFormatter) {
+    public AddBirthdayPresenter(BirthdayBuilder birthdayBuilder, ITransaction transaction,  DateFormatter dateFormatter, IClock clock) {
         this.birthdayBuilder = birthdayBuilder;
         this.transaction = transaction;
         this.dateFormatter = dateFormatter;
+        this.clock = clock;
     }
-    @Override public void restoreFromSavedInstanceState(AddBirthdayContract.FragmentView fragmentView, Bundle savedInstanceState) {
+    @SuppressWarnings("ResourceType")
+    @Override public void initialize(AddBirthdayContract.FragmentView fragmentView,  Bundle args, Bundle savedInstanceState) {
         this.fragmentView = fragmentView;
+        LocalDate now = clock.now();
         if (savedInstanceState != null) {
             birthdayBuilder.set(savedInstanceState);
+            int selectedYear = readIntFromBundle(savedInstanceState, IKeyValueArchiver.KEY_YEAR, now.getYear());
+            int selectedMonth = readIntFromBundle(savedInstanceState, IKeyValueArchiver.KEY_MONTH, now.getMonthOfYear());
+            int selectedDay = readIntFromBundle(savedInstanceState, IKeyValueArchiver.KEY_DAY, now.getDayOfMonth());
+            fragmentView.initialize(null, null, null, selectedYear, selectedMonth, selectedDay);
+        }
+        else{
+            birthdayBuilder.set(args);
+            if (birthdayBuilder.canBuild()) {
+                Birthday event = birthdayBuilder.build();
+                LocalDate date = event.getDate();
+                String formattedDate = dateFormatter.format(date.getMonthOfYear(), date.getDayOfMonth());
+                fragmentView.initialize(event.getName(), event.getLastName(), formattedDate, date.getYear(), date.getMonthOfYear(), date.getDayOfMonth());
+            }
+            else {
+                fragmentView.initialize(null, null, null, now.getYear(), now.getMonthOfYear(), now.getDayOfMonth());
+            }
         }
     }
+    private int readIntFromBundle(Bundle bundle, String key, int defaultValue) {
+        if (bundle.containsKey(key)) {
+            return bundle.getInt(key);
+        }
+        return defaultValue;
+    }
+
 
     private void setName(String name) {
         birthdayBuilder.setName(name.toString());

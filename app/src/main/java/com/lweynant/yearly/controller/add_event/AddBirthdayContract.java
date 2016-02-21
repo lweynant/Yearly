@@ -11,6 +11,8 @@ public interface AddBirthdayContract {
 
     interface FragmentView {
 
+        void initialize(String name, String lastName, String formattedDate, int selectedYear, @Date.Month int selectedMonth, int selectedDay);
+
         void showDate(String date);
 
         void enableSaveButton(Boolean enabled);
@@ -21,7 +23,7 @@ public interface AddBirthdayContract {
     }
     interface UserActionsListener {
 
-        void restoreFromSavedInstanceState(FragmentView fragmentView, Bundle savedInstanceState);
+        void initialize(FragmentView fragmentView, Bundle args, Bundle savedInstanceState);
 
         void setInputObservables(Observable<CharSequence> nameChangeEvents,
                                  Observable<CharSequence> lastNameChangeEvents,

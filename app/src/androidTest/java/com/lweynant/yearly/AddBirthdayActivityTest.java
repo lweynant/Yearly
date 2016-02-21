@@ -120,4 +120,17 @@ public class AddBirthdayActivityTest {
                 .check(matches(withText(dateFormatter.format(today.getMonthOfYear(), today.getDayOfMonth()))));
     }
 
+    @Test public void selectADayAfterBeforeAndAfterConfig() {
+        onView(withId(R.id.edit_text_birthday_date)).perform(click());
+        onView(withId(R.id.date_picker)).perform(setDate(1966, Date.FEBRUARY, 8));
+
+        onView(withText(R.string.apply)).perform(click());
+        onView(withId(R.id.edit_text_birthday_date)).check(matches(withText(dateFormatter.format(Date.FEBRUARY, 8))));
+        onView(isRoot()).perform(orientationLandscape());
+        onView(withId(R.id.edit_text_birthday_date)).perform(click());
+        onView(withText(R.string.apply)).perform(click());
+        onView(withId(R.id.edit_text_birthday_date)).check(matches(withText(dateFormatter.format(Date.FEBRUARY, 8))));
+    }
+
+
 }

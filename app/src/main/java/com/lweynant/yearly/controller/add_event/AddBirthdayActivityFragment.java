@@ -33,9 +33,14 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
     @Bind(R.id.edit_text_first_name) EditText nameEditText;
     @Bind(R.id.edit_text_lastname) EditText lastNameEditText;
     private View fragmentView;
-    @Inject IClock clock;
     @Inject DateSelector dateSelector;
     @Inject AddBirthdayContract.UserActionsListener userActionsListener;
+    private String initialName;
+    private String initialLastName;
+    private String initialFormatedDate;
+    private int selectedYear;
+    private int selectedMonth;
+    private int selectedDay;
 
     public static AddBirthdayActivityFragment newInstance(Bundle args) {
         AddBirthdayActivityFragment fragment = new AddBirthdayActivityFragment();
@@ -53,15 +58,7 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
     @Override public void onCreate(Bundle savedInstanceState) {
         Timber.d("onCreate");
         super.onCreate(savedInstanceState);
-        Bundle bundle;
-        if (savedInstanceState == null) {
-            Timber.d("first time created, use arguments");
-            bundle = getArguments();
-        }
-        else {
-            bundle = savedInstanceState;
-        }
-        userActionsListener.restoreFromSavedInstanceState(this, bundle);
+        userActionsListener.initialize(this, getArguments(), savedInstanceState);
     }
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -71,9 +68,13 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
         fragmentView = inflater.inflate(R.layout.fragment_add_birthday, container, false);
         ButterKnife.bind(this, fragmentView);
 
-        LocalDate now = clock.now();
+        if (initialFormatedDate != null) {
+            dateEditText.setText(initialFormatedDate);
+            nameEditText.setText(initialName);
+            lastNameEditText.setText(initialLastName);
+        }
         //noinspection ResourceType
-        dateSelector.prepare(getContext(), this, now.getYear(), now.getMonthOfYear(), now.getDayOfMonth());
+        dateSelector.prepare(getContext(), this, selectedYear, selectedMonth, selectedDay);
         dateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -128,6 +129,16 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
 
     @Override public void onNegativeClick() {
 
+    }
+
+    @Override
+    public void initialize(String name, String lastName, String formattedDate, int selectedYear, @Date.Month int selectedMonth, int selectedDay) {
+        this.initialName = name;
+        this.initialLastName  = lastName;
+        this.initialFormatedDate = formattedDate;
+        this.selectedYear = selectedYear;
+        this.selectedMonth = selectedMonth;
+        this.selectedDay = selectedDay;
     }
 
     @Override public void showDate(String date) {
