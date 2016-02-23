@@ -13,10 +13,11 @@ public interface ListEventsContract {
         void showAddNewBirthdayUI();
 
         void showAddNewEventUI();
+
+        void showEventDetailsUI(IEvent event);
     }
     interface FragmentView {
 
-        void showEventDetailsUI(IEvent event);
 
         void setProgressIndicator(boolean enable);
 

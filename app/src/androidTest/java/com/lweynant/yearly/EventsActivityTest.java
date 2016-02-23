@@ -17,6 +17,7 @@ import com.lweynant.yearly.controller.list_events.ListEventsActivity;
 import com.lweynant.yearly.controller.list_events.ListEventsContract;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.Date;
+import com.lweynant.yearly.model.Event;
 import com.lweynant.yearly.model.IEventRepo;
 import com.lweynant.yearly.model.ITransaction;
 import com.lweynant.yearly.model.ModelModule;
@@ -152,8 +153,8 @@ public class EventsActivityTest {
 
     @Test public void testOrderInNonEmptyList() {
         initializeTheListWith(createBirthday("Yesterday", today.minusDays(1)),
-                              createBirthday("Tomorrow", today.plusDays(1)),
-                              createBirthday("Today", today));
+                createBirthday("Tomorrow", today.plusDays(1)),
+                createBirthday("Today", today));
         activityTestRule.launchActivity(new Intent());
 
         onView(withRecyclerView(R.id.events_recycler_view).atPosition(0)).check(matches(withText(containsString("Today"))));
@@ -200,6 +201,58 @@ public class EventsActivityTest {
         onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("One")))));
         onView(withId(R.id.events_recycler_view)).check(matches(not(hasDescendant(withText(containsString("Two"))))));
         verify(alarm).scheduleAlarm(today, NotificationTime.EVENING);//we notify One's birthday the day before in the evening
+    }
+
+    @Test public void testModifyDateOfBirthday() {
+        initializeTheListWith(createBirthday("Today", today),
+                createBirthday("Tomorrow", tomorrow));
+        activityTestRule.launchActivity(new Intent());
+
+        //make sure that the order is as expected
+        onView(withRecyclerView(R.id.events_recycler_view).atPosition(0)).check(matches(withText(containsString("Today"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPosition(1)).check(matches(withText(containsString("Tomorrow"))));
+
+        onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem(withText(containsString("Today")), click()));
+        onView(withText(R.string.title_activity_add_birthday)).check(matches(isDisplayed()));
+        onView(withId(R.id.edit_text_first_name)).check(matches(withText("Today")));
+        LocalDate future = today.plusDays(5);
+        onView(withId(R.id.edit_text_birthday_date)).perform(click());
+        onView(withId(R.id.date_picker)).perform(setDate(future.getYear(), future.getMonthOfYear(), future.getDayOfMonth()));
+        onView(withText(R.string.apply)).perform(click());
+        //noinspection ResourceType
+        onView(withId(R.id.edit_text_birthday_date)).check(matches(withText(dateFormatter.format(future.getMonthOfYear(), future.getDayOfMonth()))));
+        pressBack();
+        //now the order should be reversed
+        onView(withRecyclerView(R.id.events_recycler_view).atPosition(0)).check(matches(withText(containsString("Tomorrow"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPosition(1)).check(matches(withText(containsString("Today"))));
+    }
+    @Test public void testModifyDateOfEvent() {
+        initializeTheListWith(createEvent("Today", today),
+                createBirthday("Tomorrow", tomorrow));
+        activityTestRule.launchActivity(new Intent());
+
+        //make sure that the order is as expected
+        onView(withRecyclerView(R.id.events_recycler_view).atPosition(0)).check(matches(withText(containsString("Today"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPosition(1)).check(matches(withText(containsString("Tomorrow"))));
+
+        onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem(withText(containsString("Today")), click()));
+        onView(withText(R.string.title_activity_add_event)).check(matches(isDisplayed()));
+        onView(withId(R.id.edit_text_event_name)).check(matches(withText("Today")));
+        LocalDate future = today.plusDays(5);
+        onView(withId(R.id.edit_text_event_date)).perform(click());
+        onView(withId(R.id.date_picker)).perform(setDate(future.getYear(), future.getMonthOfYear(), future.getDayOfMonth()));
+        onView(withText(R.string.apply)).perform(click());
+        //noinspection ResourceType
+        onView(withId(R.id.edit_text_event_date)).check(matches(withText(dateFormatter.format(future.getMonthOfYear(), future.getDayOfMonth()))));
+        pressBack();
+        //now the order should be reversed
+        onView(withRecyclerView(R.id.events_recycler_view).atPosition(0)).check(matches(withText(containsString("Tomorrow"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPosition(1)).check(matches(withText(containsString("Today"))));
+    }
+
+    private IEvent createEvent(String name, LocalDate date) {
+        //noinspection ResourceType
+        return new Event(name, date.getMonthOfYear(), date.getDayOfMonth(), clock, idGenerator);
     }
 
     @Test public void testPushAddBirthdayStartsNewActivity() throws IOException {

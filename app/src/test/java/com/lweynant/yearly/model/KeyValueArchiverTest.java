@@ -32,12 +32,12 @@ public class KeyValueArchiverTest {
         IValidator validator = mock(IValidator.class);
         sut.writeValidatorToBundle(validator, bundle);
 
-        verify(bundle).remove(IKeyValueArchiver.KEY_NAME);
-        verify(bundle).remove(IKeyValueArchiver.KEY_YEAR);
-        verify(bundle).remove(IKeyValueArchiver.KEY_MONTH);
-        verify(bundle).remove(IKeyValueArchiver.KEY_DAY);
-        verify(bundle).remove(IKeyValueArchiver.KEY_STRING_ID);
-        verify(bundle).remove(IKeyValueArchiver.KEY_ID);
+        verify(bundle).remove(IEvent.KEY_NAME);
+        verify(bundle).remove(IEvent.KEY_YEAR);
+        verify(bundle).remove(IEvent.KEY_MONTH);
+        verify(bundle).remove(IEvent.KEY_DAY);
+        verify(bundle).remove(IEvent.KEY_STRING_ID);
+        verify(bundle).remove(IEvent.KEY_ID);
         verifyNoMoreInteractions(bundle);
     }
     @Test public void testWriteValidatorWithNameToBundle() {
@@ -46,12 +46,12 @@ public class KeyValueArchiverTest {
         when(validator.getName()).thenReturn("Joe");
         sut.writeValidatorToBundle(validator, bundle);
 
-        verify(bundle).putString(IKeyValueArchiver.KEY_NAME, "Joe");
-        verify(bundle).remove(IKeyValueArchiver.KEY_YEAR);
-        verify(bundle).remove(IKeyValueArchiver.KEY_MONTH);
-        verify(bundle).remove(IKeyValueArchiver.KEY_DAY);
-        verify(bundle).remove(IKeyValueArchiver.KEY_STRING_ID);
-        verify(bundle).remove(IKeyValueArchiver.KEY_ID);
+        verify(bundle).putString(IEvent.KEY_NAME, "Joe");
+        verify(bundle).remove(IEvent.KEY_YEAR);
+        verify(bundle).remove(IEvent.KEY_MONTH);
+        verify(bundle).remove(IEvent.KEY_DAY);
+        verify(bundle).remove(IEvent.KEY_STRING_ID);
+        verify(bundle).remove(IEvent.KEY_ID);
         verifyNoMoreInteractions(bundle);
     }
     @Test public void testWriteValidatorWithYearToBundle() {
@@ -60,12 +60,12 @@ public class KeyValueArchiverTest {
         when(validator.getYear()).thenReturn(2016);
         sut.writeValidatorToBundle(validator, bundle);
 
-        verify(bundle).remove(IKeyValueArchiver.KEY_NAME);
-        verify(bundle).putInt(IKeyValueArchiver.KEY_YEAR, 2016);
-        verify(bundle).remove(IKeyValueArchiver.KEY_MONTH);
-        verify(bundle).remove(IKeyValueArchiver.KEY_DAY);
-        verify(bundle).remove(IKeyValueArchiver.KEY_STRING_ID);
-        verify(bundle).remove(IKeyValueArchiver.KEY_ID);
+        verify(bundle).remove(IEvent.KEY_NAME);
+        verify(bundle).putInt(IEvent.KEY_YEAR, 2016);
+        verify(bundle).remove(IEvent.KEY_MONTH);
+        verify(bundle).remove(IEvent.KEY_DAY);
+        verify(bundle).remove(IEvent.KEY_STRING_ID);
+        verify(bundle).remove(IEvent.KEY_ID);
 
         verifyNoMoreInteractions(bundle);
     }
@@ -75,12 +75,12 @@ public class KeyValueArchiverTest {
         when(validator.getMonth()).thenReturn(Date.APRIL);
         sut.writeValidatorToBundle(validator, bundle);
 
-        verify(bundle).remove(IKeyValueArchiver.KEY_NAME);
-        verify(bundle).remove(IKeyValueArchiver.KEY_YEAR);
-        verify(bundle).putInt(IKeyValueArchiver.KEY_MONTH, Date.APRIL);
-        verify(bundle).remove(IKeyValueArchiver.KEY_DAY);
-        verify(bundle).remove(IKeyValueArchiver.KEY_STRING_ID);
-        verify(bundle).remove(IKeyValueArchiver.KEY_ID);
+        verify(bundle).remove(IEvent.KEY_NAME);
+        verify(bundle).remove(IEvent.KEY_YEAR);
+        verify(bundle).putInt(IEvent.KEY_MONTH, Date.APRIL);
+        verify(bundle).remove(IEvent.KEY_DAY);
+        verify(bundle).remove(IEvent.KEY_STRING_ID);
+        verify(bundle).remove(IEvent.KEY_ID);
 
         verifyNoMoreInteractions(bundle);
     }
@@ -91,12 +91,12 @@ public class KeyValueArchiverTest {
         when(validator.getStringID()).thenReturn("id");
         sut.writeValidatorToBundle(validator, bundle);
 
-        verify(bundle).remove(IKeyValueArchiver.KEY_NAME);
-        verify(bundle).remove(IKeyValueArchiver.KEY_YEAR);
-        verify(bundle).remove(IKeyValueArchiver.KEY_MONTH);
-        verify(bundle).remove(IKeyValueArchiver.KEY_DAY);
-        verify(bundle).putString(IKeyValueArchiver.KEY_STRING_ID, "id");
-        verify(bundle).putInt(IKeyValueArchiver.KEY_ID, 666);
+        verify(bundle).remove(IEvent.KEY_NAME);
+        verify(bundle).remove(IEvent.KEY_YEAR);
+        verify(bundle).remove(IEvent.KEY_MONTH);
+        verify(bundle).remove(IEvent.KEY_DAY);
+        verify(bundle).putString(IEvent.KEY_STRING_ID, "id");
+        verify(bundle).putInt(IEvent.KEY_ID, 666);
 
         verifyNoMoreInteractions(bundle);
     }
@@ -106,13 +106,13 @@ public class KeyValueArchiverTest {
         when(validator.getDay()).thenReturn(24);
         sut.writeValidatorToBundle(validator, bundle);
 
-        verify(bundle).remove(IKeyValueArchiver.KEY_NAME);
-        verify(bundle).remove(IKeyValueArchiver.KEY_YEAR);
-        verify(bundle).remove(IKeyValueArchiver.KEY_MONTH);
-        verify(bundle).remove(IKeyValueArchiver.KEY_STRING_ID);
-        verify(bundle).remove(IKeyValueArchiver.KEY_ID);
+        verify(bundle).remove(IEvent.KEY_NAME);
+        verify(bundle).remove(IEvent.KEY_YEAR);
+        verify(bundle).remove(IEvent.KEY_MONTH);
+        verify(bundle).remove(IEvent.KEY_STRING_ID);
+        verify(bundle).remove(IEvent.KEY_ID);
 
-        verify(bundle).putInt(IKeyValueArchiver.KEY_DAY, 24);
+        verify(bundle).putInt(IEvent.KEY_DAY, 24);
         verifyNoMoreInteractions(bundle);
     }
 
@@ -123,34 +123,34 @@ public class KeyValueArchiverTest {
     }
 
     @Test public void writeBundleWithNameToValidator() {
-        when(bundle.containsKey(IKeyValueArchiver.KEY_NAME)).thenReturn(true);
-        when(bundle.getString(IKeyValueArchiver.KEY_NAME)).thenReturn("Fred");
+        when(bundle.containsKey(IEvent.KEY_NAME)).thenReturn(true);
+        when(bundle.getString(IEvent.KEY_NAME)).thenReturn("Fred");
 
         IValidator validator = sut.readValidatorFromBundle(bundle);
 
         verify(validator).setName("Fred");
     }
     @Test public void writeBundleWithIdToValidator() {
-        when(bundle.containsKey(IKeyValueArchiver.KEY_STRING_ID)).thenReturn(true);
-        when(bundle.getString(IKeyValueArchiver.KEY_STRING_ID)).thenReturn("ID");
-        when(bundle.containsKey(IKeyValueArchiver.KEY_ID)).thenReturn(true);
-        when(bundle.getInt(IKeyValueArchiver.KEY_ID)).thenReturn(888);
+        when(bundle.containsKey(IEvent.KEY_STRING_ID)).thenReturn(true);
+        when(bundle.getString(IEvent.KEY_STRING_ID)).thenReturn("ID");
+        when(bundle.containsKey(IEvent.KEY_ID)).thenReturn(true);
+        when(bundle.getInt(IEvent.KEY_ID)).thenReturn(888);
 
         IValidator validator = sut.readValidatorFromBundle(bundle);
 
         verify(validator).setID("ID", 888);
     }
     @Test public void writeBundleWithStringIdOnlyToValidator() {
-        when(bundle.containsKey(IKeyValueArchiver.KEY_STRING_ID)).thenReturn(true);
-        when(bundle.getString(IKeyValueArchiver.KEY_STRING_ID)).thenReturn("ID");
+        when(bundle.containsKey(IEvent.KEY_STRING_ID)).thenReturn(true);
+        when(bundle.getString(IEvent.KEY_STRING_ID)).thenReturn("ID");
 
         IValidator validator = sut.readValidatorFromBundle(bundle);
 
         verifyZeroInteractions(validator);
     }
     @Test public void writeBundleWithIntIdOnlyToValidator() {
-        when(bundle.containsKey(IKeyValueArchiver.KEY_ID)).thenReturn(true);
-        when(bundle.getInt(IKeyValueArchiver.KEY_ID)).thenReturn(888);
+        when(bundle.containsKey(IEvent.KEY_ID)).thenReturn(true);
+        when(bundle.getInt(IEvent.KEY_ID)).thenReturn(888);
 
         IValidator validator = sut.readValidatorFromBundle(bundle);
 
@@ -158,24 +158,24 @@ public class KeyValueArchiverTest {
     }
 
     @Test public void writeBundleWithYearToValidator() {
-        when(bundle.containsKey(IKeyValueArchiver.KEY_YEAR)).thenReturn(true);
-        when(bundle.getInt(IKeyValueArchiver.KEY_YEAR)).thenReturn(2000);
+        when(bundle.containsKey(IEvent.KEY_YEAR)).thenReturn(true);
+        when(bundle.getInt(IEvent.KEY_YEAR)).thenReturn(2000);
 
         IValidator validator = sut.readValidatorFromBundle(bundle);
 
         verify(validator).setYear(2000);
     }
     @Test public void writeBundleWithMonthToValidator() {
-        when(bundle.containsKey(IKeyValueArchiver.KEY_MONTH)).thenReturn(true);
-        when(bundle.getInt(IKeyValueArchiver.KEY_MONTH)).thenReturn(Date.DECEMBER);
+        when(bundle.containsKey(IEvent.KEY_MONTH)).thenReturn(true);
+        when(bundle.getInt(IEvent.KEY_MONTH)).thenReturn(Date.DECEMBER);
 
         IValidator validator = sut.readValidatorFromBundle(bundle);
 
         verify(validator).setMonth(Date.DECEMBER);
     }
     @Test public void writeBundleWithDayToValidator() {
-        when(bundle.containsKey(IKeyValueArchiver.KEY_DAY)).thenReturn(true);
-        when(bundle.getInt(IKeyValueArchiver.KEY_DAY)).thenReturn(26);
+        when(bundle.containsKey(IEvent.KEY_DAY)).thenReturn(true);
+        when(bundle.getInt(IEvent.KEY_DAY)).thenReturn(26);
 
         IValidator validator = sut.readValidatorFromBundle(bundle);
 

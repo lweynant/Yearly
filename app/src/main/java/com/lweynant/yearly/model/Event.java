@@ -1,29 +1,22 @@
 package com.lweynant.yearly.model;
 
+import android.os.Bundle;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IUniqueIdGenerator;
 
-import org.joda.time.Days;
 import org.joda.time.LocalDate;
 
 public class Event implements IEvent {
-    public static final String KEY_NAME = "name";
-    public static final String KEY_TYPE = "type";
-    public static final String KEY_DAY = "day";
-    public static final String KEY_MONTH = "month";
-    public static final String KEY_NBR_DAYS_FOR_NOTIFICATION = "nbr_days_for_notification";
-    public static final String KEY_UID = "uuid";
-    public static final String KEY_ID = "id";
-    public static final String KEY_YEAR = "year";
     @Expose @SerializedName(KEY_ID) public final int id;
     @Expose @SerializedName(KEY_DAY) private final int day;
     @Expose @SerializedName(KEY_MONTH) @Date.Month private final int month;
     @Expose @SerializedName(KEY_YEAR) private Integer year;
 
     @Expose @SerializedName(KEY_TYPE) private final String type;
-    @Expose @SerializedName(KEY_UID) private final String uuid;
+    @Expose @SerializedName(KEY_STRING_ID) private final String uuid;
     @Expose @SerializedName(KEY_NAME) private String name;
     @Expose @SerializedName(KEY_NBR_DAYS_FOR_NOTIFICATION) private int nbrDaysForNotification = 1;
     private final IClock clock;
@@ -93,6 +86,19 @@ public class Event implements IEvent {
 
     @Override public String getType() {
         return type;
+    }
+
+    @Override public void archiveTo(Bundle bundle) {
+        bundle.putString(IEvent.KEY_STRING_ID, getStringID());
+        bundle.putInt(IEvent.KEY_ID, getID());
+        bundle.putString(IEvent.KEY_NAME, getName());
+        if (hasYearOfOrigin()) {
+            bundle.putInt(IEvent.KEY_YEAR, getYearOfOrigin());
+        }
+        bundle.putInt(IEvent.KEY_MONTH, month);
+        bundle.putInt(IEvent.KEY_DAY, day);
+        bundle.putInt(IEvent.KEY_NBR_DAYS_FOR_NOTIFICATION, getNbrOfDaysForNotification());
+        bundle.putString(IEvent.KEY_TYPE, getType());
     }
 
     @Override public int compareTo(IEvent another) {

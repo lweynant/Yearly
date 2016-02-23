@@ -1,9 +1,20 @@
 package com.lweynant.yearly.model;
 
+import android.os.Bundle;
+
 import org.joda.time.LocalDate;
 
 public interface IEvent extends Comparable<IEvent>, IEventID {
 
+
+    String KEY_NAME = "name";
+    String KEY_TYPE = "type";
+    String KEY_DAY = "day";
+    String KEY_MONTH = "month";
+    String KEY_NBR_DAYS_FOR_NOTIFICATION = "nbr_days_for_notification";
+    String KEY_STRING_ID = "uuid";
+    String KEY_ID = "id";
+    String KEY_YEAR = "year";
 
     public String getName();
 
@@ -19,4 +30,5 @@ public interface IEvent extends Comparable<IEvent>, IEventID {
 
     String getType();
 
+    void archiveTo(Bundle bundle);
 }

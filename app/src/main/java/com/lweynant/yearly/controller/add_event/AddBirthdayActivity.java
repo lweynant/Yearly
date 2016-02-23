@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import timber.log.Timber;
 
 public class AddBirthdayActivity extends SingleFragmentActivity {
+    public static final String EXTRA_INITIAL_BIRTHDAY_BUNDLE = "AddBirthdayActivity.initial.birthday";
     @Inject AddBirthdayContract.UserActionsListener userActionsListener;
 
     @Override
@@ -38,7 +39,15 @@ public class AddBirthdayActivity extends SingleFragmentActivity {
     }
 
     @Override protected Fragment createFragment() {
-        return AddBirthdayActivityFragment.newInstance(new Bundle());
+        Intent intent = getIntent();
+        Bundle args;
+        if(intent.hasExtra(AddBirthdayActivity.EXTRA_INITIAL_BIRTHDAY_BUNDLE)){
+            args = intent.getBundleExtra(AddBirthdayActivity.EXTRA_INITIAL_BIRTHDAY_BUNDLE);
+        }
+        else {
+            args = new Bundle();
+        }
+        return AddBirthdayActivityFragment.newInstance(args);
     }
 
     @Override protected void injectDependencies(BaseYearlyAppComponent component) {

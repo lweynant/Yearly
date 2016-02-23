@@ -8,7 +8,7 @@ import com.lweynant.yearly.platform.IUniqueIdGenerator;
 
 
 public class BirthdayBuilder extends BaseEventBuilder<BirthdayBuilder, Birthday> {
-    public static final String KEY_LAST_NAME = "last_name";
+    public static final String KEY_LAST_NAME = Birthday.KEY_LAST_NAME;
     private String lastName;
 
     public BirthdayBuilder(IValidator validator, IKeyValueArchiver archiver,

@@ -1,5 +1,7 @@
 package com.lweynant.yearly.model;
 
+import android.os.Bundle;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.lweynant.yearly.platform.IClock;
@@ -15,6 +17,11 @@ import static junit.framework.Assert.assertNull;
 import static net.javacrumbs.jsonunit.fluent.JsonFluentAssert.assertThatJson;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -48,6 +55,36 @@ public class EventTest {
         assertThat(event.getYearOfOrigin(), is(2000));
     }
 
+    @Test public void archiveEventWithYearToBundle() {
+        when(uniqueIdGenerator.getUniqueId()).thenReturn("string-id");
+        when(uniqueIdGenerator.hashCode("string-id")).thenReturn(666);
+        Event event = createEvent("Fred", 2015, Date.AUGUST, 23);
+        Bundle bundle = mock(Bundle.class);
+        event.archiveTo(bundle);
+
+        verify(bundle).putString(IEvent.KEY_TYPE, Event.class.getCanonicalName());
+        verify(bundle).putInt(IEvent.KEY_ID, 666);
+        verify(bundle).putString(IEvent.KEY_STRING_ID, "string-id");
+        verify(bundle).putString(IEvent.KEY_NAME, "Fred");
+        verify(bundle).putInt(IEvent.KEY_YEAR, 2015);
+        verify(bundle).putInt(IEvent.KEY_MONTH, Date.AUGUST);
+        verify(bundle).putInt(IEvent.KEY_DAY, 23);
+    }
+    @Test public void archiveEventWithoutYearToBundle() {
+        when(uniqueIdGenerator.getUniqueId()).thenReturn("string-id");
+        when(uniqueIdGenerator.hashCode("string-id")).thenReturn(666);
+        Event event = createEvent("Fred", Date.AUGUST, 23);
+        Bundle bundle = mock(Bundle.class);
+        event.archiveTo(bundle);
+
+        verify(bundle).putString(IEvent.KEY_TYPE, Event.class.getCanonicalName());
+        verify(bundle).putInt(IEvent.KEY_ID, 666);
+        verify(bundle).putString(IEvent.KEY_STRING_ID, "string-id");
+        verify(bundle).putString(IEvent.KEY_NAME, "Fred");
+        verify(bundle, never()).putInt(eq(IEvent.KEY_YEAR), anyInt());
+        verify(bundle).putInt(IEvent.KEY_MONTH, Date.AUGUST);
+        verify(bundle).putInt(IEvent.KEY_DAY, 23);
+    }
 
     @Test public void testSerializeWithoutYear() throws Exception {
         when(uniqueIdGenerator.getUniqueId()).thenReturn("random-id");
@@ -56,14 +93,14 @@ public class EventTest {
         String name = "event name";
         Event event = createEvent(name, Date.AUGUST, 30);
         String json = gson.toJson(event);
-        assertThatJson(json).node(Event.KEY_NAME).isEqualTo(name);
-        assertThatJson(json).node(Event.KEY_TYPE).isEqualTo(Event.class.getCanonicalName());
-        assertThatJson(json).node(Event.KEY_NBR_DAYS_FOR_NOTIFICATION).isEqualTo(1);
-        assertThatJson(json).node(Event.KEY_DAY).isEqualTo(30);
-        assertThatJson(json).node(Event.KEY_MONTH).isEqualTo(Date.AUGUST);
-        assertThatJson(json).node(Event.KEY_UID).isEqualTo("random-id");
-        assertThatJson(json).node(Event.KEY_ID).isEqualTo(55);
-        assertThatJson(json).node(Event.KEY_YEAR).isAbsent();
+        assertThatJson(json).node(IEvent.KEY_NAME).isEqualTo(name);
+        assertThatJson(json).node(IEvent.KEY_TYPE).isEqualTo(Event.class.getCanonicalName());
+        assertThatJson(json).node(IEvent.KEY_NBR_DAYS_FOR_NOTIFICATION).isEqualTo(1);
+        assertThatJson(json).node(IEvent.KEY_DAY).isEqualTo(30);
+        assertThatJson(json).node(IEvent.KEY_MONTH).isEqualTo(Date.AUGUST);
+        assertThatJson(json).node(IEvent.KEY_STRING_ID).isEqualTo("random-id");
+        assertThatJson(json).node(IEvent.KEY_ID).isEqualTo(55);
+        assertThatJson(json).node(IEvent.KEY_YEAR).isAbsent();
     }
     @Test public void testSerializeWithYear() throws Exception {
         when(uniqueIdGenerator.getUniqueId()).thenReturn("random-id");
@@ -72,14 +109,14 @@ public class EventTest {
         String name = "event name";
         Event event = createEvent(name, 2016, Date.AUGUST, 30);
         String json = gson.toJson(event);
-        assertThatJson(json).node(Event.KEY_NAME).isEqualTo(name);
-        assertThatJson(json).node(Event.KEY_TYPE).isEqualTo(Event.class.getCanonicalName());
-        assertThatJson(json).node(Event.KEY_NBR_DAYS_FOR_NOTIFICATION).isEqualTo(1);
-        assertThatJson(json).node(Event.KEY_DAY).isEqualTo(30);
-        assertThatJson(json).node(Event.KEY_MONTH).isEqualTo(Date.AUGUST);
-        assertThatJson(json).node(Event.KEY_UID).isEqualTo("random-id");
-        assertThatJson(json).node(Event.KEY_ID).isEqualTo(55);
-        assertThatJson(json).node(Event.KEY_YEAR).isEqualTo(2016);
+        assertThatJson(json).node(IEvent.KEY_NAME).isEqualTo(name);
+        assertThatJson(json).node(IEvent.KEY_TYPE).isEqualTo(Event.class.getCanonicalName());
+        assertThatJson(json).node(IEvent.KEY_NBR_DAYS_FOR_NOTIFICATION).isEqualTo(1);
+        assertThatJson(json).node(IEvent.KEY_DAY).isEqualTo(30);
+        assertThatJson(json).node(IEvent.KEY_MONTH).isEqualTo(Date.AUGUST);
+        assertThatJson(json).node(IEvent.KEY_STRING_ID).isEqualTo("random-id");
+        assertThatJson(json).node(IEvent.KEY_ID).isEqualTo(55);
+        assertThatJson(json).node(IEvent.KEY_YEAR).isEqualTo(2016);
     }
 
     @Test public void testCreateFromGson() throws Exception {

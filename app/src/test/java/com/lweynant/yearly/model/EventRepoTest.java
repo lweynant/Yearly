@@ -213,7 +213,7 @@ public class EventRepoTest {
         List<String> names = new ArrayList<>();
         JsonArray array = json.getAsJsonArray("events");
         for (int i = 0; i < 4; i++) {
-            names.add(array.get(i).getAsJsonObject().getAsJsonPrimitive(Event.KEY_NAME).getAsString());
+            names.add(array.get(i).getAsJsonObject().getAsJsonPrimitive(IEvent.KEY_NAME).getAsString());
         }
         assertThat(names, containsInAnyOrder("event 1", "event 2", "event 3", "event 4"));
 

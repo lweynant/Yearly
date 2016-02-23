@@ -1,8 +1,13 @@
 package com.lweynant.yearly.ui;
 
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.ViewGroup;
 
 import com.lweynant.yearly.IStringResources;
+import com.lweynant.yearly.controller.add_event.AddBirthdayActivity;
+import com.lweynant.yearly.controller.add_event.AddEventActivity;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.Event;
 import com.lweynant.yearly.model.IEvent;
@@ -46,6 +51,19 @@ public class EventViewFactory implements IEventViewFactory {
             return new EventNotificationText(event, new EventStringResource(rstring), clock);
         }
         return null;
+    }
+
+    @Override public Intent getActivityIntentForEditing(Context context, IEvent event, Bundle bundle) {
+        Intent intent = null;
+        if(event instanceof Birthday) {
+            intent = new Intent(context, AddBirthdayActivity.class);
+            intent.putExtra(AddBirthdayActivity.EXTRA_INITIAL_BIRTHDAY_BUNDLE, bundle);
+        }
+        else if (event instanceof Event) {
+            intent = new Intent(context, AddEventActivity.class);
+            intent.putExtra(AddEventActivity.EXTRA_INITIAL_EVENT_BUNDLE, bundle);
+        }
+        return intent;
     }
 
 }

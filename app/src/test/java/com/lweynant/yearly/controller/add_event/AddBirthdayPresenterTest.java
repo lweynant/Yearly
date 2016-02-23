@@ -9,6 +9,7 @@ import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.Event;
+import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.IKeyValueArchiver;
 import com.lweynant.yearly.model.ITransaction;
 import com.lweynant.yearly.platform.IClock;
@@ -38,7 +39,7 @@ public class AddBirthdayPresenterTest {
 
     @Mock IClock clock;
     @Mock IUniqueIdGenerator idGenerator;
-    @Mock DateFormatter dateFormatter;
+    //@Mock DateFormatter dateFormatter;
     private AddBirthdayPresenter sut;
     @Mock AddBirthdayContract.FragmentView fragmentView;
     @Mock IStringResources rstring;
@@ -180,22 +181,30 @@ public class AddBirthdayPresenterTest {
 
 
     @Test public void initializeWithEmptyArgAndNullSavedInstanceState() {
-        when(dateFormatter.format(today.getMonthOfYear(), today.getDayOfMonth())).thenReturn("the date");
+        //when(dateFormatter.format(today.getMonthOfYear(), today.getDayOfMonth())).thenReturn("formatted date");
         Bundle emptyArgs = mock(Bundle.class);
         sut.initialize(fragmentView, emptyArgs, null);
 
         verify(fragmentView).initialize(null, null, null, today.getYear(), today.getMonthOfYear(), today.getDayOfMonth());
     }
+
+    @Test public void initializeWithValidEventArgWithYearAndNullSavedInstanceState() {
+        //when(dateFormatter.format(2001, Date.APRIL, 23)).thenReturn("formatted date");
+        Bundle args = createArgsFor("Events name", 2001, Date.APRIL, 23);
+        sut.initialize(fragmentView, args, null);
+
+        verify(fragmentView).initialize(("Events name"), null, ("formatted date"), 2001, Date.APRIL, 23);
+    }
+
     @Test public void initializeWithValidEventArgAndNullSavedInstanceState() {
-        when(dateFormatter.format(Date.APRIL, 23)).thenReturn("the date");
-        when(dateFormatter.format(Date.APRIL, 23)).thenReturn("the date");
+        //when(dateFormatter.format(Date.APRIL, 23)).thenReturn("the date");
         Bundle args = createArgsFor("Events name", Date.APRIL, 23);
         sut.initialize(fragmentView, args, null);
 
         verify(fragmentView).initialize("Events name", null, "23 apr", today.getYear(), Date.APRIL, 23);
     }
     @Test public void initializeWithValidEventArgAndSomeSavedInstanceState() {
-        when(dateFormatter.format(Date.APRIL, 23)).thenReturn("the date");
+       // when(dateFormatter.format(Date.APRIL, 23)).thenReturn("the date");
         Bundle args = createArgsFor("Events name", Date.APRIL, 23);
         Bundle state = createStateFor("New name", Date.AUGUST, 23);
         sut.initialize(fragmentView, args, state);
@@ -205,23 +214,23 @@ public class AddBirthdayPresenterTest {
 
     private Bundle createStateFor(String name, int month, int day) {
         Bundle bundle = mock(Bundle.class);
-        when(bundle.containsKey(IKeyValueArchiver.KEY_NAME)).thenReturn(true);
-        when(bundle.getString(IKeyValueArchiver.KEY_NAME)).thenReturn(name);
-        when(bundle.containsKey(IKeyValueArchiver.KEY_MONTH)).thenReturn(true);
-        when(bundle.getInt(IKeyValueArchiver.KEY_MONTH)).thenReturn(month);
-        when(bundle.containsKey(IKeyValueArchiver.KEY_DAY)).thenReturn(true);
-        when(bundle.getInt(IKeyValueArchiver.KEY_DAY)).thenReturn(day);
+        when(bundle.containsKey(IEvent.KEY_NAME)).thenReturn(true);
+        when(bundle.getString(IEvent.KEY_NAME)).thenReturn(name);
+        when(bundle.containsKey(IEvent.KEY_MONTH)).thenReturn(true);
+        when(bundle.getInt(IEvent.KEY_MONTH)).thenReturn(month);
+        when(bundle.containsKey(IEvent.KEY_DAY)).thenReturn(true);
+        when(bundle.getInt(IEvent.KEY_DAY)).thenReturn(day);
         return bundle;
     }
 
     private Bundle createArgsFor(String name, int month, int day) {
         Bundle args = mock(Bundle.class);
-        when(args.containsKey(IKeyValueArchiver.KEY_NAME)).thenReturn(true);
-        when(args.getString(IKeyValueArchiver.KEY_NAME)).thenReturn(name);
-        when(args.containsKey(IKeyValueArchiver.KEY_MONTH)).thenReturn(true);
-        when(args.getInt(IKeyValueArchiver.KEY_MONTH)).thenReturn(month);
-        when(args.containsKey(IKeyValueArchiver.KEY_DAY)).thenReturn(true);
-        when(args.getInt(IKeyValueArchiver.KEY_MONTH)).thenReturn(day);
+        when(args.containsKey(IEvent.KEY_NAME)).thenReturn(true);
+        when(args.getString(IEvent.KEY_NAME)).thenReturn(name);
+        when(args.containsKey(IEvent.KEY_MONTH)).thenReturn(true);
+        when(args.getInt(IEvent.KEY_MONTH)).thenReturn(month);
+        when(args.containsKey(IEvent.KEY_DAY)).thenReturn(true);
+        when(args.getInt(IEvent.KEY_MONTH)).thenReturn(day);
         //prepare the builder to accept these args
         when(birthdayBuilder.canBuild()).thenReturn(true);
         Birthday event = createBirthday(name, month, day);
@@ -229,6 +238,23 @@ public class AddBirthdayPresenterTest {
 
 
         return args;
+    }
+    private Bundle createArgsFor(String name, int year, int month, int day) {
+        Bundle args = createArgsFor(name, month, day);
+        when(args.containsKey(IEvent.KEY_YEAR)).thenReturn(true);
+        when(args.getInt(IEvent.KEY_YEAR)).thenReturn(year);
+        when(birthdayBuilder.canBuild()).thenReturn(true);
+        Birthday event = createBirthday(name, year, month, day);
+        when(birthdayBuilder.build()).thenReturn(event);
+
+        return args;
+    }
+
+    private Birthday createBirthday(String name, int year, int month, int day) {
+        Birthday bd = createBirthday(name, month, day);
+        when(bd.hasYearOfOrigin()).thenReturn(true);
+        when(bd.getYearOfOrigin()).thenReturn(year);
+        return  bd;
     }
 
     private Birthday createBirthday(String name, int month, int day) {

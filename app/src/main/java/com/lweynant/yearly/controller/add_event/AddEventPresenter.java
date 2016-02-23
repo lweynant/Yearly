@@ -7,7 +7,6 @@ import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.Event;
 import com.lweynant.yearly.model.EventBuilder;
 import com.lweynant.yearly.model.IEvent;
-import com.lweynant.yearly.model.IKeyValueArchiver;
 import com.lweynant.yearly.model.ITransaction;
 import com.lweynant.yearly.platform.IClock;
 
@@ -33,14 +32,15 @@ public class AddEventPresenter implements AddEventContract.UserActionListener{
         this.clock = clock;
     }
 
-    @Override public void initialize(AddEventContract.FragmentView fragmentView, Bundle args , Bundle savedInstanceState) {
+    @SuppressWarnings("ResourceType") @Override
+    public void initialize(AddEventContract.FragmentView fragmentView, Bundle args, Bundle savedInstanceState) {
         this.fragmentView = fragmentView;
         LocalDate now = clock.now();
         if (savedInstanceState != null) {
             builder.set(savedInstanceState);
-            int selectedYear = readIntFromBundle(savedInstanceState, IKeyValueArchiver.KEY_YEAR, now.getYear());
-            int selectedMonth = readIntFromBundle(savedInstanceState, IKeyValueArchiver.KEY_MONTH, now.getMonthOfYear());
-            int selectedDay = readIntFromBundle(savedInstanceState, IKeyValueArchiver.KEY_DAY, now.getDayOfMonth());
+            int selectedYear = readIntFromBundle(savedInstanceState, IEvent.KEY_YEAR, now.getYear());
+            int selectedMonth = readIntFromBundle(savedInstanceState, IEvent.KEY_MONTH, now.getMonthOfYear());
+            int selectedDay = readIntFromBundle(savedInstanceState, IEvent.KEY_DAY, now.getDayOfMonth());
             fragmentView.initialize(null, null, selectedYear, selectedMonth, selectedDay);
         }
         else{
@@ -49,9 +49,16 @@ public class AddEventPresenter implements AddEventContract.UserActionListener{
             if (update) {
                 Event event = builder.build();
                 LocalDate date = event.getDate();
-                //noinspection ResourceType
-                String formattedDate = dateFormatter.format(date.getMonthOfYear(), date.getDayOfMonth());
-                fragmentView.initialize(event.getName(), formattedDate, date.getYear(), date.getMonthOfYear(), date.getDayOfMonth());
+                String formattedDate;
+                int year;
+                if (event.hasYearOfOrigin()) {
+                    year = event.getYearOfOrigin();
+                    formattedDate = dateFormatter.format(year, date.getMonthOfYear(), date.getDayOfMonth());
+                } else {
+                    year = date.getYear();
+                    formattedDate = dateFormatter.format(date.getMonthOfYear(), date.getDayOfMonth());
+                }
+                fragmentView.initialize(event.getName(), formattedDate, year, date.getMonthOfYear(), date.getDayOfMonth());
             }
             else {
                 fragmentView.initialize(null, null, now.getYear(), now.getMonthOfYear(), now.getDayOfMonth());

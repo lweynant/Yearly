@@ -1,5 +1,7 @@
 package com.lweynant.yearly.model;
 
+import android.os.Bundle;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.lweynant.yearly.platform.IClock;
@@ -53,6 +55,17 @@ public class Birthday extends Event {
             return name + " - " + date;
         }
 
+    }
+
+    @Override public void archiveTo(Bundle bundle) {
+        super.archiveTo(bundle);
+        if (hasLastName()){
+            bundle.putString(KEY_LAST_NAME, getLastName());
+        }
+    }
+
+    private boolean hasLastName() {
+        return lastName != null;
     }
 
     public String getLastName() {

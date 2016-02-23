@@ -1,6 +1,8 @@
 package com.lweynant.yearly.model;
 
 
+import android.os.Bundle;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.lweynant.yearly.platform.IClock;
@@ -16,6 +18,12 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static net.javacrumbs.jsonunit.fluent.JsonFluentAssert.assertThatJson;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -103,6 +111,40 @@ public class BirthdayTest {
 
         assertThat(joe.compareTo(fred), is(-1));
     }
+
+    @Test public void archiveEventWithYearToBundle() {
+        when(uniqueIdGenerator.getUniqueId()).thenReturn("string-id");
+        when(uniqueIdGenerator.hashCode("string-id")).thenReturn(666);
+        Event event = createBirthday("Fred", 2015, Date.AUGUST, 23);
+        Bundle bundle = mock(Bundle.class);
+        event.archiveTo(bundle);
+
+        verify(bundle).putString(IEvent.KEY_TYPE, Birthday.class.getCanonicalName());
+        verify(bundle).putInt(IEvent.KEY_ID, 666);
+        verify(bundle).putString(IEvent.KEY_STRING_ID, "string-id");
+        verify(bundle).putString(IEvent.KEY_NAME, "Fred");
+        verify(bundle, never()).putString(eq(Birthday.KEY_LAST_NAME), anyString());
+        verify(bundle).putInt(IEvent.KEY_YEAR, 2015);
+        verify(bundle).putInt(IEvent.KEY_MONTH, Date.AUGUST);
+        verify(bundle).putInt(IEvent.KEY_DAY, 23);
+    }
+    @Test public void archiveBirthdayWithLastNameToBundle() {
+        when(uniqueIdGenerator.getUniqueId()).thenReturn("string-id");
+        when(uniqueIdGenerator.hashCode("string-id")).thenReturn(666);
+        Event event = createBirthday("Fred", "Doe", Date.AUGUST, 23);
+        Bundle bundle = mock(Bundle.class);
+        event.archiveTo(bundle);
+
+        verify(bundle).putString(IEvent.KEY_TYPE, Birthday.class.getCanonicalName());
+        verify(bundle).putInt(IEvent.KEY_ID, 666);
+        verify(bundle).putString(IEvent.KEY_STRING_ID, "string-id");
+        verify(bundle).putString(IEvent.KEY_NAME, "Fred");
+        verify(bundle).putString(Birthday.KEY_LAST_NAME, "Doe");
+        verify(bundle, never()).putInt(eq(IEvent.KEY_YEAR), anyInt());
+        verify(bundle).putInt(IEvent.KEY_MONTH, Date.AUGUST);
+        verify(bundle).putInt(IEvent.KEY_DAY, 23);
+    }
+
 
     @Test public void testSerializeBirthday() throws Exception {
         Birthday bd = createBirthday("Mine", Date.FEBRUARY, 8);

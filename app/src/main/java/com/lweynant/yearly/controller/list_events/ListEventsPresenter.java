@@ -40,7 +40,7 @@ public class ListEventsPresenter implements ListEventsContract.UserActionsListen
     }
 
     @Override public void openEventDetails(IEvent requestedEvent) {
-        fragmentView.showEventDetailsUI(requestedEvent);
+        activityView.showEventDetailsUI(requestedEvent);
     }
 
     @Override public void loadEvents(boolean forceUpdate) {

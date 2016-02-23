@@ -6,6 +6,7 @@ import com.lweynant.yearly.controller.DateFormatter;
 import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.Event;
 import com.lweynant.yearly.model.EventBuilder;
+import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.IKeyValueArchiver;
 import com.lweynant.yearly.model.ITransaction;
 import com.lweynant.yearly.platform.IClock;
@@ -141,6 +142,13 @@ public class AddEventPresenterTest {
 
         verify(fragmentView).initialize(("Events name"), ("the date"), today.getYear(), Date.APRIL, 23);
     }
+    @Test public void initializeWithValidEventArgWithYearAndNullSavedInstanceState() {
+        when(dateFormatter.format(2001, Date.APRIL, 23)).thenReturn("the date");
+        Bundle args = createArgsFor("Events name", 2001, Date.APRIL, 23);
+        sut.initialize(fragmentView, args, null);
+
+        verify(fragmentView).initialize(("Events name"), ("the date"), 2001, Date.APRIL, 23);
+    }
     @Test public void initializeWithValidEventArgAndSomeSavedInstanceState() {
         when(dateFormatter.format(Date.APRIL, 23)).thenReturn("the date");
         Bundle args = createArgsFor("Events name", Date.APRIL, 23);
@@ -152,23 +160,23 @@ public class AddEventPresenterTest {
 
     private Bundle createStateFor(String name, int month, int day) {
         Bundle bundle = mock(Bundle.class);
-        when(bundle.containsKey(IKeyValueArchiver.KEY_NAME)).thenReturn(true);
-        when(bundle.getString(IKeyValueArchiver.KEY_NAME)).thenReturn(name);
-        when(bundle.containsKey(IKeyValueArchiver.KEY_MONTH)).thenReturn(true);
-        when(bundle.getInt(IKeyValueArchiver.KEY_MONTH)).thenReturn(month);
-        when(bundle.containsKey(IKeyValueArchiver.KEY_DAY)).thenReturn(true);
-        when(bundle.getInt(IKeyValueArchiver.KEY_DAY)).thenReturn(day);
+        when(bundle.containsKey(IEvent.KEY_NAME)).thenReturn(true);
+        when(bundle.getString(IEvent.KEY_NAME)).thenReturn(name);
+        when(bundle.containsKey(IEvent.KEY_MONTH)).thenReturn(true);
+        when(bundle.getInt(IEvent.KEY_MONTH)).thenReturn(month);
+        when(bundle.containsKey(IEvent.KEY_DAY)).thenReturn(true);
+        when(bundle.getInt(IEvent.KEY_DAY)).thenReturn(day);
         return bundle;
     }
 
     private Bundle createArgsFor(String name, int month, int day) {
         Bundle args = mock(Bundle.class);
-        when(args.containsKey(IKeyValueArchiver.KEY_NAME)).thenReturn(true);
-        when(args.getString(IKeyValueArchiver.KEY_NAME)).thenReturn(name);
-        when(args.containsKey(IKeyValueArchiver.KEY_MONTH)).thenReturn(true);
-        when(args.getInt(IKeyValueArchiver.KEY_MONTH)).thenReturn(month);
-        when(args.containsKey(IKeyValueArchiver.KEY_DAY)).thenReturn(true);
-        when(args.getInt(IKeyValueArchiver.KEY_MONTH)).thenReturn(day);
+        when(args.containsKey(IEvent.KEY_NAME)).thenReturn(true);
+        when(args.getString(IEvent.KEY_NAME)).thenReturn(name);
+        when(args.containsKey(IEvent.KEY_MONTH)).thenReturn(true);
+        when(args.getInt(IEvent.KEY_MONTH)).thenReturn(month);
+        when(args.containsKey(IEvent.KEY_DAY)).thenReturn(true);
+        when(args.getInt(IEvent.KEY_MONTH)).thenReturn(day);
         //prepare the builder to accept these args
         when(eventBuilder.canBuild()).thenReturn(true);
         Event event = createEvent(name, month, day);
@@ -176,6 +184,23 @@ public class AddEventPresenterTest {
 
 
         return args;
+    }
+    private Bundle createArgsFor(String name, int year, int month, int day) {
+        Bundle args = createArgsFor(name, month, day);
+        when(args.containsKey(IEvent.KEY_YEAR)).thenReturn(true);
+        when(args.getInt(IEvent.KEY_YEAR)).thenReturn(year);
+        when(eventBuilder.canBuild()).thenReturn(true);
+        Event event = createEvent(name, year, month, day);
+        when(eventBuilder.build()).thenReturn(event);
+
+        return args;
+    }
+
+    private Event createEvent(String name, int year, int month, int day) {
+        Event event = createEvent(name, month, day);
+        when(event.hasYearOfOrigin()).thenReturn(true);
+        when(event.getYearOfOrigin()).thenReturn(year);
+        return event;
     }
 
     private Event createEvent(String name, int month, int day) {

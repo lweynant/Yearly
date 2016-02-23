@@ -1,5 +1,6 @@
 package com.lweynant.yearly.controller.add_event;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -22,6 +23,7 @@ import timber.log.Timber;
 
 public class AddEventActivity extends SingleFragmentActivity {
 
+    public static final String EXTRA_INITIAL_EVENT_BUNDLE = "AddEventActivity.initial.event";
     @Inject AddEventContract.UserActionListener userActionListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +44,15 @@ public class AddEventActivity extends SingleFragmentActivity {
     }
 
     @Override protected Fragment createFragment() {
-        return AddEventActivityFragment.newInstance(new Bundle());
+        Bundle args = new Bundle();
+        Intent intent = getIntent();
+        if (intent.hasExtra(AddEventActivity.EXTRA_INITIAL_EVENT_BUNDLE)) {
+            args = intent.getBundleExtra(AddEventActivity.EXTRA_INITIAL_EVENT_BUNDLE);
+        }
+        else {
+            args = new Bundle();
+        }
+        return AddEventActivityFragment.newInstance(args);
     }
 
     @Override protected void injectDependencies(BaseYearlyAppComponent component) {

@@ -119,14 +119,6 @@ public class ListEventsActivityFragment extends BaseFragment implements EventsAd
         userActionsListener.openEventDetails(event);
     }
 
-    //view interface
-    @Override public void showEventDetailsUI(IEvent event) {
-        IEventViewFactory factory = new EventViewFactory((IStringResources) getActivity().getApplication(), clock);
-        IEventNotificationText notifText = factory.getEventNotificationText(event);
-        String text = notifText.getOneLiner();
-        Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
-
-    }
 
     @Override public void setProgressIndicator(boolean active) {
 

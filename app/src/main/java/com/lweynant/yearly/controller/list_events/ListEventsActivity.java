@@ -27,6 +27,7 @@ import com.lweynant.yearly.model.ITransaction;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IJsonFileAccessor;
 import com.lweynant.yearly.platform.IUniqueIdGenerator;
+import com.lweynant.yearly.ui.IEventViewFactory;
 
 import javax.inject.Inject;
 
@@ -40,12 +41,14 @@ public class ListEventsActivity extends BaseActivity implements ListEventsContra
 
     private static final int REQUEST_ADD_BIRTHDAY = 1;
     private static final int REQUEST_ADD_EVENT = 2;
+    private static final int REQUEST_EDIT_EVENT = 3;
     @Inject IClock clock;
     @Inject IUniqueIdGenerator idGenerator;
     @Inject IEventRepo repo;
     @Inject ITransaction transaction;
     @Inject IJsonFileAccessor fileAccessor;
     @Inject AlarmGenerator alarmGenerator;
+    @Inject IEventViewFactory eventViewFactory;
     @Inject ListEventsContract.UserActionsListener userActionsListener;
     @Bind(R.id.multiple_actions) FloatingActionsMenu menuMultipleActions;
     @Bind(R.id.action_add_event) FloatingActionButton addEventButton;
@@ -153,6 +156,15 @@ public class ListEventsActivity extends BaseActivity implements ListEventsContra
         Snackbar.make(view, String.format(getResources().getString(R.string.add_birthday_for), event.getName()), Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
 
+    }
+
+    //view interface
+    @Override public void showEventDetailsUI(IEvent event) {
+        Timber.d("showEventDetailsUI for %s", event.toString());
+        Bundle bundle = new Bundle();
+        event.archiveTo(bundle);
+        Intent intent = eventViewFactory.getActivityIntentForEditing(this, event, bundle);
+        startActivityForResult(intent, REQUEST_EDIT_EVENT);
     }
 
     @Override public void showAddNewBirthdayUI() {

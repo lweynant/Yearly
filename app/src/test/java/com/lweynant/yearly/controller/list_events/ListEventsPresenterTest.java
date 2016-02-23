@@ -66,7 +66,7 @@ public class ListEventsPresenterTest {
         IEvent event = createEvent();
         sut.openEventDetails(event);
 
-        verify(fragmentView).showEventDetailsUI(event);
+        verify(activityView).showEventDetailsUI(event);
     }
 
     @Test public void testAddNewBirthday() {
