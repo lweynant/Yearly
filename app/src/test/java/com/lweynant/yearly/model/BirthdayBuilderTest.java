@@ -158,7 +158,6 @@ public class BirthdayBuilderTest {
         verifyNoMoreInteractions(bundle);
     }
 
-
     @Test public void testSetFromBundleWithoutLastName() throws Exception {
         Bundle bundle = mock(Bundle.class);
         when(archiver.readValidatorFromBundle(bundle)).thenReturn(validator);
@@ -189,5 +188,16 @@ public class BirthdayBuilderTest {
         Birthday bd = sut.build();
         assertThat(bd, is(birthday("Fred", "Flinstone", 1500, Date.APRIL, 21)));
     }
+    @Test public void testSetFromBundleWithoutLastNameOnBuilderThatHadALastname() {
+        Bundle bundle = mock(Bundle.class);
+        sut.setLastName("Flinstone");
+        when(archiver.readValidatorFromBundle(bundle)).thenReturn(validator);
+        stubValidator("Fred", Date.APRIL, 21);
+        sut.set(bundle);
+        Birthday bd = sut.build();
+        assertThat(bd, is(birthday("Fred", Date.APRIL, 21)));
+
+    }
+
 
 }

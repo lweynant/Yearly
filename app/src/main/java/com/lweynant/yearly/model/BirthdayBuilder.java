@@ -57,6 +57,9 @@ public class BirthdayBuilder extends BaseEventBuilder<BirthdayBuilder, Birthday>
         if (bundle.containsKey(KEY_LAST_NAME)) {
             lastName = bundle.getString(KEY_LAST_NAME);
         }
+        else {
+            lastName = null;
+        }
         return this;
     }
 

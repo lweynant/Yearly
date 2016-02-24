@@ -3,6 +3,7 @@ package com.lweynant.yearly;
 import android.app.Instrumentation;
 import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
+import android.support.test.espresso.action.ViewActions;
 import android.support.test.espresso.contrib.CountingIdlingResource;
 import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.rule.ActivityTestRule;
@@ -203,6 +204,24 @@ public class EventsActivityTest {
         verify(alarm).scheduleAlarm(today, NotificationTime.EVENING);//we notify One's birthday the day before in the evening
     }
 
+    @Test public void testModifyLastName() {
+        initializeTheListWith(createBirthday("Joe"),
+                createBirthday("Fred"),
+                createBirthday("Marie"));
+        activityTestRule.launchActivity(new Intent());
+
+        onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem(withText(containsString("Fred")), click()));
+        onView(withId(R.id.edit_text_lastname)).perform(typeText("Flinstone"), closeSoftKeyboard());
+        pressBack();
+        //make sure that the last-name is now shown
+        onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem(withText(containsString("Fred")), click()));
+        onView(withId(R.id.edit_text_lastname)).check(matches(withText("Flinstone")));
+        pressBack();
+        //make sure that the last name is not shown on other birthdays
+        onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem(withText(containsString("Marie")), click()));
+        onView(withId(R.id.edit_text_lastname)).check(matches(not(withText("Flinstone"))));
+
+    }
     @Test public void testModifyDateOfBirthday() {
         initializeTheListWith(createBirthday("Today", today),
                 createBirthday("Tomorrow", tomorrow));

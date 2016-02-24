@@ -52,6 +52,7 @@ public class ControllerModule {
         return new EventNotifier(eventNotification, intentFactory, viewFactory, clock);
     }
 
+    //preseters straddle the activity/fragment - both should use the same, therefor we have singletons
     @Provides @PerApp AddBirthdayContract.UserActionsListener providesAddBirthdayPresenter(BirthdayBuilder builder,
                                                                                            ITransaction transaction,
                                                                                            DateFormatter dateFormatter,
