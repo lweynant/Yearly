@@ -21,8 +21,6 @@ public interface BaseYearlyAppComponent {
 
     void inject(BootReceiver bootReceiver);
 
-    void inject(AddBirthdayActivity addBirthdayActivity);
-
     void inject(AddEventActivityFragment addEventActivityFragment);
 
     void inject(AddEventActivity addEventActivity);

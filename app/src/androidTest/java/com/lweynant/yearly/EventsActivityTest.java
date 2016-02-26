@@ -46,6 +46,7 @@ import dagger.Component;
 import timber.log.Timber;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.Espresso.registerIdlingResources;
 import static android.support.test.espresso.Espresso.unregisterIdlingResources;
@@ -286,6 +287,19 @@ public class EventsActivityTest {
         onView(withId(R.id.fab_expand_menu_button)).perform(click());
         onView(withId(R.id.action_add_birthday)).perform(click());
         enterBirthday("Joe", today);
+        pressBack();
+
+        onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("Joe")))));
+        verify(alarm).scheduleAlarm(today, NotificationTime.MORNING);
+    }
+    public void testAddBirthdayOnEmptyListPressHome() {
+        activityTestRule.launchActivity(new Intent());
+        onView(withId(R.id.fab_expand_menu_button)).perform(click());
+        onView(withId(R.id.action_add_birthday)).perform(click());
+        enterBirthday("Joe", today);
+        //openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
+        onView(withId(android.R.id.home)).perform(click());
+
         onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("Joe")))));
         verify(alarm).scheduleAlarm(today, NotificationTime.MORNING);
     }
@@ -294,6 +308,8 @@ public class EventsActivityTest {
         onView(withId(R.id.fab_expand_menu_button)).perform(click());
         onView(withId(R.id.action_add_event)).perform(click());
         enterEvent("Marriage", today);
+        pressBack();
+
         onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("Marriage")))));
         verify(alarm).scheduleAlarm(today, NotificationTime.MORNING);
     }
@@ -306,6 +322,8 @@ public class EventsActivityTest {
         onView(withId(R.id.fab_expand_menu_button)).perform(click());
         onView(withId(R.id.action_add_birthday)).perform(click());
         enterBirthday("Tomorrow", today.plusDays(1));
+        pressBack();
+
         onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("Tomorrow")))));
         onView(withRecyclerView(R.id.events_recycler_view).atPosition(0)).check(matches(withText(containsString("Today"))));
         onView(withRecyclerView(R.id.events_recycler_view).atPosition(1)).check(matches(withText(containsString("Tomorrow"))));
@@ -337,7 +355,6 @@ public class EventsActivityTest {
         onView(withText(R.string.apply)).perform(click());
         //noinspection ResourceType
         onView(withId(R.id.edit_text_birthday_date)).check(matches(withText(dateFormatter.format(date.getMonthOfYear(), date.getDayOfMonth()))));
-        pressBack();
     }
     private void enterEvent(String eventName, LocalDate date) {
         onView(withId(R.id.edit_text_event_name)).perform(typeText(eventName), closeSoftKeyboard());
@@ -346,7 +363,6 @@ public class EventsActivityTest {
         onView(withText(R.string.apply)).perform(click());
         //noinspection ResourceType
         onView(withId(R.id.edit_text_event_date)).check(matches(withText(dateFormatter.format(date.getMonthOfYear(), date.getDayOfMonth()))));
-        pressBack();
     }
 
 

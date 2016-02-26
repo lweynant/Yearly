@@ -1,9 +1,11 @@
 package com.lweynant.yearly.controller.add_event;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -12,11 +14,9 @@ import com.jakewharton.rxbinding.widget.RxTextView;
 import com.lweynant.yearly.BaseYearlyAppComponent;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.controller.BaseFragment;
+import com.lweynant.yearly.controller.IExtendeFragmentLifeCycle;
 import com.lweynant.yearly.model.Date;
-import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.ui.DateSelector;
-
-import org.joda.time.LocalDate;
 
 import javax.inject.Inject;
 
@@ -27,7 +27,9 @@ import timber.log.Timber;
 
 
 
-public class AddBirthdayActivityFragment extends BaseFragment implements DateSelector.OnClickListener, AddBirthdayContract.FragmentView {
+public class AddBirthdayActivityFragment extends BaseFragment implements DateSelector.OnClickListener,
+        AddBirthdayContract.FragmentView, IExtendeFragmentLifeCycle {
+
 
     @Bind(R.id.edit_text_birthday_date) EditText dateEditText;
     @Bind(R.id.edit_text_first_name) EditText nameEditText;
@@ -50,8 +52,7 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
     public AddBirthdayActivityFragment() {
     }
 
-    @Override
-    protected void injectDependencies(BaseYearlyAppComponent component) {
+    @Override protected void injectDependencies(BaseYearlyAppComponent component) {
         component.inject(this);
     }
 
@@ -93,8 +94,8 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
     @Override public void onResume() {
         super.onResume();
         userActionsListener.setInputObservables(RxTextView.textChangeEvents(nameEditText).skip(1).map(e -> e.text()),
-                                                RxTextView.textChangeEvents(lastNameEditText).skip(1).map(e -> e.text()),
-                                                RxTextView.textChangeEvents(dateEditText).skip(1).map(e -> e.text()));
+                RxTextView.textChangeEvents(lastNameEditText).skip(1).map(e -> e.text()),
+                RxTextView.textChangeEvents(dateEditText).skip(1).map(e -> e.text()));
     }
 
     @Override public void enableSaveButton(Boolean enabled) {
@@ -144,4 +145,13 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
     @Override public void showDate(String date) {
         dateEditText.setText(date);
     }
+
+    @Override public void onBackPressed() {
+        userActionsListener.saveBirthday();
+    }
+
+    @Override public void onOptionsItemHomePressed() {
+        userActionsListener.saveBirthday();
+    }
+
 }

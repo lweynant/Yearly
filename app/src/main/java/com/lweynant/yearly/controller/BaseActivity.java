@@ -13,8 +13,8 @@ abstract public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Timber.d("onCreate - injecting dependencies");
-        super.onCreate(savedInstanceState);
         injectDependencies(getComponent());
+        super.onCreate(savedInstanceState);
     }
 
     protected abstract void injectDependencies(BaseYearlyAppComponent component);
