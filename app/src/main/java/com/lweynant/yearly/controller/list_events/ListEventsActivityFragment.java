@@ -44,6 +44,9 @@ public class ListEventsActivityFragment extends BaseFragment implements EventsAd
 
     private RecyclerView.LayoutManager layoutManager;
 
+    public static BaseFragment newInstance() {
+        return new ListEventsActivityFragment();
+    }
 
     public ListEventsActivityFragment() {
     }
@@ -135,4 +138,5 @@ public class ListEventsActivityFragment extends BaseFragment implements EventsAd
     @Override public void onOptionsItemHomePressed() {
 
     }
+
 }

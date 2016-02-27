@@ -16,6 +16,8 @@ import com.lweynant.yearly.EventRepoSerializerToFileDecorator;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.controller.AlarmGenerator;
 import com.lweynant.yearly.controller.BaseActivity;
+import com.lweynant.yearly.controller.BaseFragment;
+import com.lweynant.yearly.controller.SingleFragmentActivity;
 import com.lweynant.yearly.controller.add_event.AddBirthdayActivity;
 import com.lweynant.yearly.controller.add_event.AddBirthdayContract;
 import com.lweynant.yearly.controller.add_event.AddEventActivity;
@@ -37,7 +39,7 @@ import rx.Observable;
 import timber.log.Timber;
 
 
-public class ListEventsActivity extends BaseActivity implements ListEventsContract.ActivityView {
+public class ListEventsActivity extends SingleFragmentActivity implements ListEventsContract.ActivityView {
 
     private static final int REQUEST_ADD_BIRTHDAY = 1;
     private static final int REQUEST_ADD_EVENT = 2;
@@ -82,6 +84,10 @@ public class ListEventsActivity extends BaseActivity implements ListEventsContra
                 menuMultipleActions.collapse();
             }
         });
+    }
+
+    @Override protected BaseFragment createFragment() {
+        return ListEventsActivityFragment.newInstance();
     }
 
     @Override
