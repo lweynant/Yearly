@@ -58,14 +58,14 @@ public class ControllerModule {
                                                                                            IClock clock) {
         return new AddBirthdayPresenter(builder, transaction, dateFormatter, clock);
     }
-    //preseters straddle the activity/fragment - both should use the same, therefor we have singletons
 
-    @Provides @PerApp AddEventContract.UserActionListener providesAddEventPresenter(EventBuilder builder,
+    @Provides AddEventContract.UserActionListener providesAddEventPresenter(EventBuilder builder,
                                                                                     ITransaction transaction,
                                                                                     DateFormatter dateFormatter,
                                                                                     IClock clock) {
         return new AddEventPresenter(builder, transaction, dateFormatter, clock);
     }
+    //preseters straddle the activity/fragment - both should use the same, therefor we have singletons
     @Provides @PerApp ListEventsContract.UserActionsListener providesEventsListPresenter(IEventsLoader eventsLoader,
                                                                                          ITransaction transaction,
                                                                                          IEventNotification eventNotification) {

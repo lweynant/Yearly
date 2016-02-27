@@ -8,6 +8,7 @@ import android.view.MenuItem;
 
 import com.lweynant.yearly.BaseYearlyAppComponent;
 import com.lweynant.yearly.R;
+import com.lweynant.yearly.controller.BaseFragment;
 import com.lweynant.yearly.controller.IExtendeFragmentLifeCycle;
 import com.lweynant.yearly.controller.SingleFragmentActivity;
 
@@ -17,7 +18,6 @@ import timber.log.Timber;
 
 public class AddBirthdayActivity extends SingleFragmentActivity{
     public static final String EXTRA_INITIAL_BIRTHDAY_BUNDLE = "AddBirthdayActivity.initial.birthday";
-    private AddBirthdayActivityFragment addBirthdayActivityFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +38,7 @@ public class AddBirthdayActivity extends SingleFragmentActivity{
         setResult(RESULT_OK, new Intent());
     }
 
-    @Override protected Fragment createFragment() {
+    @Override protected BaseFragment createFragment() {
         Intent intent = getIntent();
         Bundle args;
         if(intent.hasExtra(AddBirthdayActivity.EXTRA_INITIAL_BIRTHDAY_BUNDLE)){
@@ -47,27 +47,12 @@ public class AddBirthdayActivity extends SingleFragmentActivity{
         else {
             args = new Bundle();
         }
-        addBirthdayActivityFragment = AddBirthdayActivityFragment.newInstance(args);
-        return addBirthdayActivityFragment;
+        return AddBirthdayActivityFragment.newInstance(args);
     }
 
     @Override protected void injectDependencies(BaseYearlyAppComponent component) {
         //nothing to inject
     }
 
-    @Override public boolean onOptionsItemSelected(MenuItem item) {
-        Timber.d("onOptionsItemSelected");
-        if (item.getItemId() == android.R.id.home) {
-            Timber.d("item id is android.R.id.home");
-            addBirthdayActivityFragment.onOptionsItemHomePressed();
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override public void onBackPressed() {
-        Timber.d("onBackPressed");
-        addBirthdayActivityFragment.onBackPressed();
-        super.onBackPressed();
-    }
 
 }

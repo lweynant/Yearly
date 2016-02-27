@@ -23,5 +23,4 @@ public interface BaseYearlyAppComponent {
 
     void inject(AddEventActivityFragment addEventActivityFragment);
 
-    void inject(AddEventActivity addEventActivity);
 }

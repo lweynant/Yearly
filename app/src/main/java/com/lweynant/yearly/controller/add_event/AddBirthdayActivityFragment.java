@@ -28,7 +28,7 @@ import timber.log.Timber;
 
 
 public class AddBirthdayActivityFragment extends BaseFragment implements DateSelector.OnClickListener,
-        AddBirthdayContract.FragmentView, IExtendeFragmentLifeCycle {
+        AddBirthdayContract.FragmentView {
 
 
     @Bind(R.id.edit_text_birthday_date) EditText dateEditText;

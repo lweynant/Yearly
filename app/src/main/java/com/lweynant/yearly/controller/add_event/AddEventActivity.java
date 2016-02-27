@@ -15,6 +15,7 @@ import android.view.View;
 import com.lweynant.yearly.BaseYearlyAppComponent;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.controller.BaseActivity;
+import com.lweynant.yearly.controller.BaseFragment;
 import com.lweynant.yearly.controller.SingleFragmentActivity;
 
 import javax.inject.Inject;
@@ -24,7 +25,6 @@ import timber.log.Timber;
 public class AddEventActivity extends SingleFragmentActivity {
 
     public static final String EXTRA_INITIAL_EVENT_BUNDLE = "AddEventActivity.initial.event";
-    @Inject AddEventContract.UserActionListener userActionListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +43,7 @@ public class AddEventActivity extends SingleFragmentActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    @Override protected Fragment createFragment() {
+    @Override protected BaseFragment createFragment() {
         Bundle args = new Bundle();
         Intent intent = getIntent();
         if (intent.hasExtra(AddEventActivity.EXTRA_INITIAL_EVENT_BUNDLE)) {
@@ -56,25 +56,6 @@ public class AddEventActivity extends SingleFragmentActivity {
     }
 
     @Override protected void injectDependencies(BaseYearlyAppComponent component) {
-        component.inject(this);
-    }
-
-    @Override public boolean onOptionsItemSelected(MenuItem item) {
-        Timber.d("onOptionsItemSelected");
-        if (item.getItemId() == android.R.id.home) {
-            Timber.d("item id is android.R.id.home");
-            userActionListener.saveEvent();
-            finish();
-            return true;
-        } else {
-            return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override public void onBackPressed() {
-        Timber.d("onBackPressed");
-        userActionListener.saveEvent();
-        super.onBackPressed();
     }
 
 

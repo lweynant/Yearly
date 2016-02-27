@@ -8,7 +8,7 @@ import com.lweynant.yearly.YearlyApp;
 
 import timber.log.Timber;
 
-public abstract class BaseFragment extends Fragment {
+public abstract class BaseFragment extends Fragment implements IExtendeFragmentLifeCycle{
 
     private BaseYearlyAppComponent getComponent() {
         return ((YearlyApp) getActivity().getApplication()).getComponent();
