@@ -42,4 +42,12 @@
     <string name="add_event_for">Event %1$s toegevoegd</string>
     <string name="event_date">Datum</string>
     <string name="event_name">Naam gebeurtenis</string>
+    <string name="label_age">Leeftijd:</string>
+    <string name="label_date">Datum:</string>
+    <string name="label_day">Op:</string>
+    <string name="label_next">Wanneer:</string>
+    <string name="title_activity_show_birthday">Verjaardag</string>
+    <string name="title_activity_add_event">Nw gebeurtenis toevoegen</string>
+    <string name="label_birthday">Verjaardag:</string>
+    <string name="label_next_birthday">Volgende verjaardag:</string>
 </resources>

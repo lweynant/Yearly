@@ -23,6 +23,14 @@ public abstract class NotificationText  implements IEventNotificationText {
     public String getText() {
         LocalDate eventDate = event.getDate();
         LocalDate now = clock.now();
+        String subTitle = when(eventDate, now);
+        String text = subTitle + " " + eventDate.dayOfWeek().getAsText() + " " +
+                eventDate.getDayOfMonth() + " " + eventDate.monthOfYear().getAsText();
+        //String text = TextUtils.join(" ", Arrays.asList(subTitle, eventDate.dayOfWeek().getAsText(), eventDate.getDayOfMonth(), eventDate.monthOfYear().getAsText()));
+        return CaseFormat.capitalizeFirstLetter(text);
+    }
+
+    private String when(LocalDate eventDate, LocalDate now) {
         String subTitle;
         if (eventDate.isEqual(now)) {
             subTitle = stringResource.getStringFromId(R.string.today);
@@ -38,13 +46,17 @@ public abstract class NotificationText  implements IEventNotificationText {
                 subTitle = String.format(stringResource.getStringFromId(R.string.in_x_days), days);
             }
         }
-        String text = subTitle + " " + eventDate.dayOfWeek().getAsText() + " " +
-                eventDate.getDayOfMonth() + " " + eventDate.monthOfYear().getAsText();
-        //String text = TextUtils.join(" ", Arrays.asList(subTitle, eventDate.dayOfWeek().getAsText(), eventDate.getDayOfMonth(), eventDate.monthOfYear().getAsText()));
-        return CaseFormat.capitalizeFirstLetter(text);
+        return subTitle;
     }
 
     public String getOneLiner() {
         return stringResource.getFormattedTitle(event) + " " + CaseFormat.uncapitalizeFirstLetter(getText());
+    }
+
+    @Override public String getHowLongUntilNext() {
+        LocalDate eventDate = event.getDate();
+        LocalDate now = clock.now();
+
+        return when(eventDate, now);
     }
 }

@@ -169,7 +169,7 @@ public class ListEventsActivity extends SingleFragmentActivity implements ListEv
         Timber.d("showEventDetailsUI for %s", event.toString());
         Bundle bundle = new Bundle();
         event.archiveTo(bundle);
-        Intent intent = eventViewFactory.getActivityIntentForEditing(this, event, bundle);
+        Intent intent = eventViewFactory.getActivityIntentForShowingEvent(this, bundle);
         startActivityForResult(intent, REQUEST_EDIT_EVENT);
     }
 

@@ -6,4 +6,6 @@ public interface IEventNotificationText {
     public String getText();
 
     public String getOneLiner();
+
+    public String getHowLongUntilNext();
 }

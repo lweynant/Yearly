@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import com.lweynant.yearly.IStringResources;
 import com.lweynant.yearly.controller.add_event.AddBirthdayActivity;
 import com.lweynant.yearly.controller.add_event.AddEventActivity;
+import com.lweynant.yearly.controller.show_event.ShowBirthdayActivity;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.Event;
 import com.lweynant.yearly.model.IEvent;
@@ -53,13 +54,28 @@ public class EventViewFactory implements IEventViewFactory {
         return null;
     }
 
-    @Override public Intent getActivityIntentForEditing(Context context, IEvent event, Bundle bundle) {
+    @Override public Intent getActivityIntentForEditing(Context context, Bundle bundle) {
         Intent intent = null;
-        if(event instanceof Birthday) {
+        String type = bundle.getString(IEvent.KEY_TYPE);
+        if(type.equals(Birthday.class.getCanonicalName())) {
             intent = new Intent(context, AddBirthdayActivity.class);
             intent.putExtra(AddBirthdayActivity.EXTRA_INITIAL_BIRTHDAY_BUNDLE, bundle);
         }
-        else if (event instanceof Event) {
+        else if (type.equals(Event.class.getCanonicalName())) {
+            intent = new Intent(context, AddEventActivity.class);
+            intent.putExtra(AddEventActivity.EXTRA_INITIAL_EVENT_BUNDLE, bundle);
+        }
+        return intent;
+    }
+
+    @Override public Intent getActivityIntentForShowingEvent(Context context, Bundle bundle) {
+        Intent intent = null;
+        String type = bundle.getString(IEvent.KEY_TYPE);
+        if(type.equals(Birthday.class.getCanonicalName())) {
+            intent = new Intent(context, ShowBirthdayActivity.class);
+            intent.putExtra(ShowBirthdayActivity.EXTRA_INITIAL_BIRTHDAY_BUNDLE, bundle);
+        }
+        else if (type.equals(Event.class.getCanonicalName())) {
             intent = new Intent(context, AddEventActivity.class);
             intent.putExtra(AddEventActivity.EXTRA_INITIAL_EVENT_BUNDLE, bundle);
         }

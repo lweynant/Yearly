@@ -6,6 +6,7 @@ import com.lweynant.yearly.controller.add_event.AddEventActivity;
 import com.lweynant.yearly.controller.add_event.AddEventActivityFragment;
 import com.lweynant.yearly.controller.list_events.ListEventsActivity;
 import com.lweynant.yearly.controller.list_events.ListEventsActivityFragment;
+import com.lweynant.yearly.controller.show_event.ShowBirthdayActivity;
 
 
 public interface BaseYearlyAppComponent {
@@ -23,4 +24,5 @@ public interface BaseYearlyAppComponent {
 
     void inject(AddEventActivityFragment addEventActivityFragment);
 
+    void inject(ShowBirthdayActivity showBirthdayActivity);
 }

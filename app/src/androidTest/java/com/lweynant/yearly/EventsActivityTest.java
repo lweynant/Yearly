@@ -3,12 +3,15 @@ package com.lweynant.yearly;
 import android.app.Instrumentation;
 import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
-import android.support.test.espresso.action.ViewActions;
+import android.support.test.espresso.ViewInteraction;
 import android.support.test.espresso.contrib.CountingIdlingResource;
 import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.support.v7.widget.Toolbar;
 import android.test.suitebuilder.annotation.LargeTest;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.gson.JsonObject;
 import com.lweynant.yearly.controller.ControllerModule;
@@ -16,21 +19,24 @@ import com.lweynant.yearly.controller.DateFormatter;
 import com.lweynant.yearly.controller.list_events.EventsAdapter;
 import com.lweynant.yearly.controller.list_events.ListEventsActivity;
 import com.lweynant.yearly.controller.list_events.ListEventsContract;
+import com.lweynant.yearly.matcher.ToolBarTitleMatcher;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.Event;
+import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.IEventRepo;
 import com.lweynant.yearly.model.ITransaction;
 import com.lweynant.yearly.model.ModelModule;
-import com.lweynant.yearly.model.IEvent;
-import com.lweynant.yearly.platform.IEventNotification;
-import com.lweynant.yearly.platform.IJsonFileAccessor;
 import com.lweynant.yearly.model.NotificationTime;
 import com.lweynant.yearly.platform.IAlarm;
 import com.lweynant.yearly.platform.IClock;
+import com.lweynant.yearly.platform.IEventNotification;
+import com.lweynant.yearly.platform.IJsonFileAccessor;
 import com.lweynant.yearly.platform.IUniqueIdGenerator;
 import com.lweynant.yearly.ui.ViewModule;
 
+import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.joda.time.LocalDate;
 import org.junit.After;
 import org.junit.Before;
@@ -46,7 +52,6 @@ import dagger.Component;
 import timber.log.Timber;
 
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.Espresso.registerIdlingResources;
 import static android.support.test.espresso.Espresso.unregisterIdlingResources;
@@ -57,14 +62,18 @@ import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.contrib.PickerActions.setDate;
 import static android.support.test.espresso.matcher.ViewMatchers.hasDescendant;
+import static android.support.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isRoot;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static com.lweynant.yearly.action.OrientationChangeAction.orientationLandscape;
 import static com.lweynant.yearly.matcher.RecyclerViewMatcher.withRecyclerView;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.startsWith;
+import static org.hamcrest.core.AllOf.allOf;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -205,6 +214,16 @@ public class EventsActivityTest {
         verify(alarm).scheduleAlarm(today, NotificationTime.EVENING);//we notify One's birthday the day before in the evening
     }
 
+    @Test public void testShowDetails() {
+        initializeTheListWith(createBirthday("Joe", today),
+                createBirthday("Fred", tomorrow),
+                createBirthday("Marie", tomorrow.plusMonths(2)));
+        activityTestRule.launchActivity(new Intent());
+        onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem(withText(containsString("Fred")), click()));
+
+        ToolBarTitleMatcher.matchToolbarTitle(containsString("Fre"));
+    }
+
     @Test public void testModifyLastName() {
         initializeTheListWith(createBirthday("Joe"),
                 createBirthday("Fred"),
@@ -212,14 +231,19 @@ public class EventsActivityTest {
         activityTestRule.launchActivity(new Intent());
 
         onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem(withText(containsString("Fred")), click()));
+        onView(withId(R.id.fab_edit_birthday)).perform(click());
         onView(withId(R.id.edit_text_lastname)).perform(typeText("Flinstone"), closeSoftKeyboard());
+        pressBack();
         pressBack();
         //make sure that the last-name is now shown
         onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem(withText(containsString("Fred")), click()));
+        onView(withId(R.id.fab_edit_birthday)).perform(click());
         onView(withId(R.id.edit_text_lastname)).check(matches(withText("Flinstone")));
+        pressBack();
         pressBack();
         //make sure that the last name is not shown on other birthdays
         onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem(withText(containsString("Marie")), click()));
+        onView(withId(R.id.fab_edit_birthday)).perform(click());
         onView(withId(R.id.edit_text_lastname)).check(matches(not(withText("Flinstone"))));
 
     }
@@ -233,6 +257,7 @@ public class EventsActivityTest {
         onView(withRecyclerView(R.id.events_recycler_view).atPosition(1)).check(matches(withText(containsString("Tomorrow"))));
 
         onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem(withText(containsString("Today")), click()));
+        onView(withId(R.id.fab_edit_birthday)).perform(click());
         onView(withText(R.string.title_activity_add_birthday)).check(matches(isDisplayed()));
         onView(withId(R.id.edit_text_first_name)).check(matches(withText("Today")));
         LocalDate future = today.plusDays(5);
@@ -241,6 +266,7 @@ public class EventsActivityTest {
         onView(withText(R.string.apply)).perform(click());
         //noinspection ResourceType
         onView(withId(R.id.edit_text_birthday_date)).check(matches(withText(dateFormatter.format(future.getMonthOfYear(), future.getDayOfMonth()))));
+        pressBack();
         pressBack();
         //now the order should be reversed
         onView(withRecyclerView(R.id.events_recycler_view).atPosition(0)).check(matches(withText(containsString("Tomorrow"))));
