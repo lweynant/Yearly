@@ -10,11 +10,9 @@ import android.support.test.runner.AndroidJUnit4;
 import com.lweynant.yearly.controller.ControllerModule;
 import com.lweynant.yearly.controller.DateFormatter;
 import com.lweynant.yearly.controller.SyncControllerModule;
-import com.lweynant.yearly.controller.add_event.AddEventActivity;
 import com.lweynant.yearly.controller.show_event.ShowBirthdayActivity;
 import com.lweynant.yearly.matcher.ToolBarTitleMatcher;
 import com.lweynant.yearly.model.Birthday;
-import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.ModelModule;
 import com.lweynant.yearly.platform.IClock;
@@ -33,10 +31,10 @@ import dagger.Component;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.isRoot;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static org.hamcrest.CoreMatchers.containsString;
+import static com.lweynant.yearly.action.OrientationChangeAction.orientationLandscape;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.when;
 
@@ -80,24 +78,34 @@ public class ShowBirthdayActivityTest {
 
     }
 
-    @Test public void initialUIIsDisplayed()  {
+    @Test public void showsContentOfBirthday()  {
         Intent startIntent = new Intent();
-        int yearOfBirth = 2000;
-        int month = Date.APRIL;
-        int day = 23;
-        setBirthdayOnIntent(yearOfBirth, month, day, startIntent);
+        setBirthdayOnIntent("Fred", 2000, Date.APRIL, 23, startIntent);
         activityTestRule.launchActivity(startIntent);
 
         ToolBarTitleMatcher.matchToolbarTitle(is("Fred"));
-        onView(withId(R.id.text_birthday_date)).check(matches(withText(dateFormatter.format(yearOfBirth, month, day))));
+        onView(withId(R.id.text_birthday_date)).check(matches(withText(dateFormatter.format(2000, Date.APRIL, 23))));
         onView(withId(R.id.text_birthday_age)).check(matches(withText("15")));
-        LocalDate birthDate = new LocalDate(today.getYear(), month, day);
+        LocalDate birthDate = new LocalDate(today.getYear(), Date.APRIL, 23);
+        onView(withId(R.id.text_birthday_day)).check(matches(withText(birthDate.dayOfWeek().getAsText())));
+
+    }
+    @Test public void showsContentOfBirthdayAfterRotationChange()  {
+        Intent startIntent = new Intent();
+        setBirthdayOnIntent("Fred", 2000, Date.APRIL, 23, startIntent);
+        activityTestRule.launchActivity(startIntent);
+        onView(isRoot()).perform(orientationLandscape());
+
+        ToolBarTitleMatcher.matchToolbarTitle(is("Fred"));
+        onView(withId(R.id.text_birthday_date)).check(matches(withText(dateFormatter.format(2000, Date.APRIL, 23))));
+        onView(withId(R.id.text_birthday_age)).check(matches(withText("15")));
+        LocalDate birthDate = new LocalDate(today.getYear(), Date.APRIL, 23);
         onView(withId(R.id.text_birthday_day)).check(matches(withText(birthDate.dayOfWeek().getAsText())));
 
     }
 
-    private void setBirthdayOnIntent(int yearOfBirth, int month, int day, Intent startIntent) {
-        Birthday birthday = new Birthday("Fred", yearOfBirth, month, day, clock, idGenerator);
+    private void setBirthdayOnIntent(String name, int yearOfBirth, int month, int day, Intent startIntent) {
+        Birthday birthday = new Birthday(name, yearOfBirth, month, day, clock, idGenerator);
         Bundle bundle = new Bundle();
         birthday.archiveTo(bundle);
         startIntent.putExtra(ShowBirthdayActivity.EXTRA_INITIAL_BIRTHDAY_BUNDLE, bundle);
