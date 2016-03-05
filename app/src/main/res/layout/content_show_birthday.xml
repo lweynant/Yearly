@@ -23,13 +23,15 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/accent"/>
 
+
         <android.support.v7.widget.CardView
             android:id="@+id/card_view"
             xmlns:card_view="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            app:cardUseCompatPadding="false"
+            android:elevation="@dimen/cardview_default_elevation"
+            app:cardUseCompatPadding="true"
             card_view:cardCornerRadius="4dp">
 
             <GridLayout
@@ -38,40 +40,33 @@
                 android:columnCount="2"
                 android:rowCount="2">
 
-                <TextView
-                    android:id="@+id/textView"
+                <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/text_margin"
-                    android:layout_weight="1"
-                    android:text="@string/label_date"
-                    android:textAppearance="?android:attr/textAppearanceLarge"/>
+                    android:layout_margin="@dimen/image_margin"
+                    android:src="@drawable/ic_calendar_grey600_24dp"/>
 
                 <TextView
                     android:id="@+id/text_birthday_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/text_margin"
-                    android:layout_weight="4"
                     android:text="23 February"
-                    android:textAppearance="?android:attr/textAppearanceLarge"/>
+                    android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-                <TextView
+                <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/text_margin"
-                    android:layout_weight="1"
-                    android:text="@string/label_age"
-                    android:textAppearance="?android:attr/textAppearanceLarge"/>
+                    android:layout_margin="@dimen/image_margin"
+                    android:src="@drawable/ic_candle_grey600_24dp"/>
 
                 <TextView
                     android:id="@+id/text_birthday_age"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/text_margin"
-                    android:layout_weight="4"
                     android:text="@string/question_mark"
-                    android:textAppearance="?android:attr/textAppearanceLarge"/>
+                    android:textAppearance="?android:attr/textAppearanceMedium"/>
 
             </GridLayout>
 
@@ -90,7 +85,7 @@
             xmlns:card_view="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:cardUseCompatPadding="false"
+            app:cardUseCompatPadding="true"
 
             card_view:cardCornerRadius="4dp">
 
@@ -101,39 +96,33 @@
                 android:rowCount="2">
 
 
-                <TextView
+                <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/text_margin"
-                    android:layout_weight="1"
-                    android:text="@string/label_next"
-                    android:textAppearance="?android:attr/textAppearanceLarge"/>
+                    android:layout_margin="@dimen/image_margin"
+                    android:src="@drawable/ic_counter_grey600_24dp"/>
 
                 <TextView
                     android:id="@+id/text_birthday_in"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/text_margin"
-                    android:layout_weight="4"
                     android:text="@string/question_mark"
-                    android:textAppearance="?android:attr/textAppearanceLarge"/>
+                    android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-                <TextView
+                <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/text_margin"
-                    android:layout_weight="1"
-                    android:text="@string/label_day"
-                    android:textAppearance="?android:attr/textAppearanceLarge"/>
+                    android:layout_margin="@dimen/image_margin"
+                    android:src="@drawable/ic_label_outline_grey600_24dp"/>
 
                 <TextView
                     android:id="@+id/text_birthday_day"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/text_margin"
-                    android:layout_weight="4"
                     android:text="Wednesday"
-                    android:textAppearance="?android:attr/textAppearanceLarge"/>
+                    android:textAppearance="?android:attr/textAppearanceMedium"/>
 
             </GridLayout>
 

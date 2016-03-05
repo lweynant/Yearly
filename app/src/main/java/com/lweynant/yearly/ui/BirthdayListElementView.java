@@ -23,7 +23,7 @@ public class BirthdayListElementView implements IEventListElementView {
     @Override
     public void bindEvent(IEvent event) {
         LocalDate eventDate = event.getDate();
-        textView.setText(stringResource.getFormattedTitle(event) + ": " + eventDate.dayOfWeek().getAsShortText() + " " + eventDate.getDayOfMonth() + " " + eventDate.monthOfYear().getAsShortText());
+        textView.setText(event.getName() + ": " + eventDate.dayOfWeek().getAsText() + " " + eventDate.getDayOfMonth() + " " + eventDate.monthOfYear().getAsText());
     }
 
     @Override
