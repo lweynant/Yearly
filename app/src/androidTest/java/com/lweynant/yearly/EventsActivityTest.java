@@ -279,10 +279,10 @@ public class EventsActivityTest {
         activityTestRule.launchActivity(new Intent());
 
         //make sure that the order is as expected
-        onView(withRecyclerView(R.id.events_recycler_view).atPosition(0)).check(matches(withText(containsString("Today"))));
-        onView(withRecyclerView(R.id.events_recycler_view).atPosition(1)).check(matches(withText(containsString("Tomorrow"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(0, R.id.event_list_item_name)).check(matches(withText(containsString("Today"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(1, R.id.event_list_item_name)).check(matches(withText(containsString("Tomorrow"))));
 
-        onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem(withText(containsString("Today")), click()));
+        onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem(withChild(withText(containsString("Today"))), click()));
         onView(withText(R.string.title_activity_add_event)).check(matches(isDisplayed()));
         onView(withId(R.id.edit_text_event_name)).check(matches(withText("Today")));
         LocalDate future = today.plusDays(5);
@@ -293,8 +293,8 @@ public class EventsActivityTest {
         onView(withId(R.id.edit_text_event_date)).check(matches(withText(dateFormatter.format(future.getMonthOfYear(), future.getDayOfMonth()))));
         pressBack();
         //now the order should be reversed
-        onView(withRecyclerView(R.id.events_recycler_view).atPosition(0)).check(matches(withText(containsString("Tomorrow"))));
-        onView(withRecyclerView(R.id.events_recycler_view).atPosition(1)).check(matches(withText(containsString("Today"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(0, R.id.event_list_item_name)).check(matches(withText(containsString("Tomorrow"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(1, R.id.event_list_item_name)).check(matches(withText(containsString("Today"))));
     }
 
     private IEvent createEvent(String name, LocalDate date) {
