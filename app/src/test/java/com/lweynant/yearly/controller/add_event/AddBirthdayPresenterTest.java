@@ -24,6 +24,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import rx.Observable;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
@@ -42,13 +43,12 @@ public class AddBirthdayPresenterTest {
     //@Mock DateFormatter dateFormatter;
     private AddBirthdayPresenter sut;
     @Mock AddBirthdayContract.FragmentView fragmentView;
-    @Mock IStringResources rstring;
 
-    String[] months = new String[] {"%1$d", "%1$d jan", "%1$d feb", "%1$d mar", "%1$d apr", "%1$d mei", "%1$d jun", "%1$d jul", "%1$d aug", "%1$d sep", "%1$d okt", "%1$d nov", "%1$d dec" };
     @Mock ITransaction transaction;
     @Mock BirthdayBuilder birthdayBuilder;
     private LocalDate today;
     private Bundle emptyBundle;
+    @Mock DateFormatter dateFormatter;
 
 
     @Before public void setUp() {
@@ -64,9 +64,10 @@ public class AddBirthdayPresenterTest {
         when(birthdayBuilder.setName(anyString())).thenReturn(birthdayBuilder);
         when(birthdayBuilder.setLastName(anyString())).thenReturn(birthdayBuilder);
 
-        when(rstring.getStringArray(R.array.months_day)).thenReturn(months);
-        when(rstring.getString(eq(R.string.yyy_mm_dd), anyInt(), anyInt(), anyInt() )).thenReturn("formatted date");
-        sut = new AddBirthdayPresenter(birthdayBuilder, transaction, new DateFormatter(rstring), clock);
+        //noinspection ResourceType
+        when(dateFormatter.format(anyInt(), anyInt())).thenReturn("formatted_mm_dd");
+        when(dateFormatter.format(anyInt(), anyInt(), anyInt())).thenReturn("formatted_yy_mm_dd");
+        sut = new AddBirthdayPresenter(birthdayBuilder, transaction, dateFormatter, clock);
         emptyBundle = mock(Bundle.class);
     }
 
@@ -133,13 +134,13 @@ public class AddBirthdayPresenterTest {
         sut.initialize(fragmentView, emptyBundle, null);
         sut.setDate(Date.DECEMBER, 23);
 
-        verify(fragmentView).showDate("23 dec");
+        verify(fragmentView).showDate("formatted_mm_dd");
     }
     @Test public void showDateWithYear() {
         sut.initialize(fragmentView, emptyBundle, null);
         sut.setDate(2015, Date.DECEMBER, 23);
 
-        verify(fragmentView).showDate("formatted date");
+        verify(fragmentView).showDate("formatted_yy_mm_dd");
     }
 
     @Test public void saveButtonEnabledIfNameAndDateFilled() {
@@ -189,7 +190,7 @@ public class AddBirthdayPresenterTest {
     }
 
     @Test public void initializeWithValidEventArgWithYearAndNullSavedInstanceState() {
-        //when(dateFormatter.format(2001, Date.APRIL, 23)).thenReturn("formatted date");
+        when(dateFormatter.format(2001, Date.APRIL, 23)).thenReturn("formatted date");
         Bundle args = createArgsFor("Events name", 2001, Date.APRIL, 23);
         sut.initialize(fragmentView, args, null);
 
@@ -197,14 +198,14 @@ public class AddBirthdayPresenterTest {
     }
 
     @Test public void initializeWithValidEventArgAndNullSavedInstanceState() {
-        //when(dateFormatter.format(Date.APRIL, 23)).thenReturn("the date");
+        when(dateFormatter.format(Date.APRIL, 23)).thenReturn("the date");
         Bundle args = createArgsFor("Events name", Date.APRIL, 23);
         sut.initialize(fragmentView, args, null);
 
-        verify(fragmentView).initialize("Events name", null, "23 apr", today.getYear(), Date.APRIL, 23);
+        verify(fragmentView).initialize("Events name", null, "the date", today.getYear(), Date.APRIL, 23);
     }
     @Test public void initializeWithValidEventArgAndSomeSavedInstanceState() {
-       // when(dateFormatter.format(Date.APRIL, 23)).thenReturn("the date");
+        when(dateFormatter.format(Date.APRIL, 23)).thenReturn("the date");
         Bundle args = createArgsFor("Events name", Date.APRIL, 23);
         Bundle state = createStateFor("New name", Date.AUGUST, 23);
         sut.initialize(fragmentView, args, state);

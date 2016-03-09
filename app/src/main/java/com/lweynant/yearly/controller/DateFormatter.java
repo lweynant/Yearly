@@ -11,12 +11,16 @@ public class DateFormatter {
         this.rstring = rstring;
     }
 
-    public String format(int year, @Date.Month int month, int day) {
-        return rstring.getString(R.string.yyy_mm_dd, year, month, day);
-    }
+//    public String format(int year, @Date.Month int month, int day) {
+//        return rstring.getString(R.string.yyy_mm_dd, year, month, day);
+//    }
 
     public String format(@Date.Month int month, int day) {
         String[] months = rstring.getStringArray(R.array.months_day);
         return String.format(months[month], day);
+    }
+    public String format(int year, @Date.Month int month, int day) {
+        String[] months = rstring.getStringArray(R.array.year_months_day);
+        return String.format(months[month],year, day);
     }
 }
