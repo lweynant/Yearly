@@ -79,6 +79,22 @@ public class EventNotifierTest {
         verify(eventNotification).notify(tomorrowsEvent.getID(), tomorrowsIntent, tomorrowsText);
         verifyNoMoreInteractions(eventNotification);
     }
+    @Test public void testNonEmptyListWithNEventsOnSameDayForNotification() {
+        IEventNotificationText firstEventText = createNotificationText("first event");
+        Intent todaysIntent = mock(Intent.class);
+        IEvent todaysEvent = createEvent(today, todaysIntent, firstEventText);
+        events.add(todaysEvent);
+        IEventNotificationText secondEventText = createNotificationText("second event");
+        Intent tomorrowsIntent = mock(Intent.class);
+        IEvent tomorrowsEvent = createEvent(today, tomorrowsIntent, secondEventText);
+        events.add(tomorrowsEvent);
+        events.add(createEvent(today.plusDays(30), mock(Intent.class), createNotificationText("someday in future")));
+
+        sut.notify(Observable.from(events));
+        verify(eventNotification).notify(todaysEvent.getID(), todaysIntent, firstEventText);
+        verify(eventNotification).notify(tomorrowsEvent.getID(), tomorrowsIntent, secondEventText);
+        verifyNoMoreInteractions(eventNotification);
+    }
 
     @Test public void testNonEmptyListWithNoEventsUpForNotification() {
         IEventNotificationText notificationText = createNotificationText("today's event");
