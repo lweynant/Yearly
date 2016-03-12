@@ -1,6 +1,7 @@
 package com.lweynant.yearly.controller;
 
 import com.lweynant.yearly.model.IEvent;
+import com.lweynant.yearly.model.NotificationTime;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IEventNotification;
 import com.lweynant.yearly.ui.IEventViewFactory;
@@ -29,16 +30,10 @@ public class EventNotifier {
     public void notify(Observable<IEvent> events ) {
         Timber.d("notify");
         Subscription subscription = events
-                .filter(event -> shouldBeNotified(event))
+                .filter(event -> NotificationTime.shouldBeNotified(clock, event))
                 .subscribe(event -> eventNotification.notify(event.getID(), intentFactory.createNotificationIntent(event),
                         viewFactory.getEventNotificationText(event)));
         subscription.unsubscribe();
     }
-
-    private boolean shouldBeNotified(IEvent event) {
-        int days = Days.daysBetween(clock.now(), event.getDate()).getDays();
-        return days >= 0 && days <= event.getNbrOfDaysForNotification();
-    }
-
 
 }

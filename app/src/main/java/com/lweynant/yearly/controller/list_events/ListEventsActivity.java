@@ -26,6 +26,7 @@ import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.IEventRepo;
 import com.lweynant.yearly.model.ITransaction;
+import com.lweynant.yearly.model.NotificationTime;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IJsonFileAccessor;
 import com.lweynant.yearly.platform.IUniqueIdGenerator;
@@ -150,7 +151,7 @@ public class ListEventsActivity extends SingleFragmentActivity implements ListEv
                 events.subscribe(new EventRepoSerializerToFileDecorator(fileAccessor, new EventRepoSerializer(clock)));
             } else if (id == R.id.action_set_alarm) {
                 Timber.i("set alarm");
-                alarmGenerator.generate(repo.getEventsSubscribedOnProperScheduler(), clock.now());
+                alarmGenerator.generate(repo.getEventsSubscribedOnProperScheduler(), clock.now(), NotificationTime.START_OF_DAY);
             }
         }
 

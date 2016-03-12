@@ -7,6 +7,7 @@ import com.lweynant.yearly.platform.IAlarm;
 
 import org.joda.time.LocalDate;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -38,13 +39,13 @@ public class AlarmGeneratorTest {
     }
 
     @Test public void testEmptyList() {
-        sut.generate(Observable.from(list), today);
+        sut.generate(Observable.from(list), today, NotificationTime.MORNING);
         verify(alarm).clear();
     }
 
     @Test public void testListWithOneEvent() {
         list.add(createEvent(today));
-        sut.generate(Observable.from(list), today);
+        sut.generate(Observable.from(list), today, NotificationTime.START_OF_DAY);
         verify(alarm).scheduleAlarm(today, NotificationTime.MORNING);
     }
 
@@ -53,7 +54,7 @@ public class AlarmGeneratorTest {
         list.add(createEvent(today.plusDays(150)));
         list.add(createEvent(today.plusDays(200)));
         list.add(createEvent(today.plusDays(250)));
-        sut.generate(Observable.from(list), today);
+        sut.generate(Observable.from(list), today, NotificationTime.START_OF_DAY);
         //we schedule an alarm the day before in the evening
         verify(alarm).scheduleAlarm(today.plusDays(99), NotificationTime.EVENING);
         verifyNoMoreInteractions(alarm);
@@ -61,8 +62,15 @@ public class AlarmGeneratorTest {
     @Test public void testGenerateFromTomorrow() {
         list.add(createEvent(today));
         list.add(createEvent(tomorrow));
-        sut.generate(Observable.from(list), tomorrow);
+        sut.generate(Observable.from(list), tomorrow, NotificationTime.START_OF_DAY);
         verify(alarm).scheduleAlarm(tomorrow, NotificationTime.MORNING);
+        verifyNoMoreInteractions(alarm);
+    }
+    @Test public void testGenerateAfterTodaysNotification() {
+        list.add(createEvent(today));
+        list.add(createEvent(tomorrow));
+        sut.generate(Observable.from(list), today, NotificationTime.MORNING);
+        verify(alarm).scheduleAlarm(today, NotificationTime.EVENING);
         verifyNoMoreInteractions(alarm);
     }
 

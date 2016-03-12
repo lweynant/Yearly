@@ -1,24 +1,36 @@
 package com.lweynant.yearly.model;
 
+import com.lweynant.yearly.platform.IClock;
+
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 
 public class NotificationTime {
     public static final int MORNING = 6;
     public static final int EVENING = 19;
+    public static final int START_OF_DAY = -1;
     private final int hour;
     private final LocalDate alarmDate;
 
-    public NotificationTime(final LocalDate from, IEvent event) {
+    public NotificationTime(LocalDate fromDay, int fromHour, IEvent event) {
         LocalDate eventDate = event.getDate();
-        if (eventDate.isBefore(from)) {
+        if (isEventPast(fromDay, fromHour, eventDate)) {
             eventDate = eventDate.plusYears(1);
         }
-        int days = Days.daysBetween(from, eventDate).getDays();
+        if (fromHour >= EVENING) {
+            fromDay = fromDay.plusDays(1);
+        }
+        int days = Days.daysBetween(fromDay, eventDate).getDays();
         days = days - event.getNbrOfDaysForNotification();
         days = days < 0 ? 0 : days;
-        hour = from.isEqual(eventDate) ? MORNING : EVENING;
-        alarmDate = from.plusDays(days);
+        hour = fromDay.isEqual(eventDate) ? MORNING : EVENING;
+        alarmDate = fromDay.plusDays(days);
+    }
+
+    private boolean isEventPast(LocalDate fromDay, int fromHour, LocalDate eventDate) {
+        if (eventDate.isBefore(fromDay))  return true;
+        if (eventDate.isEqual(fromDay) && fromHour >= MORNING) return true;
+        return false;
     }
 
     public static NotificationTime min(NotificationTime rhs, NotificationTime lhs) {
@@ -37,5 +49,15 @@ public class NotificationTime {
 
     public LocalDate getAlarmDate() {
         return alarmDate;
+    }
+
+    public static boolean shouldBeNotified(IClock clock, IEvent event) {
+        int days = Days.daysBetween(clock.now(), event.getDate()).getDays();
+        if (days <= event.getNbrOfDaysForNotification()) {
+            int hour = clock.hour();
+            if (days == 0) return hour >= START_OF_DAY && hour < EVENING;
+            return  hour >= EVENING;
+        }
+        return false;
     }
 }

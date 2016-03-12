@@ -4,6 +4,7 @@ import android.content.Intent;
 
 import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.IEvent;
+import com.lweynant.yearly.model.NotificationTime;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IEventNotification;
 import com.lweynant.yearly.platform.IEventNotificationText;
@@ -25,6 +26,7 @@ import rx.Observable;
 import static junit.framework.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockingDetails;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -55,15 +57,34 @@ public class EventNotifierTest {
         verifyZeroInteractions(eventNotification);
     }
 
-    @Test public void testListWithOneEventForToday() {
+    @Test public void testListWithOneEventForTodayAtStartOfDay() {
         IEventNotificationText notificationText = createNotificationText("today's event");
         Intent todaysIntent = mock(Intent.class);
         IEvent event = createEvent(today, todaysIntent, notificationText);
         events.add(event);
+        when(clock.hour()).thenReturn(NotificationTime.START_OF_DAY);
         sut.notify(Observable.from(events));
         verify(eventNotification).notify(event.getID(), todaysIntent, notificationText);
     }
-    @Test public void testNonEmptyListWithNEventsForNotification() {
+    @Test public void testListWithOneEventForTodayAtMornings() {
+        IEventNotificationText notificationText = createNotificationText("today's event");
+        Intent todaysIntent = mock(Intent.class);
+        IEvent event = createEvent(today, todaysIntent, notificationText);
+        events.add(event);
+        when(clock.hour()).thenReturn(NotificationTime.MORNING);
+        sut.notify(Observable.from(events));
+        verify(eventNotification).notify(event.getID(), todaysIntent, notificationText);
+    }
+    @Test public void testListWithOneEventForTodayAtEvening() {
+        IEventNotificationText notificationText = createNotificationText("today's event");
+        Intent todaysIntent = mock(Intent.class);
+        IEvent event = createEvent(today, todaysIntent, notificationText);
+        events.add(event);
+        when(clock.hour()).thenReturn(NotificationTime.EVENING);
+        sut.notify(Observable.from(events));
+        verify(eventNotification, never()).notify(event.getID(), todaysIntent, notificationText);
+    }
+    @Test public void testEventForTodayAndTomorrowAtMorning() {
         IEventNotificationText todaysText = createNotificationText("today's event");
         Intent todaysIntent = mock(Intent.class);
         IEvent todaysEvent = createEvent(today, todaysIntent, todaysText);
@@ -74,25 +95,43 @@ public class EventNotifierTest {
         events.add(tomorrowsEvent);
         events.add(createEvent(today.plusDays(30), mock(Intent.class), createNotificationText("someday in future")));
 
+        when(clock.hour()).thenReturn(NotificationTime.MORNING);
         sut.notify(Observable.from(events));
         verify(eventNotification).notify(todaysEvent.getID(), todaysIntent, todaysText);
+        verifyNoMoreInteractions(eventNotification);
+    }
+
+    @Test public void testEventForTodayAndTomorrowAtEvening() {
+        IEventNotificationText todaysText = createNotificationText("today's event");
+        Intent todaysIntent = mock(Intent.class);
+        IEvent todaysEvent = createEvent(today, todaysIntent, todaysText);
+        events.add(todaysEvent);
+        IEventNotificationText tomorrowsText = createNotificationText("tomorrow's event");
+        Intent tomorrowsIntent = mock(Intent.class);
+        IEvent tomorrowsEvent = createEvent(today.plusDays(1), tomorrowsIntent, tomorrowsText);
+        events.add(tomorrowsEvent);
+        events.add(createEvent(today.plusDays(30), mock(Intent.class), createNotificationText("someday in future")));
+
+        when(clock.hour()).thenReturn(NotificationTime.EVENING);
+        sut.notify(Observable.from(events));
         verify(eventNotification).notify(tomorrowsEvent.getID(), tomorrowsIntent, tomorrowsText);
         verifyNoMoreInteractions(eventNotification);
     }
     @Test public void testNonEmptyListWithNEventsOnSameDayForNotification() {
         IEventNotificationText firstEventText = createNotificationText("first event");
-        Intent todaysIntent = mock(Intent.class);
-        IEvent todaysEvent = createEvent(today, todaysIntent, firstEventText);
+        Intent firstIntent = mock(Intent.class);
+        IEvent todaysEvent = createEvent(today, firstIntent, firstEventText);
         events.add(todaysEvent);
         IEventNotificationText secondEventText = createNotificationText("second event");
-        Intent tomorrowsIntent = mock(Intent.class);
-        IEvent tomorrowsEvent = createEvent(today, tomorrowsIntent, secondEventText);
-        events.add(tomorrowsEvent);
+        Intent secondIntent = mock(Intent.class);
+        IEvent todaysEvent2 = createEvent(today, secondIntent, secondEventText);
+        events.add(todaysEvent2);
         events.add(createEvent(today.plusDays(30), mock(Intent.class), createNotificationText("someday in future")));
 
+        when(clock.hour()).thenReturn(NotificationTime.START_OF_DAY);
         sut.notify(Observable.from(events));
-        verify(eventNotification).notify(todaysEvent.getID(), todaysIntent, firstEventText);
-        verify(eventNotification).notify(tomorrowsEvent.getID(), tomorrowsIntent, secondEventText);
+        verify(eventNotification).notify(todaysEvent.getID(), firstIntent, firstEventText);
+        verify(eventNotification).notify(todaysEvent2.getID(), secondIntent, secondEventText);
         verifyNoMoreInteractions(eventNotification);
     }
 

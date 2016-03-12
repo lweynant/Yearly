@@ -152,6 +152,37 @@ public class EventsActivityTest {
         Timber.d("verify alarm %s", alarm);
         verify(alarm, times(1)).scheduleAlarm(today, NotificationTime.MORNING);
     }
+    @Test public void testTwoEventsInListWithTodayAndTomorrowBirthday_AtStartOfDay() {
+        when(clock.hour()).thenReturn(NotificationTime.START_OF_DAY);
+        initializeTheListWith(createBirthday("John", today),
+                createBirthday("Fred", tomorrow));
+        activityTestRule.launchActivity(new Intent());
+
+        onView(withText(containsString("John"))).check(matches(isDisplayed()));
+        verify(alarm, times(1)).scheduleAlarm(today, NotificationTime.MORNING);
+        verifyNoMoreInteractions(alarm);
+    }
+    
+    @Test public void testTwoEventsInListWithTodayAndTomorrowBirthday_InMorning() {
+        when(clock.hour()).thenReturn(NotificationTime.MORNING);
+        initializeTheListWith(createBirthday("John", today),
+                createBirthday("Fred", tomorrow));
+        activityTestRule.launchActivity(new Intent());
+
+        onView(withText(containsString("John"))).check(matches(isDisplayed()));
+        verify(alarm, times(1)).scheduleAlarm(today, NotificationTime.EVENING);
+        verifyNoMoreInteractions(alarm);
+    }
+    @Test public void testTwoEventsInListWithTodayAndTomorrowBirthday_AtEvening() {
+        when(clock.hour()).thenReturn(NotificationTime.EVENING);
+        initializeTheListWith(createBirthday("John", today),
+                createBirthday("Fred", tomorrow));
+        activityTestRule.launchActivity(new Intent());
+
+        onView(withText(containsString("John"))).check(matches(isDisplayed()));
+        verify(alarm, times(1)).scheduleAlarm(tomorrow, NotificationTime.MORNING);
+        verifyNoMoreInteractions(alarm);
+    }
     @Test public void testOneEventInListWithBirthdayInFuture() {
         LocalDate birthday = today.plusDays(100);
         IEvent event = createBirthday("John", birthday);

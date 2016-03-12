@@ -65,10 +65,11 @@ public class EventNotificationService extends IntentService {
 
         eventNotifier.notify(repo.getEvents());
 
-        LocalDate tomorrow = clock.now().plusDays(1);
-        Timber.d("schedule next alarm using date %s", tomorrow);
+        LocalDate now = clock.now();
+        int hour = clock.hour();
+        Timber.d("schedule next alarm using date %s and hour %d", now, hour);
 
-        alarmGenerator.generate(repo.getEvents(), tomorrow);
+        alarmGenerator.generate(repo.getEvents(), now, hour);
 
     }
 

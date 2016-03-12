@@ -169,7 +169,7 @@ public class EventRepoTest {
         @SuppressWarnings("ResourceType")
         IEvent event3 = new Event(name, now.getMonthOfYear(), now.getDayOfMonth(), clock, uniqueIdGenerator);
         transaction.add(event1).add(event2).add(event3).commit();
-        NotificationTime time = getFirstUpComingEventTimeBeforeNotification(sut.getEvents(), now);
+        NotificationTime time = getFirstUpComingEventTimeBeforeNotification(sut.getEvents(), now, NotificationTime.START_OF_DAY);
         assertThat(time.getAlarmDate(), is(now));
         assertThat(time.getHour(), is(6));
     }
@@ -186,15 +186,15 @@ public class EventRepoTest {
         IEvent event4 = createEvent(name, Date.NOVEMBER, 8);
         transaction.add(event1).add(event2).add(event3).add(event4).commit();
         Observable<IEvent> events = sut.getEvents();
-        NotificationTime notificationTime = getFirstUpComingEventTimeBeforeNotification(events, now);
+        NotificationTime notificationTime = getFirstUpComingEventTimeBeforeNotification(events, now, NotificationTime.START_OF_DAY);
         assertThat(notificationTime.getAlarmDate(), is(now));
         assertThat(notificationTime.getHour(), is(19));
 
     }
 
-    private NotificationTime getFirstUpComingEventTimeBeforeNotification(Observable<IEvent> events, final LocalDate from) {
+    private NotificationTime getFirstUpComingEventTimeBeforeNotification(Observable<IEvent> events, final LocalDate from, int hour) {
         return events
-                .map(event -> new NotificationTime(from, event))
+                .map(event -> new NotificationTime(from, hour, event))
                 .reduce((currentMin, x) -> NotificationTime.min(currentMin, x))
                 .toBlocking().single();
     }
