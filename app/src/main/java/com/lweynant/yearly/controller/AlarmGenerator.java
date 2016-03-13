@@ -19,11 +19,11 @@ public class AlarmGenerator  {
         Timber.d("create AlarmGenerator instance");
         this.alarm = alarm;
     }
-    public void generate(Observable<IEvent> events, LocalDate now) {
-        Timber.d("generate");
+    public void generate(Observable<IEvent> events, LocalDate now, int hour) {
+        Timber.d("generate alarm at %s at %d ", now.toString(), hour);
         unsubscribeFromPreviousSubscription();
         subscription = events
-                .map(event -> new NotificationTime(now, event))
+                .map(event -> new NotificationTime(now, hour, event))
                 .reduce((currentMin, x) -> NotificationTime.min(currentMin, x))
                 .subscribe(t -> alarm.scheduleAlarm(t.getAlarmDate(), t.getHour()),
                            e -> { alarm.clear(); onError(e); },

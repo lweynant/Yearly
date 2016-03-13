@@ -91,8 +91,8 @@ public class YearlyApp extends Application implements IStringResources, IEventRe
         Observable<IEvent> events = repo.getEventsSubscribedOnProperScheduler();
         Timber.i("archive");
         events.subscribe(new EventRepoSerializerToFileDecorator(repoAccessor, new EventRepoSerializer(clock)));
-        Timber.i("set next alarm on %s", alarmGenerator);
-        alarmGenerator.generate(repo.getEventsSubscribedOnProperScheduler(), clock.now());
+        Timber.i("set next alarm on %s at %d", alarmGenerator, clock.hour());
+        alarmGenerator.generate(repo.getEventsSubscribedOnProperScheduler(), clock.now(), clock.hour());
     }
 
 

@@ -19,10 +19,10 @@ public class SyncWithTestsAlarmGenerator extends AlarmGenerator {
         this.idlingResource = idlingResource;
     }
 
-    @Override public void generate(Observable<IEvent> events, LocalDate now) {
-        Timber.d("generate - increment idlingResource");
+    @Override public void generate(Observable<IEvent> events, LocalDate now, int hour) {
+        Timber.d("generate - increment idlingResource (at %s at %d", now.toString(), hour);
         idlingResource.increment();
-        super.generate(events, now);
+        super.generate(events, now, hour);
     }
 
 

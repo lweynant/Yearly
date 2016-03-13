@@ -10,13 +10,15 @@ public class Clock implements IClock {
         Timber.d("create the clock");
     }
 
-    @Override
-    public LocalDate now() {
+    @Override public LocalDate now() {
         return LocalDate.now();
     }
 
-    @Override
-    public String timestamp() {
+    @Override public int hour() {
+        return DateTime.now().getHourOfDay();
+    }
+
+    @Override public String timestamp() {
         return DateTime.now().toString();
     }
 }
