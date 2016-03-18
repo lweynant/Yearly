@@ -21,6 +21,7 @@ import com.lweynant.yearly.ui.ViewModule;
 
 import org.joda.time.LocalDate;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,6 +31,11 @@ import javax.inject.Inject;
 import dagger.Component;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.Espresso.pressBack;
+import static android.support.test.espresso.action.ViewActions.clearText;
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isRoot;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
@@ -101,6 +107,19 @@ public class ShowBirthdayActivityTest {
         onView(withId(R.id.text_birthday_age)).check(matches(withText("15")));
         LocalDate birthDate = new LocalDate(today.getYear(), Date.APRIL, 23);
         onView(withId(R.id.text_birthday_day)).check(matches(withText(birthDate.dayOfWeek().getAsText())));
+
+    }
+
+    @Ignore @Test public void modifyFirstName () {
+        Intent startIntent = new Intent();
+        setBirthdayOnIntent("Fred", 2000, Date.APRIL, 23, startIntent);
+        activityTestRule.launchActivity(startIntent);
+
+        onView(withId(R.id.fab_edit_birthday)).perform(click());
+
+        onView(withId(R.id.edit_text_first_name)).perform(clearText(), typeText("Uncle Fred"), closeSoftKeyboard());
+        pressBack();
+        ToolBarTitleMatcher.matchToolbarTitle(is("Uncle Fred"));
 
     }
 
