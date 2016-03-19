@@ -15,7 +15,6 @@ import com.lweynant.yearly.BaseYearlyAppComponent;
 import com.lweynant.yearly.EventRepoSerializerToFileDecorator;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.controller.AlarmGenerator;
-import com.lweynant.yearly.controller.BaseActivity;
 import com.lweynant.yearly.controller.BaseFragment;
 import com.lweynant.yearly.controller.SingleFragmentActivity;
 import com.lweynant.yearly.controller.add_event.AddBirthdayActivity;
@@ -103,7 +102,7 @@ public class ListEventsActivity extends SingleFragmentActivity implements ListEv
             Timber.d("nothing added");
         }
         else if (requestCode == REQUEST_ADD_BIRTHDAY) {
-            String name = data.getStringExtra(AddBirthdayContract.EXTRA_KEY_BIRTHDAY);
+            String name = data.getStringExtra(AddBirthdayContract.EXTRA_KEY_BIRTHDAY_FIRST_NAME);
             if (name != null) {
                 Timber.d("adding birthday %s", name);
                 View view = findViewById(R.id.multiple_actions);

@@ -7,7 +7,7 @@ import com.lweynant.yearly.model.Date;
 import rx.Observable;
 
 public interface AddBirthdayContract {
-    String EXTRA_KEY_BIRTHDAY = AddBirthdayContract.class.getCanonicalName();
+    String EXTRA_KEY_BIRTHDAY_FIRST_NAME = AddBirthdayContract.class.getCanonicalName();
 
     interface FragmentView {
 

@@ -3,6 +3,7 @@ package com.lweynant.yearly;
 import android.app.Instrumentation;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -11,6 +12,7 @@ import com.lweynant.yearly.controller.ControllerModule;
 import com.lweynant.yearly.controller.DateFormatter;
 import com.lweynant.yearly.controller.SyncControllerModule;
 import com.lweynant.yearly.controller.show_event.ShowBirthdayActivity;
+import com.lweynant.yearly.matcher.CollapsingToolBarTitleMatcher;
 import com.lweynant.yearly.matcher.ToolBarTitleMatcher;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.Date;
@@ -21,7 +23,6 @@ import com.lweynant.yearly.ui.ViewModule;
 
 import org.joda.time.LocalDate;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -89,7 +90,7 @@ public class ShowBirthdayActivityTest {
         setBirthdayOnIntent("Fred", 2000, Date.APRIL, 23, startIntent);
         activityTestRule.launchActivity(startIntent);
 
-        ToolBarTitleMatcher.matchToolbarTitle(is("Fred"));
+        CollapsingToolBarTitleMatcher.matchToolbarTitle(is("Fred"));
         onView(withId(R.id.text_birthday_date)).check(matches(withText(dateFormatter.format(2000, Date.APRIL, 23))));
         onView(withId(R.id.text_birthday_age)).check(matches(withText("15")));
         LocalDate birthDate = new LocalDate(today.getYear(), Date.APRIL, 23);
@@ -102,7 +103,7 @@ public class ShowBirthdayActivityTest {
         activityTestRule.launchActivity(startIntent);
         onView(isRoot()).perform(orientationLandscape());
 
-        ToolBarTitleMatcher.matchToolbarTitle(is("Fred"));
+        CollapsingToolBarTitleMatcher.matchToolbarTitle(is("Fred"));
         onView(withId(R.id.text_birthday_date)).check(matches(withText(dateFormatter.format(2000, Date.APRIL, 23))));
         onView(withId(R.id.text_birthday_age)).check(matches(withText("15")));
         LocalDate birthDate = new LocalDate(today.getYear(), Date.APRIL, 23);
@@ -110,7 +111,7 @@ public class ShowBirthdayActivityTest {
 
     }
 
-    @Ignore @Test public void modifyFirstName () {
+    @Test public void modifyFirstName () {
         Intent startIntent = new Intent();
         setBirthdayOnIntent("Fred", 2000, Date.APRIL, 23, startIntent);
         activityTestRule.launchActivity(startIntent);
@@ -119,7 +120,7 @@ public class ShowBirthdayActivityTest {
 
         onView(withId(R.id.edit_text_first_name)).perform(clearText(), typeText("Uncle Fred"), closeSoftKeyboard());
         pressBack();
-        ToolBarTitleMatcher.matchToolbarTitle(is("Uncle Fred"));
+        CollapsingToolBarTitleMatcher.matchToolbarTitle(is("Uncle Fred"));
 
     }
 
