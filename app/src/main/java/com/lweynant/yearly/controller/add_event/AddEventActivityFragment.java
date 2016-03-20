@@ -122,7 +122,7 @@ public class AddEventActivityFragment extends BaseFragment implements DateSelect
         Intent intent = new Intent();
         Bundle bundle = new Bundle();
         event.archiveTo(bundle);
-        intent.putExtra(AddEventContract.EXTRA_KEY_EVENT, bundle);
+        intent.putExtra(IEvent.EXTRA_KEY_EVENT, bundle);
         getActivity().setResult(Activity.RESULT_OK, intent);
     }
 

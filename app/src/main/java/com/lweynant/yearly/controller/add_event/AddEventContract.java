@@ -10,7 +10,6 @@ import org.joda.time.LocalDate;
 import rx.Observable;
 
 public interface AddEventContract {
-    String EXTRA_KEY_EVENT = IEvent.EXTRA_KEY_EVENT;
 
     interface FragmentView {
 

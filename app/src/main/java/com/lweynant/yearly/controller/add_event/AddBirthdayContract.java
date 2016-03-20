@@ -8,7 +8,6 @@ import com.lweynant.yearly.model.IEvent;
 import rx.Observable;
 
 public interface AddBirthdayContract {
-    String EXTRA_KEY_BIRTHDAY = IEvent.EXTRA_KEY_EVENT;
 
     interface FragmentView {
 
