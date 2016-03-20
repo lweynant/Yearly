@@ -10,7 +10,7 @@ import org.joda.time.LocalDate;
 import rx.Observable;
 
 public interface AddEventContract {
-    String EXTRA_KEY_EVENT = AddEventContract.class.getCanonicalName();
+    String EXTRA_KEY_EVENT = IEvent.EXTRA_KEY_EVENT;
 
     interface FragmentView {
 
@@ -18,7 +18,7 @@ public interface AddEventContract {
 
         void showDate(String formattedDate);
 
-        void showSavedEvent(String name);
+        void showSavedEvent(IEvent event);
 
         void showNothingSaved();
 

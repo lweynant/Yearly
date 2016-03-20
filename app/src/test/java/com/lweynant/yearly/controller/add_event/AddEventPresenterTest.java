@@ -88,7 +88,7 @@ public class AddEventPresenterTest {
         when(eventBuilder.build()).thenReturn(event);
         sut.saveEvent();
 
-        verify(fragmentView).showSavedEvent("An Event");
+        verify(fragmentView).showSavedEvent(event);
         verify(repoTransaction).add(event);
         verify(repoTransaction).commit();
     }

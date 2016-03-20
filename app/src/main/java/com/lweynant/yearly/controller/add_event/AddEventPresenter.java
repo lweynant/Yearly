@@ -115,7 +115,7 @@ public class AddEventPresenter implements AddEventContract.UserActionListener{
     @Override public void saveEvent() {
         IEvent event = builder.build();
         if (event != null) {
-            fragmentView.showSavedEvent(event.getName());
+            fragmentView.showSavedEvent(event);
             transaction.add(event).commit();
         }
         else {

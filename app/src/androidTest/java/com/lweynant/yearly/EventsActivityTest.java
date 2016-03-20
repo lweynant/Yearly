@@ -19,6 +19,7 @@ import com.lweynant.yearly.controller.DateFormatter;
 import com.lweynant.yearly.controller.list_events.EventsAdapter;
 import com.lweynant.yearly.controller.list_events.ListEventsActivity;
 import com.lweynant.yearly.controller.list_events.ListEventsContract;
+import com.lweynant.yearly.matcher.CollapsingToolBarTitleMatcher;
 import com.lweynant.yearly.matcher.ToolBarTitleMatcher;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.Date;
@@ -253,7 +254,7 @@ public class EventsActivityTest {
         activityTestRule.launchActivity(new Intent());
         onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem(withChild(withText(containsString("Fred"))), click()));
 
-        ToolBarTitleMatcher.matchToolbarTitle(containsString("Fre"));
+        CollapsingToolBarTitleMatcher.matchToolbarTitle(containsString("Fre"));
     }
 
     @Test public void testModifyLastName() {

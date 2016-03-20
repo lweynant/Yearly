@@ -15,6 +15,7 @@ import com.lweynant.yearly.BaseYearlyAppComponent;
 import com.lweynant.yearly.EventRepoSerializerToFileDecorator;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.controller.AlarmGenerator;
+import com.lweynant.yearly.controller.BaseActivity;
 import com.lweynant.yearly.controller.BaseFragment;
 import com.lweynant.yearly.controller.SingleFragmentActivity;
 import com.lweynant.yearly.controller.add_event.AddBirthdayActivity;
@@ -102,7 +103,7 @@ public class ListEventsActivity extends SingleFragmentActivity implements ListEv
             Timber.d("nothing added");
         }
         else if (requestCode == REQUEST_ADD_BIRTHDAY) {
-            String name = data.getStringExtra(AddBirthdayContract.EXTRA_KEY_BIRTHDAY_FIRST_NAME);
+            String name = getNameFromIntent(data);
             if (name != null) {
                 Timber.d("adding birthday %s", name);
                 View view = findViewById(R.id.multiple_actions);
@@ -113,7 +114,7 @@ public class ListEventsActivity extends SingleFragmentActivity implements ListEv
             }
         }
         else if (requestCode == REQUEST_ADD_EVENT) {
-            String name = data.getStringExtra(AddEventContract.EXTRA_KEY_EVENT);
+            String name = getNameFromIntent(data);
             if (name!= null) {
                 Timber.d("adding event %s", name);
                 View view = findViewById(R.id.multiple_actions);
@@ -122,6 +123,11 @@ public class ListEventsActivity extends SingleFragmentActivity implements ListEv
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private String getNameFromIntent(Intent data) {
+        Bundle bundle = data.getBundleExtra(IEvent.EXTRA_KEY_EVENT);
+        return data.getStringExtra(IEvent.KEY_NAME);
     }
 
     @Override

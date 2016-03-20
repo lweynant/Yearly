@@ -15,6 +15,7 @@ import com.lweynant.yearly.controller.DateFormatter;
 import com.lweynant.yearly.controller.add_event.AddBirthdayContract;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.BirthdayBuilder;
+import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IEventNotificationText;
 import com.lweynant.yearly.ui.IEventViewFactory;
@@ -92,9 +93,8 @@ public class ShowBirthdayActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_EDIT_EVENT) {
             Timber.d("resultCode is REQUEST_EDIT_EVENT");
-            String name = data.getStringExtra(AddBirthdayContract.EXTRA_KEY_BIRTHDAY_FIRST_NAME);
-            Timber.d("set name %s on action bar", name);
-            toolbarLayout.setTitle(name);
+            Bundle bundle = data.getBundleExtra(IEvent.EXTRA_KEY_EVENT);
+            fillUIElements(bundle);
         }
     }
 

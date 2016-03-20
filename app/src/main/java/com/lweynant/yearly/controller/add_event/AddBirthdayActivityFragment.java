@@ -1,9 +1,11 @@
 package com.lweynant.yearly.controller.add_event;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -12,7 +14,9 @@ import com.jakewharton.rxbinding.widget.RxTextView;
 import com.lweynant.yearly.BaseYearlyAppComponent;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.controller.BaseFragment;
+import com.lweynant.yearly.controller.IExtendeFragmentLifeCycle;
 import com.lweynant.yearly.model.Date;
+import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.ui.DateSelector;
 
 import javax.inject.Inject;
@@ -100,10 +104,11 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
         //todo added a save button in the toolbar
     }
 
-    @Override public void showSavedBirthday(String name) {
-        Timber.d("showSaveBirthday");
+    @Override public void showSavedBirthday(IEvent event) {
         Intent resultIntent = new Intent();
-        resultIntent.putExtra(AddBirthdayContract.EXTRA_KEY_BIRTHDAY_FIRST_NAME, name);
+        Bundle bundle = new Bundle();
+        event.archiveTo(bundle);
+        resultIntent.putExtra(AddBirthdayContract.EXTRA_KEY_BIRTHDAY, bundle);
         getActivity().setResult(Activity.RESULT_OK, resultIntent);
     }
 

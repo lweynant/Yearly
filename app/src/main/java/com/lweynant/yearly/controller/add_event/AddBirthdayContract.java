@@ -3,11 +3,12 @@ package com.lweynant.yearly.controller.add_event;
 import android.os.Bundle;
 
 import com.lweynant.yearly.model.Date;
+import com.lweynant.yearly.model.IEvent;
 
 import rx.Observable;
 
 public interface AddBirthdayContract {
-    String EXTRA_KEY_BIRTHDAY_FIRST_NAME = AddBirthdayContract.class.getCanonicalName();
+    String EXTRA_KEY_BIRTHDAY = IEvent.EXTRA_KEY_EVENT;
 
     interface FragmentView {
 
@@ -17,7 +18,7 @@ public interface AddBirthdayContract {
 
         void enableSaveButton(Boolean enabled);
 
-        void showSavedBirthday(String name);
+        void showSavedBirthday(IEvent event);
 
         void showNothingSaved();
     }

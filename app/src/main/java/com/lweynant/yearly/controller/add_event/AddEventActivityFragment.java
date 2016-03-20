@@ -13,10 +13,8 @@ import com.lweynant.yearly.BaseYearlyAppComponent;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.controller.BaseFragment;
 import com.lweynant.yearly.model.Date;
-import com.lweynant.yearly.platform.IClock;
+import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.ui.DateSelector;
-
-import org.joda.time.LocalDate;
 
 import javax.inject.Inject;
 
@@ -120,9 +118,11 @@ public class AddEventActivityFragment extends BaseFragment implements DateSelect
         dateEditText.setText(formattedDate);
     }
 
-    @Override public void showSavedEvent(String name) {
+    @Override public void showSavedEvent(IEvent event) {
         Intent intent = new Intent();
-        intent.putExtra(AddEventContract.EXTRA_KEY_EVENT, name);
+        Bundle bundle = new Bundle();
+        event.archiveTo(bundle);
+        intent.putExtra(AddEventContract.EXTRA_KEY_EVENT, bundle);
         getActivity().setResult(Activity.RESULT_OK, intent);
     }
 
