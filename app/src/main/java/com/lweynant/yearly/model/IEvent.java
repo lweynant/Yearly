@@ -15,6 +15,7 @@ public interface IEvent extends Comparable<IEvent>, IEventID {
     String KEY_STRING_ID = "uuid";
     String KEY_ID = "id";
     String KEY_YEAR = "year";
+    String EXTRA_KEY_EVENT = "event_key_for_full_bundle";
 
     public String getName();
 

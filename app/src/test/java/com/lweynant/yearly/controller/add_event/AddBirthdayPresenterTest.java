@@ -109,7 +109,7 @@ public class AddBirthdayPresenterTest {
 
         sut.saveBirthday();
 
-        verify(fragmentView).showSavedBirthday("Joe");
+        verify(fragmentView).showSavedBirthday(birthday);
         verify(transaction).add(birthday);
         verify(transaction).commit();
     }

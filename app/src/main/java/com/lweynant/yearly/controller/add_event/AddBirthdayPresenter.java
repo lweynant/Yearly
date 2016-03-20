@@ -118,7 +118,7 @@ public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsList
         Birthday birthday = birthdayBuilder.build();
         if (birthday != null) {
             transaction.add(birthday).commit();
-            fragmentView.showSavedBirthday(birthday.getName());
+            fragmentView.showSavedBirthday(birthday);
         }
         else {
             fragmentView.showNothingSaved();
