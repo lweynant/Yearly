@@ -25,7 +25,7 @@ public class IntentFactory implements IIntentFactory {
             Bundle bundle = new Bundle();
             event.archiveTo(bundle);
             Intent intent = new Intent(context, ShowBirthdayActivity.class);
-            intent.putExtra(ShowBirthdayActivity.EXTRA_INITIAL_BIRTHDAY_BUNDLE, bundle);
+            intent.putExtra(IEvent.EXTRA_KEY_EVENT, bundle);
             return intent;
         }
         return new Intent(context, ListEventsActivity.class);

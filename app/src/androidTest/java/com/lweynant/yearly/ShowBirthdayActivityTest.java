@@ -3,7 +3,6 @@ package com.lweynant.yearly;
 import android.app.Instrumentation;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -13,9 +12,9 @@ import com.lweynant.yearly.controller.DateFormatter;
 import com.lweynant.yearly.controller.SyncControllerModule;
 import com.lweynant.yearly.controller.show_event.ShowBirthdayActivity;
 import com.lweynant.yearly.matcher.CollapsingToolBarTitleMatcher;
-import com.lweynant.yearly.matcher.ToolBarTitleMatcher;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.Date;
+import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.ModelModule;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IUniqueIdGenerator;
@@ -128,7 +127,7 @@ public class ShowBirthdayActivityTest {
         Birthday birthday = new Birthday(name, yearOfBirth, month, day, clock, idGenerator);
         Bundle bundle = new Bundle();
         birthday.archiveTo(bundle);
-        startIntent.putExtra(ShowBirthdayActivity.EXTRA_INITIAL_BIRTHDAY_BUNDLE, bundle);
+        startIntent.putExtra(IEvent.EXTRA_KEY_EVENT, bundle);
     }
 
 }

@@ -2,29 +2,16 @@ package com.lweynant.yearly.controller.add_event;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
-import android.view.View;
 
 import com.lweynant.yearly.BaseYearlyAppComponent;
 import com.lweynant.yearly.R;
-import com.lweynant.yearly.controller.BaseActivity;
 import com.lweynant.yearly.controller.BaseFragment;
 import com.lweynant.yearly.controller.SingleFragmentActivity;
-
-import javax.inject.Inject;
-
-import timber.log.Timber;
+import com.lweynant.yearly.model.IEvent;
 
 public class AddEventActivity extends SingleFragmentActivity {
 
-    public static final String EXTRA_INITIAL_EVENT_BUNDLE = "AddEventActivity.initial.event";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,8 +33,8 @@ public class AddEventActivity extends SingleFragmentActivity {
     @Override protected BaseFragment createFragment() {
         Bundle args = new Bundle();
         Intent intent = getIntent();
-        if (intent.hasExtra(AddEventActivity.EXTRA_INITIAL_EVENT_BUNDLE)) {
-            args = intent.getBundleExtra(AddEventActivity.EXTRA_INITIAL_EVENT_BUNDLE);
+        if (intent.hasExtra(IEvent.EXTRA_KEY_EVENT)) {
+            args = intent.getBundleExtra(IEvent.EXTRA_KEY_EVENT);
         }
         else {
             args = new Bundle();

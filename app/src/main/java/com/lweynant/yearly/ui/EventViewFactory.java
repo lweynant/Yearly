@@ -59,11 +59,11 @@ public class EventViewFactory implements IEventViewFactory {
         String type = bundle.getString(IEvent.KEY_TYPE);
         if(type.equals(Birthday.class.getCanonicalName())) {
             intent = new Intent(context, AddBirthdayActivity.class);
-            intent.putExtra(AddBirthdayActivity.EXTRA_INITIAL_BIRTHDAY_BUNDLE, bundle);
+            intent.putExtra(IEvent.EXTRA_KEY_EVENT, bundle);
         }
         else if (type.equals(Event.class.getCanonicalName())) {
             intent = new Intent(context, AddEventActivity.class);
-            intent.putExtra(AddEventActivity.EXTRA_INITIAL_EVENT_BUNDLE, bundle);
+            intent.putExtra(IEvent.EXTRA_KEY_EVENT, bundle);
         }
         return intent;
     }
@@ -73,11 +73,11 @@ public class EventViewFactory implements IEventViewFactory {
         String type = bundle.getString(IEvent.KEY_TYPE);
         if(type.equals(Birthday.class.getCanonicalName())) {
             intent = new Intent(context, ShowBirthdayActivity.class);
-            intent.putExtra(ShowBirthdayActivity.EXTRA_INITIAL_BIRTHDAY_BUNDLE, bundle);
+            intent.putExtra(IEvent.EXTRA_KEY_EVENT, bundle);
         }
         else if (type.equals(Event.class.getCanonicalName())) {
             intent = new Intent(context, AddEventActivity.class);
-            intent.putExtra(AddEventActivity.EXTRA_INITIAL_EVENT_BUNDLE, bundle);
+            intent.putExtra(IEvent.EXTRA_KEY_EVENT, bundle);
         }
         return intent;
     }

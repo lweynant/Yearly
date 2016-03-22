@@ -12,7 +12,6 @@ import com.lweynant.yearly.BaseYearlyAppComponent;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.controller.BaseActivity;
 import com.lweynant.yearly.controller.DateFormatter;
-import com.lweynant.yearly.controller.add_event.AddBirthdayContract;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.model.IEvent;
@@ -32,7 +31,6 @@ import timber.log.Timber;
 
 public class ShowBirthdayActivity extends BaseActivity {
     private static final int REQUEST_EDIT_EVENT = 1;
-    public static final String EXTRA_INITIAL_BIRTHDAY_BUNDLE = "ShowBirthdayActivity.initial.birthday";
     @Inject IEventViewFactory eventViewFactory;
     @Inject BirthdayBuilder birthdayBuilder;
     @Inject DateFormatter dateFormatter;
@@ -101,8 +99,8 @@ public class ShowBirthdayActivity extends BaseActivity {
     private Bundle getBundle() {
         Intent intent = getIntent();
         Bundle args;
-        if(intent.hasExtra(ShowBirthdayActivity.EXTRA_INITIAL_BIRTHDAY_BUNDLE)){
-            args = intent.getBundleExtra(ShowBirthdayActivity.EXTRA_INITIAL_BIRTHDAY_BUNDLE);
+        if(intent.hasExtra(IEvent.EXTRA_KEY_EVENT)){
+            args = intent.getBundleExtra(IEvent.EXTRA_KEY_EVENT);
         }
         else {
             args = new Bundle();
