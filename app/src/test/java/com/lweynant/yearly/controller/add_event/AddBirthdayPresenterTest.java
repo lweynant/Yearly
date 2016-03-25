@@ -2,15 +2,11 @@ package com.lweynant.yearly.controller.add_event;
 
 import android.os.Bundle;
 
-import com.lweynant.yearly.IStringResources;
-import com.lweynant.yearly.R;
 import com.lweynant.yearly.controller.DateFormatter;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.model.Date;
-import com.lweynant.yearly.model.Event;
 import com.lweynant.yearly.model.IEvent;
-import com.lweynant.yearly.model.IKeyValueArchiver;
 import com.lweynant.yearly.model.ITransaction;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IUniqueIdGenerator;
@@ -29,6 +25,7 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.after;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -47,7 +44,7 @@ public class AddBirthdayPresenterTest {
     @Mock ITransaction transaction;
     @Mock BirthdayBuilder birthdayBuilder;
     private LocalDate today;
-    private Bundle emptyBundle;
+    @Mock Bundle emptyBundle;
     @Mock DateFormatter dateFormatter;
 
 
@@ -68,7 +65,6 @@ public class AddBirthdayPresenterTest {
         when(dateFormatter.format(anyInt(), anyInt())).thenReturn("formatted_mm_dd");
         when(dateFormatter.format(anyInt(), anyInt(), anyInt())).thenReturn("formatted_yy_mm_dd");
         sut = new AddBirthdayPresenter(birthdayBuilder, transaction, dateFormatter, clock);
-        emptyBundle = mock(Bundle.class);
     }
 
     @Test public void setName() {
@@ -84,7 +80,7 @@ public class AddBirthdayPresenterTest {
     }
 
     @Test public void onlyDateWithoutYear() {
-        sut.initialize(fragmentView, emptyBundle, null);
+        sut.initialize(fragmentView, emptyBundle);
         sut.setDate(Date.DECEMBER, 23);
 
         verify(birthdayBuilder).setMonth(Date.DECEMBER);
@@ -93,7 +89,7 @@ public class AddBirthdayPresenterTest {
     }
 
     @Test public void onlyDateWithYear() {
-        sut.initialize(fragmentView, emptyBundle, null);
+        sut.initialize(fragmentView, emptyBundle);
         sut.setDate(2015, Date.DECEMBER, 23);
 
         verify(birthdayBuilder).setMonth(Date.DECEMBER);
@@ -103,7 +99,7 @@ public class AddBirthdayPresenterTest {
     }
 
     @Test public void saveBirthday() {
-        sut.initialize(fragmentView, emptyBundle, null);
+        sut.initialize(fragmentView, emptyBundle);
         Birthday birthday = createBirthday("Joe");
         when(birthdayBuilder.build()).thenReturn(birthday);
 
@@ -115,7 +111,7 @@ public class AddBirthdayPresenterTest {
     }
 
     @Test public void saveNothing() {
-        sut.initialize(fragmentView, emptyBundle, null);
+        sut.initialize(fragmentView, emptyBundle);
         when(birthdayBuilder.build()).thenReturn(null);
 
         sut.saveBirthday();
@@ -131,20 +127,20 @@ public class AddBirthdayPresenterTest {
     }
 
     @Test public void showDateWithoutYear() {
-        sut.initialize(fragmentView, emptyBundle, null);
+        sut.initialize(fragmentView, emptyBundle);
         sut.setDate(Date.DECEMBER, 23);
 
         verify(fragmentView).showDate("formatted_mm_dd");
     }
     @Test public void showDateWithYear() {
-        sut.initialize(fragmentView, emptyBundle, null);
+        sut.initialize(fragmentView, emptyBundle);
         sut.setDate(2015, Date.DECEMBER, 23);
 
         verify(fragmentView).showDate("formatted_yy_mm_dd");
     }
 
     @Test public void saveButtonEnabledIfNameAndDateFilled() {
-        sut.initialize(fragmentView, emptyBundle, null);
+        sut.initialize(fragmentView, emptyBundle);
         sut.setInputObservables(Observable.just("Joe"), Observable.empty(), Observable.just("23 dec"));
 
         verify(fragmentView).enableSaveButton(true);
@@ -161,7 +157,7 @@ public class AddBirthdayPresenterTest {
 //        inOrder.verify(fragmentView).enableSaveButton(true);
 //    }
     @Test public void saveButtonNotEnabledIfNameOnlyFilled() {
-        sut.initialize(fragmentView, emptyBundle, null);
+        sut.initialize(fragmentView, emptyBundle);
         sut.setInputObservables(Observable.just("Joe"), Observable.empty(), Observable.empty());
 
         verify(fragmentView, never()).enableSaveButton(true);
@@ -169,7 +165,7 @@ public class AddBirthdayPresenterTest {
 
     @Test public void restoreFromState() {
         Bundle state = mock(Bundle.class);
-        sut.initialize(fragmentView, mock(Bundle.class), state);
+        sut.initialize(fragmentView, state);
 
         verify(birthdayBuilder).set(state);
     }
@@ -181,36 +177,28 @@ public class AddBirthdayPresenterTest {
     }
 
 
-    @Test public void initializeWithEmptyArgAndNullSavedInstanceState() {
+    @Test public void initializeWithEmptyArg() {
         //when(dateFormatter.format(today.getMonthOfYear(), today.getDayOfMonth())).thenReturn("formatted date");
         Bundle emptyArgs = mock(Bundle.class);
-        sut.initialize(fragmentView, emptyArgs, null);
+        sut.initialize(fragmentView, emptyArgs);
 
         verify(fragmentView).initialize(null, null, null, today.getYear(), today.getMonthOfYear(), today.getDayOfMonth());
     }
 
-    @Test public void initializeWithValidEventArgWithYearAndNullSavedInstanceState() {
+    @Test public void initializeWithValidEventArgWithYear() {
         when(dateFormatter.format(2001, Date.APRIL, 23)).thenReturn("formatted date");
         Bundle args = createArgsFor("Events name", 2001, Date.APRIL, 23);
-        sut.initialize(fragmentView, args, null);
+        sut.initialize(fragmentView, args);
 
         verify(fragmentView).initialize(("Events name"), null, ("formatted date"), 2001, Date.APRIL, 23);
     }
 
-    @Test public void initializeWithValidEventArgAndNullSavedInstanceState() {
+    @Test public void initializeWithValidEventArg() {
         when(dateFormatter.format(Date.APRIL, 23)).thenReturn("the date");
         Bundle args = createArgsFor("Events name", Date.APRIL, 23);
-        sut.initialize(fragmentView, args, null);
+        sut.initialize(fragmentView, args);
 
         verify(fragmentView).initialize("Events name", null, "the date", today.getYear(), Date.APRIL, 23);
-    }
-    @Test public void initializeWithValidEventArgAndSomeSavedInstanceState() {
-        when(dateFormatter.format(Date.APRIL, 23)).thenReturn("the date");
-        Bundle args = createArgsFor("Events name", Date.APRIL, 23);
-        Bundle state = createStateFor("New name", Date.AUGUST, 23);
-        sut.initialize(fragmentView, args, state);
-
-        verify(fragmentView).initialize(null, null, null, today.getYear(), Date.AUGUST, 23);
     }
 
     private Bundle createStateFor(String name, int month, int day) {
@@ -231,12 +219,7 @@ public class AddBirthdayPresenterTest {
         when(args.containsKey(IEvent.KEY_MONTH)).thenReturn(true);
         when(args.getInt(IEvent.KEY_MONTH)).thenReturn(month);
         when(args.containsKey(IEvent.KEY_DAY)).thenReturn(true);
-        when(args.getInt(IEvent.KEY_MONTH)).thenReturn(day);
-        //prepare the builder to accept these args
-        when(birthdayBuilder.canBuild()).thenReturn(true);
-        Birthday event = createBirthday(name, month, day);
-        when(birthdayBuilder.build()).thenReturn(event);
-
+        when(args.getInt(IEvent.KEY_DAY)).thenReturn(day);
 
         return args;
     }
@@ -244,26 +227,11 @@ public class AddBirthdayPresenterTest {
         Bundle args = createArgsFor(name, month, day);
         when(args.containsKey(IEvent.KEY_YEAR)).thenReturn(true);
         when(args.getInt(IEvent.KEY_YEAR)).thenReturn(year);
-        when(birthdayBuilder.canBuild()).thenReturn(true);
-        Birthday event = createBirthday(name, year, month, day);
-        when(birthdayBuilder.build()).thenReturn(event);
+        when(args.containsKey(IEvent.KEY_MONTH)).thenReturn(true);
+        when(args.getInt(IEvent.KEY_MONTH)).thenReturn(month);
+        when(args.containsKey(IEvent.KEY_DAY)).thenReturn(true);
+        when(args.getInt(IEvent.KEY_DAY)).thenReturn(day);
 
         return args;
     }
-
-    private Birthday createBirthday(String name, int year, int month, int day) {
-        Birthday bd = createBirthday(name, month, day);
-        when(bd.hasYearOfOrigin()).thenReturn(true);
-        when(bd.getYearOfOrigin()).thenReturn(year);
-        return  bd;
-    }
-
-    private Birthday createBirthday(String name, int month, int day) {
-        Birthday bd = mock(Birthday.class);
-        when(bd.getName()).thenReturn(name);
-        when(bd.getDate()).thenReturn(new LocalDate(today.getYear(), month, day));
-        return bd;
-    }
-
-
 }
