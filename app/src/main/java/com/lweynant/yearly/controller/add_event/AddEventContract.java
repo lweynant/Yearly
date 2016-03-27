@@ -25,7 +25,7 @@ public interface AddEventContract {
     }
     interface UserActionListener {
 
-        void initialize(FragmentView fragmentView, Bundle args, Bundle savedInstanceState);
+        void initialize(FragmentView fragmentView, Bundle args);
 
         void setInputObservables(Observable<CharSequence> nameChangeEvents,
                                  Observable<CharSequence> dateChangeEvents);

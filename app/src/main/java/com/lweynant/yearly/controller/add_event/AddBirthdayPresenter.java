@@ -34,7 +34,7 @@ public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsList
     @Override public void initialize(AddBirthdayContract.FragmentView fragmentView, Bundle args) {
         this.fragmentView = fragmentView;
         LocalDate now = clock.now();
-            birthdayBuilder.set(args);
+        birthdayBuilder.set(args);
         int selectedYear = readIntFromBundle(args, IEvent.KEY_YEAR, now.getYear());
         int selectedMonth = readIntFromBundle(args, IEvent.KEY_MONTH, now.getMonthOfYear());
         int selectedDay = readIntFromBundle(args, IEvent.KEY_DAY, now.getDayOfMonth());

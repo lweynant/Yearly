@@ -59,7 +59,8 @@ public class AddEventActivityFragment extends BaseFragment implements DateSelect
     @Override public void onCreate(Bundle savedInstanceState) {
         Timber.d("onCreate");
         super.onCreate(savedInstanceState);
-        userActionListener.initialize(this, getArguments(), savedInstanceState);
+        Bundle args = savedInstanceState != null? savedInstanceState: getArguments();
+        userActionListener.initialize(this, args);
     }
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,

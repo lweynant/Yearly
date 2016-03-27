@@ -4,7 +4,6 @@ import android.os.Bundle;
 
 import com.lweynant.yearly.controller.DateFormatter;
 import com.lweynant.yearly.model.Date;
-import com.lweynant.yearly.model.Event;
 import com.lweynant.yearly.model.EventBuilder;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.ITransaction;
@@ -33,37 +32,29 @@ public class AddEventPresenter implements AddEventContract.UserActionListener{
     }
 
     @SuppressWarnings("ResourceType") @Override
-    public void initialize(AddEventContract.FragmentView fragmentView, Bundle args, Bundle savedInstanceState) {
+    public void initialize(AddEventContract.FragmentView fragmentView, Bundle args) {
         this.fragmentView = fragmentView;
         LocalDate now = clock.now();
-        if (savedInstanceState != null) {
-            builder.set(savedInstanceState);
-            int selectedYear = readIntFromBundle(savedInstanceState, IEvent.KEY_YEAR, now.getYear());
-            int selectedMonth = readIntFromBundle(savedInstanceState, IEvent.KEY_MONTH, now.getMonthOfYear());
-            int selectedDay = readIntFromBundle(savedInstanceState, IEvent.KEY_DAY, now.getDayOfMonth());
-            fragmentView.initialize(null, null, selectedYear, selectedMonth, selectedDay);
-        }
-        else{
-            builder.set(args);
-            update = builder.canBuild();
-            if (update) {
-                Event event = builder.build();
-                LocalDate date = event.getDate();
-                String formattedDate;
-                int year;
-                if (event.hasYearOfOrigin()) {
-                    year = event.getYearOfOrigin();
-                    formattedDate = dateFormatter.format(year, date.getMonthOfYear(), date.getDayOfMonth());
-                } else {
-                    year = date.getYear();
-                    formattedDate = dateFormatter.format(date.getMonthOfYear(), date.getDayOfMonth());
-                }
-                fragmentView.initialize(event.getName(), formattedDate, year, date.getMonthOfYear(), date.getDayOfMonth());
-            }
-            else {
-                fragmentView.initialize(null, null, now.getYear(), now.getMonthOfYear(), now.getDayOfMonth());
+        builder.set(args);
+        int selectedYear = readIntFromBundle(args, IEvent.KEY_YEAR, now.getYear());
+        int selectedMonth = readIntFromBundle(args, IEvent.KEY_MONTH, now.getMonthOfYear());
+        int selectedDay = readIntFromBundle(args, IEvent.KEY_DAY, now.getDayOfMonth());
+        String name = readStringFromBundle(args, IEvent.KEY_NAME, null);
+        String formattedDate = null;
+        if (args.containsKey(IEvent.KEY_DAY) && args.containsKey(IEvent.KEY_MONTH)) {
+            if (args.containsKey(IEvent.KEY_YEAR)) {
+                formattedDate = dateFormatter.format(selectedYear, selectedMonth, selectedDay);
+            } else {
+                formattedDate = dateFormatter.format(selectedMonth, selectedDay);
             }
         }
+        fragmentView.initialize(name, formattedDate, selectedYear, selectedMonth, selectedDay);
+    }
+    private String readStringFromBundle(Bundle bundle, String key, String defaultValue) {
+        if (bundle.containsKey(key)) {
+            return bundle.getString(key);
+        }
+        return defaultValue;
     }
 
     private int readIntFromBundle(Bundle bundle, String key, int defaultValue) {
