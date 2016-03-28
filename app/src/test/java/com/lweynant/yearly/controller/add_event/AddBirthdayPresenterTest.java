@@ -10,6 +10,7 @@ import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.ITransaction;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IUniqueIdGenerator;
+import com.lweynant.yearly.test_helpers.StubbedBundle;
 
 import org.joda.time.LocalDate;
 import org.junit.Before;
@@ -201,37 +202,11 @@ public class AddBirthdayPresenterTest {
         verify(fragmentView).initialize("Events name", null, "the date", today.getYear(), Date.APRIL, 23);
     }
 
-    private Bundle createStateFor(String name, int month, int day) {
-        Bundle bundle = mock(Bundle.class);
-        when(bundle.containsKey(IEvent.KEY_NAME)).thenReturn(true);
-        when(bundle.getString(IEvent.KEY_NAME)).thenReturn(name);
-        when(bundle.containsKey(IEvent.KEY_MONTH)).thenReturn(true);
-        when(bundle.getInt(IEvent.KEY_MONTH)).thenReturn(month);
-        when(bundle.containsKey(IEvent.KEY_DAY)).thenReturn(true);
-        when(bundle.getInt(IEvent.KEY_DAY)).thenReturn(day);
-        return bundle;
-    }
 
     private Bundle createArgsFor(String name, int month, int day) {
-        Bundle args = mock(Bundle.class);
-        when(args.containsKey(IEvent.KEY_NAME)).thenReturn(true);
-        when(args.getString(IEvent.KEY_NAME)).thenReturn(name);
-        when(args.containsKey(IEvent.KEY_MONTH)).thenReturn(true);
-        when(args.getInt(IEvent.KEY_MONTH)).thenReturn(month);
-        when(args.containsKey(IEvent.KEY_DAY)).thenReturn(true);
-        when(args.getInt(IEvent.KEY_DAY)).thenReturn(day);
-
-        return args;
+        return StubbedBundle.createBundleForEvent(name, month, day);
     }
     private Bundle createArgsFor(String name, int year, int month, int day) {
-        Bundle args = createArgsFor(name, month, day);
-        when(args.containsKey(IEvent.KEY_YEAR)).thenReturn(true);
-        when(args.getInt(IEvent.KEY_YEAR)).thenReturn(year);
-        when(args.containsKey(IEvent.KEY_MONTH)).thenReturn(true);
-        when(args.getInt(IEvent.KEY_MONTH)).thenReturn(month);
-        when(args.containsKey(IEvent.KEY_DAY)).thenReturn(true);
-        when(args.getInt(IEvent.KEY_DAY)).thenReturn(day);
-
-        return args;
+        return StubbedBundle.createBundleForEvent(name, year, month, day);
     }
 }
