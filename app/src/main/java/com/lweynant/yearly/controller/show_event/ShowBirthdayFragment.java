@@ -1,5 +1,6 @@
 package com.lweynant.yearly.controller.show_event;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -28,6 +29,15 @@ import butterknife.ButterKnife;
 import timber.log.Timber;
 
 public class ShowBirthdayFragment extends BaseFragment implements ShowBirthdayContract.FragmentView {
+
+
+
+    public interface Callback {
+        public void setToolbar(Toolbar toolBar);
+    }
+
+
+    private Callback callback;
     private static final int REQUEST_EDIT_EVENT = 1;
     @Inject IEventViewFactory eventViewFactory;
     @Inject BirthdayBuilder birthdayBuilder;
@@ -39,6 +49,7 @@ public class ShowBirthdayFragment extends BaseFragment implements ShowBirthdayCo
     @Bind(R.id.text_birthday_age) TextView ageTextView;
     @Bind(R.id.text_birthday_in) TextView inTextView;
     @Bind(R.id.toolbar_layout) CollapsingToolbarLayout toolbarLayout;
+    @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.fab_edit_birthday) FloatingActionButton fab;
 
     public static ShowBirthdayFragment newInstance(Bundle args) {
@@ -51,17 +62,28 @@ public class ShowBirthdayFragment extends BaseFragment implements ShowBirthdayCo
         component.inject(this);
     }
 
+    @Override public void onAttach(Context context) {
+        Timber.d("onAttach");
+        super.onAttach(context);
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+            callback = (Callback) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement ShowBirthdayFragment.Callback");
+        }
+    }
 
     @Nullable @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Timber.d("onCreateView");
         View view = inflater.inflate(R.layout.fragment_show_birthday, container, false);
         ButterKnife.bind(this, view);
-
+        callback.setToolbar(toolbar);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 userActionsListener.editBirthday();
-
             }
         });
 

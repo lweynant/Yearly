@@ -31,16 +31,13 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
-public class ShowBirthdayActivity extends SingleFragmentActivity {
+public class ShowBirthdayActivity extends SingleFragmentActivity implements ShowBirthdayFragment.Callback {
 
     @SuppressWarnings("ResourceType") @Override
     protected void onCreate(Bundle savedInstanceState) {
         Timber.d("onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_birthday);
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override protected BaseFragment createFragment() {
@@ -62,5 +59,10 @@ public class ShowBirthdayActivity extends SingleFragmentActivity {
     }
 
     @Override protected void injectDependencies(BaseYearlyAppComponent component) {
+    }
+
+    @Override public void setToolbar(Toolbar toolbar) {
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 }
