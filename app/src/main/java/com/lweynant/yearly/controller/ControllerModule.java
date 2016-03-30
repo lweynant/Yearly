@@ -13,6 +13,8 @@ import com.lweynant.yearly.controller.list_events.EventsAdapter;
 import com.lweynant.yearly.controller.list_events.IEventsLoader;
 import com.lweynant.yearly.controller.list_events.ListEventsContract;
 import com.lweynant.yearly.controller.list_events.ListEventsPresenter;
+import com.lweynant.yearly.controller.show_event.ShowBirthdayContract;
+import com.lweynant.yearly.controller.show_event.ShowBirthdayPresenter;
 import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.model.EventBuilder;
 import com.lweynant.yearly.model.ITransaction;
@@ -64,6 +66,9 @@ public class ControllerModule {
                                                                                     DateFormatter dateFormatter,
                                                                                     IClock clock) {
         return new AddEventPresenter(builder, transaction, dateFormatter, clock);
+    }
+    @Provides ShowBirthdayContract.UserActionsListener providesShowBirthdayPresenter(DateFormatter dateFormatter, BirthdayBuilder builder, IClock clock) {
+        return new ShowBirthdayPresenter(dateFormatter, builder, clock);
     }
     //preseters straddle the activity/fragment - both should use the same, therefor we have singletons
     @Provides @PerApp ListEventsContract.UserActionsListener providesEventsListPresenter(IEventsLoader eventsLoader,
