@@ -67,6 +67,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.isAssignableFro
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isRoot;
 import static android.support.test.espresso.matcher.ViewMatchers.withChild;
+import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
@@ -254,7 +255,20 @@ public class EventsActivityTest {
         activityTestRule.launchActivity(new Intent());
         onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem(withChild(withText(containsString("Fred"))), click()));
 
-        CollapsingToolBarTitleMatcher.matchToolbarTitle(containsString("Fre"));
+        CollapsingToolBarTitleMatcher.matchToolbarTitle(containsString("Fred"));
+    }
+    @Test public void testShowDetailsPressUp() {
+        initializeTheListWith(createBirthday("Joe", today),
+                createBirthday("Fred", tomorrow),
+                createBirthday("Marie", tomorrow.plusMonths(2)));
+        activityTestRule.launchActivity(new Intent());
+        onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem(withChild(withText(containsString("Fred"))), click()));
+
+        CollapsingToolBarTitleMatcher.matchToolbarTitle(containsString("Fred"));
+        pressNavigateUp();
+        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(0, R.id.birthday_list_item_name))
+                .check(matches(withText(containsString("Joe"))));
+
     }
 
     @Test public void testModifyLastName() {
@@ -351,23 +365,37 @@ public class EventsActivityTest {
         onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("Joe")))));
         verify(alarm).scheduleAlarm(today, NotificationTime.MORNING);
     }
-    public void testAddBirthdayOnEmptyListPressHome() {
+    @Test public void testAddBirthdayOnEmptyListPressHome() {
         activityTestRule.launchActivity(new Intent());
         onView(withId(R.id.fab_expand_menu_button)).perform(click());
         onView(withId(R.id.action_add_birthday)).perform(click());
         enterBirthday("Joe", today);
-        //openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
-        onView(withId(android.R.id.home)).perform(click());
+        pressNavigateUp();
 
         onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("Joe")))));
         verify(alarm).scheduleAlarm(today, NotificationTime.MORNING);
     }
+
+    private void pressNavigateUp() {
+        onView(withContentDescription(android.support.v7.appcompat.R.string.abc_action_bar_up_description)).perform(click());
+    }
+
     @Test public void testAddEventOnEmptyList() {
         activityTestRule.launchActivity(new Intent());
         onView(withId(R.id.fab_expand_menu_button)).perform(click());
         onView(withId(R.id.action_add_event)).perform(click());
         enterEvent("Marriage", today);
         pressBack();
+
+        onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("Marriage")))));
+        verify(alarm).scheduleAlarm(today, NotificationTime.MORNING);
+    }
+    @Test public void testAddEventOnEmptyListPressUp() {
+        activityTestRule.launchActivity(new Intent());
+        onView(withId(R.id.fab_expand_menu_button)).perform(click());
+        onView(withId(R.id.action_add_event)).perform(click());
+        enterEvent("Marriage", today);
+        pressNavigateUp();
 
         onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("Marriage")))));
         verify(alarm).scheduleAlarm(today, NotificationTime.MORNING);
