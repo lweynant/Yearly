@@ -1,6 +1,5 @@
 package com.lweynant.yearly.model;
 
-import android.support.test.espresso.core.deps.guava.collect.HashBasedTable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
