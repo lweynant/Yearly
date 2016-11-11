@@ -4,7 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -31,7 +36,11 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
+
 public class ShowBirthdayActivity extends SingleFragmentActivity implements ShowBirthdayFragment.Callback {
+
+    private ShareActionProvider shareActionProvider;
+    private String textToShare;
 
     @SuppressWarnings("ResourceType") @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +53,28 @@ public class ShowBirthdayActivity extends SingleFragmentActivity implements Show
         return ShowBirthdayFragment.newInstance(getBundle());
     }
 
+    // Create and return the Share Intent
+    private Intent createShareIntent(String text) {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, text);
+        return shareIntent;
+    }
 
+    @Override public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_show_birthday, menu);
+        // Locate MenuItem with ShareActionProvider
+        MenuItem item = menu.findItem(R.id.menu_item_share);
+        // Fetch and store ShareActionProvider
+        shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+
+        if (textToShare != null){
+            shareActionProvider.setShareIntent(createShareIntent(textToShare));
+        }
+
+        //return true to show the menu
+        return true;
+    }
 
     private Bundle getBundle() {
         Intent intent = getIntent();
@@ -65,4 +95,13 @@ public class ShowBirthdayActivity extends SingleFragmentActivity implements Show
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
+
+    @Override public void setShareIntentText(String text) {
+        if (shareActionProvider != null) {
+            shareActionProvider.setShareIntent(createShareIntent(text));
+        }
+        textToShare = text;
+    }
+
+
 }

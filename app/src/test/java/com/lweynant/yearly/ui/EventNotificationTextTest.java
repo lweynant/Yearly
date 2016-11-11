@@ -33,6 +33,7 @@ public class EventNotificationTextTest {
         tomorrow = today.plusDays(1);
         dayAfterTomorrow = tomorrow.plusDays(1);
         when(clock.now()).thenReturn(today);
+        when(rstring.getStringFromId(R.string.at)).thenReturn("at");
         sut = new EventNotificationText(event, rstring, clock);
     }
 
@@ -79,12 +80,13 @@ public class EventNotificationTextTest {
         when(rstring.getStringFromId(R.string.in_x_days)).thenReturn("in %1$s days");
         String text = sut.getText();
 
-        assertThat(text, is("In 10 days " + getDateAsText(future)));
+        assertThat(text, is("In 10 days at " + getDateAsText(future)));
     }
 
     @Test public void onliner () {
         when(event.getDate()).thenReturn(today);
         when(rstring.getStringFromId(R.string.today)).thenReturn("today");
+        when(rstring.getStringFromId(R.string.at)).thenReturn("at");
         when(rstring.getFormattedTitle(event)).thenReturn("event's title");
         String text = sut.getOneLiner();
 

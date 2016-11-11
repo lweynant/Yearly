@@ -21,6 +21,8 @@ public interface ShowBirthdayContract {
         void showNameOfDay(String day);
 
         void showEditUI(IEvent intent);
+
+        void shareText(String s);
     }
     interface UserActionsListener {
         void initialize(FragmentView fragmentView, Bundle args);

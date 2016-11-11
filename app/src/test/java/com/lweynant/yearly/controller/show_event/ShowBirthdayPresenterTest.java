@@ -7,6 +7,7 @@ import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.test_helpers.StubbedBirthdayBuilder;
+import com.lweynant.yearly.ui.IEventViewFactory;
 
 import org.joda.time.LocalDate;
 import org.junit.Before;
@@ -19,6 +20,7 @@ import static com.lweynant.yearly.test_helpers.StubbedBirthdayBuilder.stubBuilde
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
@@ -33,10 +35,11 @@ public class ShowBirthdayPresenterTest {
     @Mock DateFormatter dateFormatter;
     @Mock BirthdayBuilder birthdayBuilder;
     @Mock IClock clock;
+    @Mock IEventViewFactory eventViewFactory;
     private final LocalDate today = new LocalDate(2016, Date.MARCH, 1);
 
     @Before public void setUp() {
-        sut = new ShowBirthdayPresenter(dateFormatter, birthdayBuilder, clock);
+        sut = new ShowBirthdayPresenter(dateFormatter, birthdayBuilder, eventViewFactory, clock);
         when(clock.now()).thenReturn(today);
     }
 
@@ -47,7 +50,7 @@ public class ShowBirthdayPresenterTest {
 
     @Test public void initializeWithMinimalInfoArgs() {
         when(dateFormatter.format(Date.MARCH, 21)).thenReturn("21 Maart");
-        stubBuilderAndBundleForEvent(birthdayBuilder, args, "Joe", Date.MARCH, 21, clock);
+        stubBuilderAndBundleForEvent(birthdayBuilder, args, "Joe", Date.MARCH, 21, "shared text", eventViewFactory, clock);
         sut.initialize(fragmentView, args);
 
         verify(fragmentView).showFirstName("Joe");
@@ -55,11 +58,12 @@ public class ShowBirthdayPresenterTest {
         verify(fragmentView).showNameOfDay("Monday");
         verify(fragmentView).showNextEventIn(20);
         verify(fragmentView).showUnknownAge();
+        verify(fragmentView).shareText("shared text");
         verify(fragmentView, never()).showAge(anyInt());
     }
     @Test public void initializeWithYearOfBirth() {
         when(dateFormatter.format(2000, Date.MARCH, 21)).thenReturn("21 Maart 2000");
-        stubBuilderAndBundleForEvent(birthdayBuilder, args, "Joe", 2000, Date.MARCH, 21, clock);
+        stubBuilderAndBundleForEvent(birthdayBuilder, args, "Joe", 2000, Date.MARCH, 21, "shared text", eventViewFactory, clock);
         sut.initialize(fragmentView, args);
 
         verify(fragmentView).showFirstName("Joe");
@@ -67,6 +71,7 @@ public class ShowBirthdayPresenterTest {
         verify(fragmentView).showNameOfDay("Monday");
         verify(fragmentView).showNextEventIn(20);
         verify(fragmentView).showAge(15);
+        verify(fragmentView).shareText("shared text");
         verify(fragmentView, never()).showUnknownAge();
     }
 

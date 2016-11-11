@@ -7,5 +7,4 @@ public interface IEventNotificationText {
 
     public String getOneLiner();
 
-    public String getHowLongUntilNext();
 }

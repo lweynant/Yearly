@@ -10,6 +10,7 @@ import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.platform.IClock;
+import com.lweynant.yearly.platform.IEventNotificationText;
 import com.lweynant.yearly.ui.IEventViewFactory;
 
 import org.joda.time.Days;
@@ -18,15 +19,17 @@ import org.joda.time.Years;
 
 public class ShowBirthdayPresenter implements ShowBirthdayContract.UserActionsListener
 {
+    private final IEventViewFactory eventViewFactory;
     private DateFormatter dateFormatter;
     private BirthdayBuilder birthdayBuilder;
     private IClock clock;
     private ShowBirthdayContract.FragmentView fragmentView;
 
-    public ShowBirthdayPresenter(DateFormatter dateFormatter, BirthdayBuilder birthdayBuilder, IClock clock) {
+    public ShowBirthdayPresenter(DateFormatter dateFormatter, BirthdayBuilder birthdayBuilder, IEventViewFactory eventViewFactory, IClock clock) {
         this.dateFormatter = dateFormatter;
         this.birthdayBuilder = birthdayBuilder;
         this.clock = clock;
+        this.eventViewFactory = eventViewFactory;
     }
 
     @Override public void initialize(ShowBirthdayContract.FragmentView fragmentView, @NonNull Bundle args) {
@@ -40,7 +43,13 @@ public class ShowBirthdayPresenter implements ShowBirthdayContract.UserActionsLi
             LocalDate date = birthday.getDate();
             showNameOfDay(fragmentView, date);
             showNextEventInNbrDays(fragmentView, date);
+            shareText(fragmentView, birthday);
         }
+    }
+
+    private void shareText(ShowBirthdayContract.FragmentView fragmentView, Birthday birthday) {
+        IEventNotificationText text = eventViewFactory.getEventNotificationText(birthday);
+        fragmentView.shareText(text.getOneLiner());
     }
 
     @Override public void editBirthday() {

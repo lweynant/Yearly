@@ -66,6 +66,7 @@
     <string name="label_age">Age:</string>
     <string name="label_next_birthday">Next Birthday</string>
     <string name="label_birthday">Birthday</string>
+    <string name="at">at</string>
 
 
 </resources>

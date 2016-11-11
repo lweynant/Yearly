@@ -34,6 +34,8 @@ public class ShowBirthdayFragment extends BaseFragment implements ShowBirthdayCo
 
     public interface Callback {
         public void setToolbar(Toolbar toolBar);
+
+        public void setShareIntentText(String text);
     }
 
 
@@ -120,6 +122,11 @@ public class ShowBirthdayFragment extends BaseFragment implements ShowBirthdayCo
         event.archiveTo(bundle);
         Intent intent = eventViewFactory.getActivityIntentForEditing(getContext(), bundle);
         startActivityForResult(intent, REQUEST_EDIT_EVENT);
+    }
+
+    @Override public void shareText(String s) {
+        Timber.d("share text %s", s);
+        callback.setShareIntentText(s);
     }
 
     @Override public void onActivityResult(int requestCode, int resultCode, Intent data) {
