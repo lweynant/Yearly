@@ -54,26 +54,32 @@ public class ShowBirthdayActivity extends SingleFragmentActivity implements Show
     }
 
     // Create and return the Share Intent
-    private Intent createShareIntent(String text) {
+    private Intent createShareIntent() {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, text);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, textToShare);
         return shareIntent;
     }
 
     @Override public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_show_birthday, menu);
-        // Locate MenuItem with ShareActionProvider
-        MenuItem item = menu.findItem(R.id.menu_item_share);
-        // Fetch and store ShareActionProvider
-        shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
-
-        if (textToShare != null){
-            shareActionProvider.setShareIntent(createShareIntent(textToShare));
-        }
 
         //return true to show the menu
         return true;
+    }
+
+    @Override public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.menu_item_share){
+            showShareDialog();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showShareDialog() {
+        startActivity(Intent.createChooser(createShareIntent(), getString(R.string.menu_share)));
     }
 
     private Bundle getBundle() {
@@ -97,9 +103,7 @@ public class ShowBirthdayActivity extends SingleFragmentActivity implements Show
     }
 
     @Override public void setShareIntentText(String text) {
-        if (shareActionProvider != null) {
-            shareActionProvider.setShareIntent(createShareIntent(text));
-        }
+
         textToShare = text;
     }
 
