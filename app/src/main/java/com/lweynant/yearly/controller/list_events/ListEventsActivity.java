@@ -163,12 +163,6 @@ public class ListEventsActivity extends SingleFragmentActivity implements ListEv
         return super.onOptionsItemSelected(item);
     }
 
-    @Override public void showEventAdded(IEvent event) {
-        View view = findViewById(R.id.multiple_actions);
-        Snackbar.make(view, String.format(getResources().getString(R.string.add_birthday_for), event.getName()), Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
-
-    }
 
     //view interface
     @Override public void showEventDetailsUI(IEvent event) {

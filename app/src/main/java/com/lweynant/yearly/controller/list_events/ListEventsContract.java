@@ -8,8 +8,6 @@ import java.util.List;
 public interface ListEventsContract {
     interface ActivityView {
 
-        void showEventAdded(IEvent event);
-
         void showAddNewBirthdayUI();
 
         void showAddNewEventUI();
