@@ -28,5 +28,7 @@ public interface ShowBirthdayContract {
         void initialize(FragmentView fragmentView, Bundle args);
 
         void editBirthday();
+
+        void removeBirthday();
     }
 }

@@ -68,4 +68,6 @@
     <string name="label_next_birthday">Volgende verjaardag</string>
     <string name="at">op</string>
     <string name="menu_share">Delen</string>
+    <string name="event">Gebeurtenis</string>
+    <string name="delete">Verwijder</string>
 </resources>

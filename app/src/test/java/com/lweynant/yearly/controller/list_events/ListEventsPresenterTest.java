@@ -3,6 +3,7 @@ package com.lweynant.yearly.controller.list_events;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.ITransaction;
 import com.lweynant.yearly.platform.IEventNotification;
+import com.lweynant.yearly.utils.RemoveAction;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -23,6 +24,7 @@ import static org.mockito.Mockito.when;
 public class ListEventsPresenterTest {
 
     @Mock IEventsLoader eventsLoader;
+    @Mock RemoveAction removeAction;
     @Mock ITransaction transaction;
     @Mock IEventNotification eventNotification;
     private ListEventsPresenter sut;
@@ -33,7 +35,7 @@ public class ListEventsPresenterTest {
         //transaction has fluent api - so we make sure we return the object
         when(transaction.remove(anyObject())).thenReturn(transaction);
         when(transaction.add(anyObject())).thenReturn(transaction);
-        sut = new ListEventsPresenter(eventsLoader, transaction, eventNotification);
+        sut = new ListEventsPresenter(eventsLoader, removeAction);
         sut.setActivityView(activityView);
         sut.setFragmentView(fragmentView);
     }
@@ -57,9 +59,7 @@ public class ListEventsPresenterTest {
         sut.removeEvent(event);
 
         verify(eventsLoader).loadEvents(true, sut);
-        verify(transaction).remove(event);
-        verify(transaction).commit();
-        verify(eventNotification).cancel(id);
+        verify(removeAction).remove(event);
     }
 
     @Test public void testOpenEventDetails() {

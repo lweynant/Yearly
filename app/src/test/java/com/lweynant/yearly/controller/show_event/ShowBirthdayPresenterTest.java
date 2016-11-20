@@ -3,21 +3,29 @@ package com.lweynant.yearly.controller.show_event;
 import android.os.Bundle;
 
 import com.lweynant.yearly.controller.DateFormatter;
+import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.model.Date;
+import com.lweynant.yearly.model.IEvent;
+import com.lweynant.yearly.model.ITransaction;
 import com.lweynant.yearly.platform.IClock;
+import com.lweynant.yearly.platform.IEventNotification;
 import com.lweynant.yearly.test_helpers.StubbedBirthdayBuilder;
 import com.lweynant.yearly.ui.IEventViewFactory;
+import com.lweynant.yearly.utils.RemoveAction;
 
 import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static com.lweynant.yearly.test_helpers.StubbedBirthdayBuilder.stubBuilderAndBundleForEvent;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -34,12 +42,13 @@ public class ShowBirthdayPresenterTest {
     @Mock ShowBirthdayContract.FragmentView fragmentView;
     @Mock DateFormatter dateFormatter;
     @Mock BirthdayBuilder birthdayBuilder;
+    @Mock RemoveAction removeAction;
     @Mock IClock clock;
     @Mock IEventViewFactory eventViewFactory;
     private final LocalDate today = new LocalDate(2016, Date.MARCH, 1);
 
     @Before public void setUp() {
-        sut = new ShowBirthdayPresenter(dateFormatter, birthdayBuilder, eventViewFactory, clock);
+        sut = new ShowBirthdayPresenter(dateFormatter, birthdayBuilder, removeAction, eventViewFactory, clock);
         when(clock.now()).thenReturn(today);
     }
 
@@ -75,5 +84,12 @@ public class ShowBirthdayPresenterTest {
         verify(fragmentView, never()).showUnknownAge();
     }
 
+    @Test public void remove() {
+        Birthday birthday = mock(Birthday.class);
+        when(birthdayBuilder.build()).thenReturn(birthday);
+        sut.removeBirthday();
+
+        verify(removeAction).remove(birthday);
+    }
 
 }

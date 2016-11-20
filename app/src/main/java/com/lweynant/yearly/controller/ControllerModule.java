@@ -21,6 +21,7 @@ import com.lweynant.yearly.model.ITransaction;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IEventNotification;
 import com.lweynant.yearly.ui.IEventViewFactory;
+import com.lweynant.yearly.utils.RemoveAction;
 
 import dagger.Module;
 import dagger.Provides;
@@ -32,6 +33,10 @@ public class ControllerModule {
 
     public ControllerModule(Application app) {
         this.appContext = app.getApplicationContext();
+    }
+
+    @Provides RemoveAction providesRemoveAction(ITransaction transaction, IEventNotification eventNotification){
+        return new RemoveAction(transaction, eventNotification);
     }
 
 
@@ -67,14 +72,16 @@ public class ControllerModule {
                                                                                     IClock clock) {
         return new AddEventPresenter(builder, transaction, dateFormatter, clock);
     }
-    @Provides ShowBirthdayContract.UserActionsListener providesShowBirthdayPresenter(DateFormatter dateFormatter, BirthdayBuilder builder, IEventViewFactory eventViewFactory, IClock clock) {
-        return new ShowBirthdayPresenter(dateFormatter, builder, eventViewFactory, clock);
-    }
     //preseters straddle the activity/fragment - both should use the same, therefor we have singletons
+    @Provides @PerApp ShowBirthdayContract.UserActionsListener providesShowBirthdayPresenter(DateFormatter dateFormatter,
+                                                                                     BirthdayBuilder builder,
+                                                                                     RemoveAction removeAction,
+                                                                                     IEventViewFactory eventViewFactory, IClock clock) {
+        return new ShowBirthdayPresenter(dateFormatter, builder, removeAction, eventViewFactory, clock);
+    }
     @Provides @PerApp ListEventsContract.UserActionsListener providesEventsListPresenter(IEventsLoader eventsLoader,
-                                                                                         ITransaction transaction,
-                                                                                         IEventNotification eventNotification) {
-        return new ListEventsPresenter(eventsLoader,  transaction, eventNotification);
+                                                                                         RemoveAction removeAction) {
+        return new ListEventsPresenter(eventsLoader,  removeAction);
     }
 
 

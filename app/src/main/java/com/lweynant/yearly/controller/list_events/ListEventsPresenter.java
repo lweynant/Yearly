@@ -3,6 +3,7 @@ package com.lweynant.yearly.controller.list_events;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.ITransaction;
 import com.lweynant.yearly.platform.IEventNotification;
+import com.lweynant.yearly.utils.RemoveAction;
 
 import java.util.List;
 
@@ -14,15 +15,12 @@ public class ListEventsPresenter implements ListEventsContract.UserActionsListen
 
     private ListEventsContract.FragmentView fragmentView;
     private IEventsLoader eventsLoader;
-    private ITransaction transaction;
-    private IEventNotification eventNotification;
+    private RemoveAction removeAction;
     private ListEventsContract.ActivityView activityView;
 
-    public ListEventsPresenter(IEventsLoader eventsLoader, ITransaction transaction,
-                               IEventNotification eventNotification) {
+    public ListEventsPresenter(IEventsLoader eventsLoader, RemoveAction removeAction) {
         this.eventsLoader = eventsLoader;
-        this.transaction = transaction;
-        this.eventNotification = eventNotification;
+        this.removeAction = removeAction;
     }
 
     @Override public void setFragmentView(ListEventsContract.FragmentView fragmentView) {
@@ -34,8 +32,7 @@ public class ListEventsPresenter implements ListEventsContract.UserActionsListen
     }
 
     @Override public void removeEvent(IEvent event) {
-        transaction.remove(event).commit();
-        eventNotification.cancel(event.getID());
+        removeAction.remove(event);
         eventsLoader.loadEvents(true, this);
     }
 

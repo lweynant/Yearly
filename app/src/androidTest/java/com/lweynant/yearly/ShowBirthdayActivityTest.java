@@ -3,7 +3,6 @@ package com.lweynant.yearly;
 import android.app.Instrumentation;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -15,8 +14,10 @@ import com.lweynant.yearly.matcher.CollapsingToolBarTitleMatcher;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.IEvent;
+import com.lweynant.yearly.model.ITransaction;
 import com.lweynant.yearly.model.ModelModule;
 import com.lweynant.yearly.platform.IClock;
+import com.lweynant.yearly.platform.IEventNotification;
 import com.lweynant.yearly.platform.IUniqueIdGenerator;
 import com.lweynant.yearly.ui.ViewModule;
 
@@ -30,7 +31,9 @@ import javax.inject.Inject;
 
 import dagger.Component;
 
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -42,6 +45,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static com.lweynant.yearly.action.OrientationChangeAction.orientationLandscape;
 import static org.hamcrest.core.Is.is;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(AndroidJUnit4.class)
@@ -59,13 +63,14 @@ public class ShowBirthdayActivityTest {
     @Inject IStringResources rstring;
     @Inject IClock clock;
     @Inject DateFormatter dateFormatter;
+    @Inject IEventNotification eventNotification;
 
     @Rule public ActivityTestRule<ShowBirthdayActivity> activityTestRule = new ActivityTestRule<ShowBirthdayActivity>(ShowBirthdayActivity.class,
             true, //initial touch mode
             false); //launchActivity false, we need to inject dependencies
 
     @Before public void setUp() {
-        Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
+        Instrumentation instrumentation = getInstrumentation();
         YearlyApp app = (YearlyApp) instrumentation.getTargetContext().getApplicationContext();
 
         TestPlatformComponent platformComponent = DaggerTestPlatformComponent.builder()
@@ -122,9 +127,25 @@ public class ShowBirthdayActivityTest {
         CollapsingToolBarTitleMatcher.matchToolbarTitle(is("Uncle Fred"));
 
     }
+    @Test public void deleteBirthday() {
+        Intent startIntent = new Intent();
+        Birthday birthday = new Birthday("Joe", 2000, Date.APRIL, 3, clock, idGenerator);
+        setBirthdayOnIntent(birthday, startIntent);
+        activityTestRule.launchActivity(startIntent);
+
+        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+        onView(withText(R.string.delete)).perform(click());
+
+        verify(eventNotification).cancel(birthday.getID());
+    }
+
 
     private void setBirthdayOnIntent(String name, int yearOfBirth, int month, int day, Intent startIntent) {
         Birthday birthday = new Birthday(name, yearOfBirth, month, day, clock, idGenerator);
+        setBirthdayOnIntent(birthday, startIntent);
+    }
+
+    private void setBirthdayOnIntent(Birthday birthday, Intent startIntent) {
         Bundle bundle = new Bundle();
         birthday.archiveTo(bundle);
         startIntent.putExtra(IEvent.EXTRA_KEY_EVENT, bundle);

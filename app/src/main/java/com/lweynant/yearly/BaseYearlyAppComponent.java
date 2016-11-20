@@ -26,4 +26,6 @@ public interface BaseYearlyAppComponent {
     void inject(AddEventActivityFragment addEventActivityFragment);
 
     void inject(ShowBirthdayFragment showBirthdayFragment);
+
+    void inject(ShowBirthdayActivity showBirthdayActivity);
 }

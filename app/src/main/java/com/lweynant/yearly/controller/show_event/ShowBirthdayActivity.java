@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
@@ -41,6 +42,7 @@ public class ShowBirthdayActivity extends SingleFragmentActivity implements Show
 
     private ShareActionProvider shareActionProvider;
     private String textToShare;
+    @Inject ShowBirthdayContract.UserActionsListener userActionsListener;
 
     @SuppressWarnings("ResourceType") @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +76,12 @@ public class ShowBirthdayActivity extends SingleFragmentActivity implements Show
             showShareDialog();
             return true;
         }
+        else if (id == R.id.menu_item_delete) {
+            userActionsListener.removeBirthday();
+
+            finish();
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -95,6 +103,7 @@ public class ShowBirthdayActivity extends SingleFragmentActivity implements Show
     }
 
     @Override protected void injectDependencies(BaseYearlyAppComponent component) {
+        component.inject(this);
     }
 
     @Override public void setToolbar(Toolbar toolbar) {

@@ -9,9 +9,12 @@ import com.lweynant.yearly.controller.add_event.AddEventContract;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.model.IEvent;
+import com.lweynant.yearly.model.ITransaction;
 import com.lweynant.yearly.platform.IClock;
+import com.lweynant.yearly.platform.IEventNotification;
 import com.lweynant.yearly.platform.IEventNotificationText;
 import com.lweynant.yearly.ui.IEventViewFactory;
+import com.lweynant.yearly.utils.RemoveAction;
 
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
@@ -22,12 +25,14 @@ public class ShowBirthdayPresenter implements ShowBirthdayContract.UserActionsLi
     private final IEventViewFactory eventViewFactory;
     private DateFormatter dateFormatter;
     private BirthdayBuilder birthdayBuilder;
+    private RemoveAction removeAction;
     private IClock clock;
     private ShowBirthdayContract.FragmentView fragmentView;
 
-    public ShowBirthdayPresenter(DateFormatter dateFormatter, BirthdayBuilder birthdayBuilder, IEventViewFactory eventViewFactory, IClock clock) {
+    public ShowBirthdayPresenter(DateFormatter dateFormatter, BirthdayBuilder birthdayBuilder, RemoveAction removeAction, IEventViewFactory eventViewFactory, IClock clock) {
         this.dateFormatter = dateFormatter;
         this.birthdayBuilder = birthdayBuilder;
+        this.removeAction = removeAction;
         this.clock = clock;
         this.eventViewFactory = eventViewFactory;
     }
@@ -55,6 +60,11 @@ public class ShowBirthdayPresenter implements ShowBirthdayContract.UserActionsLi
     @Override public void editBirthday() {
         IEvent event = birthdayBuilder.build();
         fragmentView.showEditUI(event);
+    }
+
+    @Override public void removeBirthday() {
+        IEvent event = birthdayBuilder.build();
+        removeAction.remove(event);
     }
 
     public void showNextEventInNbrDays(ShowBirthdayContract.FragmentView fragmentView, LocalDate date) {
