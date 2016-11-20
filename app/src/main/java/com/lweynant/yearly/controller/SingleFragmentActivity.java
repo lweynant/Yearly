@@ -41,7 +41,9 @@ public abstract class SingleFragmentActivity extends BaseActivity {
 
     @Override public void onBackPressed() {
         Timber.d("onBackPressed");
-        fragment.onBackPressed();
+        if (fragment != null) {
+            fragment.onBackPressed();
+        }
         super.onBackPressed();
     }
 
