@@ -70,28 +70,28 @@ public class ListEventsActivityFragment extends BaseFragment implements EventsAd
         Timber.d("repo: %s", repo.toString());
 
         eventsAdapter.setListener(this);
-
+        recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setAdapter(eventsAdapter);
 
-        ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
-            @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                return false;
-            }
-
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                Timber.d("onSwiped");
-                if (direction == ItemTouchHelper.LEFT) {
-                    Timber.d("removing event");
-                    IEvent event = ((EventsAdapter.EventViewHolder) viewHolder).getEvent();
-                    userActionsListener.removeEvent(event);
-                }
-
-            }
-        };
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
-        itemTouchHelper.attachToRecyclerView(recyclerView);
+//        ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+//            @Override
+//            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+//                return false;
+//            }
+//
+//            @Override
+//            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+//                Timber.d("onSwiped");
+//                if (direction == ItemTouchHelper.LEFT) {
+//                    Timber.d("removing event");
+//                    IEvent event = ((EventsAdapter.EventViewHolder) viewHolder).getEvent();
+//                    userActionsListener.removeEvent(event);
+//                }
+//
+//            }
+//        };
+//        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
+//        itemTouchHelper.attachToRecyclerView(recyclerView);
 
         return view;
     }

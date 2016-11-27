@@ -224,29 +224,7 @@ public class EventsActivityTest {
     }
 
 
-    @Test public void testOneEventRemoveLast() throws IOException {
-        IEvent onesBirthday = createBirthday("One");
-        initializeTheListWith(onesBirthday);
-        activityTestRule.launchActivity(new Intent());
 
-        onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("One")))));
-        onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem(withChild(withText(containsString("One"))), swipeLeft()));
-        onView(withId(R.id.events_recycler_view)).check(matches(not(hasDescendant(withText(containsString("One"))))));
-        verify(alarm, times(1)).clear();
-        verify(eventNotification).cancel(onesBirthday.getID());
-    }
-
-    @Test public void testTwoEventsRemoveLast() throws IOException {
-        initializeTheListWith(createBirthday("One", tomorrow),
-                createBirthday("Two", today));
-        activityTestRule.launchActivity(new Intent());
-
-        onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("Two")))));
-        onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem(withChild(withText(containsString("Two"))), swipeLeft()));
-        onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("One")))));
-        onView(withId(R.id.events_recycler_view)).check(matches(not(hasDescendant(withText(containsString("Two"))))));
-        verify(alarm).scheduleAlarm(today, NotificationTime.EVENING);//we notify One's birthday the day before in the evening
-    }
 
     @Test public void testShowDetails() {
         initializeTheListWith(createBirthday("Joe", today),

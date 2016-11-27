@@ -70,4 +70,5 @@
     <string name="menu_share">Delen</string>
     <string name="event">Gebeurtenis</string>
     <string name="delete">Verwijder</string>
+    <string name="title_activity_list_birthdays">Verjaardagen</string>
 </resources>

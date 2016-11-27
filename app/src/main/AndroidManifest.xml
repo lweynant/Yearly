@@ -15,11 +15,6 @@
             android:name=".controller.list_events.ListEventsActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
         </activity>
 
         <receiver
@@ -66,6 +61,17 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.lweynant.yearly.controller.list_events.ListEventsActivity"/>
+        </activity>
+        <activity android:name=".controller.list_events.list_birthdays.ListBirthdaysActivity"
+                  android:label="@string/title_activity_list_birthdays"
+            android:theme="@style/AppTheme.NoActionBar">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+
         </activity>
     </application>
 
