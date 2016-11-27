@@ -62,7 +62,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.lweynant.yearly.controller.list_events.ListEventsActivity"/>
         </activity>
-        <activity android:name=".controller.list_events.list_birthdays.ListBirthdaysActivity"
+        <activity android:name=".controller.list_events.ListBirthdaysActivity"
                   android:label="@string/title_activity_list_birthdays"
             android:theme="@style/AppTheme.NoActionBar">
 

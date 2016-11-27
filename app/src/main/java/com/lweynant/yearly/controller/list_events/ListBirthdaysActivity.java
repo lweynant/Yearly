@@ -1,4 +1,4 @@
-package com.lweynant.yearly.controller.list_events.list_birthdays;
+package com.lweynant.yearly.controller.list_events;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,8 +15,6 @@ import com.lweynant.yearly.controller.AlarmGenerator;
 import com.lweynant.yearly.controller.BaseFragment;
 import com.lweynant.yearly.controller.SingleFragmentActivity;
 import com.lweynant.yearly.controller.add_event.AddBirthdayActivity;
-import com.lweynant.yearly.controller.list_events.ListEventsActivityFragment;
-import com.lweynant.yearly.controller.list_events.ListEventsContract;
 import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.IEventRepo;
