@@ -1,6 +1,7 @@
 package com.lweynant.yearly.controller.list_events;
 
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -27,6 +28,8 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import timber.log.Timber;
+
+import static android.support.v7.widget.DividerItemDecoration.VERTICAL;
 
 
 /**
@@ -72,6 +75,9 @@ public class ListEventsActivityFragment extends BaseFragment implements EventsAd
         eventsAdapter.setListener(this);
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setAdapter(eventsAdapter);
+        RecyclerView.ItemDecoration itemDecoration = new
+                DividerItemDecoration(getContext(), VERTICAL);
+        recyclerView.addItemDecoration(itemDecoration);
 
 //        ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
 //            @Override
