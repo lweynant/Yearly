@@ -8,12 +8,15 @@
 
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageView"
+
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:id="@+id/birthday_list_item_image"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:src="@drawable/ic_account_circle_grey600_48dp"/>
+        android:src="@drawable/ic_account_circle_grey600_48dp"
+        android:adjustViewBounds="false"
+        android:layout_margin="4dp"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -22,8 +25,8 @@
         android:text="Large Text"
         android:id="@+id/birthday_list_item_name"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/imageView"
-        android:layout_toEndOf="@+id/imageView"
+        android:layout_toRightOf="@+id/birthday_list_item_image"
+        android:layout_toEndOf="@+id/birthday_list_item_image"
         android:paddingLeft="@dimen/text_margin"/>
     <TextView
         android:id="@+id/birthday_list_item_date"
@@ -32,6 +35,6 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="woensdag 5 september"
         android:layout_below="@id/birthday_list_item_name"
-        android:layout_toRightOf="@id/imageView"
+        android:layout_toRightOf="@id/birthday_list_item_image"
         android:paddingLeft="@dimen/text_margin"/>
 </RelativeLayout>

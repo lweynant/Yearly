@@ -3,8 +3,11 @@ package com.lweynant.yearly.ui;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.amulyakhare.textdrawable.TextDrawable;
+import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.lweynant.yearly.IStringResources;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.model.IEvent;
@@ -15,9 +18,11 @@ import org.w3c.dom.Text;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+
 public class BirthdayListElementView implements IEventListElementView {
 
     private final View view;
+    private final ImageView myImageView;
     private TextView nameTextView;
     private TextView dateTextView;
     private final IEventStringResource stringResource;
@@ -27,6 +32,7 @@ public class BirthdayListElementView implements IEventListElementView {
         view = LayoutInflater.from(parent.getContext()).inflate(R.layout.birthday_list_item, parent, false);
         nameTextView = (TextView) view.findViewById(R.id.birthday_list_item_name);
         dateTextView = (TextView) view.findViewById(R.id.birthday_list_item_date);
+        myImageView = (ImageView) view.findViewById(R.id.birthday_list_item_image);
     }
 
     @Override
@@ -34,6 +40,19 @@ public class BirthdayListElementView implements IEventListElementView {
         LocalDate eventDate = event.getDate();
         nameTextView.setText(event.getName());
         dateTextView.setText(getDateAsText(event.getDate()));
+        //get first letter of each String item
+        String firstLetter = String.valueOf(event.getName().charAt(0));
+
+        ColorGenerator generator = ColorGenerator.MATERIAL; // or use DEFAULT
+        // generate random color
+        int color = generator.getColor(event.getName());
+        //int color = generator.getRandomColor();
+
+        TextDrawable drawable = TextDrawable.builder()
+                .buildRound(firstLetter, color); // radius in px
+
+        myImageView.setImageDrawable(drawable);
+
     }
 
     private String getDateAsText(LocalDate date) {

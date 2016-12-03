@@ -8,5 +8,5 @@
     <dimen name="app_bar_height">180dp</dimen>
     <dimen name="text_margin">16dp</dimen>
     <dimen name="image_margin">16dp</dimen>
-    <dimen name="birthday_app_bar_height">240dp</dimen>
+    <dimen name="birthday_app_bar_height">180dp</dimen>
 </resources>
