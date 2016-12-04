@@ -34,7 +34,9 @@ public abstract class SingleFragmentActivity extends BaseActivity {
         Timber.d("onOptionsItemSelected");
         if (item.getItemId() == android.R.id.home) {
             Timber.d("item id is android.R.id.home");
-            fragment.onOptionsItemHomePressed();
+            if (fragment != null) {
+                fragment.onOptionsItemHomePressed();
+            }
         }
         return super.onOptionsItemSelected(item);
     }
