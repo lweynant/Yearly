@@ -38,11 +38,11 @@
         <activity
             android:name=".controller.add_event.AddBirthdayActivity"
             android:label="@string/title_activity_add_birthday"
-            android:parentActivityName=".controller.list_events.ListEventsActivity"
+            android:parentActivityName=".controller.list_events.ListBirthdaysActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".controller.list_events.ListEventsActivity"/>
+                android:value=".controller.list_events.ListBirthdaysActivity"/>
         </activity>
         <activity
             android:name=".controller.add_event.AddEventActivity"
@@ -56,11 +56,11 @@
         <activity
             android:name=".controller.show_event.ShowBirthdayActivity"
             android:label="@string/title_activity_show_birthday"
-            android:parentActivityName=".controller.list_events.ListEventsActivity"
+            android:parentActivityName=".controller.list_events.ListBirthdaysActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.lweynant.yearly.controller.list_events.ListEventsActivity"/>
+                android:value="com.lweynant.yearly.controller.list_events.ListBirthdaysActivity"/>
         </activity>
         <activity android:name=".controller.list_events.ListBirthdaysActivity"
                   android:label="@string/title_activity_list_birthdays"
