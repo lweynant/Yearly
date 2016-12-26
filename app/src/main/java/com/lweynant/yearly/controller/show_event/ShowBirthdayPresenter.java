@@ -48,14 +48,9 @@ public class ShowBirthdayPresenter implements ShowBirthdayContract.UserActionsLi
             LocalDate date = birthday.getDate();
             showNameOfDay(fragmentView, date);
             showNextEventInNbrDays(fragmentView, date);
-            shareText(fragmentView, birthday);
         }
     }
 
-    private void shareText(ShowBirthdayContract.FragmentView fragmentView, Birthday birthday) {
-        IEventNotificationText text = eventViewFactory.getEventNotificationText(birthday);
-        fragmentView.shareText(text.getOneLiner());
-    }
 
     @Override public void editBirthday() {
         IEvent event = birthdayBuilder.build();
@@ -65,6 +60,12 @@ public class ShowBirthdayPresenter implements ShowBirthdayContract.UserActionsLi
     @Override public void removeBirthday() {
         IEvent event = birthdayBuilder.build();
         removeAction.remove(event);
+    }
+
+    @Override public String getTextToShare() {
+        Birthday birthday = birthdayBuilder.build();
+        IEventNotificationText text = eventViewFactory.getEventNotificationText(birthday);
+        return text.getOneLiner();
     }
 
     public void showNextEventInNbrDays(ShowBirthdayContract.FragmentView fragmentView, LocalDate date) {

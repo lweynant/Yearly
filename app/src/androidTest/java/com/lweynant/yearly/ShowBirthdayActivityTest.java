@@ -56,6 +56,7 @@ public class ShowBirthdayActivityTest {
             SyncControllerModule.class, ViewModule.class, ModelModule.class, ControllerModule.class})
     public interface TestComponent extends BaseYearlyAppComponent {
         void inject(ShowBirthdayActivityTest showBirthdayActivity);
+
     }
 
     private LocalDate today;

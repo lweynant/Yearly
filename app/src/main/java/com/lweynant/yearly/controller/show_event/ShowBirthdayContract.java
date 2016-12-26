@@ -22,7 +22,6 @@ public interface ShowBirthdayContract {
 
         void showEditUI(IEvent intent);
 
-        void shareText(String s);
     }
     interface UserActionsListener {
         void initialize(FragmentView fragmentView, Bundle args);
@@ -30,5 +29,7 @@ public interface ShowBirthdayContract {
         void editBirthday();
 
         void removeBirthday();
+
+        String getTextToShare();
     }
 }

@@ -41,7 +41,6 @@ import timber.log.Timber;
 public class ShowBirthdayActivity extends SingleFragmentActivity implements ShowBirthdayFragment.Callback {
 
     private ShareActionProvider shareActionProvider;
-    private String textToShare;
     @Inject ShowBirthdayContract.UserActionsListener userActionsListener;
 
     @SuppressWarnings("ResourceType") @Override
@@ -57,6 +56,7 @@ public class ShowBirthdayActivity extends SingleFragmentActivity implements Show
 
     // Create and return the Share Intent
     private Intent createShareIntent() {
+        String textToShare = userActionsListener.getTextToShare();
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT, textToShare);
@@ -87,7 +87,8 @@ public class ShowBirthdayActivity extends SingleFragmentActivity implements Show
     }
 
     private void showShareDialog() {
-        startActivity(Intent.createChooser(createShareIntent(), getString(R.string.menu_share)));
+        //startActivity(Intent.createChooser(createShareIntent(), getString(R.string.menu_share)));
+        startActivity(createShareIntent());
     }
 
     private Bundle getBundle() {
@@ -111,10 +112,7 @@ public class ShowBirthdayActivity extends SingleFragmentActivity implements Show
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    @Override public void setShareIntentText(String text) {
 
-        textToShare = text;
-    }
 
 
 }
