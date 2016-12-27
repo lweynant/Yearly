@@ -87,8 +87,7 @@ public class ShowBirthdayActivity extends SingleFragmentActivity implements Show
     }
 
     private void showShareDialog() {
-        //startActivity(Intent.createChooser(createShareIntent(), getString(R.string.menu_share)));
-        startActivity(createShareIntent());
+        startActivity(Intent.createChooser(createShareIntent(), getString(R.string.menu_share)));
     }
 
     private Bundle getBundle() {

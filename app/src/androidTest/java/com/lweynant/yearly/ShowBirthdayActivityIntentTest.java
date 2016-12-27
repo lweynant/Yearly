@@ -31,7 +31,6 @@ import dagger.Component;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.InstrumentationRegistry.getTargetContext;
-import static android.support.test.espresso.Espresso.getIdlingResources;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.intent.Intents.intended;
@@ -39,10 +38,10 @@ import static android.support.test.espresso.intent.matcher.BundleMatchers.hasEnt
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasAction;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasExtras;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static com.lweynant.yearly.matcher.BirthdayShareIntentMatcher.matchShareIntentWrappedInChooser;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.mockito.Mockito.when;
 
 @RunWith(AndroidJUnit4.class)
@@ -92,11 +91,12 @@ public class ShowBirthdayActivityIntentTest  {
         activityTestRule.launchActivity(startIntent);
 
         onView(withId(R.id.menu_item_share)).perform(click());
-
-        intended(allOf(hasAction(equalTo(Intent.ACTION_SEND)),
+        intended(matchShareIntentWrappedInChooser(allOf(hasAction(equalTo(Intent.ACTION_SEND)),
                 hasExtras(hasEntry(equalTo(Intent.EXTRA_TEXT),
                         allOf(containsString(getTargetContext().getString(R.string.tomorrow)),
-                                containsString("Fred"))))));
+                                containsString("Freddy")))))));
+
+
     }
 
     @Test public void testIntentSend_NewDay(){
@@ -107,13 +107,14 @@ public class ShowBirthdayActivityIntentTest  {
         when(clock.now()).thenReturn(today.plusDays(1));
         onView(withId(R.id.menu_item_share)).perform(click());
 
-        intended(allOf(hasAction(equalTo(Intent.ACTION_SEND)),
+        intended(matchShareIntentWrappedInChooser(allOf(hasAction(equalTo(Intent.ACTION_SEND)),
                 hasExtras(hasEntry(equalTo(Intent.EXTRA_TEXT),
                         allOf(containsString(getTargetContext().getString(R.string.today)),
-                                containsString("Fred"))))));
+                                containsString("Fred")))))));
     }
 
     private void setBirthdayOnIntent(String name, LocalDate date, Intent startIntent) {
+        //noinspection WrongConstant
         Birthday birthday = new Birthday(name, date.getMonthOfYear(), date.getDayOfMonth(), clock, idGenerator);
         setBirthdayOnIntent(birthday, startIntent);
 
