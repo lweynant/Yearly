@@ -94,7 +94,7 @@ public class ShowBirthdayActivityIntentTest  {
         intended(matchShareIntentWrappedInChooser(allOf(hasAction(equalTo(Intent.ACTION_SEND)),
                 hasExtras(hasEntry(equalTo(Intent.EXTRA_TEXT),
                         allOf(containsString(getTargetContext().getString(R.string.tomorrow)),
-                                containsString("Freddy")))))));
+                                containsString("Fred")))))));
 
 
     }
