@@ -1,17 +1,13 @@
 package com.lweynant.yearly.controller.show_event;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import com.lweynant.yearly.controller.DateFormatter;
-import com.lweynant.yearly.controller.add_event.AddEventContract;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.model.IEvent;
-import com.lweynant.yearly.model.ITransaction;
 import com.lweynant.yearly.platform.IClock;
-import com.lweynant.yearly.platform.IEventNotification;
 import com.lweynant.yearly.platform.IEventNotificationText;
 import com.lweynant.yearly.ui.IEventViewFactory;
 import com.lweynant.yearly.utils.RemoveAction;
@@ -29,7 +25,8 @@ public class ShowBirthdayPresenter implements ShowBirthdayContract.UserActionsLi
     private IClock clock;
     private ShowBirthdayContract.FragmentView fragmentView;
 
-    public ShowBirthdayPresenter(DateFormatter dateFormatter, BirthdayBuilder birthdayBuilder, RemoveAction removeAction, IEventViewFactory eventViewFactory, IClock clock) {
+    public ShowBirthdayPresenter(DateFormatter dateFormatter, BirthdayBuilder birthdayBuilder,
+                                 RemoveAction removeAction, IEventViewFactory eventViewFactory, IClock clock) {
         this.dateFormatter = dateFormatter;
         this.birthdayBuilder = birthdayBuilder;
         this.removeAction = removeAction;

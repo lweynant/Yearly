@@ -12,7 +12,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import rx.Observable;
 
@@ -32,12 +31,13 @@ public class ListEventsPresenterTest {
     private ListEventsPresenter sut;
     @Mock ListEventsContract.ActivityView activityView;
     @Mock ListEventsContract.FragmentView fragmentView;
+    @Mock IListItemsFactory listItemsFactory;
 
     @Before public void setUp() {
         //transaction has fluent api - so we make sure we return the object
         when(transaction.remove(anyObject())).thenReturn(transaction);
         when(transaction.add(anyObject())).thenReturn(transaction);
-        sut = new ListEventsPresenter(eventsLoader, removeAction);
+        sut = new ListEventsPresenter(eventsLoader, listItemsFactory, removeAction);
         sut.setActivityView(activityView);
         sut.setFragmentView(fragmentView);
     }
@@ -91,9 +91,11 @@ public class ListEventsPresenterTest {
 
     @Test public void testOnEventLoadingFinished() {
         Observable<IEvent> events = createEvents();
+        Observable<ListEventsContract.ListItem> listItems = Observable.empty();
+        when(listItemsFactory.createFrom(events)).thenReturn(listItems);
         sut.onEventsLoadingFinished(events, "modif id");
 
-        verify(fragmentView).showEvents(anyObject());
+        verify(fragmentView).showListItems(listItems);
         verify(fragmentView).setProgressIndicator(false);
     }
 

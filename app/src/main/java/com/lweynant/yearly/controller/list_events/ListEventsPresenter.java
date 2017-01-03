@@ -1,11 +1,7 @@
 package com.lweynant.yearly.controller.list_events;
 
 import com.lweynant.yearly.model.IEvent;
-import com.lweynant.yearly.model.ITransaction;
-import com.lweynant.yearly.platform.IEventNotification;
 import com.lweynant.yearly.utils.RemoveAction;
-
-import java.util.List;
 
 import rx.Observable;
 import timber.log.Timber;
@@ -16,11 +12,13 @@ public class ListEventsPresenter implements ListEventsContract.UserActionsListen
 
     private ListEventsContract.FragmentView fragmentView;
     private IEventsLoader eventsLoader;
+    private IListItemsFactory listItemsFactory;
     private RemoveAction removeAction;
     private ListEventsContract.ActivityView activityView;
 
-    public ListEventsPresenter(IEventsLoader eventsLoader, RemoveAction removeAction) {
+    public ListEventsPresenter(IEventsLoader eventsLoader, IListItemsFactory listItemsFactory,  RemoveAction removeAction) {
         this.eventsLoader = eventsLoader;
+        this.listItemsFactory = listItemsFactory;
         this.removeAction = removeAction;
     }
 
@@ -66,12 +64,8 @@ public class ListEventsPresenter implements ListEventsContract.UserActionsListen
     @Override public void onEventsLoadingFinished(Observable<IEvent> events, String modifId) {
         Timber.d("onEventsLoadingFinished %s", modifId);
         fragmentView.setProgressIndicator(false);
-        Observable<ListEventsContract.ListItem> items =
-                events.groupBy(e -> e.getDate().getMonthOfYear())
-                        .concatMap(grouped -> grouped.map(event -> new ListEventsContract.ListItem(event))
-                                .startWith(new ListEventsContract.ListItem(grouped.getKey())));
-//        Observable<ListEventsContract.ListItem> items = events.map(e -> new ListEventsContract.ListItem(e));
-        fragmentView.showEvents(items);
+        Observable<ListEventsContract.ListItem> items = listItemsFactory.createFrom(events);
+        fragmentView.showListItems(items);
     }
 
     @Override public void onEventsLoadingCancelled(String currentlyUpdatingRepoModifId) {

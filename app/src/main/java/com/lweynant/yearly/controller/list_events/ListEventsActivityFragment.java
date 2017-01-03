@@ -134,7 +134,7 @@ public class ListEventsActivityFragment extends BaseFragment implements EventsAd
 
     }
 
-    @Override public void showEvents(Observable<ListEventsContract.ListItem> items) {
+    @Override public void showListItems(Observable<ListEventsContract.ListItem> items) {
         List<ListEventsContract.ListItem> list = items.toList().toBlocking().single();
         eventsAdapter.replaceData(list);
     }

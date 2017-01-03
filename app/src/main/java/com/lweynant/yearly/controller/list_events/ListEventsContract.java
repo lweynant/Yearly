@@ -45,7 +45,7 @@ public interface ListEventsContract {
 
         void setProgressIndicator(boolean enable);
 
-        void showEvents(Observable<ListItem> items);
+        void showListItems(Observable<ListItem> items);
     }
     interface UserActionsListener {
 
