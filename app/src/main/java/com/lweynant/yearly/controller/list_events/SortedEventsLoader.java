@@ -117,7 +117,7 @@ public class SortedEventsLoader implements IEventsLoader {
         repoIdFromCachedEvents = repo.getModificationId();
         currentlyUpdatingRepoModifId = null;
         sortedFrom = clock.now();
-        callback.onEventsLoadingFinished(newEvents, repoIdFromCachedEvents);
+        callback.onEventsLoadingFinished(Observable.from(newEvents), repoIdFromCachedEvents);
     }
 
 }

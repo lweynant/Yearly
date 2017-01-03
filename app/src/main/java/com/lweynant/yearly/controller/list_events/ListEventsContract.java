@@ -1,11 +1,37 @@
 package com.lweynant.yearly.controller.list_events;
 
 import com.lweynant.yearly.model.Birthday;
+import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.IEvent;
 
 import java.util.List;
 
+import rx.Observable;
+
 public interface ListEventsContract {
+    class ListItem {
+        private String separator;
+        private IEvent event;
+
+        public ListItem(Integer month){
+            this.separator = month.toString();
+        }
+        public ListItem(IEvent event) {
+            this.event = event;
+        }
+        public boolean isSeparator() {
+            return separator != null;
+        }
+        public String getSeparator() {
+            return separator;
+        }
+        public boolean isEvent() {
+            return event != null;
+        }
+        public IEvent getEvent() {
+            return event;
+        }
+    }
     interface ActivityView {
 
         void showAddNewBirthdayUI();
@@ -19,7 +45,7 @@ public interface ListEventsContract {
 
         void setProgressIndicator(boolean enable);
 
-        void showEvents(List<IEvent> events);
+        void showEvents(Observable<ListItem> items);
     }
     interface UserActionsListener {
 

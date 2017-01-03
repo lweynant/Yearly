@@ -7,11 +7,12 @@ import android.widget.TextView;
 
 import com.lweynant.yearly.IStringResources;
 import com.lweynant.yearly.R;
+import com.lweynant.yearly.controller.list_events.ListEventsContract;
 import com.lweynant.yearly.model.IEvent;
 
 import org.joda.time.LocalDate;
 
-public class EventListElementView implements IEventListElementView {
+public class EventListElementView implements IListElementView {
     private final IStringResources rstring;
     private final TextView nameTextView;
     private final TextView dateTextView;
@@ -33,7 +34,8 @@ public class EventListElementView implements IEventListElementView {
         return view;
     }
 
-    @Override public void bindEvent(IEvent event) {
+    @Override public void bindEvent(ListEventsContract.ListItem listItem) {
+        IEvent event = listItem.getEvent();
         LocalDate eventDate = event.getDate();
         nameTextView.setText(event.getName());
         dateTextView.setText(getDateAsText(event.getDate()));

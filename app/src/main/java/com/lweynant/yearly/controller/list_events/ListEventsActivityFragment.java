@@ -27,6 +27,7 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import rx.Observable;
 import timber.log.Timber;
 
 import static android.support.v7.widget.DividerItemDecoration.VERTICAL;
@@ -133,8 +134,9 @@ public class ListEventsActivityFragment extends BaseFragment implements EventsAd
 
     }
 
-    @Override public void showEvents(List<IEvent> events) {
-        eventsAdapter.replaceData(events);
+    @Override public void showEvents(Observable<ListEventsContract.ListItem> items) {
+        List<ListEventsContract.ListItem> list = items.toList().toBlocking().single();
+        eventsAdapter.replaceData(list);
     }
 
     @Override public void onBackPressed() {

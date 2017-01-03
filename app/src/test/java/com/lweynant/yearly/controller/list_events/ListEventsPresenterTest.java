@@ -14,6 +14,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.ArrayList;
 import java.util.List;
 
+import rx.Observable;
+
 import static junit.framework.Assert.fail;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.mock;
@@ -88,10 +90,10 @@ public class ListEventsPresenterTest {
     }
 
     @Test public void testOnEventLoadingFinished() {
-        List<IEvent> events = createEvents();
+        Observable<IEvent> events = createEvents();
         sut.onEventsLoadingFinished(events, "modif id");
 
-        verify(fragmentView).showEvents(events);
+        verify(fragmentView).showEvents(anyObject());
         verify(fragmentView).setProgressIndicator(false);
     }
 
@@ -101,10 +103,10 @@ public class ListEventsPresenterTest {
         verify(fragmentView).setProgressIndicator(false);
     }
 
-    private List<IEvent> createEvents() {
+    private Observable<IEvent> createEvents() {
         ArrayList<IEvent> events = new ArrayList<>();
         events.add(mock(IEvent.class));
-        return events;
+        return Observable.from(events);
     }
 
     private IEvent createEvent() {

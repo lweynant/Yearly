@@ -67,7 +67,6 @@ public class ShowBirthdayPresenterTest {
         verify(fragmentView).showNameOfDay("Monday");
         verify(fragmentView).showNextEventIn(20);
         verify(fragmentView).showUnknownAge();
-        verify(fragmentView).shareText("shared text");
         verify(fragmentView, never()).showAge(anyInt());
     }
     @Test public void initializeWithYearOfBirth() {
@@ -80,7 +79,6 @@ public class ShowBirthdayPresenterTest {
         verify(fragmentView).showNameOfDay("Monday");
         verify(fragmentView).showNextEventIn(20);
         verify(fragmentView).showAge(15);
-        verify(fragmentView).shareText("shared text");
         verify(fragmentView, never()).showUnknownAge();
     }
 

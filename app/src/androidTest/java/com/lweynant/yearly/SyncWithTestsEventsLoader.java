@@ -8,6 +8,7 @@ import com.lweynant.yearly.model.IEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import rx.Observable;
 import timber.log.Timber;
 
 
@@ -38,7 +39,7 @@ public class SyncWithTestsEventsLoader implements IEventsLoader, IEventsLoader.C
         callback.onEventsLoadingStarted(modifId);
     }
 
-    @Override public void onEventsLoadingFinished(List<IEvent> events, String modifId) {
+    @Override public void onEventsLoadingFinished(Observable<IEvent> events, String modifId) {
         callback.onEventsLoadingFinished(events, modifId);
         Timber.d("onEventsLoadingFinished - %s", modifId);
         decrementIdlingResourceCounter(modifId);

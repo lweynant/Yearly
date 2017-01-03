@@ -10,16 +10,13 @@ import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.lweynant.yearly.IStringResources;
 import com.lweynant.yearly.R;
+import com.lweynant.yearly.controller.list_events.ListEventsContract;
 import com.lweynant.yearly.model.IEvent;
 
 import org.joda.time.LocalDate;
-import org.w3c.dom.Text;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
 
 
-public class BirthdayListElementView implements IEventListElementView {
+public class BirthdayListElementView implements IListElementView {
 
     private final View view;
     private final ImageView myImageView;
@@ -36,8 +33,8 @@ public class BirthdayListElementView implements IEventListElementView {
     }
 
     @Override
-    public void bindEvent(IEvent event) {
-        LocalDate eventDate = event.getDate();
+    public void bindEvent(ListEventsContract.ListItem listItem) {
+        IEvent event = listItem.getEvent();
         nameTextView.setText(event.getName());
         dateTextView.setText(getDateAsText(event.getDate()));
         //get first letter of each String item

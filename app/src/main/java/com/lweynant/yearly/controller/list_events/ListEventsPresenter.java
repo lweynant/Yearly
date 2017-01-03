@@ -7,6 +7,7 @@ import com.lweynant.yearly.utils.RemoveAction;
 
 import java.util.List;
 
+import rx.Observable;
 import timber.log.Timber;
 
 
@@ -62,10 +63,15 @@ public class ListEventsPresenter implements ListEventsContract.UserActionsListen
     }
 
 
-    @Override public void onEventsLoadingFinished(List<IEvent> events, String modifId) {
+    @Override public void onEventsLoadingFinished(Observable<IEvent> events, String modifId) {
         Timber.d("onEventsLoadingFinished %s", modifId);
         fragmentView.setProgressIndicator(false);
-        fragmentView.showEvents(events);
+        Observable<ListEventsContract.ListItem> items =
+                events.groupBy(e -> e.getDate().getMonthOfYear())
+                        .concatMap(grouped -> grouped.map(event -> new ListEventsContract.ListItem(event))
+                                .startWith(new ListEventsContract.ListItem(grouped.getKey())));
+//        Observable<ListEventsContract.ListItem> items = events.map(e -> new ListEventsContract.ListItem(e));
+        fragmentView.showEvents(items);
     }
 
     @Override public void onEventsLoadingCancelled(String currentlyUpdatingRepoModifId) {

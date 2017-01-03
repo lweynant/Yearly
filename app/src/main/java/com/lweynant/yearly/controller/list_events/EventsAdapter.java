@@ -5,7 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.lweynant.yearly.model.IEvent;
-import com.lweynant.yearly.ui.IEventListElementView;
+import com.lweynant.yearly.ui.IListElementView;
 import com.lweynant.yearly.ui.IEventViewFactory;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
         public void onSelected(IEvent eventType);
     }
 
-    private List<IEvent> events = new ArrayList<>();
+    private List<ListEventsContract.ListItem> listItems = new ArrayList<>();
     private EventSelectionListener listener;
     private IEventViewFactory viewFactory;
 
@@ -36,29 +36,29 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
 
 
     @Override public EventViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        IEventListElementView view = viewFactory.getEventListElementView(parent, viewType);
+        IListElementView view = viewFactory.getListElementView(parent, viewType);
         //FragmentView v = LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_list_item_1, parent, false);
         EventViewHolder eventViewHolder = new EventViewHolder(view, listener);
         return eventViewHolder;
     }
 
     @Override public void onBindViewHolder(EventViewHolder holder, int position) {
-        IEvent event = events.get(position);
-        holder.bindEvent(event);
+        ListEventsContract.ListItem listItem = listItems.get(position);
+        holder.bindListItem(listItem);
     }
 
     @Override public int getItemViewType(int position) {
-        return viewFactory.getEventListElementViewType(events.get(position));
+        return viewFactory.getListElementViewType(listItems.get(position));
     }
 
     @Override public int getItemCount() {
-        return events.size();
+        return listItems.size();
     }
 
-    public void replaceData(List<IEvent> events) {
+    public void replaceData(List<ListEventsContract.ListItem> listItems) {
         synchronized (this) {
             Timber.d("onDataLoaded");
-            this.events = events;
+            this.listItems = listItems;
             notifyDataSetChanged();
         }
     }
@@ -66,32 +66,31 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
 
     public static class EventViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private final EventSelectionListener listener;
-        private IEventListElementView eventListElementView;
-        private IEvent event;
+        private IListElementView eventListElementView;
+        private ListEventsContract.ListItem listItem;
         // Provide a reference to the views for each data item
         // Complex data items may need more than one view per item, and
         // you provide access to all the views for a data item in a view holder
 
-        public EventViewHolder(IEventListElementView itemView, EventSelectionListener listener) {
+        public EventViewHolder(IListElementView itemView, EventSelectionListener listener) {
             super(itemView.getView());
             itemView.setOnClickListener(this);
             this.listener = listener;
             this.eventListElementView = itemView;
         }
 
-        public IEvent getEvent() {
-            return event;
-        }
 
         @Override public void onClick(View v) {
             if (listener != null) {
-                listener.onSelected(event);
+                if (listItem.isEvent()) {
+                    listener.onSelected(listItem.getEvent());
+                }
             }
         }
 
-        public void bindEvent(IEvent event) {
-            this.event = event;
-            eventListElementView.bindEvent(event);
+        public void bindListItem(ListEventsContract.ListItem listItem) {
+            this.listItem = listItem;
+            eventListElementView.bindEvent(listItem);
         }
     }
 
