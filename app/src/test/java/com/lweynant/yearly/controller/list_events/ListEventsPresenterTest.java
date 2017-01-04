@@ -31,13 +31,13 @@ public class ListEventsPresenterTest {
     private ListEventsPresenter sut;
     @Mock ListEventsContract.ActivityView activityView;
     @Mock ListEventsContract.FragmentView fragmentView;
-    @Mock IListItemsFactory listItemsFactory;
+    @Mock IListItemsObservable listItemsObservable;
 
     @Before public void setUp() {
         //transaction has fluent api - so we make sure we return the object
         when(transaction.remove(anyObject())).thenReturn(transaction);
         when(transaction.add(anyObject())).thenReturn(transaction);
-        sut = new ListEventsPresenter(eventsLoader, listItemsFactory, removeAction);
+        sut = new ListEventsPresenter(eventsLoader, listItemsObservable, removeAction);
         sut.setActivityView(activityView);
         sut.setFragmentView(fragmentView);
     }
@@ -92,7 +92,7 @@ public class ListEventsPresenterTest {
     @Test public void testOnEventLoadingFinished() {
         Observable<IEvent> events = createEvents();
         Observable<ListEventsContract.ListItem> listItems = Observable.empty();
-        when(listItemsFactory.createFrom(events)).thenReturn(listItems);
+        when(listItemsObservable.from(events)).thenReturn(listItems);
         sut.onEventsLoadingFinished(events, "modif id");
 
         verify(fragmentView).showListItems(listItems);

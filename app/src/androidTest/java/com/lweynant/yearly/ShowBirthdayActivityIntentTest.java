@@ -20,6 +20,7 @@ import com.lweynant.yearly.platform.IUniqueIdGenerator;
 import com.lweynant.yearly.ui.ViewModule;
 
 import org.joda.time.LocalDate;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -32,6 +33,7 @@ import dagger.Component;
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.InstrumentationRegistry.getTargetContext;
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.intent.Intents.intended;
 import static android.support.test.espresso.intent.matcher.BundleMatchers.hasEntry;
@@ -85,6 +87,7 @@ public class ShowBirthdayActivityIntentTest  {
         when(clock.now()).thenReturn(today);
 
     }
+
     @Test public void testIntentSend(){
         Intent startIntent = new Intent();
         setBirthdayOnIntent("Fred", today.plusDays(1), startIntent);

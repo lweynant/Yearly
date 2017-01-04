@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="?android:attr/selectableItemBackground"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="16dp"
-        android:clipToPadding="false"
-        android:paddingBottom="16dp"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:background="@color/cardview_light_background"
+                android:paddingLeft="32dp"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="16dp"
+                android:clipToPadding="false"
+                android:paddingBottom="16dp"
 
-        android:elevation="2dp">
+                android:elevation="2dp">
 
 
     <ImageView
@@ -22,25 +23,27 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:src="@drawable/ic_account_circle_grey600_48dp"
-        android:adjustViewBounds="false"
-        android:layout_margin="4dp"/>
+        android:adjustViewBounds="false"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
+        tools:text="Large Text"
         android:id="@+id/birthday_list_item_name"
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/birthday_list_item_image"
         android:layout_toEndOf="@+id/birthday_list_item_image"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:paddingLeft="@dimen/text_margin"/>
     <TextView
         android:id="@+id/birthday_list_item_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="woensdag 5 september"
+        tools:text="woensdag 5 september"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+
         android:layout_below="@id/birthday_list_item_name"
         android:layout_toRightOf="@id/birthday_list_item_image"
         android:paddingLeft="@dimen/text_margin"/>

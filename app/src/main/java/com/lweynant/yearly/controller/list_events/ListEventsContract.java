@@ -13,8 +13,8 @@ public interface ListEventsContract {
         private String separator;
         private IEvent event;
 
-        public ListItem(Integer month){
-            this.separator = month.toString();
+        public ListItem(String separator){
+            this.separator = separator;
         }
         public ListItem(IEvent event) {
             this.event = event;

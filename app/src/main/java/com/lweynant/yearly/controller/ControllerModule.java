@@ -10,11 +10,13 @@ import com.lweynant.yearly.controller.add_event.AddBirthdayPresenter;
 import com.lweynant.yearly.controller.add_event.AddEventContract;
 import com.lweynant.yearly.controller.add_event.AddEventPresenter;
 import com.lweynant.yearly.controller.list_events.EventsAdapter;
+import com.lweynant.yearly.controller.list_events.GroupEventsByDate;
 import com.lweynant.yearly.controller.list_events.IEventsLoader;
-import com.lweynant.yearly.controller.list_events.IListItemsFactory;
+import com.lweynant.yearly.controller.list_events.IGroupEventsStrategy;
+import com.lweynant.yearly.controller.list_events.IListItemsObservable;
 import com.lweynant.yearly.controller.list_events.ListEventsContract;
 import com.lweynant.yearly.controller.list_events.ListEventsPresenter;
-import com.lweynant.yearly.controller.list_events.ListItemsFactory;
+import com.lweynant.yearly.controller.list_events.ListItemsObservable;
 import com.lweynant.yearly.controller.show_event.ShowBirthdayContract;
 import com.lweynant.yearly.controller.show_event.ShowBirthdayPresenter;
 import com.lweynant.yearly.model.BirthdayBuilder;
@@ -74,8 +76,11 @@ public class ControllerModule {
                                                                                     IClock clock) {
         return new AddEventPresenter(builder, transaction, dateFormatter, clock);
     }
-    @Provides IListItemsFactory providesListItemsFactory(){
-        return new ListItemsFactory();
+    @Provides IGroupEventsStrategy providesGroupEventsStrategy(IClock clock, IStringResources stringResources) {
+        return  new GroupEventsByDate(clock, stringResources);
+    }
+    @Provides IListItemsObservable providesListItemsObservable(IGroupEventsStrategy groupEventsStrategy){
+        return new ListItemsObservable(groupEventsStrategy);
     }
     //preseters straddle the activity/fragment - both should use the same, therefor we have singletons
     @Provides @PerApp ShowBirthdayContract.UserActionsListener providesShowBirthdayPresenter(DateFormatter dateFormatter,
@@ -85,7 +90,7 @@ public class ControllerModule {
         return new ShowBirthdayPresenter(dateFormatter, builder, removeAction, eventViewFactory, clock);
     }
     @Provides @PerApp ListEventsContract.UserActionsListener providesEventsListPresenter(IEventsLoader eventsLoader,
-                                                                                         IListItemsFactory listItemsFactory,
+                                                                                         IListItemsObservable listItemsFactory,
                                                                                          RemoveAction removeAction) {
         return new ListEventsPresenter(eventsLoader,  listItemsFactory, removeAction);
     }

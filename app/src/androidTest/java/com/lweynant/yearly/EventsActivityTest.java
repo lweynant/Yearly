@@ -197,31 +197,32 @@ public class EventsActivityTest {
 
 
     @Test public void testOrderInNonEmptyList() {
-        initializeTheListWith(createBirthday("Yesterday", today.minusDays(1)),
-                createBirthday("Tomorrow", today.plusDays(1)),
-                createBirthday("Today", today));
+        initializeTheListWith(createBirthday("Mr Yesterday", today.minusDays(1)),
+                createBirthday("Mr Tomorrow", today.plusDays(1)),
+                createBirthday("Mr Today", today));
         activityTestRule.launchActivity(new Intent());
 
 
-        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(1, R.id.birthday_list_item_name)).check(matches(withText(containsString("Today"))));
-        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(2, R.id.birthday_list_item_name)).check(matches(withText(containsString("Tomorrow"))));
-        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(3, R.id.birthday_list_item_name)).check(matches(withText(containsString("Yesterday"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(1, R.id.birthday_list_item_name)).check(matches(withText(containsString("Mr Today"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(3, R.id.birthday_list_item_name)).check(matches(withText(containsString("Mr Tomorrow"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(5, R.id.birthday_list_item_name)).check(matches(withText(containsString("Mr Yesterday"))));
         verify(alarm).scheduleAlarm(today, NotificationTime.MORNING);
         verifyNoMoreInteractions(alarm);
     }
     @Test public void testListRemainsAfterOrientationChange() {
-        initializeTheListWith(createBirthday("Yesterday", today.minusDays(1)),
-                              createBirthday("Tomorrow", today.plusDays(1)),
-                              createBirthday("Today", today));
+        initializeTheListWith(createBirthday("Mr Yesterday", today.minusDays(1)),
+                              createBirthday("Mr Tomorrow", today.plusDays(1)),
+                              createBirthday("Mr Today", today));
         activityTestRule.launchActivity(new Intent());
 
-        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(1, R.id.birthday_list_item_name)).check(matches(withText(containsString("Today"))));
-        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(2, R.id.birthday_list_item_name)).check(matches(withText(containsString("Tomorrow"))));
-        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(3, R.id.birthday_list_item_name)).check(matches(withText(containsString("Yesterday"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(1, R.id.birthday_list_item_name)).check(matches(withText(containsString("Mr Today"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(3, R.id.birthday_list_item_name)).check(matches(withText(containsString("Mr Tomorrow"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(5, R.id.birthday_list_item_name)).check(matches(withText(containsString("Mr Yesterday"))));
         onView(isRoot()).perform(orientationLandscape());
-        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(1, R.id.birthday_list_item_name)).check(matches(withText(containsString("Today"))));
-        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(2, R.id.birthday_list_item_name)).check(matches(withText(containsString("Tomorrow"))));
-        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(3, R.id.birthday_list_item_name)).check(matches(withText(containsString("Yesterday"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(1, R.id.birthday_list_item_name)).check(matches(withText(containsString("Mr Today"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(3, R.id.birthday_list_item_name)).check(matches(withText(containsString("Mr Tomorrow"))));
+        //too many views the last one is not visible, so the assert will fail
+        //onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(5, R.id.birthday_list_item_name)).check(matches(withText(containsString("Mr Yesterday"))));
     }
 
 
@@ -274,18 +275,18 @@ public class EventsActivityTest {
 
     }
     @Test public void testModifyDateOfBirthday() {
-        initializeTheListWith(createBirthday("Today", today),
-                createBirthday("Tomorrow", tomorrow));
+        initializeTheListWith(createBirthday("Mr Today", today),
+                createBirthday("Mr Tomorrow", tomorrow));
         activityTestRule.launchActivity(new Intent());
 
         //make sure that the order is as expected
-        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(1, R.id.birthday_list_item_name)).check(matches(withText(containsString("Today"))));
-        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(2, R.id.birthday_list_item_name)).check(matches(withText(containsString("Tomorrow"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(1, R.id.birthday_list_item_name)).check(matches(withText(containsString("Mr Today"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(3, R.id.birthday_list_item_name)).check(matches(withText(containsString("Mr Tomorrow"))));
 
-        onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem(withChild(withText(Matchers.containsString("Today"))), click()));
+        onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem(withChild(withText(Matchers.containsString("Mr Today"))), click()));
         onView(withId(R.id.fab_edit_birthday)).perform(click());
         onView(withText(R.string.title_activity_add_birthday)).check(matches(isDisplayed()));
-        onView(withId(R.id.edit_text_first_name)).check(matches(withText("Today")));
+        onView(withId(R.id.edit_text_first_name)).check(matches(withText("Mr Today")));
         LocalDate future = today.plusDays(5);
         onView(withId(R.id.edit_text_birthday_date)).perform(click());
         onView(withId(R.id.date_picker)).perform(setDate(future.getYear(), future.getMonthOfYear(), future.getDayOfMonth()));
@@ -295,21 +296,21 @@ public class EventsActivityTest {
         pressBack();
         pressBack();
         //now the order should be reversed
-        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(1, R.id.birthday_list_item_name)).check(matches(withText(containsString("Tomorrow"))));
-        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(2, R.id.birthday_list_item_name)).check(matches(withText(containsString("Today"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(1, R.id.birthday_list_item_name)).check(matches(withText(containsString("Mr Tomorrow"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(3, R.id.birthday_list_item_name)).check(matches(withText(containsString("Mr Today"))));
     }
     @Test public void testModifyDateOfEvent() {
-        initializeTheListWith(createEvent("Today", today),
-                createEvent("Tomorrow", tomorrow));
+        initializeTheListWith(createEvent("Mr Today", today),
+                createEvent("Mr Tomorrow", tomorrow));
         activityTestRule.launchActivity(new Intent());
 
         //make sure that the order is as expected
-        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(1, R.id.event_list_item_name)).check(matches(withText(containsString("Today"))));
-        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(2, R.id.event_list_item_name)).check(matches(withText(containsString("Tomorrow"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(1, R.id.event_list_item_name)).check(matches(withText(containsString("Mr Today"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(3, R.id.event_list_item_name)).check(matches(withText(containsString("Mr Tomorrow"))));
 
-        onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem(withChild(withText(containsString("Today"))), click()));
+        onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem(withChild(withText(containsString("Mr Today"))), click()));
         onView(withText(R.string.title_activity_add_event)).check(matches(isDisplayed()));
-        onView(withId(R.id.edit_text_event_name)).check(matches(withText("Today")));
+        onView(withId(R.id.edit_text_event_name)).check(matches(withText("Mr Today")));
         LocalDate future = today.plusDays(5);
         onView(withId(R.id.edit_text_event_date)).perform(click());
         onView(withId(R.id.date_picker)).perform(setDate(future.getYear(), future.getMonthOfYear(), future.getDayOfMonth()));
@@ -318,8 +319,8 @@ public class EventsActivityTest {
         onView(withId(R.id.edit_text_event_date)).check(matches(withText(dateFormatter.format(future.getMonthOfYear(), future.getDayOfMonth()))));
         pressBack();
         //now the order should be reversed
-        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(1, R.id.event_list_item_name)).check(matches(withText(containsString("Tomorrow"))));
-        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(2, R.id.event_list_item_name)).check(matches(withText(containsString("Today"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(1, R.id.event_list_item_name)).check(matches(withText(containsString("Mr Tomorrow"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(3, R.id.event_list_item_name)).check(matches(withText(containsString("Mr Today"))));
     }
 
     private IEvent createEvent(String name, LocalDate date) {
@@ -381,19 +382,19 @@ public class EventsActivityTest {
     }
 
     @Test public void testAddBirthDayOnNonEmptyList() {
-        initializeTheListWith(createBirthday("Yesterday", today.minusDays(1)),
-                createBirthday("Today", today));
+        initializeTheListWith(createBirthday("Mr Yesterday", today.minusDays(1)),
+                createBirthday("Mr Today", today));
         activityTestRule.launchActivity(new Intent());
 
         onView(withId(R.id.fab_expand_menu_button)).perform(click());
         onView(withId(R.id.action_add_birthday)).perform(click());
-        enterBirthday("Tomorrow", today.plusDays(1));
+        enterBirthday("Mr Tomorrow", today.plusDays(1));
         pressBack();
 
-        onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("Tomorrow")))));
-        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(1, R.id.birthday_list_item_name)).check(matches(withText(containsString("Today"))));
-        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(2, R.id.birthday_list_item_name)).check(matches(withText(containsString("Tomorrow"))));
-        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(3, R.id.birthday_list_item_name)).check(matches(withText(containsString("Yesterday"))));
+        onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("Mr Tomorrow")))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(1, R.id.birthday_list_item_name)).check(matches(withText(containsString("Mr Today"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(3, R.id.birthday_list_item_name)).check(matches(withText(containsString("Mr Tomorrow"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(5, R.id.birthday_list_item_name)).check(matches(withText(containsString("Mr Yesterday"))));
         verify(alarm, atLeastOnce()).scheduleAlarm(today, NotificationTime.MORNING);
     }
 

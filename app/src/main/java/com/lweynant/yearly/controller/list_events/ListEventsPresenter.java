@@ -12,13 +12,13 @@ public class ListEventsPresenter implements ListEventsContract.UserActionsListen
 
     private ListEventsContract.FragmentView fragmentView;
     private IEventsLoader eventsLoader;
-    private IListItemsFactory listItemsFactory;
+    private IListItemsObservable listItemsObservable;
     private RemoveAction removeAction;
     private ListEventsContract.ActivityView activityView;
 
-    public ListEventsPresenter(IEventsLoader eventsLoader, IListItemsFactory listItemsFactory,  RemoveAction removeAction) {
+    public ListEventsPresenter(IEventsLoader eventsLoader, IListItemsObservable listItemsObservable, RemoveAction removeAction) {
         this.eventsLoader = eventsLoader;
-        this.listItemsFactory = listItemsFactory;
+        this.listItemsObservable = listItemsObservable;
         this.removeAction = removeAction;
     }
 
@@ -64,8 +64,7 @@ public class ListEventsPresenter implements ListEventsContract.UserActionsListen
     @Override public void onEventsLoadingFinished(Observable<IEvent> events, String modifId) {
         Timber.d("onEventsLoadingFinished %s", modifId);
         fragmentView.setProgressIndicator(false);
-        Observable<ListEventsContract.ListItem> items = listItemsFactory.createFrom(events);
-        fragmentView.showListItems(items);
+        fragmentView.showListItems(listItemsObservable.from(events));
     }
 
     @Override public void onEventsLoadingCancelled(String currentlyUpdatingRepoModifId) {

@@ -29,6 +29,6 @@ public class SeparatorListElementView implements IListElementView {
     }
 
     @Override public void bindEvent(ListEventsContract.ListItem item) {
-        nameTextView.setText("");
+        nameTextView.setText(item.getSeparator());
     }
 }
