@@ -24,9 +24,9 @@ public class BirthdayListElementView implements IListElementView {
     private TextView dateTextView;
     private final IEventStringResource stringResource;
 
-    public BirthdayListElementView(IStringResources rstring, ViewGroup parent) {
+    public BirthdayListElementView(int layout, IStringResources rstring, ViewGroup parent) {
         stringResource = new BirthdayStringResource(rstring);
-        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.birthday_list_item, parent, false);
+        view = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
         nameTextView = (TextView) view.findViewById(R.id.birthday_list_item_name);
         dateTextView = (TextView) view.findViewById(R.id.birthday_list_item_date);
         myImageView = (ImageView) view.findViewById(R.id.birthday_list_item_image);

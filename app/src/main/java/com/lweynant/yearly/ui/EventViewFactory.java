@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.ViewGroup;
 
 import com.lweynant.yearly.IStringResources;
+import com.lweynant.yearly.R;
 import com.lweynant.yearly.controller.add_event.AddBirthdayActivity;
 import com.lweynant.yearly.controller.add_event.AddEventActivity;
 import com.lweynant.yearly.controller.list_events.ListEventsContract;
@@ -21,6 +22,7 @@ public class EventViewFactory implements IEventViewFactory {
     private static final int EVENT_LIST_ELEMENT_VIEW_TYPE = 0;
     private static final int BIRTHDAY_LIST_ELEMENT_VIEW_TYPE = 1;
     private static final int SEPARATOR_LIST_ELEMENT_VIEW_TYPE = 2;
+    private static final int TODAYS_BIRTHDAY_LIST_ELEMENT_VIEW_TYPE = 3;
     private final IStringResources rstring;
     private final IClock clock;
 
@@ -31,7 +33,10 @@ public class EventViewFactory implements IEventViewFactory {
 
     @Override public IListElementView getListElementView(ViewGroup parent, int eventType) {
         if (eventType == BIRTHDAY_LIST_ELEMENT_VIEW_TYPE) {
-            return new BirthdayListElementView(rstring, parent);
+            return new BirthdayListElementView(R.layout.birthday_list_item, rstring, parent);
+        }
+        else if (eventType == TODAYS_BIRTHDAY_LIST_ELEMENT_VIEW_TYPE) {
+            return new BirthdayListElementView(R.layout.todays_birthday_list_item, rstring, parent);
         }
         else if (eventType == EVENT_LIST_ELEMENT_VIEW_TYPE) {
             return new EventListElementView(rstring, parent);
@@ -46,6 +51,9 @@ public class EventViewFactory implements IEventViewFactory {
         if (listItem.isEvent()){
             IEvent event = listItem.getEvent();
             if (event.getType().equals(Birthday.class.getCanonicalName())) {
+                if (clock.now().isEqual(event.getDate())){
+                    return TODAYS_BIRTHDAY_LIST_ELEMENT_VIEW_TYPE;
+                }
                 return BIRTHDAY_LIST_ELEMENT_VIEW_TYPE;
             }
             return EVENT_LIST_ELEMENT_VIEW_TYPE;
