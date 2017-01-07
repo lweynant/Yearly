@@ -60,6 +60,7 @@ dependencies {
     compile 'com.jakewharton.rxbinding:rxbinding:0.3.0'
     compile 'com.google.dagger:dagger:2.0'
     compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
+    compile 'com.squareup.picasso:picasso:2.5.2'
     // IdlingResource is used in the app under test
     //compile "com.android.support.test.espresso:espresso-idling-resource:${ESPRESSO_VERSION}"
     // For CountingIdlingResource:

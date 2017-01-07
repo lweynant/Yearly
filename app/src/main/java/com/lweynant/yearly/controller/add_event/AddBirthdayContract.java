@@ -8,6 +8,7 @@ import com.lweynant.yearly.model.IEvent;
 import rx.Observable;
 
 public interface AddBirthdayContract {
+    static final int REQUEST_IMAGE = 1;
 
     interface FragmentView {
 

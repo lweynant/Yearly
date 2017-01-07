@@ -2,11 +2,15 @@ package com.lweynant.yearly.controller.add_event;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.lweynant.yearly.BaseYearlyAppComponent;
@@ -15,6 +19,10 @@ import com.lweynant.yearly.controller.BaseFragment;
 import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.ui.DateSelector;
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
+import java.io.IOException;
 
 import javax.inject.Inject;
 
@@ -22,7 +30,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
-
+import static com.lweynant.yearly.controller.add_event.AddBirthdayContract.REQUEST_IMAGE;
 
 
 public class AddBirthdayActivityFragment extends BaseFragment implements DateSelector.OnClickListener,
@@ -32,6 +40,7 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
     @Bind(R.id.edit_text_birthday_date) EditText dateEditText;
     @Bind(R.id.edit_text_first_name) EditText nameEditText;
     @Bind(R.id.edit_text_lastname) EditText lastNameEditText;
+    @Bind(R.id.image_button) ImageButton imageButton;
     private View fragmentView;
     @Inject DateSelector dateSelector;
     @Inject AddBirthdayContract.UserActionsListener userActionsListener;
@@ -41,6 +50,7 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
     private int selectedYear;
     private int selectedMonth;
     private int selectedDay;
+    private File pictureFile;
 
     public static AddBirthdayActivityFragment newInstance(Bundle args) {
         AddBirthdayActivityFragment fragment = new AddBirthdayActivityFragment();
@@ -82,6 +92,26 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
                 dateSelector.show();
             }
         });
+        //prototyping camera
+        imageButton.setOnClickListener(new View.OnClickListener(){
+
+            @Override public void onClick(View v) {
+                Intent captureImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                File dir = getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+                if (dir != null) {
+                    try {
+                        Timber.d("storing files in dir %s", dir.getCanonicalPath());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                pictureFile = new File(dir, "yearly_picture.bmp");
+                Uri uri = Uri.fromFile(pictureFile);
+                captureImage.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+                startActivityForResult(captureImage, REQUEST_IMAGE);
+            }
+        });
+
         return fragmentView;
     }
 
@@ -95,6 +125,18 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
         userActionsListener.setInputObservables(RxTextView.textChangeEvents(nameEditText).skip(1).map(e -> e.text()),
                 RxTextView.textChangeEvents(lastNameEditText).skip(1).map(e -> e.text()),
                 RxTextView.textChangeEvents(dateEditText).skip(1).map(e -> e.text()));
+    }
+
+    @Override public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK ) {
+            if (requestCode == AddBirthdayContract.REQUEST_IMAGE) {
+                Timber.d("show image");
+                Picasso.with(getContext()).load(pictureFile).centerCrop().fit().into(imageButton);
+            }
+        }
+        else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Override public void enableSaveButton(Boolean enabled) {

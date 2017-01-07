@@ -37,6 +37,7 @@ public class BirthdayListElementView implements IListElementView {
         IEvent event = listItem.getEvent();
         nameTextView.setText(event.getName());
         dateTextView.setText(getDateAsText(event.getDate()));
+
         //get first letter of each String item
         String firstLetter = String.valueOf(event.getName().charAt(0));
 
