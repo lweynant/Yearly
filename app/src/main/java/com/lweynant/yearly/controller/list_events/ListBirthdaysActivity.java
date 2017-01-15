@@ -15,6 +15,7 @@ import com.lweynant.yearly.controller.AlarmGenerator;
 import com.lweynant.yearly.controller.BaseFragment;
 import com.lweynant.yearly.controller.SingleFragmentActivity;
 import com.lweynant.yearly.controller.add_event.AddBirthdayActivity;
+import com.lweynant.yearly.controller.settings.SettingsActivity;
 import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.IEventRepo;
@@ -35,7 +36,6 @@ public class ListBirthdaysActivity extends SingleFragmentActivity implements Lis
     @Inject IEventViewFactory eventViewFactory;
     @Inject ListEventsContract.UserActionsListener userActionListener;
     @Bind(R.id.fab_add_birthday) FloatingActionButton fab;
-    @Inject AlarmGenerator alarmGenerator;
     @Inject IEventRepo repo;
     @Inject IJsonFileAccessor fileAccessor;
     @Inject IClock clock;
@@ -101,14 +101,13 @@ public class ListBirthdaysActivity extends SingleFragmentActivity implements Lis
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         } else if (id == R.id.action_archive) {
             Timber.i("archive");
             Observable<IEvent> events = repo.getEventsSubscribedOnProperScheduler();
             events.subscribe(new EventRepoSerializerToFileDecorator(fileAccessor, new EventRepoSerializer(clock)));
-        } else if (id == R.id.action_set_alarm) {
-            Timber.i("set alarm");
-            alarmGenerator.generate(repo.getEventsSubscribedOnProperScheduler(), clock.now(), NotificationTime.START_OF_DAY);
+            return true;
         }
 
 

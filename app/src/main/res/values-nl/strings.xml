@@ -92,4 +92,6 @@
     <string name="event">Gebeurtenis</string>
     <string name="delete">Verwijder</string>
     <string name="title_activity_list_birthdays">Verjaardagen</string>
+    <string name="current_alarm">Huidig alarm</string>
+
 </resources>

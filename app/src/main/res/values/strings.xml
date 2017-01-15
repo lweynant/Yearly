@@ -93,6 +93,8 @@
     <string name="event">Event</string>
     <string name="delete">Delete</string>
     <string name="title_activity_list_birthdays">Birthdays</string>
+    <string name="alarm">alarm</string>
+    <string name="current_alarm">Current alarm</string>
 
 
 </resources>
