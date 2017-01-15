@@ -1,4 +1,6 @@
-package com.lweynant.yearly.platform;
+package com.lweynant.yearly.utils;
+
+import com.lweynant.yearly.platform.IAlarm;
 
 import org.joda.time.LocalDate;
 
