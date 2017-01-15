@@ -62,21 +62,25 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.lweynant.yearly.controller.list_events.ListBirthdaysActivity"/>
         </activity>
-        <activity android:name=".controller.list_events.ListBirthdaysActivity"
-                  android:label="@string/title_activity_list_birthdays"
+        <activity
+            android:name=".controller.list_events.ListBirthdaysActivity"
+            android:label="@string/title_activity_list_birthdays"
             android:theme="@style/AppTheme.NoActionBar">
-
-
-
         </activity>
         <activity
             android:name=".controller.SplashActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+        <activity android:name=".controller.settings.SettingsActivity"
+                  android:parentActivityName=".controller.list_events.ListBirthdaysActivity"
+                  android:label="@string/action_settings"
+            >
+
         </activity>
     </application>
 

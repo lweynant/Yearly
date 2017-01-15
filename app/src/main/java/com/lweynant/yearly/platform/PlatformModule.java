@@ -39,7 +39,8 @@ public class PlatformModule {
     }
 
     @Provides @Singleton IAlarm provideAlarm() {
-        return new Alarm(context, new Intent(context, AlarmReceiver.class));
+        IAlarm alarm = new Alarm(context, new Intent(context, AlarmReceiver.class));
+        return new AlarmArchiver(alarm, context);
     }
     @Provides @Singleton IEventNotification provideEventNotification() {
         return new EventNotification(context);
