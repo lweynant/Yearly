@@ -2,7 +2,7 @@ package com.lweynant.yearly.controller.add_event;
 
 import android.os.Bundle;
 
-import com.lweynant.yearly.controller.DateFormatter;
+import com.lweynant.yearly.IDateFormatter;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.model.Date;
@@ -17,14 +17,14 @@ import rx.subscriptions.CompositeSubscription;
 
 public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsListener {
     private ITransaction transaction;
-    private final DateFormatter dateFormatter;
+    private final IDateFormatter dateFormatter;
     private IClock clock;
     private AddBirthdayContract.FragmentView fragmentView;
 
     private BirthdayBuilder birthdayBuilder;
     private final CompositeSubscription subcription = new CompositeSubscription();
 
-    public AddBirthdayPresenter(BirthdayBuilder birthdayBuilder, ITransaction transaction,  DateFormatter dateFormatter, IClock clock) {
+    public AddBirthdayPresenter(BirthdayBuilder birthdayBuilder, ITransaction transaction, IDateFormatter dateFormatter, IClock clock) {
         this.birthdayBuilder = birthdayBuilder;
         this.transaction = transaction;
         this.dateFormatter = dateFormatter;

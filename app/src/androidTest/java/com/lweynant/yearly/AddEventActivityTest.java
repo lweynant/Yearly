@@ -7,7 +7,6 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.lweynant.yearly.controller.ControllerModule;
-import com.lweynant.yearly.controller.DateFormatter;
 import com.lweynant.yearly.controller.SyncControllerModule;
 import com.lweynant.yearly.controller.add_event.AddEventActivity;
 import com.lweynant.yearly.model.Date;
@@ -17,7 +16,6 @@ import com.lweynant.yearly.ui.ViewModule;
 
 import org.joda.time.LocalDate;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,7 +50,7 @@ public class AddEventActivityTest {
 
     @Inject IStringResources rstring;
     @Inject IClock clock;
-    @Inject DateFormatter dateFormatter;
+    @Inject IDateFormatter dateFormatter;
 
     @Rule public ActivityTestRule<AddEventActivity> activityTestRule = new ActivityTestRule<AddEventActivity>(AddEventActivity.class,
             true, //initial touch mode

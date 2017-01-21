@@ -7,7 +7,6 @@ import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.lweynant.yearly.controller.ControllerModule;
-import com.lweynant.yearly.controller.DateFormatter;
 import com.lweynant.yearly.controller.SyncControllerModule;
 import com.lweynant.yearly.controller.show_event.ShowBirthdayActivity;
 import com.lweynant.yearly.model.Birthday;
@@ -20,7 +19,6 @@ import com.lweynant.yearly.platform.IUniqueIdGenerator;
 import com.lweynant.yearly.ui.ViewModule;
 
 import org.joda.time.LocalDate;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,7 +31,6 @@ import dagger.Component;
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.InstrumentationRegistry.getTargetContext;
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.intent.Intents.intended;
 import static android.support.test.espresso.intent.matcher.BundleMatchers.hasEntry;
@@ -60,7 +57,7 @@ public class ShowBirthdayActivityIntentTest  {
     @Inject IUniqueIdGenerator idGenerator;
     @Inject IStringResources rstring;
     @Inject IClock clock;
-    @Inject DateFormatter dateFormatter;
+    @Inject IDateFormatter dateFormatter;
     @Inject IEventNotification eventNotification;
 
     @Rule public IntentsTestRule<ShowBirthdayActivity> activityTestRule =

@@ -7,14 +7,12 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.lweynant.yearly.controller.ControllerModule;
-import com.lweynant.yearly.controller.DateFormatter;
 import com.lweynant.yearly.controller.SyncControllerModule;
 import com.lweynant.yearly.controller.show_event.ShowBirthdayActivity;
 import com.lweynant.yearly.matcher.CollapsingToolBarTitleMatcher;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.IEvent;
-import com.lweynant.yearly.model.ITransaction;
 import com.lweynant.yearly.model.ModelModule;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IEventNotification;
@@ -63,7 +61,7 @@ public class ShowBirthdayActivityTest {
     @Inject IUniqueIdGenerator idGenerator;
     @Inject IStringResources rstring;
     @Inject IClock clock;
-    @Inject DateFormatter dateFormatter;
+    @Inject IDateFormatter dateFormatter;
     @Inject IEventNotification eventNotification;
 
     @Rule public ActivityTestRule<ShowBirthdayActivity> activityTestRule = new ActivityTestRule<ShowBirthdayActivity>(ShowBirthdayActivity.class,

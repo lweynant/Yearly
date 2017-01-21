@@ -3,10 +3,10 @@ package com.lweynant.yearly;
 import android.support.test.espresso.contrib.CountingIdlingResource;
 
 import com.lweynant.yearly.platform.IJsonFileAccessor;
-import com.lweynant.yearly.controller.AlarmGenerator;
-import com.lweynant.yearly.platform.IAlarm;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IEventNotification;
+import com.lweynant.yearly.platform.IPreferences;
+import com.lweynant.yearly.platform.IRawAlarm;
 import com.lweynant.yearly.platform.IUniqueIdGenerator;
 import com.lweynant.yearly.platform.UUID;
 
@@ -33,9 +33,12 @@ public class MockPlatformModule {
     @Provides @Singleton IJsonFileAccessor provideJsonFileAccessor() {
         return mock(IJsonFileAccessor.class);
     }
+    @Provides @Singleton IPreferences providePreferences() {
+        return mock(IPreferences.class);
+    }
 
-    @Provides @Singleton IAlarm provideAlarm() {
-        return mock(IAlarm.class);
+    @Provides @Singleton IRawAlarm provideAlarm() {
+        return mock(IRawAlarm.class);
     }
 
 

@@ -8,7 +8,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 
 import com.lweynant.yearly.R;
-import com.lweynant.yearly.platform.AlarmArchiver;
+import com.lweynant.yearly.AlarmArchiver;
 
 import timber.log.Timber;
 
