@@ -2,11 +2,10 @@ package com.lweynant.yearly.controller.add_event;
 
 import android.os.Bundle;
 
-import com.lweynant.yearly.controller.DateFormatter;
+import com.lweynant.yearly.IDateFormatter;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.model.Date;
-import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.ITransaction;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IUniqueIdGenerator;
@@ -26,7 +25,6 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.after;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -46,7 +44,7 @@ public class AddBirthdayPresenterTest {
     @Mock BirthdayBuilder birthdayBuilder;
     private LocalDate today;
     @Mock Bundle emptyBundle;
-    @Mock DateFormatter dateFormatter;
+    @Mock IDateFormatter dateFormatter;
 
 
     @Before public void setUp() {

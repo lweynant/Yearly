@@ -51,6 +51,21 @@
         <item>November %2$d %1$d</item>
         <item>December %2$d %1$d</item>
     </string-array>
+    <string-array name="year_months_day_hour">
+        <item> null %2$d %1$d, %3$dh</item>
+        <item>January %2$d %1$d, %3$dh</item>
+        <item>February %2$d %1$d, %3$dh</item>
+        <item>March %2$d %1$d, %3$dh</item>
+        <item>April %2$d %1$d, %3$dh</item>
+        <item>May %2$d %1$d, %3$dh</item>
+        <item>June %2$d %1$d, %3$dh</item>
+        <item>July %2$d %1$d, %3$dh</item>
+        <item>August %2$d %1$d, %3$dh</item>
+        <item>September %2$d %1$d, %3$dh</item>
+        <item>October %2$d %1$d, %3$dh</item>
+        <item>November %2$d %1$d, %3$dh</item>
+        <item>December %2$d %1$d, %3$dh</item>
+    </string-array>
     <string name="app_name">Yearly</string>
     <string name="action_settings">Settings</string>
     <string name="birthday_from">%1$s\'s birthday</string>

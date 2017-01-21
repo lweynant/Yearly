@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.lweynant.yearly.AlarmReceiver;
-import com.lweynant.yearly.utils.AlarmArchiver;
 
 import javax.inject.Singleton;
 
@@ -39,13 +38,13 @@ public class PlatformModule {
         return new UUID();
     }
 
+
     @Provides @Singleton IPreferences providePreferences(){
         return new Preferences(context);
     }
 
-    @Provides @Singleton IAlarm provideAlarm() {
-        IAlarm alarm = new Alarm(context, new Intent(context, AlarmReceiver.class));
-        return new AlarmArchiver(alarm, providePreferences(), new TimeConvertor());
+    @Provides @Singleton IRawAlarm provideAlarm() {
+        return new Alarm(context, new Intent(context, AlarmReceiver.class));
     }
     @Provides @Singleton IEventNotification provideEventNotification() {
         return new EventNotification(context);

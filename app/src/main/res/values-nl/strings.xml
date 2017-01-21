@@ -51,6 +51,21 @@
         <item>%2$d november %1$d</item>
         <item>%2$d december %1$d</item>
     </string-array>
+    <string-array name="year_months_day_hour">
+        <item>%3$d:00, %2$d null %1$d</item>
+        <item>%3$d:00, %2$d januari %1$d</item>
+        <item>%3$d:00, %2$d februari %1$d</item>
+        <item>%3$d:00, %2$d maart %1$d</item>
+        <item>%3$d:00, %2$d april %1$d</item>
+        <item>%3$d:00, %2$d mei %1$d</item>
+        <item>%3$d:00, %2$d juni %1$d</item>
+        <item>%3$d:00, %2$d juli %1$d</item>
+        <item>%3$d:00, %2$d augustus %1$d</item>
+        <item>%3$d:00, %2$d september %1$d</item>
+        <item>%3$d:00, %2$d oktober %1$d</item>
+        <item>%3$d:00, %2$d november %1$d</item>
+        <item>%3$d:00, %2$d december %1$d</item>
+    </string-array>
 
     <string name="app_name">Yearly</string>
     <string name="action_settings">Instellingen</string>

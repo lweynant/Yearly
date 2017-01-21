@@ -8,7 +8,6 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.lweynant.yearly.controller.add_event.AddBirthdayActivity;
 import com.lweynant.yearly.controller.ControllerModule;
-import com.lweynant.yearly.controller.DateFormatter;
 import com.lweynant.yearly.controller.SyncControllerModule;
 import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.ModelModule;
@@ -55,7 +54,7 @@ public class AddBirthdayActivityTest {
             true,  //initialTouchMode
             false); //launchActivity. False we need to set the mock file accessor
     @Inject IClock clock;
-    @Inject DateFormatter dateFormatter;
+    @Inject IDateFormatter dateFormatter;
 
     @Before
     public void setUp() throws IOException {

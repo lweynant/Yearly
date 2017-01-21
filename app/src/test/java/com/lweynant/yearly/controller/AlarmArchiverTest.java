@@ -1,12 +1,11 @@
-package com.lweynant.yearly.ui;
+package com.lweynant.yearly.controller;
 
+import com.lweynant.yearly.IDateFormatter;
 import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.platform.IAlarm;
 import com.lweynant.yearly.platform.IPreferences;
-import com.lweynant.yearly.platform.ITimeConvertor;
-import com.lweynant.yearly.utils.AlarmArchiver;
+import com.lweynant.yearly.AlarmArchiver;
 
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,8 +15,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static junit.framework.Assert.fail;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockingDetails;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -25,21 +22,21 @@ import static org.mockito.Mockito.when;
 public class AlarmArchiverTest {
     @Mock IAlarm alarm;
     @Mock IPreferences preferences;
-    @Mock ITimeConvertor timeConvertor;
+    @Mock IDateFormatter dateFormatter;
     private AlarmArchiver sut;
 
     @Before public void setUp() {
-        sut = new AlarmArchiver(alarm, preferences, timeConvertor);
+        sut = new AlarmArchiver(alarm, preferences, dateFormatter);
     }
 
     @Test public void archiveToPreferences() {
         LocalDate date = new LocalDate(2017, Date.JANUARY, 15);
         int hour = 19;
-        String time = "time";
-        when(timeConvertor.convert(date, hour)).thenReturn(time);
+        String formattedTime = "formatted time";
+        when(dateFormatter.format(date, hour)).thenReturn(formattedTime);
         sut.scheduleAlarm(date, hour);
 
-        verify(preferences).setStringValue(AlarmArchiver.CURRENT_ALARM, time);
+        verify(preferences).setStringValue(AlarmArchiver.CURRENT_ALARM, formattedTime);
         verify(alarm).scheduleAlarm(date, hour);
     }
     @Test public void clearFromPreferences() {
