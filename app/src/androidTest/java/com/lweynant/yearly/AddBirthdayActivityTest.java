@@ -30,6 +30,7 @@ import dagger.Component;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.contrib.PickerActions.setDate;
@@ -127,7 +128,7 @@ public class AddBirthdayActivityTest {
         onView(withText(R.string.apply)).perform(click());
         onView(withId(R.id.edit_text_birthday_date)).check(matches(withText(dateFormatter.format(Date.FEBRUARY, 8))));
         onView(isRoot()).perform(orientationLandscape());
-        onView(withId(R.id.edit_text_birthday_date)).perform(click());
+        onView(withId(R.id.edit_text_birthday_date)).perform(scrollTo(), click());
         onView(withText(R.string.apply)).perform(click());
         onView(withId(R.id.edit_text_birthday_date)).check(matches(withText(dateFormatter.format(Date.FEBRUARY, 8))));
     }
