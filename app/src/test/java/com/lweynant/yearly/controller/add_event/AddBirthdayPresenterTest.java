@@ -9,6 +9,7 @@ import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.ITransaction;
 import com.lweynant.yearly.platform.IClock;
+import com.lweynant.yearly.platform.IPictureRepo;
 import com.lweynant.yearly.platform.IUniqueIdGenerator;
 import com.lweynant.yearly.test_helpers.StubbedBundle;
 
@@ -18,6 +19,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.io.File;
 
 import rx.Observable;
 
@@ -47,6 +50,7 @@ public class AddBirthdayPresenterTest {
     private LocalDate today;
     @Mock Bundle emptyBundle;
     @Mock DateFormatter dateFormatter;
+    @Mock IPictureRepo pictureRepo;
 
 
     @Before public void setUp() {
@@ -65,7 +69,7 @@ public class AddBirthdayPresenterTest {
         //noinspection ResourceType
         when(dateFormatter.format(anyInt(), anyInt())).thenReturn("formatted_mm_dd");
         when(dateFormatter.format(anyInt(), anyInt(), anyInt())).thenReturn("formatted_yy_mm_dd");
-        sut = new AddBirthdayPresenter(birthdayBuilder, transaction, dateFormatter, clock);
+        sut = new AddBirthdayPresenter(birthdayBuilder, transaction, pictureRepo, dateFormatter, clock);
     }
 
     @Test public void setName() {
@@ -107,8 +111,42 @@ public class AddBirthdayPresenterTest {
         sut.saveBirthday();
 
         verify(fragmentView).showSavedBirthday(birthday);
+        verify(fragmentView, never()).showPicture(any());
         verify(transaction).add(birthday);
         verify(transaction).commit();
+        verifyZeroInteractions(pictureRepo);
+    }
+    @Test public void saveBirthdayWithPicture() {
+        sut.initialize(fragmentView, emptyBundle);
+        Birthday birthday = createBirthday("Joe");
+        when(birthdayBuilder.build()).thenReturn(birthday);
+        File picture = new File("picture");
+        when(pictureRepo.getPicture()).thenReturn(picture);
+        sut.takePicture();
+        sut.setPicture();
+        sut.saveBirthday();
+
+        verify(fragmentView).showSavedBirthday(birthday);
+        verify(fragmentView).showPicture(picture);
+        verify(transaction).add(birthday);
+        verify(transaction).commit();
+        verify(pictureRepo).storePicture(birthday, picture);
+    }
+    @Test public void saveBirthdayWithCancelledPicture() {
+        sut.initialize(fragmentView, emptyBundle);
+        Birthday birthday = createBirthday("Joe");
+        when(birthdayBuilder.build()).thenReturn(birthday);
+        File picture = new File("picture");
+        when(pictureRepo.getPicture()).thenReturn(picture);
+        sut.takePicture();
+        sut.clearPicture();
+        sut.saveBirthday();
+
+        verify(fragmentView).showSavedBirthday(birthday);
+        verify(fragmentView, never()).showPicture(any());
+        verify(transaction).add(birthday);
+        verify(transaction).commit();
+        verify(pictureRepo, never()).storePicture(any(), any());
     }
 
     @Test public void saveNothing() {

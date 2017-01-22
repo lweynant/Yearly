@@ -11,4 +11,6 @@ public interface BasePlatformComponent {
     IAlarm alarm();
 
     IEventNotification eventNotification();
+
+    IPictureRepo pictureRepo();
 }

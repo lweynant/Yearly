@@ -24,6 +24,7 @@ import com.lweynant.yearly.model.EventBuilder;
 import com.lweynant.yearly.model.ITransaction;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IEventNotification;
+import com.lweynant.yearly.platform.IPictureRepo;
 import com.lweynant.yearly.ui.IEventViewFactory;
 import com.lweynant.yearly.utils.RemoveAction;
 
@@ -65,9 +66,10 @@ public class ControllerModule {
 
     @Provides AddBirthdayContract.UserActionsListener providesAddBirthdayPresenter(BirthdayBuilder builder,
                                                                                            ITransaction transaction,
+                                                                                   IPictureRepo pictureRepo,
                                                                                            DateFormatter dateFormatter,
                                                                                            IClock clock) {
-        return new AddBirthdayPresenter(builder, transaction, dateFormatter, clock);
+        return new AddBirthdayPresenter(builder, transaction, pictureRepo, dateFormatter, clock);
     }
 
     @Provides AddEventContract.UserActionListener providesAddEventPresenter(EventBuilder builder,
@@ -85,9 +87,10 @@ public class ControllerModule {
     //preseters straddle the activity/fragment - both should use the same, therefor we have singletons
     @Provides @PerApp ShowBirthdayContract.UserActionsListener providesShowBirthdayPresenter(DateFormatter dateFormatter,
                                                                                      BirthdayBuilder builder,
+                                                                                             IPictureRepo pictureRepo,
                                                                                      RemoveAction removeAction,
                                                                                      IEventViewFactory eventViewFactory, IClock clock) {
-        return new ShowBirthdayPresenter(dateFormatter, builder, removeAction, eventViewFactory, clock);
+        return new ShowBirthdayPresenter(dateFormatter, builder, pictureRepo, removeAction, eventViewFactory, clock);
     }
     @Provides @PerApp ListEventsContract.UserActionsListener providesEventsListPresenter(IEventsLoader eventsLoader,
                                                                                          IListItemsObservable listItemsFactory,

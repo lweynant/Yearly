@@ -50,7 +50,6 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
     private int selectedYear;
     private int selectedMonth;
     private int selectedDay;
-    private File pictureFile;
 
     public static AddBirthdayActivityFragment newInstance(Bundle args) {
         AddBirthdayActivityFragment fragment = new AddBirthdayActivityFragment();
@@ -96,19 +95,7 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
         imageButton.setOnClickListener(new View.OnClickListener(){
 
             @Override public void onClick(View v) {
-                Intent captureImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                File dir = getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-                if (dir != null) {
-                    try {
-                        Timber.d("storing files in dir %s", dir.getCanonicalPath());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                pictureFile = new File(dir, "yearly_picture.bmp");
-                Uri uri = Uri.fromFile(pictureFile);
-                captureImage.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-                startActivityForResult(captureImage, REQUEST_IMAGE);
+                userActionsListener.takePicture();
             }
         });
 
@@ -118,23 +105,29 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
     @Override public void onViewCreated(View view, Bundle savedInstanceState) {
         Timber.d("onViewCreated");
         super.onViewCreated(view, savedInstanceState);
-    }
-
-    @Override public void onResume() {
-        super.onResume();
         userActionsListener.setInputObservables(RxTextView.textChangeEvents(nameEditText).skip(1).map(e -> e.text()),
                 RxTextView.textChangeEvents(lastNameEditText).skip(1).map(e -> e.text()),
                 RxTextView.textChangeEvents(dateEditText).skip(1).map(e -> e.text()));
+
+    }
+
+    @Override public void onResume() {
+        Timber.d("onResume");
+        super.onResume();
+
     }
 
     @Override public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK ) {
-            if (requestCode == AddBirthdayContract.REQUEST_IMAGE) {
-                Timber.d("show image");
-                Picasso.with(getContext()).load(pictureFile).centerCrop().fit().into(imageButton);
+        Timber.d("onActivityResult");
+        if (requestCode == AddBirthdayContract.REQUEST_IMAGE) {
+            if (resultCode == Activity.RESULT_OK) {
+                Timber.d("set image");
+                userActionsListener.setPicture();
             }
-        }
-        else {
+            else {
+                userActionsListener.clearPicture();
+            }
+        } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
@@ -145,6 +138,7 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
     }
 
     @Override public void showSavedBirthday(IEvent event) {
+        Timber.d("showSavedBirthday %s", event.toString());
         Intent resultIntent = new Intent();
         Bundle bundle = new Bundle();
         event.archiveTo(bundle);
@@ -153,7 +147,21 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
     }
 
     @Override public void showNothingSaved() {
+        Timber.d("showNothingSaved");
         getActivity().setResult(Activity.RESULT_CANCELED);
+    }
+
+    @Override public void showPicture(File picture) {
+        Timber.d("showPicture");
+        Picasso.with(getContext()).load(picture).centerCrop().fit().into(imageButton);
+    }
+
+    @Override public void takePicture(File pictureFile) {
+        Timber.d("takePicture in file %s", pictureFile.toString());
+        Intent captureImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        Uri uri = Uri.fromFile(pictureFile);
+        captureImage.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        startActivityForResult(captureImage, REQUEST_IMAGE);
     }
 
 
@@ -177,6 +185,7 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
 
     @Override
     public void initialize(String name, String lastName, String formattedDate, int selectedYear, @Date.Month int selectedMonth, int selectedDay) {
+        Timber.d("initialize");
         this.initialName = name;
         this.initialLastName  = lastName;
         this.initialFormatedDate = formattedDate;
@@ -186,14 +195,17 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
     }
 
     @Override public void showDate(String date) {
+        Timber.d("showDate");
         dateEditText.setText(date);
     }
 
     @Override public void onBackPressed() {
+        Timber.d("onBackPressed");
         userActionsListener.saveBirthday();
     }
 
     @Override public void onOptionsItemHomePressed() {
+        Timber.d("onOptionsItemHomePressed");
         userActionsListener.saveBirthday();
     }
 

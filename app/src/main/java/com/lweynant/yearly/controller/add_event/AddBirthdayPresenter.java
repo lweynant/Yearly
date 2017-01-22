@@ -9,29 +9,39 @@ import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.ITransaction;
 import com.lweynant.yearly.platform.IClock;
+import com.lweynant.yearly.platform.IPictureRepo;
 
 import org.joda.time.LocalDate;
 
+import java.io.File;
+
 import rx.Observable;
 import rx.subscriptions.CompositeSubscription;
+import timber.log.Timber;
 
 public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsListener {
     private ITransaction transaction;
+    private IPictureRepo pictureRepo;
     private final DateFormatter dateFormatter;
     private IClock clock;
     private AddBirthdayContract.FragmentView fragmentView;
 
     private BirthdayBuilder birthdayBuilder;
     private final CompositeSubscription subcription = new CompositeSubscription();
+    private File picture;
 
-    public AddBirthdayPresenter(BirthdayBuilder birthdayBuilder, ITransaction transaction,  DateFormatter dateFormatter, IClock clock) {
+    public AddBirthdayPresenter(BirthdayBuilder birthdayBuilder, ITransaction transaction,
+                                IPictureRepo pictureRepo,
+                                DateFormatter dateFormatter, IClock clock) {
         this.birthdayBuilder = birthdayBuilder;
         this.transaction = transaction;
+        this.pictureRepo = pictureRepo;
         this.dateFormatter = dateFormatter;
         this.clock = clock;
     }
     @SuppressWarnings("ResourceType")
     @Override public void initialize(AddBirthdayContract.FragmentView fragmentView, Bundle args) {
+        Timber.d("initialize");
         this.fragmentView = fragmentView;
         LocalDate now = clock.now();
         birthdayBuilder.set(args);
@@ -67,6 +77,7 @@ public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsList
 
 
     private void setName(String name) {
+        Timber.d("setName %s", name);
         birthdayBuilder.setName(name.toString());
     }
 
@@ -78,6 +89,7 @@ public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsList
     public void setInputObservables(Observable<CharSequence> nameChangeEvents,
                                     Observable<CharSequence> lastNameChangeEvents,
                                     Observable<CharSequence> dateChangeEvents) {
+        Timber.d("setInputObservables");
         Observable<Boolean> validName = nameChangeEvents
                 //.doOnNext(t -> System.out.print(String.format("-'%s'-", t.toString())))
                 .map(t -> t.length())
@@ -108,21 +120,42 @@ public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsList
 
 
     @Override public void saveBirthday() {
+        Timber.d("saveBirthday");
         //save to repo
         Birthday birthday = birthdayBuilder.build();
         if (birthday != null) {
             transaction.add(birthday).commit();
+            if (picture !=null) {
+                pictureRepo.storePicture(birthday, picture);
+            }
             fragmentView.showSavedBirthday(birthday);
         }
         else {
             fragmentView.showNothingSaved();
         }
+        subcription.unsubscribe();
+    }
+
+    @Override public void setPicture() {
+        Timber.d("setPicture");
+        fragmentView.showPicture(picture);
+    }
+    @Override public void clearPicture() {
+        Timber.d("clearPicture");
+        picture = null;
+    }
+
+    @Override public void takePicture() {
+        Timber.d("takePicture");
+        picture = pictureRepo.getPicture();
+        fragmentView.takePicture(picture);
     }
 
 
     @Override public void saveInstanceState(Bundle outState) {
+        Timber.d("saveInstanceState");
         birthdayBuilder.archiveTo(outState);
-        subcription.unsubscribe();
+
     }
 
     @Override public void setDate(int year, @Date.Month int month, int day) {

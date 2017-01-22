@@ -9,6 +9,7 @@ import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IEventNotificationText;
+import com.lweynant.yearly.platform.IPictureRepo;
 import com.lweynant.yearly.ui.IEventViewFactory;
 import com.lweynant.yearly.utils.RemoveAction;
 
@@ -21,14 +22,16 @@ public class ShowBirthdayPresenter implements ShowBirthdayContract.UserActionsLi
     private final IEventViewFactory eventViewFactory;
     private DateFormatter dateFormatter;
     private BirthdayBuilder birthdayBuilder;
+    private IPictureRepo pictureRepo;
     private RemoveAction removeAction;
     private IClock clock;
     private ShowBirthdayContract.FragmentView fragmentView;
 
-    public ShowBirthdayPresenter(DateFormatter dateFormatter, BirthdayBuilder birthdayBuilder,
+    public ShowBirthdayPresenter(DateFormatter dateFormatter, BirthdayBuilder birthdayBuilder, IPictureRepo pictureRepo,
                                  RemoveAction removeAction, IEventViewFactory eventViewFactory, IClock clock) {
         this.dateFormatter = dateFormatter;
         this.birthdayBuilder = birthdayBuilder;
+        this.pictureRepo = pictureRepo;
         this.removeAction = removeAction;
         this.clock = clock;
         this.eventViewFactory = eventViewFactory;
@@ -57,6 +60,7 @@ public class ShowBirthdayPresenter implements ShowBirthdayContract.UserActionsLi
     @Override public void removeBirthday() {
         IEvent event = birthdayBuilder.build();
         removeAction.remove(event);
+        pictureRepo.removePicture(event);
     }
 
     @Override public String getTextToShare() {

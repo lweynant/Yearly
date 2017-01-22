@@ -44,4 +44,7 @@ public class PlatformModule {
     @Provides @Singleton IEventNotification provideEventNotification() {
         return new EventNotification(context);
     }
+    @Provides @Singleton IPictureRepo providePictureRepo() {
+        return new PictureRepo(context);
+    }
 }

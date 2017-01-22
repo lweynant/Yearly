@@ -7,6 +7,7 @@ import com.lweynant.yearly.controller.AlarmGenerator;
 import com.lweynant.yearly.platform.IAlarm;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IEventNotification;
+import com.lweynant.yearly.platform.IPictureRepo;
 import com.lweynant.yearly.platform.IUniqueIdGenerator;
 import com.lweynant.yearly.platform.UUID;
 
@@ -41,6 +42,9 @@ public class MockPlatformModule {
 
     @Provides @Singleton IEventNotification provideEventNotification() {
         return mock(IEventNotification.class);
+    }
+    @Provides @Singleton IPictureRepo providePictureRepo() {
+        return mock(IPictureRepo.class);
     }
 
 }

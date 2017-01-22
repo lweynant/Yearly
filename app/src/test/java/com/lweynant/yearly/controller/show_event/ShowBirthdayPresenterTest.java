@@ -10,6 +10,7 @@ import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.ITransaction;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IEventNotification;
+import com.lweynant.yearly.platform.IPictureRepo;
 import com.lweynant.yearly.test_helpers.StubbedBirthdayBuilder;
 import com.lweynant.yearly.ui.IEventViewFactory;
 import com.lweynant.yearly.utils.RemoveAction;
@@ -45,10 +46,11 @@ public class ShowBirthdayPresenterTest {
     @Mock RemoveAction removeAction;
     @Mock IClock clock;
     @Mock IEventViewFactory eventViewFactory;
+    @Mock IPictureRepo pictureRepo;
     private final LocalDate today = new LocalDate(2016, Date.MARCH, 1);
 
     @Before public void setUp() {
-        sut = new ShowBirthdayPresenter(dateFormatter, birthdayBuilder, removeAction, eventViewFactory, clock);
+        sut = new ShowBirthdayPresenter(dateFormatter, birthdayBuilder, pictureRepo, removeAction, eventViewFactory, clock);
         when(clock.now()).thenReturn(today);
     }
 
@@ -88,6 +90,7 @@ public class ShowBirthdayPresenterTest {
         sut.removeBirthday();
 
         verify(removeAction).remove(birthday);
+        verify(pictureRepo).removePicture(birthday);
     }
 
 }

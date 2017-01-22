@@ -5,6 +5,8 @@ import android.os.Bundle;
 import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.IEvent;
 
+import java.io.File;
+
 import rx.Observable;
 
 public interface AddBirthdayContract {
@@ -21,6 +23,11 @@ public interface AddBirthdayContract {
         void showSavedBirthday(IEvent event);
 
         void showNothingSaved();
+
+        void takePicture(File file);
+
+        void showPicture(File pictureFile);
+
     }
     interface UserActionsListener {
 
@@ -37,5 +44,11 @@ public interface AddBirthdayContract {
         void saveInstanceState(Bundle outState);
 
         void saveBirthday();
+
+        void takePicture();
+
+        void setPicture();
+
+        void clearPicture();
     }
 }
