@@ -1,6 +1,7 @@
 package com.lweynant.yearly.platform;
 
 
+
 public interface BasePlatformComponent {
     IClock clock();
 
@@ -8,9 +9,10 @@ public interface BasePlatformComponent {
 
     IJsonFileAccessor jsonFileAccessor();
 
-    IAlarm alarm();
+    IRawAlarm alarm();
 
     IEventNotification eventNotification();
 
     IPictureRepo pictureRepo();
+    IPreferences preferences();
 }

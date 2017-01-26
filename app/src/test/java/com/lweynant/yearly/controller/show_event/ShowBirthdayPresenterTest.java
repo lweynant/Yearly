@@ -2,16 +2,12 @@ package com.lweynant.yearly.controller.show_event;
 
 import android.os.Bundle;
 
-import com.lweynant.yearly.controller.DateFormatter;
+import com.lweynant.yearly.IDateFormatter;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.model.Date;
-import com.lweynant.yearly.model.IEvent;
-import com.lweynant.yearly.model.ITransaction;
 import com.lweynant.yearly.platform.IClock;
-import com.lweynant.yearly.platform.IEventNotification;
 import com.lweynant.yearly.platform.IPictureRepo;
-import com.lweynant.yearly.test_helpers.StubbedBirthdayBuilder;
 import com.lweynant.yearly.ui.IEventViewFactory;
 import com.lweynant.yearly.utils.RemoveAction;
 
@@ -20,16 +16,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static com.lweynant.yearly.test_helpers.StubbedBirthdayBuilder.stubBuilderAndBundleForEvent;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
@@ -41,7 +34,7 @@ public class ShowBirthdayPresenterTest {
     @Mock Bundle emptyBundle;
     @Mock Bundle args;
     @Mock ShowBirthdayContract.FragmentView fragmentView;
-    @Mock DateFormatter dateFormatter;
+    @Mock IDateFormatter dateFormatter;
     @Mock BirthdayBuilder birthdayBuilder;
     @Mock RemoveAction removeAction;
     @Mock IClock clock;

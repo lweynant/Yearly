@@ -2,7 +2,7 @@ package com.lweynant.yearly.controller.add_event;
 
 import android.os.Bundle;
 
-import com.lweynant.yearly.controller.DateFormatter;
+import com.lweynant.yearly.IDateFormatter;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.model.Date;
@@ -22,7 +22,7 @@ import timber.log.Timber;
 public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsListener {
     private ITransaction transaction;
     private IPictureRepo pictureRepo;
-    private final DateFormatter dateFormatter;
+    private final IDateFormatter dateFormatter;
     private IClock clock;
     private AddBirthdayContract.FragmentView fragmentView;
 
@@ -32,7 +32,7 @@ public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsList
 
     public AddBirthdayPresenter(BirthdayBuilder birthdayBuilder, ITransaction transaction,
                                 IPictureRepo pictureRepo,
-                                DateFormatter dateFormatter, IClock clock) {
+                                IDateFormatter dateFormatter, IClock clock) {
         this.birthdayBuilder = birthdayBuilder;
         this.transaction = transaction;
         this.pictureRepo = pictureRepo;

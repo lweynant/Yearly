@@ -2,11 +2,10 @@ package com.lweynant.yearly.controller.add_event;
 
 import android.os.Bundle;
 
-import com.lweynant.yearly.controller.DateFormatter;
+import com.lweynant.yearly.IDateFormatter;
 import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.Event;
 import com.lweynant.yearly.model.EventBuilder;
-import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.model.ITransaction;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.test_helpers.StubbedBundle;
@@ -34,7 +33,7 @@ import static org.mockito.Mockito.when;
 public class AddEventPresenterTest {
 
     @Mock AddEventContract.FragmentView fragmentView;
-    @Mock DateFormatter dateFormatter;
+    @Mock IDateFormatter dateFormatter;
     @Mock EventBuilder eventBuilder;
     @Mock ITransaction repoTransaction;
     @Mock IClock clock;

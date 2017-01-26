@@ -3,7 +3,7 @@ package com.lweynant.yearly.controller.show_event;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
-import com.lweynant.yearly.controller.DateFormatter;
+import com.lweynant.yearly.IDateFormatter;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.model.IEvent;
@@ -20,14 +20,14 @@ import org.joda.time.Years;
 public class ShowBirthdayPresenter implements ShowBirthdayContract.UserActionsListener
 {
     private final IEventViewFactory eventViewFactory;
-    private DateFormatter dateFormatter;
+    private IDateFormatter dateFormatter;
     private BirthdayBuilder birthdayBuilder;
     private IPictureRepo pictureRepo;
     private RemoveAction removeAction;
     private IClock clock;
     private ShowBirthdayContract.FragmentView fragmentView;
 
-    public ShowBirthdayPresenter(DateFormatter dateFormatter, BirthdayBuilder birthdayBuilder, IPictureRepo pictureRepo,
+    public ShowBirthdayPresenter(IDateFormatter dateFormatter, BirthdayBuilder birthdayBuilder, IPictureRepo pictureRepo,
                                  RemoveAction removeAction, IEventViewFactory eventViewFactory, IClock clock) {
         this.dateFormatter = dateFormatter;
         this.birthdayBuilder = birthdayBuilder;

@@ -12,8 +12,11 @@
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/birthday_app_bar_height"
+
         android:fitsSystemWindows="true"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_behavior="com.lweynant.yearly.ui.FlingBehavior"
+        >
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/toolbar_layout"
@@ -28,8 +31,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
-                app:popupTheme="@style/AppTheme.PopupOverlay"
-                app:layout_scrollFlags="scroll|enterAlways"/>
+
+                app:popupTheme="@style/AppTheme.PopupOverlay"/>
 
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
@@ -42,7 +45,8 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context="com.lweynant.yearly.controller.show_event.ShowBirthdayActivity"
-        tools:showIn="@layout/activity_show_birthday">
+        tools:showIn="@layout/activity_show_birthday"
+        android:scrollbars="vertical">
 
 
         <include layout="@layout/fragment_frame" />

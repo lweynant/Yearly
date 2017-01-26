@@ -2,7 +2,7 @@ package com.lweynant.yearly.controller.add_event;
 
 import android.os.Bundle;
 
-import com.lweynant.yearly.controller.DateFormatter;
+import com.lweynant.yearly.IDateFormatter;
 import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.EventBuilder;
 import com.lweynant.yearly.model.IEvent;
@@ -19,12 +19,12 @@ public class AddEventPresenter implements AddEventContract.UserActionListener{
     private AddEventContract.FragmentView fragmentView;
     private EventBuilder builder;
     private ITransaction transaction;
-    private DateFormatter dateFormatter;
+    private IDateFormatter dateFormatter;
     private IClock clock;
     private CompositeSubscription subcription = new CompositeSubscription();
     private boolean update = false;
 
-    public AddEventPresenter(EventBuilder builder, ITransaction transaction, DateFormatter dateFormatter, IClock clock){
+    public AddEventPresenter(EventBuilder builder, ITransaction transaction, IDateFormatter dateFormatter, IClock clock){
         this.builder = builder;
         this.transaction = transaction;
         this.dateFormatter = dateFormatter;

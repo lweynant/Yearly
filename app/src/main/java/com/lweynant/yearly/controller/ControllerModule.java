@@ -23,6 +23,7 @@ import com.lweynant.yearly.model.BirthdayBuilder;
 import com.lweynant.yearly.model.EventBuilder;
 import com.lweynant.yearly.model.ITransaction;
 import com.lweynant.yearly.platform.IClock;
+import com.lweynant.yearly.IDateFormatter;
 import com.lweynant.yearly.platform.IEventNotification;
 import com.lweynant.yearly.platform.IPictureRepo;
 import com.lweynant.yearly.ui.IEventViewFactory;
@@ -49,9 +50,6 @@ public class ControllerModule {
         return new IntentFactory(appContext);
     }
 
-    @Provides DateFormatter providesDateFormatter(IStringResources rstring) {
-        return new DateFormatter(rstring);
-    }
 
     @Provides EventsAdapter provideEventsAdapter(IEventViewFactory viewFactory) {
         return new EventsAdapter(viewFactory);
@@ -67,14 +65,14 @@ public class ControllerModule {
     @Provides AddBirthdayContract.UserActionsListener providesAddBirthdayPresenter(BirthdayBuilder builder,
                                                                                            ITransaction transaction,
                                                                                    IPictureRepo pictureRepo,
-                                                                                           DateFormatter dateFormatter,
+                                                                                           IDateFormatter dateFormatter,
                                                                                            IClock clock) {
         return new AddBirthdayPresenter(builder, transaction, pictureRepo, dateFormatter, clock);
     }
 
     @Provides AddEventContract.UserActionListener providesAddEventPresenter(EventBuilder builder,
                                                                                     ITransaction transaction,
-                                                                                    DateFormatter dateFormatter,
+                                                                                    IDateFormatter dateFormatter,
                                                                                     IClock clock) {
         return new AddEventPresenter(builder, transaction, dateFormatter, clock);
     }
@@ -85,7 +83,7 @@ public class ControllerModule {
         return new ListItemsObservable(groupEventsStrategy);
     }
     //preseters straddle the activity/fragment - both should use the same, therefor we have singletons
-    @Provides @PerApp ShowBirthdayContract.UserActionsListener providesShowBirthdayPresenter(DateFormatter dateFormatter,
+    @Provides @PerApp ShowBirthdayContract.UserActionsListener providesShowBirthdayPresenter(IDateFormatter dateFormatter,
                                                                                      BirthdayBuilder builder,
                                                                                              IPictureRepo pictureRepo,
                                                                                      RemoveAction removeAction,

@@ -38,7 +38,12 @@ public class PlatformModule {
         return new UUID();
     }
 
-    @Provides @Singleton IAlarm provideAlarm() {
+
+    @Provides @Singleton IPreferences providePreferences(){
+        return new Preferences(context);
+    }
+
+    @Provides @Singleton IRawAlarm provideAlarm() {
         return new Alarm(context, new Intent(context, AlarmReceiver.class));
     }
     @Provides @Singleton IEventNotification provideEventNotification() {
