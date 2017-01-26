@@ -50,6 +50,7 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
     private int selectedYear;
     private int selectedMonth;
     private int selectedDay;
+    private File initialPicture;
 
     public static AddBirthdayActivityFragment newInstance(Bundle args) {
         AddBirthdayActivityFragment fragment = new AddBirthdayActivityFragment();
@@ -98,6 +99,9 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
                 userActionsListener.takePicture();
             }
         });
+        if (initialPicture != null) {
+            showPicture(initialPicture);
+        }
 
         return fragmentView;
     }
@@ -153,7 +157,10 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
 
     @Override public void showPicture(File picture) {
         Timber.d("showPicture");
-        Picasso.with(getContext()).load(picture).centerCrop().fit().into(imageButton);
+        if (picture.exists()) {
+            Timber.d("picture exists");
+            Picasso.with(getContext()).load(picture).centerCrop().fit().into(imageButton);
+        }
     }
 
     @Override public void takePicture(File pictureFile) {
@@ -184,7 +191,9 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
     }
 
     @Override
-    public void initialize(String name, String lastName, String formattedDate, int selectedYear, @Date.Month int selectedMonth, int selectedDay) {
+    public void initialize(String name, String lastName, String formattedDate,
+                           int selectedYear, @Date.Month int selectedMonth, int selectedDay,
+                           File picture) {
         Timber.d("initialize");
         this.initialName = name;
         this.initialLastName  = lastName;
@@ -192,6 +201,7 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
         this.selectedYear = selectedYear;
         this.selectedMonth = selectedMonth;
         this.selectedDay = selectedDay;
+        this.initialPicture = picture;
     }
 
     @Override public void showDate(String date) {

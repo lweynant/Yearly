@@ -28,10 +28,6 @@ public class PictureRepo implements IPictureRepo {
 
     }
 
-    @Override public boolean hasPicture(IEvent event) {
-        Timber.d("has picture %s from event %s", event.getStringID(), event.toString());
-        return false;
-    }
 
     @Override public File getPicture(IEvent event) {
         Timber.d("get picture %s from event %s", event.getStringID(), event.toString());

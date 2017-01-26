@@ -14,7 +14,9 @@ public interface AddBirthdayContract {
 
     interface FragmentView {
 
-        void initialize(String name, String lastName, String formattedDate, int selectedYear, @Date.Month int selectedMonth, int selectedDay);
+        void initialize(String name, String lastName, String formattedDate,
+                        int selectedYear, @Date.Month int selectedMonth, int selectedDay,
+                        File picture);
 
         void showDate(String date);
 

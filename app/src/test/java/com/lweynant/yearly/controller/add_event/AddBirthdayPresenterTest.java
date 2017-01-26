@@ -221,7 +221,7 @@ public class AddBirthdayPresenterTest {
         Bundle emptyArgs = mock(Bundle.class);
         sut.initialize(fragmentView, emptyArgs);
 
-        verify(fragmentView).initialize(null, null, null, today.getYear(), today.getMonthOfYear(), today.getDayOfMonth());
+        verify(fragmentView).initialize(null, null, null, today.getYear(), today.getMonthOfYear(), today.getDayOfMonth(), null);
     }
 
     @Test public void initializeWithValidEventArgWithYear() {
@@ -229,7 +229,7 @@ public class AddBirthdayPresenterTest {
         Bundle args = createArgsFor("Events name", 2001, Date.APRIL, 23);
         sut.initialize(fragmentView, args);
 
-        verify(fragmentView).initialize(("Events name"), null, ("formatted date"), 2001, Date.APRIL, 23);
+        verify(fragmentView).initialize(("Events name"), null, ("formatted date"), 2001, Date.APRIL, 23, null);
     }
 
     @Test public void initializeWithValidEventArg() {
@@ -237,7 +237,7 @@ public class AddBirthdayPresenterTest {
         Bundle args = createArgsFor("Events name", Date.APRIL, 23);
         sut.initialize(fragmentView, args);
 
-        verify(fragmentView).initialize("Events name", null, "the date", today.getYear(), Date.APRIL, 23);
+        verify(fragmentView).initialize("Events name", null, "the date", today.getYear(), Date.APRIL, 23, null);
     }
 
 

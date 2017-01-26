@@ -58,7 +58,11 @@ public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsList
                 formattedDate = dateFormatter.format(selectedMonth, selectedDay);
             }
         }
-        fragmentView.initialize(firstName, lastName, formattedDate, selectedYear, selectedMonth, selectedDay);
+        File picture = null;
+        if (birthdayBuilder.canBuild()) {
+            picture = pictureRepo.getPicture(birthdayBuilder.build());
+        }
+        fragmentView.initialize(firstName, lastName, formattedDate, selectedYear, selectedMonth, selectedDay, picture);
     }
 
     private String readStringFromBundle(Bundle bundle, String key, String defaultValue) {
