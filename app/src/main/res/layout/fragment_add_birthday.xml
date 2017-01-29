@@ -21,7 +21,7 @@
             <ImageButton
                 android:id="@+id/image_button"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="248dp"
 
                 android:elevation="2dp"
                 app:srcCompat="@drawable/person_256"/>

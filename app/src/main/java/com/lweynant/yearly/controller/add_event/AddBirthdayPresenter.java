@@ -82,11 +82,11 @@ public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsList
 
     private void setName(String name) {
         Timber.d("setName %s", name);
-        birthdayBuilder.setName(name.toString());
+        birthdayBuilder.setName(name);
     }
 
     private void setLastName(String name) {
-        birthdayBuilder.setLastName(name.toString());
+        birthdayBuilder.setLastName(name);
     }
 
     @Override
@@ -130,7 +130,7 @@ public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsList
         if (birthday != null) {
             transaction.add(birthday).commit();
             if (picture !=null) {
-                pictureRepo.storePicture(birthday, picture);
+                picture = pictureRepo.storePicture(birthday, picture);
             }
             fragmentView.showSavedBirthday(birthday);
         }

@@ -17,14 +17,22 @@ public class PictureRepo implements IPictureRepo {
         this.context = context;
     }
 
-    @Override public void storePicture(IEvent event, File picture) {
+    @Override public File storePicture(IEvent event, File picture) {
         Timber.d("storePicture %s, %s, %s", event.toString(), picture.getParent(), picture.getName());
         File storedFile = new File(picture.getParent(), event.getStringID());
+        Timber.d("will store file in %s", storedFile.toString());
         if (storedFile.exists()) {
+            Timber.d("file exists, will delete it");
             storedFile.delete();
         }
-        picture.renameTo(storedFile);
-        Timber.d("picture renamed to: %s", picture.toString());
+        if (picture.renameTo(storedFile)) {
+            Timber.d("picture renamed to: %s", storedFile.toString());
+            return storedFile;
+        }
+        else {
+            Timber.d("renaming failed, %s", picture.toString());
+            return picture;
+        }
 
     }
 
@@ -36,20 +44,15 @@ public class PictureRepo implements IPictureRepo {
     }
 
     @NonNull public File getFile(String name) {
+        Timber.d("get picture %s", name);
         File dir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        if (dir != null) {
-            try {
-                Timber.d("storing files in dir %s", dir.getCanonicalPath());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
         return new File(dir, name);
     }
 
     @Override public void removePicture(IEvent event) {
         Timber.d("remove picture %s from event %s", event.getStringID(), event.toString());
-
+        File picture = getPicture(event);
+        picture.delete();
     }
 
     @Override public File getPicture() {

@@ -19,6 +19,7 @@ import com.lweynant.yearly.controller.BaseFragment;
 import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.ui.DateSelector;
+import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -156,10 +157,11 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
     }
 
     @Override public void showPicture(File picture) {
-        Timber.d("showPicture");
+        Timber.d("showPicture %s", picture.toString());
         if (picture.exists()) {
             Timber.d("picture exists");
-            Picasso.with(getContext()).load(picture).centerCrop().fit().into(imageButton);
+            //Picasso.with(getContext()).load(R.drawable.person_256).skipMemoryCache().fit().into(imageButton);
+            Picasso.with(getContext()).load(picture).memoryPolicy(MemoryPolicy.NO_CACHE).centerCrop().fit().into(imageButton);
         }
     }
 
