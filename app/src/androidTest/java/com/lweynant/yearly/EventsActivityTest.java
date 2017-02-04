@@ -64,6 +64,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static com.lweynant.yearly.action.OrientationChangeAction.orientationLandscape;
 import static com.lweynant.yearly.matcher.RecyclerViewMatcher.withRecyclerView;
+import static java.lang.Thread.sleep;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.AllOf.allOf;
@@ -185,6 +186,16 @@ public class EventsActivityTest {
         verify(alarm, times(1)).scheduleAlarm(birthday.minusDays(event.getNbrOfDaysForNotification()), NotificationTime.EVENING);
     }
 
+    @Test public void testGitHubIssue35() throws InterruptedException {
+        initializeTheListWith(createBirthday("Mr Yesterday", today.minusDays(1)),
+                createBirthday("Mr This Month", today.plusDays(5)),
+                createBirthday("Mr Next Month", today.plusMonths(1)));
+        activityTestRule.launchActivity(new Intent());
+
+        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(1, R.id.birthday_list_item_name)).check(matches(withText(containsString("Mr This Month"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(3, R.id.birthday_list_item_name)).check(matches(withText(containsString("Mr Next Month"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(5, R.id.birthday_list_item_name)).check(matches(withText(containsString("Mr Yesterday"))));
+    }
 
     @Test public void testOrderInNonEmptyList() {
         initializeTheListWith(createBirthday("Mr Yesterday", today.minusDays(1)),

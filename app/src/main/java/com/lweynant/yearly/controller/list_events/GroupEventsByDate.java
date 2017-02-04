@@ -40,6 +40,10 @@ public class GroupEventsByDate implements IGroupEventsStrategy {
         else if (nearFuture.length > 2 && now.plusDays(2).isEqual(date)) {
             return stringResources.getStringArray(R.array.near_future)[2];
         }
+        else if ((date.getMonthOfYear() == now.getMonthOfYear()) && date.getYear() > now.getYear()) {
+            String string = stringResources.getStringArray(R.array.months)[e.getDate().getMonthOfYear()];
+            return string + " " + Integer.toString(date.getYear());
+        }
         else {
             return stringResources.getStringArray(R.array.months)[e.getDate().getMonthOfYear()];
         }
