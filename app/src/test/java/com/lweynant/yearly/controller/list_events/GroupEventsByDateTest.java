@@ -35,7 +35,7 @@ public class GroupEventsByDateTest {
         today = new LocalDate(2000, Date.APRIL, 20);
         tomorrow = today.plusDays(1);
         dayAfterTomorrow = tomorrow.plusDays(1);
-        yesterday = today.minusDays(1).plusYears(1);
+        yesterday = today.minusDays(1);
         when(clock.now()).thenReturn(today);
         when(stringResources.getStringArray(R.array.near_future)).thenReturn(near_future);
         when(stringResources.getStringArray(R.array.months)).thenReturn(months);
@@ -64,9 +64,10 @@ public class GroupEventsByDateTest {
     }
     @Test public void group_eventThatHappensYesterday() throws Exception {
         GroupEventsByDate sut = new GroupEventsByDate(clock, stringResources);
-        when(event.getDate()).thenReturn(yesterday);
+        LocalDate eventDate = yesterday.plusYears(1);
+        when(event.getDate()).thenReturn(eventDate);
         String group = sut.group(event);
-        assertThat(group, containsString(Integer.toString(yesterday.getYear())));
+        assertThat(group, containsString(Integer.toString(eventDate.getYear())));
 
     }
 
