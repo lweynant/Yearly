@@ -2,6 +2,7 @@ package com.lweynant.yearly.controller.add_event;
 
 import android.os.Bundle;
 
+import com.lweynant.yearly.BootReceiver;
 import com.lweynant.yearly.IDateFormatter;
 import com.lweynant.yearly.model.Birthday;
 import com.lweynant.yearly.model.BirthdayBuilder;
@@ -23,6 +24,7 @@ public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsList
 
     private BirthdayBuilder birthdayBuilder;
     private final CompositeSubscription subcription = new CompositeSubscription();
+    private Bundle originalArgs;
 
     public AddBirthdayPresenter(BirthdayBuilder birthdayBuilder, ITransaction transaction, IDateFormatter dateFormatter, IClock clock) {
         this.birthdayBuilder = birthdayBuilder;
@@ -35,6 +37,7 @@ public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsList
         this.fragmentView = fragmentView;
         LocalDate now = clock.now();
         birthdayBuilder.set(args);
+        originalArgs = args;
         int selectedYear = readIntFromBundle(args, IEvent.KEY_YEAR, now.getYear());
         int selectedMonth = readIntFromBundle(args, IEvent.KEY_MONTH, now.getMonthOfYear());
         int selectedDay = readIntFromBundle(args, IEvent.KEY_DAY, now.getDayOfMonth());
@@ -75,13 +78,16 @@ public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsList
     }
 
     @Override
-    public void setInputObservables(Observable<CharSequence> nameChangeEvents,
+    public void setInputObservables(Observable<CharSequence> firstNameChangeEvents,
                                     Observable<CharSequence> lastNameChangeEvents,
                                     Observable<CharSequence> dateChangeEvents) {
-        Observable<Boolean> validName = nameChangeEvents
+        Observable<Boolean> validFirstName = firstNameChangeEvents
                 //.doOnNext(t -> System.out.print(String.format("-'%s'-", t.toString())))
                 .map(t -> t.length())
                 .map(l -> l > 0);
+        Observable<Boolean> validLastName = lastNameChangeEvents.map(t -> true);
+
+
 
 
         Observable<Boolean> validDate = dateChangeEvents
@@ -89,10 +95,10 @@ public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsList
                 .map(t -> t.length())
                 .map(l -> l > 0);
 
-
+        Observable<Boolean> validName = Observable.combineLatest(validFirstName, validLastName, (f, l) -> f && l);
         Observable<Boolean> enableSaveButton = Observable.combineLatest(validName, validDate, (a, b) -> a && b);
 
-        subcription.add(nameChangeEvents
+        subcription.add(firstNameChangeEvents
                 .subscribe(n -> {
                     setName(n.toString());
                 }));
@@ -102,6 +108,7 @@ public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsList
                 }));
 
         subcription.add(enableSaveButton.distinctUntilChanged()
+                //.doOnNext(b -> System.out.print(b))
                 .subscribe(enabled -> fragmentView.enableSaveButton(enabled)));
 
     }
@@ -112,11 +119,27 @@ public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsList
         Birthday birthday = birthdayBuilder.build();
         if (birthday != null) {
             transaction.add(birthday).commit();
+        }
+        showBirthday(birthday);
+    }
+
+    @Override public boolean isBirthdaySaved() {
+        return !fragmentView.isSaveButtonEnabled();
+    }
+
+    @Override public void throwAwayModifications() {
+        birthdayBuilder.set(originalArgs);
+        showBirthday(birthdayBuilder.build());
+    }
+
+    private void showBirthday(Birthday birthday) {
+        if (birthday != null) {
             fragmentView.showSavedBirthday(birthday);
         }
         else {
             fragmentView.showNothingSaved();
         }
+
     }
 
 

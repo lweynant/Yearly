@@ -130,11 +130,4 @@ public class ShowBirthdayFragment extends BaseFragment implements ShowBirthdayCo
         }
 
     }
-
-    @Override public void onBackPressed() {
-    }
-
-    @Override public void onOptionsItemHomePressed() {
-
-    }
 }

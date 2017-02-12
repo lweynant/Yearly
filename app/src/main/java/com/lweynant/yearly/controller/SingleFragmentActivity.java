@@ -35,7 +35,9 @@ public abstract class SingleFragmentActivity extends BaseActivity {
         if (item.getItemId() == android.R.id.home) {
             Timber.d("item id is android.R.id.home");
             if (fragment != null) {
-                fragment.onOptionsItemHomePressed();
+                if (fragment.onOptionsItemHomePressed()){
+                    return true;
+                }
             }
         }
         return super.onOptionsItemSelected(item);
@@ -44,7 +46,9 @@ public abstract class SingleFragmentActivity extends BaseActivity {
     @Override public void onBackPressed() {
         Timber.d("onBackPressed");
         if (fragment != null) {
-            fragment.onBackPressed();
+            if (fragment.onBackPressed()){
+                return;
+            }
         }
         super.onBackPressed();
     }

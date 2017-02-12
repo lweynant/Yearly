@@ -139,12 +139,5 @@ public class ListEventsActivityFragment extends BaseFragment implements EventsAd
         eventsAdapter.replaceData(list);
     }
 
-    @Override public void onBackPressed() {
-
-    }
-
-    @Override public void onOptionsItemHomePressed() {
-
-    }
 
 }

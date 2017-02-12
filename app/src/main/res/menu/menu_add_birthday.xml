@@ -3,8 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:rstring="com.lweynant.yearly.controller.AddBirthdayActivity">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_save"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+        android:title="@string/action_save"
+        app:showAsAction="always|withText"
+        android:enabled="false"
+        android:visible="true"/>
 </menu>

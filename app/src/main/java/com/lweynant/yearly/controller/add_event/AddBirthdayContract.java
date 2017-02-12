@@ -20,6 +20,8 @@ public interface AddBirthdayContract {
         void showSavedBirthday(IEvent event);
 
         void showNothingSaved();
+
+        boolean isSaveButtonEnabled();
     }
     interface UserActionsListener {
 
@@ -36,5 +38,9 @@ public interface AddBirthdayContract {
         void saveInstanceState(Bundle outState);
 
         void saveBirthday();
+
+        boolean isBirthdaySaved();
+
+        void throwAwayModifications();
     }
 }
