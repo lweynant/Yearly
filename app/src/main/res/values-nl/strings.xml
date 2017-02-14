@@ -110,7 +110,7 @@
     <string name="current_alarm">Huidig alarm</string>
     <string name="action_save">opslaan</string>
     <string name="action_archive">Opslaan</string>
-    <string name="add_birthday_ask_throw_away_modifications">Wijzigingen annuleren?</string>
+    <string name="add_birthday_ask_throw_away_modifications">Wijzigingen weggooien?</string>
     <string name="add_birthday_ask_throw_away_modifications_cancel">Annuleren</string>
     <string name="add_birthday_throw_away">Weggooien</string>
 
