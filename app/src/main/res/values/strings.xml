@@ -112,8 +112,8 @@
     <string name="current_alarm">Current alarm</string>
     <string name="action_save">save</string>
     <string name="add_birthday_throw_away">throw away</string>
-    <string name="add_birthday_ask_throw_away_modifications">Ignore modifications?</string>
-    <string name="add_birthday_ask_throw_away_modifications_cancel">cancel</string>
+    <string name="add_birthday_ask_throw_away_modifications">Are you sure you want to throw away the changes?</string>
+    <string name="add_birthday_ask_throw_away_modifications_cancel">Keep modifying</string>
 
 
 </resources>

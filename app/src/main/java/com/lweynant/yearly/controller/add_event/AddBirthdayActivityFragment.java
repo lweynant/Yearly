@@ -196,7 +196,7 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setMessage(R.string.add_birthday_ask_throw_away_modifications);
             builder.setCancelable(false);
-            builder.setPositiveButton(R.string.add_birthday_throw_away, new DialogInterface.OnClickListener() {
+            builder.setNegativeButton(R.string.add_birthday_throw_away, new DialogInterface.OnClickListener() {
 
 
                 @Override public void onClick(DialogInterface dialog, int which) {
@@ -205,7 +205,7 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
 
                 }
             });
-            builder.setNegativeButton(R.string.add_birthday_ask_throw_away_modifications_cancel, new DialogInterface.OnClickListener() {
+            builder.setPositiveButton(R.string.add_birthday_ask_throw_away_modifications_cancel, new DialogInterface.OnClickListener() {
                 @Override public void onClick(DialogInterface dialog, int which) {
                     Timber.d("pressed negative burron, cancel - continue changing");
 
