@@ -15,6 +15,7 @@ import org.joda.time.LocalDate;
 
 import rx.Observable;
 import rx.subscriptions.CompositeSubscription;
+import timber.log.Timber;
 
 public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsListener {
     private ITransaction transaction;
@@ -25,6 +26,7 @@ public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsList
     private BirthdayBuilder birthdayBuilder;
     private final CompositeSubscription subcription = new CompositeSubscription();
     private Bundle originalArgs;
+    private boolean modified;
 
     public AddBirthdayPresenter(BirthdayBuilder birthdayBuilder, ITransaction transaction, IDateFormatter dateFormatter, IClock clock) {
         this.birthdayBuilder = birthdayBuilder;
@@ -35,6 +37,7 @@ public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsList
     @SuppressWarnings("ResourceType")
     @Override public void initialize(AddBirthdayContract.FragmentView fragmentView, Bundle args) {
         this.fragmentView = fragmentView;
+        modified = false;
         LocalDate now = clock.now();
         birthdayBuilder.set(args);
         originalArgs = args;
@@ -87,7 +90,8 @@ public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsList
                 .map(l -> l > 0);
         Observable<Boolean> validLastName = lastNameChangeEvents.map(t -> true);
 
-
+        subcription.add(Observable.merge(firstNameChangeEvents.skip(1), lastNameChangeEvents.skip(1), dateChangeEvents.skip(1))
+                .subscribe(m -> modified(m)));
 
 
         Observable<Boolean> validDate = dateChangeEvents
@@ -113,6 +117,11 @@ public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsList
 
     }
 
+    private void modified(CharSequence m) {
+        Timber.d("modified %s", m);
+        modified = true;
+    }
+
 
     @Override public void saveBirthday() {
         //save to repo
@@ -123,8 +132,9 @@ public class AddBirthdayPresenter implements AddBirthdayContract.UserActionsList
         showBirthday(birthday);
     }
 
-    @Override public boolean isBirthdaySaved() {
-        return !fragmentView.isSaveButtonEnabled();
+    @Override public boolean isBirthdayModified() {
+        Timber.d(("isBirthdayModified"));
+        return modified;
     }
 
     @Override public void throwAwayModifications() {

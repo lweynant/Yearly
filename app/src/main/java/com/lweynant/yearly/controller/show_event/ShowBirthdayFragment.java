@@ -1,5 +1,6 @@
 package com.lweynant.yearly.controller.show_event;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -125,8 +126,10 @@ public class ShowBirthdayFragment extends BaseFragment implements ShowBirthdayCo
     @Override public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_EDIT_EVENT) {
             Timber.d("resultCode is REQUEST_EDIT_EVENT");
-            Bundle bundle = data.getBundleExtra(IEvent.EXTRA_KEY_EVENT);
-            userActionsListener.initialize(this, bundle);
+            if (resultCode == Activity.RESULT_OK) {
+                Bundle bundle = data.getBundleExtra(IEvent.EXTRA_KEY_EVENT);
+                userActionsListener.initialize(this, bundle);
+            }
         }
 
     }

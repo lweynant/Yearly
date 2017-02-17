@@ -21,7 +21,6 @@ public interface AddBirthdayContract {
 
         void showNothingSaved();
 
-        boolean isSaveButtonEnabled();
     }
     interface UserActionsListener {
 
@@ -39,7 +38,7 @@ public interface AddBirthdayContract {
 
         void saveBirthday();
 
-        boolean isBirthdaySaved();
+        boolean isBirthdayModified();
 
         void throwAwayModifications();
     }

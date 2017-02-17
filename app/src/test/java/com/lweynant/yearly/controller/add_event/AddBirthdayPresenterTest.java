@@ -155,9 +155,8 @@ public class AddBirthdayPresenterTest {
     }
      @Test public void isSaveButtonEnabled() {
          sut.initialize(fragmentView, emptyBundle);
-         when(fragmentView.isSaveButtonEnabled()).thenReturn(false);
 
-         assertThat(sut.isBirthdaySaved(), is(true));
+         assertThat(sut.isBirthdayModified(), is(false));
      }
 
 //    @Test public void saveButtonDisnabledIfNameCleared() {

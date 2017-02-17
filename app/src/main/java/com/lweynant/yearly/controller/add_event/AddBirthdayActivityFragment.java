@@ -131,9 +131,6 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
         saveButtonState = enabled;
     }
 
-    @Override public boolean isSaveButtonEnabled() {
-        return saveButtonState;
-    }
 
     @Override public void showSavedBirthday(IEvent event) {
         Timber.d("showSavedBirthday");
@@ -191,8 +188,8 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
     }
 
     private boolean handleBirthdayModification() {
-        if (!userActionsListener.isBirthdaySaved()){
-            Timber.d("todo notify user that birthday is NOT saved, give him option to save!!");
+        if (userActionsListener.isBirthdayModified()){
+            Timber.d("notify user that birthday is NOT saved, give him option to continue editing!!");
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setMessage(R.string.add_birthday_ask_throw_away_modifications);
             builder.setCancelable(false);
@@ -207,13 +204,16 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
             });
             builder.setPositiveButton(R.string.add_birthday_ask_throw_away_modifications_cancel, new DialogInterface.OnClickListener() {
                 @Override public void onClick(DialogInterface dialog, int which) {
-                    Timber.d("pressed negative burron, cancel - continue changing");
+                    Timber.d("pressed negative button, cancel - continue changing");
 
                 }
             });
             AlertDialog dialog = builder.create();
             dialog.show();
             return true;
+        }
+        else {
+            showNothingSaved();
         }
         return false;
     }
