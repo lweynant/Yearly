@@ -256,6 +256,19 @@ public class EventsActivityTest {
 
     }
 
+    @Test public void testPressEditAndBackWithoutChanging() {
+        initializeTheListWith(createBirthday("Joe"),
+                createBirthday("Fred"),
+                createBirthday("Marie"));
+        activityTestRule.launchActivity(new Intent());
+        reset(alarm);
+        onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem(withChild(withText(containsString("Fred"))), click()));
+        onView(withId(R.id.fab_edit_birthday)).perform(click());
+
+        pressBack();
+        verifyZeroInteractions(alarm);
+    }
+
     @Test public void testModifyLastName() {
         initializeTheListWith(createBirthday("Joe"),
                 createBirthday("Fred"),
