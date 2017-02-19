@@ -12,6 +12,7 @@ import android.test.suitebuilder.annotation.LargeTest;
 import com.google.gson.JsonObject;
 import com.lweynant.yearly.controller.ControllerModule;
 import com.lweynant.yearly.controller.list_events.EventsAdapter;
+import com.lweynant.yearly.controller.list_events.ListBirthdaysActivity;
 import com.lweynant.yearly.controller.list_events.ListEventsActivity;
 import com.lweynant.yearly.controller.list_events.ListEventsContract;
 import com.lweynant.yearly.matcher.CollapsingToolBarTitleMatcher;
@@ -69,9 +70,12 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.AllOf.allOf;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 @RunWith(AndroidJUnit4.class)
@@ -101,7 +105,7 @@ public class EventsActivityTest {
     private LocalDate today;
     private LocalDate tomorrow;
 
-    @Rule public ActivityTestRule<ListEventsActivity> activityTestRule = new ActivityTestRule<ListEventsActivity>(ListEventsActivity.class,
+    @Rule public ActivityTestRule<ListBirthdaysActivity> activityTestRule = new ActivityTestRule<ListBirthdaysActivity>(ListBirthdaysActivity.class,
             true,  //initialTouchMode
             false); //launchActivity. False we need to set the mock file accessor
 
@@ -252,6 +256,19 @@ public class EventsActivityTest {
 
     }
 
+    @Test public void testPressEditAndBackWithoutChanging() {
+        initializeTheListWith(createBirthday("Joe"),
+                createBirthday("Fred"),
+                createBirthday("Marie"));
+        activityTestRule.launchActivity(new Intent());
+        reset(alarm);
+        onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem(withChild(withText(containsString("Fred"))), click()));
+        onView(withId(R.id.fab_edit_birthday)).perform(click());
+
+        pressBack();
+        verifyZeroInteractions(alarm);
+    }
+
     @Test public void testModifyLastName() {
         initializeTheListWith(createBirthday("Joe"),
                 createBirthday("Fred"),
@@ -261,13 +278,17 @@ public class EventsActivityTest {
         onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem(withChild(withText(containsString("Fred"))), click()));
         onView(withId(R.id.fab_edit_birthday)).perform(click());
         onView(withId(R.id.edit_text_lastname)).perform(typeText("Flinstone"), closeSoftKeyboard());
+
+        onView(withText(R.string.action_save)).perform(click());
         pressBack();
-        pressBack();
+
         //make sure that the last-name is now shown
         onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem(withChild(withText(containsString("Fred"))), click()));
         onView(withId(R.id.fab_edit_birthday)).perform(click());
         onView(withId(R.id.edit_text_lastname)).check(matches(withText("Flinstone")));
-        pressBack();
+        //because of know bug (save button is enabled on add we have to press save instead of pressBack
+        //pressBack();
+        onView(withText(R.string.action_save)).perform(click());
         pressBack();
         //make sure that the last name is not shown on other birthdays
         onView(withId(R.id.events_recycler_view)).perform(RecyclerViewActions.actionOnItem(withChild(withText(containsString("Marie"))), click()));
@@ -294,7 +315,7 @@ public class EventsActivityTest {
         onView(withText(R.string.apply)).perform(click());
         //noinspection ResourceType
         onView(withId(R.id.edit_text_birthday_date)).check(matches(withText(dateFormatter.format(future.getMonthOfYear(), future.getDayOfMonth()))));
-        pressBack();
+        onView(withText(R.string.action_save)).perform(click());
         pressBack();
         //now the order should be reversed
         onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(1, R.id.birthday_list_item_name)).check(matches(withText(containsString("Mr Tomorrow"))));
@@ -331,72 +352,105 @@ public class EventsActivityTest {
 
     @Test public void testPushAddBirthdayStartsNewActivity() throws IOException {
         activityTestRule.launchActivity(new Intent());
-        onView(withId(R.id.fab_expand_menu_button)).perform(click());
-        onView(withId(R.id.action_add_birthday)).perform(click());
+        onView(withId(R.id.fab_add_birthday)).perform(click());
         onView(withText(R.string.title_activity_add_birthday)).check(matches(isDisplayed()));
     }
-
     @Test public void testAddBirthdayOnEmptyList() {
         activityTestRule.launchActivity(new Intent());
-        onView(withId(R.id.fab_expand_menu_button)).perform(click());
-        onView(withId(R.id.action_add_birthday)).perform(click());
+        onView(withId(R.id.fab_add_birthday)).perform(click());
+        enterBirthday("Joe", today);
+        onView(withText(R.string.action_save)).perform(click());
+        onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("Joe")))));
+        verify(alarm).scheduleAlarm(today, NotificationTime.MORNING);
+    }
+
+    @Test public void testAddBirthdayOnEmptyListPressBackAndThrowaway() {
+        activityTestRule.launchActivity(new Intent());
+        onView(withId(R.id.fab_add_birthday)).perform(click());
         enterBirthday("Joe", today);
         pressBack();
+        onView(withText(R.string.add_birthday_throw_away)).perform(click());
+        onView(withId(R.id.events_recycler_view)).check(matches(not(hasDescendant(withText(containsString("Joe"))))));
 
-        onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("Joe")))));
-        verify(alarm).scheduleAlarm(today, NotificationTime.MORNING);
     }
-    @Test public void testAddBirthdayOnEmptyListPressHome() {
+    @Test public void testAddBirthdayOnEmptyListPressHomeAndThrowAway() {
         activityTestRule.launchActivity(new Intent());
-        onView(withId(R.id.fab_expand_menu_button)).perform(click());
-        onView(withId(R.id.action_add_birthday)).perform(click());
+        onView(withId(R.id.fab_add_birthday)).perform(click());
         enterBirthday("Joe", today);
         pressNavigateUp();
+        onView(withText(R.string.add_birthday_throw_away)).perform(click());
 
-        onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("Joe")))));
-        verify(alarm).scheduleAlarm(today, NotificationTime.MORNING);
+        onView(withId(R.id.events_recycler_view)).check(matches(not(hasDescendant(withText(containsString("Joe"))))));
     }
+
+    @Test public void testAddBirthdayOnEmptyListPressBackCancelAndSave() {
+        activityTestRule.launchActivity(new Intent());
+        onView(withId(R.id.fab_add_birthday)).perform(click());
+        enterBirthday("Joe", today);
+        pressBack();
+        onView(withText(R.string.add_birthday_ask_throw_away_modifications_cancel)).perform(click());
+        onView(withText(R.string.action_save)).perform(click());
+        onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("Joe")))));
+    }
+
+    @Test public void testAddBirthdayOnEmptyListNavigateUpCancelAndSave() {
+        activityTestRule.launchActivity(new Intent());
+        onView(withId(R.id.fab_add_birthday)).perform(click());
+        enterBirthday("Joe", today);
+        pressNavigateUp();
+        onView(withText(R.string.add_birthday_ask_throw_away_modifications_cancel)).perform(click());
+        onView(withText(R.string.action_save)).perform(click());
+        onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("Joe")))));
+    }
+
+    private void sleep() {
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private void pressNavigateUp() {
         onView(withContentDescription(android.support.v7.appcompat.R.string.abc_action_bar_up_description)).perform(click());
     }
 
-    @Test public void testAddEventOnEmptyList() {
-        activityTestRule.launchActivity(new Intent());
-        onView(withId(R.id.fab_expand_menu_button)).perform(click());
-        onView(withId(R.id.action_add_event)).perform(click());
-        enterEvent("Marriage", today);
-        pressBack();
-
-        onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("Marriage")))));
-        verify(alarm).scheduleAlarm(today, NotificationTime.MORNING);
-    }
-    @Test public void testAddEventOnEmptyListPressUp() {
-        activityTestRule.launchActivity(new Intent());
-        onView(withId(R.id.fab_expand_menu_button)).perform(click());
-        onView(withId(R.id.action_add_event)).perform(click());
-        enterEvent("Marriage", today);
-        pressNavigateUp();
-
-        onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("Marriage")))));
-        verify(alarm).scheduleAlarm(today, NotificationTime.MORNING);
-    }
 
     @Test public void testAddBirthDayOnNonEmptyList() {
         initializeTheListWith(createBirthday("Mr Yesterday", today.minusDays(1)),
                 createBirthday("Mr Today", today));
         activityTestRule.launchActivity(new Intent());
 
-        onView(withId(R.id.fab_expand_menu_button)).perform(click());
-        onView(withId(R.id.action_add_birthday)).perform(click());
+        onView(withId(R.id.fab_add_birthday)).perform(click());
         enterBirthday("Mr Tomorrow", today.plusDays(1));
-        pressBack();
+        onView(withText(R.string.action_save)).perform(click());
 
         onView(withId(R.id.events_recycler_view)).check(matches(hasDescendant(withText(containsString("Mr Tomorrow")))));
         onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(1, R.id.birthday_list_item_name)).check(matches(withText(containsString("Mr Today"))));
         onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(3, R.id.birthday_list_item_name)).check(matches(withText(containsString("Mr Tomorrow"))));
         onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(5, R.id.birthday_list_item_name)).check(matches(withText(containsString("Mr Yesterday"))));
         verify(alarm, atLeastOnce()).scheduleAlarm(today, NotificationTime.MORNING);
+    }
+    @Test public void testAddBirthDayOnNonEmptyListPressBackAndThrowAway() {
+        initializeTheListWith(createBirthday("Mr Yesterday", today.minusDays(1)),
+                createBirthday("Mr Today", today));
+        activityTestRule.launchActivity(new Intent());
+        reset(alarm);
+        onView(withId(R.id.fab_add_birthday)).perform(click());
+        enterBirthday("Mr Tomorrow", today.plusDays(1));
+        pressBack();
+        onView(withText(R.string.add_birthday_throw_away)).perform(click());
+
+        onView(withId(R.id.events_recycler_view)).check(matches(not(hasDescendant(withText(containsString("Mr Tomorrow"))))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(1, R.id.birthday_list_item_name)).check(matches(withText(containsString("Mr Today"))));
+        onView(withRecyclerView(R.id.events_recycler_view).atPositionOnView(3, R.id.birthday_list_item_name)).check(matches(withText(containsString("Mr Yesterday"))));
+        verifyZeroInteractions(alarm);
+    }
+
+    private void pressBackAndSave() {
+        pressBack();
+        //onView(wi)
     }
 
     private void initializeTheListWith(IEvent ... birthdays) {

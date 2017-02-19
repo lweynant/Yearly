@@ -122,7 +122,7 @@ public class ShowBirthdayActivityTest {
         onView(withId(R.id.fab_edit_birthday)).perform(click());
 
         onView(withId(R.id.edit_text_first_name)).perform(clearText(), typeText("Uncle Fred"), closeSoftKeyboard());
-        pressBack();
+        onView(withText(R.string.action_save)).perform(click());
         CollapsingToolBarTitleMatcher.matchToolbarTitle(is("Uncle Fred"));
 
     }

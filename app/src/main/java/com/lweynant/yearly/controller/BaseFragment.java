@@ -27,4 +27,12 @@ public abstract class BaseFragment extends Fragment implements IExtendeFragmentL
     public void onDestroy() {
         super.onDestroy();
     }
+
+    @Override public boolean onBackPressed() {
+        return false;
+    }
+
+    @Override public boolean onOptionsItemHomePressed() {
+        return false;
+    }
 }
