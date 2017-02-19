@@ -52,5 +52,9 @@ public interface AddBirthdayContract {
         void setPicture();
 
         void clearPicture();
+
+        boolean isBirthdayModified();
+
+        void throwAwayModifications();
     }
 }

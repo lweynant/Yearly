@@ -135,11 +135,13 @@ public class AddEventActivityFragment extends BaseFragment implements DateSelect
 
     }
 
-    @Override public void onBackPressed() {
+    @Override public boolean onBackPressed() {
         userActionListener.saveEvent();
+        return false;
     }
 
-    @Override public void onOptionsItemHomePressed() {
+    @Override public boolean onOptionsItemHomePressed() {
         userActionListener.saveEvent();
+        return false;
     }
 }

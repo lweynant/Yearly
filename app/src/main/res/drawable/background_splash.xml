@@ -9,9 +9,9 @@
             android:gravity="center"
             android:src="@drawable/logo"/>
     </item>
-    <item android:top="330dp">
+    <item android:top="520dp">
         <bitmap
             android:gravity="center"
-            android:src="@drawable/name"/>
+            android:src="@drawable/yearly"/>
     </item>
 </layer-list>

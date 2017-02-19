@@ -108,5 +108,10 @@
     <string name="delete">Verwijder</string>
     <string name="title_activity_list_birthdays">Verjaardagen</string>
     <string name="current_alarm">Huidig alarm</string>
+    <string name="action_save">opslaan</string>
+    <string name="action_archive">Opslaan</string>
+    <string name="add_birthday_ask_throw_away_modifications">Weet je zeker dat je de wijzigingen will weggooien?</string>
+    <string name="add_birthday_ask_throw_away_modifications_cancel">Blijven bewerken</string>
+    <string name="add_birthday_throw_away">Weggooien</string>
 
 </resources>

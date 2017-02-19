@@ -23,6 +23,8 @@ import java.io.File;
 
 import rx.Observable;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyObject;
@@ -71,7 +73,7 @@ public class AddBirthdayPresenterTest {
     }
 
     @Test public void setName() {
-        sut.setInputObservables(Observable.just("Joe"), Observable.empty(), Observable.empty());
+        sut.setInputObservables(Observable.just("J", "Jo", "Joe"), Observable.empty(), Observable.empty());
 
         verify(birthdayBuilder).setName("Joe");
 
@@ -80,6 +82,13 @@ public class AddBirthdayPresenterTest {
         sut.setInputObservables(Observable.empty(), Observable.just("Doe"), Observable.empty());
 
         verify(birthdayBuilder).setLastName("Doe");
+    }
+    @Test public void setNameAndDate() {
+        sut.initialize(fragmentView, emptyBundle);
+        sut.setInputObservables(Observable.just("Joe"), Observable.just(""), Observable.just("Jan"));
+
+        verify(fragmentView).enableSaveButton(true);
+
     }
 
     @Test public void onlyDateWithoutYear() {
@@ -178,10 +187,15 @@ public class AddBirthdayPresenterTest {
 
     @Test public void saveButtonEnabledIfNameAndDateFilled() {
         sut.initialize(fragmentView, emptyBundle);
-        sut.setInputObservables(Observable.just("Joe"), Observable.empty(), Observable.just("23 dec"));
+        sut.setInputObservables(Observable.just("Joe"), Observable.just(""), Observable.just("23 dec"));
 
         verify(fragmentView).enableSaveButton(true);
     }
+     @Test public void isSaveButtonEnabled() {
+         sut.initialize(fragmentView, emptyBundle);
+
+         assertThat(sut.isBirthdayModified(), is(false));
+     }
 
 //    @Test public void saveButtonDisnabledIfNameCleared() {
 //        CharSequence date = "23 dec";

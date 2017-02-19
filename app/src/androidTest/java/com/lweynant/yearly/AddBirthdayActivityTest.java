@@ -31,13 +31,16 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.action.ViewActions.typeText;
+import static android.support.test.espresso.action.ViewActions.typeTextIntoFocusedView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.contrib.PickerActions.setDate;
+import static android.support.test.espresso.matcher.ViewMatchers.isEnabled;
 import static android.support.test.espresso.matcher.ViewMatchers.isRoot;
 import static android.support.test.espresso.matcher.ViewMatchers.withChild;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static com.lweynant.yearly.action.OrientationChangeAction.orientationLandscape;
+import static org.hamcrest.core.IsNot.not;
 import static org.mockito.Mockito.when;
 
 @RunWith(AndroidJUnit4.class)
@@ -92,11 +95,12 @@ public class AddBirthdayActivityTest {
         onView(withId(R.id.edit_text_birthday_date)).check(matches(withText(dateFormatter.format(2015, Date.JANUARY, 1))));
     }
     @Test public void selectADay() {
-        onView(withId(R.id.edit_text_birthday_date)).perform(click());
+        onView(withId(R.id.edit_text_birthday_date)).perform(scrollTo(), click());
         onView(withId(R.id.date_picker)).perform(setDate(1966, Date.FEBRUARY, 8));
 
         onView(withText(R.string.apply)).perform(click());
         onView(withId(R.id.edit_text_birthday_date)).check(matches(withText(dateFormatter.format(Date.FEBRUARY, 8))));
+        onView(withId(R.id.action_save)).check(matches(not(isEnabled())));
     }
     @Test public void selectADayWithYear() {
         onView(withId(R.id.edit_text_birthday_date)).perform(click());
@@ -105,6 +109,35 @@ public class AddBirthdayActivityTest {
 
         onView(withText(R.string.apply)).perform(click());
         onView(withId(R.id.edit_text_birthday_date)).check(matches(withText(dateFormatter.format(1966, Date.FEBRUARY, 8))));
+    }
+
+    @Test public void saveIsEnabledWhenFirstNameAndDateIsGiven(){
+        onView(withId(R.id.edit_text_first_name)).perform(scrollTo(), typeText("Joe"));
+        addDate(today);
+        onView(withId(R.id.action_save)).check(matches(isEnabled()));
+    }
+
+
+    @Test public void saveIsNotEnabledWhenOnlyFirstNameIsGiven(){
+        onView(withId(R.id.edit_text_first_name)).perform(typeText("Joe"));
+
+        onView(withId(R.id.action_save)).check(matches(not(isEnabled())));
+    }
+    @Test public void saveIsNotEnabledWhenOnlyDateIsGiven(){
+        addDate(today);
+
+        onView(withId(R.id.action_save)).check(matches(not(isEnabled())));
+    }
+    @Test public void saveIsNotEnabledAtStart(){
+
+        onView(withId(R.id.action_save)).check(matches(not(isEnabled())));
+    }
+
+
+    private void addDate(LocalDate date) {
+        onView(withId(R.id.edit_text_birthday_date)).perform(scrollTo(),click());
+        onView(withId(R.id.date_picker)).perform(setDate(date.getYear(),date.getMonthOfYear(), date.getDayOfMonth()));
+        onView(withText(R.string.apply)).perform(click());
     }
 
     @Test public void configChangeSavesName() {

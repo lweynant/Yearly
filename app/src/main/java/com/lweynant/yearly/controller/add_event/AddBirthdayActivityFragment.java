@@ -1,12 +1,16 @@
 package com.lweynant.yearly.controller.add_event;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -52,6 +56,8 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
     private int selectedMonth;
     private int selectedDay;
     private File initialPicture;
+    private MenuItem saveMenu;
+    private boolean saveButtonState = false;
 
     public static AddBirthdayActivityFragment newInstance(Bundle args) {
         AddBirthdayActivityFragment fragment = new AddBirthdayActivityFragment();
@@ -69,6 +75,7 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
         Timber.d("onCreate");
         super.onCreate(savedInstanceState);
         Bundle args = savedInstanceState != null? savedInstanceState: getArguments();
+        setHasOptionsMenu(true);
         userActionsListener.initialize(this, args);
     }
 
@@ -119,8 +126,12 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
     @Override public void onResume() {
         Timber.d("onResume");
         super.onResume();
-
+        userActionsListener.setInputObservables(RxTextView.textChangeEvents(nameEditText).map(e -> e.text()),
+                RxTextView.textChangeEvents(lastNameEditText).map(e -> e.text()),
+                RxTextView.textChangeEvents(dateEditText).map(e -> e.text()));
     }
+
+
 
     @Override public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Timber.d("onActivityResult");
@@ -128,19 +139,39 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
             if (resultCode == Activity.RESULT_OK) {
                 Timber.d("set image");
                 userActionsListener.setPicture();
-            }
-            else {
+            } else {
                 userActionsListener.clearPicture();
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
+    @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        Timber.d("onCreateOptionsMenu");
+        inflater.inflate(R.menu.menu_add_birthday, menu);
+        saveMenu = menu.findItem(R.id.action_save);
+        saveMenu.setEnabled(saveButtonState);
+    }
+
+    @Override public boolean onOptionsItemSelected(MenuItem item) {
+        Timber.d("onOptionsItemSelected");
+        int id = item.getItemId();
+        if (id == R.id.action_save) {
+            Timber.i("save birthday");
+            userActionsListener.saveBirthday();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override public void enableSaveButton(Boolean enabled) {
         Timber.d("enableSaveButton %s", enabled ? "true" : "false");
-        //todo added a save button in the toolbar
+        if (saveMenu != null) {
+            saveMenu.setEnabled(enabled);
+        }
+        saveButtonState = enabled;
     }
+
 
     @Override public void showSavedBirthday(IEvent event) {
         Timber.d("showSavedBirthday %s", event.toString());
@@ -149,11 +180,13 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
         event.archiveTo(bundle);
         resultIntent.putExtra(IEvent.EXTRA_KEY_EVENT, bundle);
         getActivity().setResult(Activity.RESULT_OK, resultIntent);
+        getActivity().finish();
     }
 
     @Override public void showNothingSaved() {
         Timber.d("showNothingSaved");
         getActivity().setResult(Activity.RESULT_CANCELED);
+        getActivity().finish();
     }
 
     @Override public void showPicture(File picture) {
@@ -211,14 +244,45 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
         dateEditText.setText(date);
     }
 
-    @Override public void onBackPressed() {
-        Timber.d("onBackPressed");
-        userActionsListener.saveBirthday();
+    @Override public boolean onOptionsItemHomePressed() {
+        Timber.d("onOptionsItemHomePressed");
+        return handleBirthdayModification();
+    }
+    @Override public boolean onBackPressed() {
+
+        return handleBirthdayModification();
     }
 
-    @Override public void onOptionsItemHomePressed() {
-        Timber.d("onOptionsItemHomePressed");
-        userActionsListener.saveBirthday();
+    private boolean handleBirthdayModification() {
+        if (userActionsListener.isBirthdayModified()){
+            Timber.d("notify user that birthday is NOT saved, give him option to continue editing!!");
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setMessage(R.string.add_birthday_ask_throw_away_modifications);
+            builder.setCancelable(false);
+            builder.setNegativeButton(R.string.add_birthday_throw_away, new DialogInterface.OnClickListener() {
+
+
+                @Override public void onClick(DialogInterface dialog, int which) {
+                    Timber.d("pressed positive button, throw away changes");
+                    userActionsListener.throwAwayModifications();
+
+                }
+            });
+            builder.setPositiveButton(R.string.add_birthday_ask_throw_away_modifications_cancel, new DialogInterface.OnClickListener() {
+                @Override public void onClick(DialogInterface dialog, int which) {
+                    Timber.d("pressed negative button, cancel - continue changing");
+
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+            return true;
+        }
+        else {
+            showNothingSaved();
+        }
+        return false;
     }
+
 
 }

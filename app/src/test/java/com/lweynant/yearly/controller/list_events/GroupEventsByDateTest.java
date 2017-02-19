@@ -15,6 +15,7 @@ import org.mockito.internal.exceptions.ExceptionIncludingMockitoWarnings;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 
@@ -26,6 +27,7 @@ public class GroupEventsByDateTest {
     LocalDate today;
     LocalDate tomorrow;
     LocalDate dayAfterTomorrow;
+    LocalDate yesterday;
     private java.lang.String[] near_future = { "today", "tomorrow", "day after tomorrow"};
     private String[] months = { "", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
@@ -33,6 +35,7 @@ public class GroupEventsByDateTest {
         today = new LocalDate(2000, Date.APRIL, 20);
         tomorrow = today.plusDays(1);
         dayAfterTomorrow = tomorrow.plusDays(1);
+        yesterday = today.minusDays(1);
         when(clock.now()).thenReturn(today);
         when(stringResources.getStringArray(R.array.near_future)).thenReturn(near_future);
         when(stringResources.getStringArray(R.array.months)).thenReturn(months);
@@ -58,6 +61,14 @@ public class GroupEventsByDateTest {
         when(event.getDate()).thenReturn(dayAfterTomorrow);
         String group = sut.group(event);
         assertThat(group, is("day after tomorrow"));
+    }
+    @Test public void group_eventThatHappensYesterday() throws Exception {
+        GroupEventsByDate sut = new GroupEventsByDate(clock, stringResources);
+        LocalDate eventDate = yesterday.plusYears(1);
+        when(event.getDate()).thenReturn(eventDate);
+        String group = sut.group(event);
+        assertThat(group, containsString(Integer.toString(eventDate.getYear())));
+
     }
 
     @Test public void group_eventThatHappensInJune() throws Exception {

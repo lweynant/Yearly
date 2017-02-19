@@ -28,6 +28,7 @@ public class AddBirthdayActivity extends SingleFragmentActivity{
 //            }
 //        });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.close);
         setResult(RESULT_OK, new Intent());
     }
 
