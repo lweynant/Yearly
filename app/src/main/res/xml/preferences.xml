@@ -13,4 +13,15 @@
             android:selectable="false"/>
 
     </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/settings_about">
+        <Preference
+            android:key="com.lweynant.app_version"
+            android:defaultValue=""
+            android:title="@string/settings_app_version"
+            android:enabled="true"
+            android:shouldDisableView="true"
+            android:selectable="false"/>
+
+    </PreferenceCategory>
 </PreferenceScreen>
