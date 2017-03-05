@@ -113,5 +113,7 @@
     <string name="add_birthday_ask_throw_away_modifications">Weet je zeker dat je de wijzigingen will weggooien?</string>
     <string name="add_birthday_ask_throw_away_modifications_cancel">Blijven bewerken</string>
     <string name="add_birthday_throw_away">Weggooien</string>
+    <string name="settings_about">over</string>
+    <string name="settings_app_version">App versie</string>
 
 </resources>

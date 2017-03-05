@@ -17,7 +17,6 @@ import timber.log.Timber;
 public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     public static final String COM_LWEYNANT_APP_VERSION = "com.lweynant.app_version";
-    public static final String COM_LWEYNANT_APP_CODE = "com.lweynant.app_code";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
