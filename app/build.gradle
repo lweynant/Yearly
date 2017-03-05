@@ -4,7 +4,7 @@ apply plugin: 'com.neenbedankt.android-apt'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '23.0.2'
+    buildToolsVersion '25.0.0'
 
     defaultConfig {
         applicationId "com.lweynant.yearly"
@@ -41,7 +41,7 @@ retrolambda {
 }
 
 final DEXMAKER_VERSION = '1.2'
-final ESPRESSO_VERSION = '2.2.1'
+final ESPRESSO_VERSION = '2.2.2'
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
@@ -60,6 +60,7 @@ dependencies {
     compile 'com.jakewharton.rxbinding:rxbinding:0.3.0'
     compile 'com.google.dagger:dagger:2.0'
     compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
+
     // IdlingResource is used in the app under test
     //compile "com.android.support.test.espresso:espresso-idling-resource:${ESPRESSO_VERSION}"
     // For CountingIdlingResource:
@@ -73,20 +74,22 @@ dependencies {
     androidTestCompile "com.google.dexmaker:dexmaker:${DEXMAKER_VERSION}"
     androidTestCompile "com.google.dexmaker:dexmaker-mockito:${DEXMAKER_VERSION}"
     // Set this dependency to build and run Espresso tests
+    androidTestCompile 'com.android.support.test:runner:0.5'
+    androidTestCompile 'com.android.support.test:rules:0.5'
     androidTestCompile "com.android.support.test.espresso:espresso-core:${ESPRESSO_VERSION}"
-    androidTestCompile("com.android.support.test.espresso:espresso-contrib:${ESPRESSO_VERSION}")
-    {
-        exclude group: 'com.android.support', module: 'appcompat'
-        exclude group: 'com.android.support', module: 'support-v4'
-        exclude module: 'recyclerview-v7'
-     }
+    androidTestCompile ("com.android.support.test.espresso:espresso-contrib:${ESPRESSO_VERSION}") {
+                exclude group: 'com.android.support', module: 'appcompat-v7'
+                exclude group: 'com.android.support', module: 'design'
+                exclude group: 'com.android.support', module: 'support-v4'
+                exclude group: 'com.android.support', module: 'recyclerview-v7'
+    }
     androidTestCompile "com.android.support.test.espresso:espresso-intents:${ESPRESSO_VERSION}"
     apt 'com.google.dagger:dagger-compiler:2.0'
     androidTestApt 'com.google.dagger:dagger-compiler:2.0'
     provided 'javax.annotation:jsr250-api:1.0'
 }
-//configurations.all {
-//    resolutionStrategy {
-//        force 'com.android.support:support-annotations:25.0.0'
-//    }
-//}
+configurations.all {
+    resolutionStrategy {
+        force 'com.android.support:support-annotations:25.0.0'
+    }
+}
