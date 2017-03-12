@@ -22,15 +22,14 @@ class WeekChecker {
 
     public boolean isThisWeek(LocalDate date) {
         LocalDate now = clock.now();
-        LocalDate beginOfWeek = now.withDayOfWeek(DateTimeConstants.MONDAY);
         LocalDate endOfWeek = now.withDayOfWeek(DateTimeConstants.SUNDAY);
-        return isBetween(date, beginOfWeek, endOfWeek);
+        return isBetween(date, now, endOfWeek);
     }
 
     public boolean isNextWeek(LocalDate date) {
         LocalDate now = clock.now();
-        LocalDate beginOfWeek = now.withDayOfWeek(DateTimeConstants.MONDAY).plusWeeks(1);
-        LocalDate endOfWeek = now.withDayOfWeek(DateTimeConstants.SUNDAY).plusWeeks(1);
-        return isBetween(date, beginOfWeek, endOfWeek);
+        LocalDate beginOfNextWeek = now.withDayOfWeek(DateTimeConstants.MONDAY).plusWeeks(1);
+        LocalDate endOfNextWeek = now.withDayOfWeek(DateTimeConstants.SUNDAY).plusWeeks(1);
+        return isBetween(date, beginOfNextWeek, endOfNextWeek);
     }
 }

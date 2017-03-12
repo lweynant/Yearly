@@ -1,6 +1,5 @@
-package com.lweynant.yearly.controller.add_event;
+package com.lweynant.yearly.controller.list_events;
 
-import com.lweynant.yearly.controller.list_events.WeekChecker;
 import com.lweynant.yearly.platform.IClock;
 
 import org.joda.time.LocalDate;
@@ -29,14 +28,20 @@ public class WeekCheckerTest {
         setTodayOnClock(wednesday);
         assertThat(sut.isThisWeek(wednesday), is(true));
     }
-    @Test public void testTodayPlusWeekIsNotThisWeek(){
+
+    @Test public void testYesterdayIsNotThisWeek() {
+        setTodayOnClock(wednesday.plusDays(1));
+        assertThat(sut.isThisWeek(wednesday), is(false));
+    }
+
+    @Test public void testTodayPlusWeekIsNotThisWeek() {
         setTodayOnClock(wednesday.minusWeeks(1));
         assertThat(sut.isThisWeek(wednesday), is(false));
     }
-    @Test public void testMondayIsThisWeek() {
-        LocalDate monday = wednesday.minusDays(2);
+    @Test public void testMondayIsNextWeek() {
+        LocalDate monday = wednesday.plusDays(5);
         setTodayOnClock(wednesday);
-        assertThat(sut.isThisWeek(monday), is(true));
+        assertThat(sut.isNextWeek(monday), is(true));
     }
 
     @Test public void testSundayIsThisWeek() {
