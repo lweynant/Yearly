@@ -3,6 +3,8 @@
         <item>Today</item>
         <item>Tomorrow</item>
         <item>Day after tomorrow</item>
+        <item>This week</item>
+        <item>Next week</item>
     </string-array>
 
     <string-array name="months">

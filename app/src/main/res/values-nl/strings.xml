@@ -4,6 +4,8 @@
         <item>vandaag</item>
         <item>morgen</item>
         <item>overmorgen</item>
+        <item>deze week</item>
+        <item>volgende week</item>
     </string-array>
     <string-array name="months">
         <item>null</item>
