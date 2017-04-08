@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -34,9 +35,9 @@ public class AddBirthdayActivityFragment extends BaseFragment implements DateSel
         AddBirthdayContract.FragmentView {
 
 
-    @Bind(R.id.edit_text_birthday_date) EditText dateEditText;
-    @Bind(R.id.edit_text_first_name) EditText nameEditText;
-    @Bind(R.id.edit_text_lastname) EditText lastNameEditText;
+    @Bind(R.id.edit_text_birthday_date) TextInputEditText dateEditText;
+    @Bind(R.id.edit_text_first_name) TextInputEditText nameEditText;
+    @Bind(R.id.edit_text_lastname) TextInputEditText lastNameEditText;
     private View fragmentView;
     @Inject DateSelector dateSelector;
     @Inject AddBirthdayContract.UserActionsListener userActionsListener;
