@@ -50,34 +50,63 @@
             >
 
             <TextView
+                android:paddingLeft="32dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="8dp"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+
+                android:text="@string/label_next_birthday"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/text_margin"
+                android:textColor="@color/black_semi_transparent"
+                tools:textColor="@color/black_semi_transparent"/>
+
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:elevation="2dp"
+                android:background="@color/cardview_light_background">
+                <include
+                    layout="@layout/countdown_layout_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="8dp"
+                android:paddingLeft="32dp"
+
+                android:paddingTop="16dp"
                 android:text="@string/label_birthday"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/accent"
-                android:paddingLeft="@dimen/activity_horizontal_margin"/>
 
+                android:textColor="@color/black_semi_transparent"
+                tools:textColor="@color/black_semi_transparent"/>
 
             <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/cardview_light_background"
-                    android:paddingLeft="@dimen/text_margin">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/cardview_light_background"
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/image_margin"
-                        android:src="@drawable/ic_calendar_grey600_24dp"/>
+                android:paddingLeft="@dimen/text_margin">
 
-                    <TextView
-                        android:id="@+id/text_birthday_date"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/text_margin"
-                        android:text="23 February"
-                        android:textAppearance="?android:attr/textAppearanceMedium"/>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/image_margin"
+                    android:src="@drawable/ic_calendar_grey600_24dp"/>
+
+                <TextView
+                    android:id="@+id/text_birthday_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/text_margin"
+                    android:textColor="@color/secondary_text"
+                    android:text="23 February"
+                    android:textAppearance="?android:attr/textAppearanceLarge"/>
             </LinearLayout>
             <View
                 android:layout_width="match_parent"
@@ -88,52 +117,20 @@
                 android:layout_height="match_parent"
                 android:background="@color/cardview_light_background"
                 android:paddingLeft="@dimen/text_margin">
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/image_margin"
-                        android:src="@drawable/ic_candle_grey600_24dp"/>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/image_margin"
+                    android:src="@drawable/ic_candle_grey600_24dp"/>
 
-                    <TextView
-                        android:id="@+id/text_birthday_age"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/text_margin"
-                        android:text="@string/question_mark"
-                        android:textAppearance="?android:attr/textAppearanceMedium"/>
-            </LinearLayout>
-
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/text_margin"
-                android:text="@string/label_next_birthday"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/accent"
-                android:paddingLeft="@dimen/text_margin"/>
-
-
-            <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:paddingLeft="@dimen/text_margin"
-                    android:background="@color/cardview_light_background">
-
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/image_margin"
-                        android:src="@drawable/ic_counter_grey600_24dp"/>
-
-                    <TextView
-                        android:id="@+id/text_birthday_in"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/text_margin"
-                        android:text="@string/question_mark"
-                        android:textAppearance="?android:attr/textAppearanceMedium"/>
+                <TextView
+                    android:id="@+id/text_birthday_age"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/text_margin"
+                    android:textColor="@color/secondary_text"
+                    android:text="@string/question_mark"
+                    android:textAppearance="?android:attr/textAppearanceLarge"/>
             </LinearLayout>
             <View
                 android:layout_width="match_parent"
@@ -146,20 +143,53 @@
                 android:paddingLeft="@dimen/text_margin">
 
                 <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/image_margin"
-                        android:src="@drawable/ic_label_outline_grey600_24dp"/>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/image_margin"
+                    android:src="@drawable/ic_label_outline_grey600_24dp"/>
 
-                    <TextView
-                        android:id="@+id/text_birthday_day"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/text_margin"
-                        android:text="Wednesday"
-                        android:textAppearance="?android:attr/textAppearanceMedium"/>
+                <TextView
+                    android:id="@+id/text_birthday_day"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/text_margin"
+                    android:textColor="@color/secondary_text"
+                    android:text="Wednesday"
+                    android:textAppearance="?android:attr/textAppearanceLarge"/>
 
             </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/background"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/text_margin"
+                android:background="@color/cardview_light_background">
+
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/image_margin"
+                    android:src="@drawable/ic_counter_grey600_24dp"/>
+
+                <TextView
+                    android:id="@+id/text_birthday_in"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/text_margin"
+                    android:textColor="@color/secondary_text"
+                    android:text="@string/question_mark"
+                    android:textAppearance="?android:attr/textAppearanceLarge"/>
+            </LinearLayout>
+
+
+
+
+
+
 
         </LinearLayout>
 

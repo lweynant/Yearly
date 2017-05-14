@@ -13,11 +13,13 @@ public class GroupEventsByDate implements IGroupEventsStrategy {
     private final IClock clock;
     private final IStringResources stringResources;
     private final String[] nearFuture;
+    private final WeekChecker weekChecker;
 
     public GroupEventsByDate(IClock clock, IStringResources stringResources) {
         this.clock = clock;
         this.stringResources = stringResources;
         this.nearFuture = stringResources.getStringArray(R.array.near_future);
+        this.weekChecker = new WeekChecker(clock);
     }
 
     @Override @NonNull public ListEventsContract.ListItem createListItem(IEvent event) {
@@ -39,6 +41,12 @@ public class GroupEventsByDate implements IGroupEventsStrategy {
         }
         else if (nearFuture.length > 2 && now.plusDays(2).isEqual(date)) {
             return stringResources.getStringArray(R.array.near_future)[2];
+        }
+        else if (nearFuture.length > 3 && weekChecker.isThisWeek(date)) {
+            return stringResources.getStringArray(R.array.near_future)[3];
+        }
+        else if (nearFuture.length > 4 && weekChecker.isNextWeek(date)) {
+            return stringResources.getStringArray(R.array.near_future)[4];
         }
         else if ((date.getMonthOfYear() == now.getMonthOfYear()) && date.getYear() > now.getYear()) {
             String string = stringResources.getStringArray(R.array.months)[e.getDate().getMonthOfYear()];

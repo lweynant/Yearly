@@ -16,7 +16,7 @@ public interface ShowBirthdayContract {
 
         void showUnknownAge();
 
-        void showNextEventIn(int days);
+        void showNextEventIn(int totaldays, int months, int weeks, int days);
 
         void showNameOfDay(String day);
 

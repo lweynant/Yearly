@@ -48,6 +48,9 @@ public class ShowBirthdayFragment extends BaseFragment implements ShowBirthdayCo
     @Bind(R.id.text_birthday_day) TextView dayTextView;
     @Bind(R.id.text_birthday_age) TextView ageTextView;
     @Bind(R.id.text_birthday_in) TextView inTextView;
+    @Bind(R.id.countdown_days) TextView countDownMonthsTextView;
+    @Bind(R.id.countdown_hours) TextView countDownWeeksTextView;
+    @Bind(R.id.countdown_minutes) TextView countDownDaysTextView;
     @Bind(R.id.toolbar_layout) CollapsingToolbarLayout toolbarLayout;
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.fab_edit_birthday) FloatingActionButton fab;
@@ -107,8 +110,11 @@ public class ShowBirthdayFragment extends BaseFragment implements ShowBirthdayCo
         ageTextView.setText(R.string.question_mark);
     }
 
-    @Override public void showNextEventIn(int days) {
-        inTextView.setText(Integer.toString(days));
+    @Override public void showNextEventIn(int totaldays, int months, int weeks, int days) {
+        inTextView.setText(String.format("%d",totaldays));
+        countDownDaysTextView.setText(String.format("%02d", days));
+        countDownWeeksTextView.setText(String.format("%02d", weeks));
+        countDownMonthsTextView.setText(String.format("%02d", months));
     }
 
     @Override public void showNameOfDay(String day) {

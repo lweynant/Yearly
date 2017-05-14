@@ -14,7 +14,10 @@ import com.lweynant.yearly.ui.IEventViewFactory;
 import com.lweynant.yearly.utils.RemoveAction;
 
 import org.joda.time.Days;
+import org.joda.time.Hours;
 import org.joda.time.LocalDate;
+import org.joda.time.Months;
+import org.joda.time.Weeks;
 import org.joda.time.Years;
 
 public class ShowBirthdayPresenter implements ShowBirthdayContract.UserActionsListener
@@ -70,8 +73,15 @@ public class ShowBirthdayPresenter implements ShowBirthdayContract.UserActionsLi
     }
 
     public void showNextEventInNbrDays(ShowBirthdayContract.FragmentView fragmentView, LocalDate date) {
-        int nbrDays = Days.daysBetween(clock.now(), date).getDays();
-        fragmentView.showNextEventIn(nbrDays);
+        LocalDate now = clock.now();
+        int totalNbrDays = Days.daysBetween(now, date).getDays();
+        int nbrMonths = Months.monthsBetween(now, date).getMonths();
+        now = now.plusMonths(nbrMonths);
+        int nbrWeeks = Weeks.weeksBetween(now, date).getWeeks();
+        now = now.plusWeeks(nbrWeeks);
+        int nbrDays = Days.daysBetween(now, date).getDays();
+
+        fragmentView.showNextEventIn(totalNbrDays, nbrMonths, nbrWeeks, nbrDays);
     }
 
     public void showNameOfDay(ShowBirthdayContract.FragmentView fragmentView, LocalDate date) {

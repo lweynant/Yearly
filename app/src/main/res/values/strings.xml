@@ -3,6 +3,8 @@
         <item>Today</item>
         <item>Tomorrow</item>
         <item>Day after tomorrow</item>
+        <item>This week</item>
+        <item>Next week</item>
     </string-array>
 
     <string-array name="months">
@@ -116,7 +118,9 @@
     <string name="add_birthday_ask_throw_away_modifications_cancel">Keep modifying</string>
     <string name="settings_app_version">App version</string>
     <string name="settings_about">about</string>
-    <string name="settings_app_code">App code</string>
+    <string name="countdown_layout_months">MONTHS</string>
+    <string name="countdown_layout_weeks">WEEKS</string>
+    <string name="countdown_layout_days">DAYS</string>
 
 
 </resources>

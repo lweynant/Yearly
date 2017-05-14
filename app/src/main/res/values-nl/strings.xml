@@ -4,6 +4,8 @@
         <item>vandaag</item>
         <item>morgen</item>
         <item>overmorgen</item>
+        <item>deze week</item>
+        <item>volgende week</item>
     </string-array>
     <string-array name="months">
         <item>null</item>
@@ -100,8 +102,8 @@
     <string name="label_next">Wanneer:</string>
     <string name="title_activity_show_birthday">Verjaardag</string>
     <string name="title_activity_add_event">Nw gebeurtenis toevoegen</string>
-    <string name="label_birthday">Geboortedag</string>
-    <string name="label_next_birthday">Volgende verjaardag</string>
+    <string name="label_birthday">geboortedag</string>
+    <string name="label_next_birthday">volgende verjaardag</string>
     <string name="at">op</string>
     <string name="menu_share">Delen</string>
     <string name="event">Gebeurtenis</string>
@@ -113,5 +115,10 @@
     <string name="add_birthday_ask_throw_away_modifications">Weet je zeker dat je de wijzigingen will weggooien?</string>
     <string name="add_birthday_ask_throw_away_modifications_cancel">Blijven bewerken</string>
     <string name="add_birthday_throw_away">Weggooien</string>
+    <string name="settings_about">over</string>
+    <string name="settings_app_version">App versie</string>
+    <string name="countdown_layout_months">MAANDEN</string>
+    <string name="countdown_layout_weeks">WEKEN</string>
+    <string name="countdown_layout_days">DAGEN</string>
 
 </resources>

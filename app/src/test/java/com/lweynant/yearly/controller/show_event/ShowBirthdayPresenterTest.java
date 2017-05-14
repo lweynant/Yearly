@@ -60,7 +60,7 @@ public class ShowBirthdayPresenterTest {
         verify(fragmentView).showFirstName("Joe");
         verify(fragmentView).showDate("21 Maart");
         verify(fragmentView).showNameOfDay("Monday");
-        verify(fragmentView).showNextEventIn(20);
+        verify(fragmentView).showNextEventIn(20, 0, 2, 6);
         verify(fragmentView).showUnknownAge();
         verify(fragmentView, never()).showAge(anyInt());
     }
@@ -72,7 +72,7 @@ public class ShowBirthdayPresenterTest {
         verify(fragmentView).showFirstName("Joe");
         verify(fragmentView).showDate("21 Maart 2000");
         verify(fragmentView).showNameOfDay("Monday");
-        verify(fragmentView).showNextEventIn(20);
+        verify(fragmentView).showNextEventIn(20, 0, 2, 6);
         verify(fragmentView).showAge(15);
         verify(fragmentView, never()).showUnknownAge();
     }
