@@ -121,6 +121,7 @@
     <string name="countdown_layout_months">MONTHS</string>
     <string name="countdown_layout_weeks">WEEKS</string>
     <string name="countdown_layout_days">DAYS</string>
+    <string name="title_activity_archive">ArchiveActivity</string>
 
 
 </resources>

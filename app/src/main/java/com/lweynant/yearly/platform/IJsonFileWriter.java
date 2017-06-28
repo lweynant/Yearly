@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 
 import java.io.IOException;
 
-public interface IJsonFileAccessor extends IJsonFileWriter {
-
-    JsonObject read() throws IOException;
+public interface IJsonFileWriter {
+    void write(JsonObject content) throws IOException;
 }

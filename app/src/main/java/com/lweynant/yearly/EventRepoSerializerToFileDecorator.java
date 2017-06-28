@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.IEvent;
 import com.lweynant.yearly.platform.IJsonFileAccessor;
+import com.lweynant.yearly.platform.IJsonFileWriter;
 
 import java.io.IOException;
 
@@ -12,9 +13,9 @@ import timber.log.Timber;
 
 public class EventRepoSerializerToFileDecorator extends Subscriber<IEvent> {
     private final EventRepoSerializer serializer;
-    private IJsonFileAccessor accessor;
+    private IJsonFileWriter accessor;
 
-    public EventRepoSerializerToFileDecorator(IJsonFileAccessor accessor, EventRepoSerializer eventRepoSerializer) {
+    public EventRepoSerializerToFileDecorator(IJsonFileWriter accessor, EventRepoSerializer eventRepoSerializer) {
         this.accessor = accessor;
         this.serializer = eventRepoSerializer;
     }

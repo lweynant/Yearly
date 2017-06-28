@@ -15,6 +15,7 @@ import com.lweynant.yearly.controller.AlarmGenerator;
 import com.lweynant.yearly.controller.BaseFragment;
 import com.lweynant.yearly.controller.SingleFragmentActivity;
 import com.lweynant.yearly.controller.add_event.AddBirthdayActivity;
+import com.lweynant.yearly.controller.archive.ArchiveActivity;
 import com.lweynant.yearly.controller.settings.SettingsActivity;
 import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.IEvent;
@@ -104,9 +105,10 @@ public class ListBirthdaysActivity extends SingleFragmentActivity implements Lis
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
         } else if (id == R.id.action_archive) {
-            Timber.i("archive");
-            Observable<IEvent> events = repo.getEventsSubscribedOnProperScheduler();
-            events.subscribe(new EventRepoSerializerToFileDecorator(fileAccessor, new EventRepoSerializer(clock)));
+            startActivity(new Intent(this, ArchiveActivity.class));
+//            Timber.i("archive");
+//            Observable<IEvent> events = repo.getEventsSubscribedOnProperScheduler();
+//            events.subscribe(new EventRepoSerializerToFileDecorator(fileAccessor, new EventRepoSerializer(clock)));
             return true;
         }
 

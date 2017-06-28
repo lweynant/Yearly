@@ -76,11 +76,19 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".controller.settings.SettingsActivity"
-                  android:parentActivityName=".controller.list_events.ListBirthdaysActivity"
-                  android:label="@string/action_settings"
-            >
-
+        <activity
+            android:name=".controller.settings.SettingsActivity"
+            android:label="@string/action_settings"
+            android:parentActivityName=".controller.list_events.ListBirthdaysActivity">
+        </activity>
+        <activity
+            android:name=".controller.archive.ArchiveActivity"
+            android:label="@string/title_activity_archive"
+            android:parentActivityName=".controller.list_events.ListBirthdaysActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.lweynant.yearly.controller.list_events.ListBirthdaysActivity"/>
         </activity>
     </application>
 
