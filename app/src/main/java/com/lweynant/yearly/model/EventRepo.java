@@ -1,23 +1,27 @@
 package com.lweynant.yearly.model;
 
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.lweynant.yearly.platform.IClock;
-import com.lweynant.yearly.platform.IJsonFileAccessor;
 import com.lweynant.yearly.platform.IJsonFileReader;
 import com.lweynant.yearly.platform.IUniqueIdGenerator;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -58,7 +62,7 @@ public class EventRepo implements IEventRepoModifier, IEventRepo {
     }
 
     private void handle(ITransaction.ITransactionItem transactionItem) {
-        switch (transactionItem.action()){
+        switch (transactionItem.action()) {
             case ADD:
                 add(transactionItem.event());
                 break;
@@ -72,21 +76,42 @@ public class EventRepo implements IEventRepoModifier, IEventRepo {
         }
     }
 
+    @Override public void restore(InputStream inputStream)
+    {
+        synchronized (cachedEvents) {
+            try {
+                BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
+                JsonParser parser = new JsonParser();
+                JsonObject jsonObject = parser.parse(in).getAsJsonObject();
+                cachedEvents = readEventsInMap(getEventsJsonArray(jsonObject));
+                in.close();
+                notifyListeners();
+            } catch (IOException e) {
+                Timber.e(e, "could not restore from jsonArray");
+            }
+        }
+    }
 
 
     @Override public Observable<IEvent> getEvents() {
         Timber.d("getEvents");
-        if (!cachedEvents.isEmpty()) {
-            return getEventsFromCache();
-        } else {
-            return getEventsFromFile();
+        synchronized (cachedEvents) {
+            if (cachedEvents.isEmpty()) {
+                try {
+                    cachedEvents = readEventsInMap(getEventsJsonArray());
+                } catch (IOException e) {
+                    Timber.e(e, "new events could not be retrieved");
+                }
+            }
+            return getEventsFromCache(cachedEvents);
         }
+
     }
+
     @Override public Observable<IEvent> getEventsSubscribedOnProperScheduler() {
         Timber.d("getEvents on proper scheduler");
         return getEvents().subscribeOn(Schedulers.io());
     }
-
 
 
     @Override public String getModificationId() {
@@ -121,59 +146,46 @@ public class EventRepo implements IEventRepoModifier, IEventRepo {
     }
 
 
-    private Observable<IEvent> getEventsFromFile() {
-        Timber.d("getEventsFromFile");
-        Observable<IEvent> observable = Observable.create(new Observable.OnSubscribe<IEvent>() {
-            @Override
-            public void call(Subscriber<? super IEvent> subscriber) {
-                cachedEvents.clear();
-                Map<String, IEvent> cache = new HashMap<String, IEvent>();
-                try {
-                    try {
-                        JsonObject jsonObject = eventRepoFileAccessor.read();
-                        JsonArray jsonArray = jsonObject.getAsJsonArray("events");
-                        if (jsonArray != null) {
-                            GsonBuilder builder = new GsonBuilder()
-                                    .excludeFieldsWithoutExposeAnnotation()
-                                    .registerTypeAdapter(Birthday.class, new BirthdayInstanceCreator(clock, uniqueIdGenerator));
-                            Gson gson = builder.create();
-                            for (int i = 0; i < jsonArray.size(); i++) {
-                                JsonObject eventObj = jsonArray.get(i).getAsJsonObject();
-                                Event event = gson.fromJson(eventObj, Birthday.class);
-                                if (!subscriber.isUnsubscribed()) {
-                                    Timber.d("calling onNext for %s", event.toString());
-                                    cache.put(event.getStringID(), event);
-                                    subscriber.onNext(event);
-                                } else {
-                                    break;
-                                }
-                            }
-                        }
-                        Timber.d("calling onCompleted");
-                        subscriber.onCompleted();
-                        cachedEvents = Collections.synchronizedMap(cache);
-                    } catch (FileNotFoundException e) {
-                        Timber.d("file not found, so we assume we have empty list");
-                        subscriber.onCompleted();
-                    }
-
-                } catch (Throwable t) {
-                    subscriber.onError(t);
-                }
-            }
-        });
-        return observable;
+    private JsonArray getEventsJsonArray() throws IOException {
+        JsonObject jsonObject = eventRepoFileAccessor.read();
+        if (jsonObject == null) return new JsonArray();
+        return getEventsJsonArray(jsonObject);
+    }
+    private JsonArray getEventsJsonArray(JsonObject jsonObject) {
+        JsonArray events = jsonObject.getAsJsonArray("events");
+        if (events == null) events = new JsonArray();
+        return events;
     }
 
-    private Observable<IEvent> getEventsFromCache() {
+    @NonNull private Gson getGson() {
+        GsonBuilder builder = new GsonBuilder()
+                .excludeFieldsWithoutExposeAnnotation()
+                .registerTypeAdapter(Birthday.class, new BirthdayInstanceCreator(clock, uniqueIdGenerator));
+        return builder.create();
+    }
+
+    private Map<String, IEvent> readEventsInMap(JsonArray jsonArray) throws IOException {
+
+        Gson gson = getGson();
+        Map<String, IEvent> cache = new HashMap<String, IEvent>();
+
+        for (int i = 0; i < jsonArray.size(); i++) {
+            JsonObject eventObj = jsonArray.get(i).getAsJsonObject();
+            Event event = gson.fromJson(eventObj, Birthday.class);
+            Timber.d("caching event %s", event.toString());
+            cache.put(event.getStringID(), event);
+        }
+        return cache;
+    }
+
+    private Observable<IEvent> getEventsFromCache(Map<String, IEvent> cache) {
         Timber.d("getEventsFromCache");
         Observable<IEvent> observable = Observable.create(new Observable.OnSubscribe<IEvent>() {
             @Override
             public void call(Subscriber<? super IEvent> subscriber) {
-                synchronized (cachedEvents) {
                     try {
-                        if (cachedEvents != null) {
-                            for (IEvent event : cachedEvents.values()) {
+                        if (cache != null) {
+                            for (IEvent event : cache.values()) {
                                 if (!subscriber.isUnsubscribed()) {
                                     Timber.d("call onNext for %s", event.toString());
                                     subscriber.onNext(event);
@@ -190,7 +202,6 @@ public class EventRepo implements IEventRepoModifier, IEventRepo {
                         subscriber.onError(t);
                     }
                 }
-            }
         });
         return observable;
     }

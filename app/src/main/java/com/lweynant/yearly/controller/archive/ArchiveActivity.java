@@ -21,6 +21,8 @@ import com.google.android.gms.drive.MetadataChangeSet;
 import com.google.android.gms.drive.OpenFileActivityBuilder;
 import com.lweynant.yearly.BaseYearlyAppComponent;
 import com.lweynant.yearly.EventRepoSerializerToFileDecorator;
+import com.lweynant.yearly.IStringResources;
+import com.lweynant.yearly.R;
 import com.lweynant.yearly.controller.BaseActivity;
 import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.IEvent;
@@ -45,6 +47,7 @@ public class ArchiveActivity extends BaseActivity implements GoogleApiClient.OnC
     private GoogleApiClient mGoogleApiClient;
     @Inject IClock clock;
     @Inject IEventRepo repo;
+    @Inject IStringResources stringResources;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -125,7 +128,7 @@ public class ArchiveActivity extends BaseActivity implements GoogleApiClient.OnC
                     DriveContents driveContents = result.getDriveContents();
 
                     MetadataChangeSet metadataChangeSet = new MetadataChangeSet.Builder()
-                            .setMimeType("text/html")
+                            .setMimeType("text/plain")
                             .setTitle(getBackupFileName()).build();
                     IntentSender intentSender = Drive.DriveApi
                             .newCreateFileActivityBuilder()
@@ -194,10 +197,10 @@ public class ArchiveActivity extends BaseActivity implements GoogleApiClient.OnC
         @Override
         protected void onPostExecute(Boolean result) {
             if (!result) {
-                showMessage("Error while editing contents");
+                showMessage(stringResources.getString(R.string.archive_activity_failed));
                 return;
             }
-            showMessage("Successfully edited contents");
+            showMessage(stringResources.getString(R.string.archive_activity_success));
         }
     }
 }

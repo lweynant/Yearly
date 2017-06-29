@@ -16,24 +16,32 @@ import com.google.android.gms.drive.DriveContents;
 import com.google.android.gms.drive.DriveFile;
 import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.OpenFileActivityBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.lweynant.yearly.BaseYearlyAppComponent;
 import com.lweynant.yearly.EventRepoSerializerToFileDecorator;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.IEvent;
+import com.lweynant.yearly.model.IEventRepo;
 import com.lweynant.yearly.platform.GoogleDriveApiClientAsyncTask;
 import com.lweynant.yearly.utils.JsonStreamWriter;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+
+import javax.inject.Inject;
 
 import rx.Observable;
 import rx.observables.BlockingObservable;
 import timber.log.Timber;
 
-public class RestoreActivity extends BaseGDriveApiClientActivity {
+public class RestoreActivity extends BaseGDriveApiClientActivity implements RestoreEventsAsyncTask.ICallback {
 
+    @Inject IEventRepo repo;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,54 +77,24 @@ public class RestoreActivity extends BaseGDriveApiClientActivity {
                 if (resultCode == RESULT_OK) {
                     DriveId driveId = (DriveId) data.getParcelableExtra(
                             OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
-                    showMessage("Selected file's ID: " + driveId);
+                    Timber.d("Selected file's ID: " + driveId);
+                    DriveFile file = driveId.asDriveFile();
+                    new RestoreEventsAsyncTask(this, repo, this).execute(file);
                 }
-                finish();
                 break;
             default:
                 super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
-    public class RestoreEventsAsyncTask extends GoogleDriveApiClientAsyncTask<DriveFile, Void, Boolean> {
 
-        public RestoreEventsAsyncTask(Context context) {
-            super(context);
-        }
+    @Override public void restoreSucceeded() {
+        showMessage("restore from backup succeeded");
+        finish();
+    }
 
-        @Override
-        protected Boolean doInBackgroundConnected(DriveFile... args) {
-            Timber.d("doInBackgroundConnected");
-            DriveFile file = args[0];
-            DriveApi.DriveContentsResult driveContentsResult = file.open(
-                    getGoogleApiClient(), DriveFile.MODE_READ_ONLY, null).await();
-            if (!driveContentsResult.getStatus().isSuccess()) {
-                Timber.e("could not read file");
-                return false;
-            }
-            DriveContents driveContents = driveContentsResult.getDriveContents();
-            InputStream inputStream = driveContents.getInputStream();
-            readFile(inputStream);
-            com.google.android.gms.common.api.Status status =
-                    driveContents.commit(getGoogleApiClient(), null).await();
-            boolean success = status.getStatus().isSuccess();
-            if (success) Timber.d("successfully commited content to file");
-            else Timber.e("failed to commit content to file");
-            return success;
-        }
-
-        private void readFile(InputStream inputStream) {
-            Timber.d("readFile");
-        }
-
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            if (!result) {
-                showMessage("Error while editing contents");
-                return;
-            }
-            showMessage("Successfully edited contents");
-        }
+    @Override public void restoreFailed() {
+        showMessage("restore from backup failed");
+        finish();
     }
 }
