@@ -90,6 +90,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.lweynant.yearly.controller.list_events.ListBirthdaysActivity"/>
         </activity>
+        <activity
+            android:name=".controller.archive.RestoreActivity"
+            android:label="@string/title_activity_restore"
+            android:parentActivityName=".controller.list_events.ListBirthdaysActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.lweynant.yearly.controller.list_events.ListBirthdaysActivity"/>
+        </activity>
     </application>
 
 </manifest>

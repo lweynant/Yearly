@@ -7,6 +7,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IJsonFileAccessor;
+import com.lweynant.yearly.platform.IJsonFileReader;
 import com.lweynant.yearly.platform.IUniqueIdGenerator;
 
 import java.io.FileNotFoundException;
@@ -26,14 +27,14 @@ import timber.log.Timber;
 
 public class EventRepo implements IEventRepoModifier, IEventRepo {
     private final IUniqueIdGenerator uniqueIdGenerator;
-    public IJsonFileAccessor eventRepoFileAccessor = null;
+    public IJsonFileReader eventRepoFileAccessor = null;
     private IClock clock = null;
     private Map<String, IEvent> cachedEvents = Collections.synchronizedMap(new HashMap<String, IEvent>());
     private List<IEventRepoListener> listeners = new ArrayList<>();
     private String modificationId;
 
 
-    public EventRepo(IJsonFileAccessor eventRepoFileAccessor, IClock clock, IUniqueIdGenerator uniqueIdGenerator) {
+    public EventRepo(IJsonFileReader eventRepoFileAccessor, IClock clock, IUniqueIdGenerator uniqueIdGenerator) {
         Timber.d("create event repo with file accessor %s", eventRepoFileAccessor.toString());
         this.clock = clock;
         this.uniqueIdGenerator = uniqueIdGenerator;
@@ -70,6 +71,8 @@ public class EventRepo implements IEventRepoModifier, IEventRepo {
                 break;
         }
     }
+
+
 
     @Override public Observable<IEvent> getEvents() {
         Timber.d("getEvents");

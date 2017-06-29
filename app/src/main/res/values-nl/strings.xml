@@ -120,5 +120,6 @@
     <string name="countdown_layout_months">MAANDEN</string>
     <string name="countdown_layout_weeks">WEKEN</string>
     <string name="countdown_layout_days">DAGEN</string>
+    <string name="action_restore">Restore</string>
 
 </resources>

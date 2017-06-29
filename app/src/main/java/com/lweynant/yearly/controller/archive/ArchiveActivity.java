@@ -6,18 +6,12 @@ import android.content.IntentSender;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveApi;
 import com.google.android.gms.drive.DriveContents;
@@ -27,7 +21,6 @@ import com.google.android.gms.drive.MetadataChangeSet;
 import com.google.android.gms.drive.OpenFileActivityBuilder;
 import com.lweynant.yearly.BaseYearlyAppComponent;
 import com.lweynant.yearly.EventRepoSerializerToFileDecorator;
-import com.lweynant.yearly.R;
 import com.lweynant.yearly.controller.BaseActivity;
 import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.IEvent;
@@ -38,7 +31,6 @@ import com.lweynant.yearly.utils.JsonStreamWriter;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Date;
 
 import javax.inject.Inject;
 
@@ -57,19 +49,6 @@ public class ArchiveActivity extends BaseActivity implements GoogleApiClient.OnC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Timber.d("onCreate");
-        setContentView(R.layout.activity_archive);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this, this)
                 .addApi(Drive.API)
@@ -86,6 +65,7 @@ public class ArchiveActivity extends BaseActivity implements GoogleApiClient.OnC
     @Override public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Timber.d("onConnectionFailed");
         if (connectionResult.hasResolution()) {
+            //todo check, I think that for enableAutoManage api client this is handled
             try {
                 Timber.i("calling connectionResult.startResolutionForResult()");
                 connectionResult.startResolutionForResult(this, RESOLVE_CONNECTION_REQUEST_CODE);
@@ -116,7 +96,7 @@ public class ArchiveActivity extends BaseActivity implements GoogleApiClient.OnC
                             OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
                     Timber.i("File created with ID: " + driveId);
                     DriveFile file = driveId.asDriveFile();
-                    new EditContentsAsyncTask(getApplicationContext()).execute(file);
+                    new ArchiveEventsAsyncTask(getApplicationContext()).execute(file);
                 }
                 finish();
                 break;
@@ -170,9 +150,9 @@ public class ArchiveActivity extends BaseActivity implements GoogleApiClient.OnC
         return name;
     }
 
-    public class EditContentsAsyncTask extends GoogleDriveApiClientAsyncTask<DriveFile, Void, Boolean> {
+    public class ArchiveEventsAsyncTask extends GoogleDriveApiClientAsyncTask<DriveFile, Void, Boolean> {
 
-        public EditContentsAsyncTask(Context context) {
+        public ArchiveEventsAsyncTask(Context context) {
             super(context);
         }
 
@@ -203,7 +183,7 @@ public class ArchiveActivity extends BaseActivity implements GoogleApiClient.OnC
         }
 
         private void writeFile(OutputStream outputStream) throws IOException {
-            Observable<IEvent> events = repo.getEventsSubscribedOnProperScheduler();
+            Observable<IEvent> events = repo.getEvents();
             Timber.i("archive");
             JsonStreamWriter streamWriter = new JsonStreamWriter(outputStream);
             BlockingObservable blockingEvents = BlockingObservable.from(events);
