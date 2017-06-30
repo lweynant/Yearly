@@ -50,6 +50,7 @@ public abstract class BaseGDriveApiClientActivity extends BaseActivity implement
         return mGoogleApiClient;
     }
     protected void showMessage(String message) {
+        Timber.d("showMessage: %s", message);
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 

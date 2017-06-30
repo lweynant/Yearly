@@ -96,12 +96,12 @@ public class RestoreActivity extends BaseGDriveApiClientActivity implements Rest
 
 
     @Override public void restoreSucceeded() {
-        showMessage("restore from backup succeeded");
+        showMessage(stringResources.getString(R.string.restore_activity_success));
         finish();
     }
 
     @Override public void restoreFailed() {
-        showMessage("restore from backup failed");
+        showMessage(stringResources.getString(R.string.restore_activity_failed));
         finish();
     }
 }

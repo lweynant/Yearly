@@ -126,6 +126,8 @@
     <string name="action_restore">Restore</string>
     <string name="archive_activity_failed">Backup creation failed</string>
     <string name="archive_activity_success">Backup succeeded</string>
+    <string name="restore_activity_success">Restore from backup succeeded</string>
+    <string name="restore_activity_failed">Restore from backup failed</string>
 
 
 </resources>

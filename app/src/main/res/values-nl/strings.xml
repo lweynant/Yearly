@@ -126,5 +126,7 @@
     <string name="title_activity_restore">Selecteer backup bestand</string>
     <string name="title_activity_archive">Bewaar backup</string>
     <string name="question_mark">\?</string>
+    <string name="restore_activity_failed">Herstel van backup mislukt.</string>
+    <string name="restore_activity_success">Herstel van backup gelukt</string>
 
 </resources>
