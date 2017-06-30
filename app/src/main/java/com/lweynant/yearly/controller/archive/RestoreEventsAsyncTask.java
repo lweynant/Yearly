@@ -40,14 +40,9 @@ public class RestoreEventsAsyncTask extends GoogleDriveApiClientAsyncTask<DriveF
         }
         DriveContents driveContents = driveContentsResult.getDriveContents();
         InputStream inputStream = driveContents.getInputStream();
-        readFile(inputStream);
-
-        return true;
-    }
-
-    private void readFile(InputStream inputStream) {
         Timber.d("readFile");
-        repo.restore(inputStream);
+        return repo.restore(inputStream);
+
     }
 
 

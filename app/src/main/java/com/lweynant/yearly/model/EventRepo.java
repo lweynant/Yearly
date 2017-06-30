@@ -76,7 +76,7 @@ public class EventRepo implements IEventRepoModifier, IEventRepo {
         }
     }
 
-    @Override public void restore(InputStream inputStream)
+    @Override public boolean restore(InputStream inputStream)
     {
         synchronized (cachedEvents) {
             try {
@@ -86,8 +86,10 @@ public class EventRepo implements IEventRepoModifier, IEventRepo {
                 cachedEvents = readEventsInMap(getEventsJsonArray(jsonObject));
                 in.close();
                 notifyListeners();
-            } catch (IOException e) {
+                return true;
+            } catch (Throwable e) {
                 Timber.e(e, "could not restore from jsonArray");
+                return false;
             }
         }
     }

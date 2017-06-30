@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +21,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.lweynant.yearly.BaseYearlyAppComponent;
 import com.lweynant.yearly.EventRepoSerializerToFileDecorator;
+import com.lweynant.yearly.IStringResources;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.model.EventRepoSerializer;
 import com.lweynant.yearly.model.IEvent;
@@ -42,6 +44,7 @@ import timber.log.Timber;
 public class RestoreActivity extends BaseGDriveApiClientActivity implements RestoreEventsAsyncTask.ICallback {
 
     @Inject IEventRepo repo;
+    @Inject IStringResources stringResources;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +63,8 @@ public class RestoreActivity extends BaseGDriveApiClientActivity implements Rest
         super.onConnected(connectionHint);
         IntentSender intentSender = Drive.DriveApi
                 .newOpenFileActivityBuilder()
-                .setMimeType(new String[] { "text/plain", "text/html" })
+                .setMimeType(getMimeTypes())
+                .setActivityTitle(stringResources.getString(R.string.title_activity_restore))
                 .build(getGoogleApiClient());
         try {
             startIntentSenderForResult(
@@ -80,6 +84,9 @@ public class RestoreActivity extends BaseGDriveApiClientActivity implements Rest
                     Timber.d("Selected file's ID: " + driveId);
                     DriveFile file = driveId.asDriveFile();
                     new RestoreEventsAsyncTask(this, repo, this).execute(file);
+                }
+                else {
+                    finish();
                 }
                 break;
             default:

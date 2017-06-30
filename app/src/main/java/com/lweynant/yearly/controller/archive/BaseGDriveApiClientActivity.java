@@ -54,4 +54,11 @@ public abstract class BaseGDriveApiClientActivity extends BaseActivity implement
     }
 
 
+    @NonNull protected String[] getMimeTypes() {
+        return new String[] {getMimeType()};
+    }
+
+    @NonNull protected String getMimeType() {
+        return "text/plain";
+    }
 }

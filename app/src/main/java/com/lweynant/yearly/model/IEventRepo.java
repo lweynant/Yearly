@@ -9,7 +9,7 @@ public interface IEventRepo {
 
     void removeListener(IEventRepoListener listener);
 
-    void restore(InputStream inputStream);
+    boolean restore(InputStream inputStream);
 
     Observable<IEvent> getEvents();
 

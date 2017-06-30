@@ -121,8 +121,8 @@
     <string name="countdown_layout_months">MONTHS</string>
     <string name="countdown_layout_weeks">WEEKS</string>
     <string name="countdown_layout_days">DAYS</string>
-    <string name="title_activity_archive">ArchiveActivity</string>
-    <string name="title_activity_restore">RestoreActivity</string>
+    <string name="title_activity_archive">Store backup</string>
+    <string name="title_activity_restore">Select backup file</string>
     <string name="action_restore">Restore</string>
     <string name="archive_activity_failed">Backup creation failed</string>
     <string name="archive_activity_success">Backup succeeded</string>
