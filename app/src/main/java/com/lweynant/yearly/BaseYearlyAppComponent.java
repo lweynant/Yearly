@@ -3,6 +3,7 @@ package com.lweynant.yearly;
 import com.lweynant.yearly.controller.add_event.AddBirthdayActivityFragment;
 import com.lweynant.yearly.controller.add_event.AddEventActivityFragment;
 import com.lweynant.yearly.controller.archive.ArchiveActivity;
+import com.lweynant.yearly.controller.archive.BaseGDriveApiClientActivity;
 import com.lweynant.yearly.controller.archive.RestoreActivity;
 import com.lweynant.yearly.controller.list_events.ListEventsActivity;
 import com.lweynant.yearly.controller.list_events.ListEventsActivityFragment;
@@ -38,4 +39,6 @@ public interface BaseYearlyAppComponent {
     void inject(ArchiveActivity archiveActivity);
 
     void inject(RestoreActivity restoreActivity);
+
+    void inject(BaseGDriveApiClientActivity baseGDriveApiClientActivity);
 }

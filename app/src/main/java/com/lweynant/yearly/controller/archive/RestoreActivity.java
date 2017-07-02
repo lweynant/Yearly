@@ -45,6 +45,7 @@ public class RestoreActivity extends BaseGDriveApiClientActivity implements Rest
 
     @Inject IEventRepo repo;
     @Inject IStringResources stringResources;
+    @Inject CreateRestoreBackupFileIntentSenderAction createRestoreBackupFileIntentSenderAction;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,17 +62,16 @@ public class RestoreActivity extends BaseGDriveApiClientActivity implements Rest
     @Override
     public void onConnected(Bundle connectionHint) {
         super.onConnected(connectionHint);
-        IntentSender intentSender = Drive.DriveApi
-                .newOpenFileActivityBuilder()
-                .setMimeType(getMimeTypes())
-                .setActivityTitle(stringResources.getString(R.string.title_activity_restore))
-                .build(getGoogleApiClient());
-        try {
-            startIntentSenderForResult(
-                    intentSender, REQUEST_CODE_OPENER, null, 0, 0, 0);
-        } catch (IntentSender.SendIntentException e) {
-            Timber.e(e, "Unable to send intent");
-        }
+        createRestoreBackupFileIntentSenderAction.execute(getBackupFolderName(),getMimeTypes(), getGoogleApiClient(), new CreateRestoreBackupFileIntentSenderAction.Callback() {
+            @Override public void onResult(IntentSender intentSender) {
+                try {
+                    startIntentSenderForResult(
+                            intentSender, REQUEST_CODE_OPENER, null, 0, 0, 0);
+                } catch (IntentSender.SendIntentException e) {
+                    Timber.e(e, "Unable to send intent");
+                }
+            }
+        });
     }
 
     @Override

@@ -12,7 +12,11 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.drive.Drive;
+import com.lweynant.yearly.BaseYearlyAppComponent;
 import com.lweynant.yearly.controller.BaseActivity;
+import com.lweynant.yearly.platform.IClock;
+
+import javax.inject.Inject;
 
 import timber.log.Timber;
 
@@ -21,6 +25,7 @@ public abstract class BaseGDriveApiClientActivity extends BaseActivity implement
     private static final int RESOLVE_CONNECTION_REQUEST_CODE = 1;
     private GoogleApiClient mGoogleApiClient;
 
+    @Inject IClock clock;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +42,10 @@ public abstract class BaseGDriveApiClientActivity extends BaseActivity implement
 
     }
 
+    @Override protected void injectDependencies(BaseYearlyAppComponent component) {
+        component.inject(this);
+    }
+
     @Override public void onConnectionSuspended(int i) {
         Timber.d("onConnectionSuspended %d", i);
     }
@@ -51,9 +60,18 @@ public abstract class BaseGDriveApiClientActivity extends BaseActivity implement
     }
     protected void showMessage(String message) {
         Timber.d("showMessage: %s", message);
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
+    protected String getBackupFolderName() {
+        return "Yearly";
+    }
+    protected String getBackupFileName() {
+        String name = new String("yearly-");
+        name += clock.timestamp() + ".json";
+        Timber.d("backup file: %s", name);
+        return name;
+    }
 
     @NonNull protected String[] getMimeTypes() {
         return new String[] {getMimeType()};

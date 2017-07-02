@@ -9,6 +9,10 @@ import com.lweynant.yearly.controller.add_event.AddBirthdayContract;
 import com.lweynant.yearly.controller.add_event.AddBirthdayPresenter;
 import com.lweynant.yearly.controller.add_event.AddEventContract;
 import com.lweynant.yearly.controller.add_event.AddEventPresenter;
+import com.lweynant.yearly.controller.archive.CreateRestoreBackupFileIntentSenderAction;
+import com.lweynant.yearly.controller.archive.CreateSaveBackupFileIntentSenderAction;
+import com.lweynant.yearly.controller.archive.CreateBackupFolderAction;
+import com.lweynant.yearly.controller.archive.HasBackupFolderAction;
 import com.lweynant.yearly.controller.list_events.EventsAdapter;
 import com.lweynant.yearly.controller.list_events.GroupEventsByDate;
 import com.lweynant.yearly.controller.list_events.IEventsLoader;
@@ -94,5 +98,18 @@ public class ControllerModule {
     }
 
 
-
+    @Provides HasBackupFolderAction providesHasBackupFolderAction(){
+        return new HasBackupFolderAction();
+    }
+    @Provides CreateBackupFolderAction providesCreateBackupFolderAction(HasBackupFolderAction hasBackupFolderAction) {
+        return new CreateBackupFolderAction(hasBackupFolderAction);
+    }
+    @Provides
+    CreateSaveBackupFileIntentSenderAction providesCreateBackupFileIntentSenderAction(CreateBackupFolderAction createBackupFolderAction,
+                                                                                      IStringResources stringResources){
+        return new CreateSaveBackupFileIntentSenderAction(createBackupFolderAction, stringResources);
+    }
+    @Provides CreateRestoreBackupFileIntentSenderAction providesCreateRestoreBackupFileIntentSenderAction(HasBackupFolderAction hasBackupFolderAction, IStringResources stringResources){
+        return new CreateRestoreBackupFileIntentSenderAction(hasBackupFolderAction, stringResources);
+    }
 }
