@@ -84,20 +84,20 @@
         <activity
             android:name=".controller.archive.ArchiveActivity"
             android:label="@string/title_activity_archive"
-            android:parentActivityName=".controller.list_events.ListBirthdaysActivity"
+            android:parentActivityName=".controller.settings.SettingsActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.lweynant.yearly.controller.list_events.ListBirthdaysActivity"/>
+                android:value="com.lweynant.yearly.controller.settings.SettingsActivity"/>
         </activity>
         <activity
             android:name=".controller.archive.RestoreActivity"
             android:label="@string/title_activity_restore"
-            android:parentActivityName=".controller.list_events.ListBirthdaysActivity"
+            android:parentActivityName=".controller.settings.SettingsActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.lweynant.yearly.controller.list_events.ListBirthdaysActivity"/>
+                android:value="com.lweynant.yearly.controller.settings.SettingsActivity"/>
         </activity>
     </application>
 

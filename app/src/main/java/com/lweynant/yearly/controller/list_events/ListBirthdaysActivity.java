@@ -105,15 +105,6 @@ public class ListBirthdaysActivity extends SingleFragmentActivity implements Lis
         if (id == R.id.action_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
-        } else if (id == R.id.action_archive) {
-            startActivity(new Intent(this, ArchiveActivity.class));
-//            Timber.i("archive");
-//            Observable<IEvent> events = repo.getEventsSubscribedOnProperScheduler();
-//            events.subscribe(new EventRepoSerializerToFileDecorator(fileAccessor, new EventRepoSerializer(clock)));
-            return true;
-        } else if (id == R.id.action_restore) {
-            startActivity(new Intent(this, RestoreActivity.class));
-            return true;
         }
 
 

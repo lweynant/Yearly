@@ -4,18 +4,9 @@
     tools:rstring=".EventsActivity">
 
     <item
-        android:id="@+id/action_archive"
-        android:orderInCategory="100"
-        android:title="@string/action_archive"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_restore"
-        android:orderInCategory="100"
-        android:title="@string/action_restore"
-        app:showAsAction="never" />
-    <item
         android:id="@+id/action_settings"
+        android:icon="@drawable/ic_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"
-        app:showAsAction="never" />
+        app:showAsAction="always"/>
 </menu>

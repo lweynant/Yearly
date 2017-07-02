@@ -110,14 +110,14 @@
     <string name="event">Event</string>
     <string name="delete">Delete</string>
     <string name="title_activity_list_birthdays">Birthdays</string>
-    <string name="alarm">alarm</string>
-    <string name="current_alarm">Current alarm</string>
+    <string name="settings_preferences_category_alarm">Alarm</string>
+    <string name="settings_preferences_current_alarm">Current alarm</string>
     <string name="action_save">save</string>
     <string name="add_birthday_throw_away">throw away</string>
     <string name="add_birthday_ask_throw_away_modifications">Are you sure you want to throw away the changes?</string>
     <string name="add_birthday_ask_throw_away_modifications_cancel">Keep modifying</string>
-    <string name="settings_app_version">App version</string>
-    <string name="settings_about">about</string>
+    <string name="settings_preferences_app_version">App version</string>
+    <string name="settings_preferences_category_about">About</string>
     <string name="countdown_layout_months">MONTHS</string>
     <string name="countdown_layout_weeks">WEEKS</string>
     <string name="countdown_layout_days">DAYS</string>
@@ -128,6 +128,10 @@
     <string name="archive_activity_success">Backup succeeded</string>
     <string name="restore_activity_success">Restore from backup succeeded</string>
     <string name="restore_activity_failed">Restore from backup failed</string>
+    <string name="settings_preference_category_backup">Backup</string>
+    <string name="settings_preference_make_backup">Make backup</string>
+    <string name="settings_preference_restore_backup">Restore from backup</string>
+    <string name="settings_alarm_set">Alarm set</string>
 
 
 </resources>

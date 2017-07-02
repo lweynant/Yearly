@@ -149,15 +149,6 @@ public class ListEventsActivity extends SingleFragmentActivity implements ListEv
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
-        } else {
-            if (id == R.id.action_archive) {
-                Timber.i("archive");
-                Observable<IEvent> events = repo.getEventsSubscribedOnProperScheduler();
-                events.subscribe(new EventRepoSerializerToFileDecorator(fileAccessor, new EventRepoSerializer(clock)));
-            } else if (id == R.id.action_set_alarm) {
-                Timber.i("set alarm");
-                alarmGenerator.generate(repo.getEventsSubscribedOnProperScheduler(), clock.now(), NotificationTime.START_OF_DAY);
-            }
         }
 
         return super.onOptionsItemSelected(item);

@@ -109,14 +109,14 @@
     <string name="event">Gebeurtenis</string>
     <string name="delete">Verwijder</string>
     <string name="title_activity_list_birthdays">Verjaardagen</string>
-    <string name="current_alarm">Huidig alarm</string>
+    <string name="settings_preferences_current_alarm">Huidig alarm</string>
     <string name="action_save">opslaan</string>
     <string name="action_archive">Opslaan</string>
     <string name="add_birthday_ask_throw_away_modifications">Weet je zeker dat je de wijzigingen will weggooien?</string>
     <string name="add_birthday_ask_throw_away_modifications_cancel">Blijven bewerken</string>
     <string name="add_birthday_throw_away">Weggooien</string>
-    <string name="settings_about">over</string>
-    <string name="settings_app_version">App versie</string>
+    <string name="settings_preferences_category_about">Over</string>
+    <string name="settings_preferences_app_version">App versie</string>
     <string name="countdown_layout_months">MAANDEN</string>
     <string name="countdown_layout_weeks">WEKEN</string>
     <string name="countdown_layout_days">DAGEN</string>
@@ -128,5 +128,10 @@
     <string name="question_mark">\?</string>
     <string name="restore_activity_failed">Herstel van backup mislukt.</string>
     <string name="restore_activity_success">Herstel van backup gelukt</string>
+    <string name="settings_alarm_set">Alarm gezet</string>
+    <string name="settings_preference_category_backup">Backup</string>
+    <string name="settings_preference_make_backup">Maak backup</string>
+    <string name="settings_preference_restore_backup">Herstel van backup</string>
+    <string name="settings_preferences_category_alarm">Alarm</string>
 
 </resources>
