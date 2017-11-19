@@ -3,6 +3,8 @@ package com.lweynant.yearly;
 import android.app.Instrumentation;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.test.espresso.Espresso;
+import android.support.test.espresso.intent.Intents;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -19,7 +21,9 @@ import com.lweynant.yearly.platform.IUniqueIdGenerator;
 import com.lweynant.yearly.ui.ViewModule;
 
 import org.joda.time.LocalDate;
+import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -85,20 +89,21 @@ public class ShowBirthdayActivityIntentTest  {
 
     }
 
+    @Ignore
     @Test public void testIntentSend(){
         Intent startIntent = new Intent();
         setBirthdayOnIntent("Fred", today.plusDays(1), startIntent);
         activityTestRule.launchActivity(startIntent);
 
         onView(withId(R.id.menu_item_share)).perform(click());
+
         intended(matchShareIntentWrappedInChooser(allOf(hasAction(equalTo(Intent.ACTION_SEND)),
                 hasExtras(hasEntry(equalTo(Intent.EXTRA_TEXT),
                         allOf(containsString(getTargetContext().getString(R.string.tomorrow)),
                                 containsString("Fred")))))));
 
-
     }
-
+    @Ignore
     @Test public void testIntentSend_NewDay(){
         Intent startIntent = new Intent();
         setBirthdayOnIntent("Fred", today.plusDays(1), startIntent);

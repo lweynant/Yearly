@@ -25,11 +25,13 @@ package com.lweynant.yearly.action;
  */
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.support.test.espresso.UiController;
 import android.support.test.espresso.ViewAction;
 import android.support.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import android.support.test.runner.lifecycle.Stage;
+import android.support.v4.view.ViewPager;
 import android.view.View;
 
 import org.hamcrest.Matcher;
@@ -61,7 +63,8 @@ public class OrientationChangeAction implements ViewAction {
     @Override
     public void perform(UiController uiController, View view) {
         uiController.loopMainThreadUntilIdle();
-        final Activity activity = (Activity) view.getContext();
+
+        final Activity activity = (Activity) view.findViewById(android.R.id.content).getContext();
         activity.setRequestedOrientation(orientation);
 
         Collection<Activity> resumedActivities = ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(Stage.RESUMED);
