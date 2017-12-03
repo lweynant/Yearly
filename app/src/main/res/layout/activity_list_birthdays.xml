@@ -15,7 +15,6 @@
 
         android:fitsSystemWindows="true"
         android:theme="@style/AppTheme.AppBarOverlay"
-        app:layout_behavior="com.lweynant.yearly.ui.FlingBehavior"
         >
 
         <android.support.design.widget.CollapsingToolbarLayout
