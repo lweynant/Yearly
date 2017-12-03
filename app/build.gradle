@@ -35,9 +35,7 @@ android {
         exclude 'META-INF/maven/com.google.dagger/dagger/pom.xml'
     }
 }
-retrolambda {
-    jvmArgs '-noverify'
-}
+
 
 final DEXMAKER_VERSION = '1.2'
 final ESPRESSO_VERSION = '2.2.2'
