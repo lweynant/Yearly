@@ -34,6 +34,7 @@ public class SettingsActivity extends BaseActivity implements SettingsFragment.C
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsFragment())
                 .commit();
+        setTheme(R.style.Preferences);
     }
 
     @Override protected void injectDependencies(BaseYearlyAppComponent component) {
