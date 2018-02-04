@@ -7,5 +7,9 @@ public interface IClock {
 
     int hour();
 
+    int minutes();
+
     String timestamp();
+
+    int seconds();
 }

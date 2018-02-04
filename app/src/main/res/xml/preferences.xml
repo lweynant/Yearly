@@ -27,6 +27,20 @@
             android:enabled="true"
             android:shouldDisableView="false"
             android:selectable="true"/>
+        <Preference
+            android:key="com.lweynant.alarm_set_at"
+            android:defaultValue=""
+            android:title="@string/settings_preferences_alarm_set_at"
+            android:enabled="true"
+            android:shouldDisableView="false"
+            android:selectable="false"/>
+        <Preference
+        android:key="com.lweynant.last_notification"
+        android:defaultValue=""
+        android:title="@string/settings_preferences_last_notification"
+        android:enabled="true"
+        android:shouldDisableView="false"
+        android:selectable="false"/>
 
     </PreferenceCategory>
     <PreferenceCategory

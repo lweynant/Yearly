@@ -1,6 +1,7 @@
 package com.lweynant.yearly;
 
 import com.lweynant.yearly.platform.IAlarm;
+import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IPreferences;
 import com.lweynant.yearly.platform.IRawAlarm;
 
@@ -21,8 +22,8 @@ public class YearlyAppModule {
     @Provides IDateFormatter providesDateFormatter(IStringResources rstring) {
         return new DateFormatter(rstring);
     }
-    @Provides @PerApp IAlarm providesAlaram(IRawAlarm rawAlarm, IPreferences preferences, IDateFormatter dateFormatter) {
-        return new AlarmArchiver(rawAlarm, preferences, dateFormatter);
+    @Provides @PerApp IAlarm providesAlaram(IRawAlarm rawAlarm, IPreferences preferences, IDateFormatter dateFormatter, IClock clock) {
+        return new AlarmArchiver(rawAlarm, preferences, dateFormatter, clock);
     }
 
 

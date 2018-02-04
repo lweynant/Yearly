@@ -18,7 +18,15 @@ public class Clock implements IClock {
         return DateTime.now().getHourOfDay();
     }
 
+    @Override public int minutes() {
+        return DateTime.now().getMinuteOfHour();
+    }
+
     @Override public String timestamp() {
         return DateTime.now().toString();
+    }
+
+    @Override public int seconds() {
+        return DateTime.now().getSecondOfMinute();
     }
 }

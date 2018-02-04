@@ -3,6 +3,8 @@ package com.lweynant.yearly;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.v4.app.JobIntentService;
 
 import com.lweynant.yearly.controller.EventNotifier;
 import com.lweynant.yearly.controller.AlarmGenerator;
@@ -20,7 +22,7 @@ import timber.log.Timber;
  * a service on a separate handler thread.
  * <p>
  */
-public class EventNotificationService extends IntentService {
+public class EventNotificationService extends JobIntentService {
     @Inject IClock clock;
     @Inject IEventRepo repo;
     @Inject AlarmGenerator alarmGenerator;
@@ -28,9 +30,6 @@ public class EventNotificationService extends IntentService {
     // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
     private static final String ACTION_NOTIFY = "com.lweynant.yearly.action.ACTION-NOTIFY";
 
-    public EventNotificationService() {
-        super("EventNotificationService");
-    }
 
     /**
      * Starts this service to perform action Foo with the given parameters. If
@@ -41,7 +40,8 @@ public class EventNotificationService extends IntentService {
     public static void startNotification(Context context) {
         Intent intent = new Intent(context, EventNotificationService.class);
         intent.setAction(ACTION_NOTIFY);
-        context.startService(intent);
+        enqueueWork(context, EventNotificationService.class
+                , 1, intent);
     }
 
     @Override public void onCreate() {
@@ -49,8 +49,7 @@ public class EventNotificationService extends IntentService {
         ((YearlyApp)getApplication()).getComponent().inject(this);
     }
 
-    @Override
-    protected void onHandleIntent(Intent intent) {
+    @Override protected void onHandleWork(@NonNull Intent intent) {
         Timber.d("onHandleIntent");
         if (intent != null) {
             final String action = intent.getAction();
@@ -59,6 +58,7 @@ public class EventNotificationService extends IntentService {
             }
         }
     }
+
 
     private void handleActionNotification() {
         Timber.d("handleActionNotification");

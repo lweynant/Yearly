@@ -3,6 +3,7 @@ package com.lweynant.yearly.controller;
 import com.lweynant.yearly.IDateFormatter;
 import com.lweynant.yearly.model.Date;
 import com.lweynant.yearly.platform.IAlarm;
+import com.lweynant.yearly.platform.IClock;
 import com.lweynant.yearly.platform.IPreferences;
 import com.lweynant.yearly.AlarmArchiver;
 
@@ -23,20 +24,25 @@ public class AlarmArchiverTest {
     @Mock IAlarm alarm;
     @Mock IPreferences preferences;
     @Mock IDateFormatter dateFormatter;
+    @Mock IClock clock;
     private AlarmArchiver sut;
 
     @Before public void setUp() {
-        sut = new AlarmArchiver(alarm, preferences, dateFormatter);
+        sut = new AlarmArchiver(alarm, preferences, dateFormatter, clock);
     }
 
     @Test public void archiveToPreferences() {
         LocalDate date = new LocalDate(2017, Date.JANUARY, 15);
+        LocalDate now = new LocalDate(2017, Date.JANUARY, 10);
         int hour = 19;
-        String formattedTime = "formatted time";
-        when(dateFormatter.format(date, hour)).thenReturn(formattedTime);
+        String formattedDate = "formatted date";
+        when(dateFormatter.format(date, hour)).thenReturn(formattedDate);
+        String formattedNow = "formatted now";
+        when(dateFormatter.format(clock)).thenReturn(formattedNow);
         sut.scheduleAlarm(date, hour);
 
-        verify(preferences).setStringValue(AlarmArchiver.CURRENT_ALARM, formattedTime);
+        verify(preferences).setStringValue(AlarmArchiver.CURRENT_ALARM, formattedDate);
+        verify(preferences).setStringValue(AlarmArchiver.ALARM_SET_AT, formattedNow);
         verify(alarm).scheduleAlarm(date, hour);
     }
     @Test public void clearFromPreferences() {
@@ -44,6 +50,7 @@ public class AlarmArchiverTest {
         sut.clear();
 
         verify(preferences).remove(AlarmArchiver.CURRENT_ALARM);
+        verify(preferences).remove(AlarmArchiver.ALARM_SET_AT);
         verify(alarm).clear();
     }
 

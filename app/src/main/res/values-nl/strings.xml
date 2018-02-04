@@ -133,5 +133,7 @@
     <string name="settings_preference_make_backup">Maak backup</string>
     <string name="settings_preference_restore_backup">Herstel van backup</string>
     <string name="settings_preferences_category_alarm">Alarm</string>
+    <string name="settings_preferences_alarm_set_at">Alarm gezet op</string>
+    <string name="settings_preferences_last_notification">Laatste notificatie</string>
 
 </resources>

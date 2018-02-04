@@ -13,10 +13,12 @@ import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import com.lweynant.yearly.BuildConfig;
+import com.lweynant.yearly.EventNotificationService;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.AlarmArchiver;
 import com.lweynant.yearly.controller.archive.ArchiveActivity;
 import com.lweynant.yearly.controller.archive.RestoreActivity;
+import com.lweynant.yearly.platform.EventNotification;
 
 import dagger.Provides;
 import timber.log.Timber;
@@ -81,6 +83,24 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         if (key == AlarmArchiver.CURRENT_ALARM){
             setCurrentAlarmPreferenceValue();
         }
+        else if (key == AlarmArchiver.ALARM_SET_AT) {
+            setAlarmSetAtPreferenceValue();
+        }
+        else if (key == EventNotification.LAST_NOTIFICATION){
+            setLastNotificationPreferenceValue();
+        }
+    }
+
+    private void setLastNotificationPreferenceValue() {
+        final String key = EventNotification.LAST_NOTIFICATION;
+        Preference pref = findPreference(key);
+        pref.setSummary(getDefaultSharedPreferences().getString(key, ""));
+    }
+
+    private void setAlarmSetAtPreferenceValue() {
+        final String key = AlarmArchiver.ALARM_SET_AT;
+        Preference pref = findPreference(key);
+        pref.setSummary(getDefaultSharedPreferences().getString(key, ""));
     }
 
     private void setVersion() {
@@ -100,6 +120,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         super.onResume();
         setCurrentAlarmPreferenceValue();
         setVersion();
+        setAlarmSetAtPreferenceValue();
+        setLastNotificationPreferenceValue();
         getDefaultSharedPreferences().registerOnSharedPreferenceChangeListener(this);
     }
 
