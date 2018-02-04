@@ -51,7 +51,7 @@ public class ShowBirthdayActivityTest {
 
     @PerApp
     @Component(dependencies = TestPlatformComponent.class, modules = {YearlyAppModule.class,
-            SyncControllerModule.class, ViewModule.class, ModelModule.class, ControllerModule.class})
+            TestSyncControllerModule.class, ViewModule.class, ModelModule.class, ControllerModule.class})
     public interface TestComponent extends BaseYearlyAppComponent {
         void inject(ShowBirthdayActivityTest showBirthdayActivity);
 

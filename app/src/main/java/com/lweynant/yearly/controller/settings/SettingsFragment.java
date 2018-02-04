@@ -4,23 +4,18 @@ package com.lweynant.yearly.controller.settings;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.widget.Toast;
 
 import com.lweynant.yearly.BuildConfig;
-import com.lweynant.yearly.EventNotificationService;
 import com.lweynant.yearly.R;
 import com.lweynant.yearly.AlarmArchiver;
 import com.lweynant.yearly.controller.archive.ArchiveActivity;
 import com.lweynant.yearly.controller.archive.RestoreActivity;
-import com.lweynant.yearly.platform.EventNotification;
+import com.lweynant.yearly.EventNotification;
 
-import dagger.Provides;
 import timber.log.Timber;
 
 public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {

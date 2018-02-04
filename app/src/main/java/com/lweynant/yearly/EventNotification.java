@@ -1,4 +1,4 @@
-package com.lweynant.yearly.platform;
+package com.lweynant.yearly;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -11,6 +11,10 @@ import android.support.v4.app.NotificationCompat;
 
 import com.lweynant.yearly.IDateFormatter;
 import com.lweynant.yearly.R;
+import com.lweynant.yearly.platform.IClock;
+import com.lweynant.yearly.platform.IEventNotification;
+import com.lweynant.yearly.platform.IEventNotificationText;
+import com.lweynant.yearly.platform.IPreferences;
 
 import org.joda.time.LocalDate;
 
@@ -18,26 +22,27 @@ import timber.log.Timber;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 import static android.support.v4.app.NotificationCompat.CATEGORY_REMINDER;
+import static com.lweynant.yearly.YearlyApp.NOTIFICATION_CHANNEL_ID;
 
 public class EventNotification implements IEventNotification {
     private final Context context;
     public static final String LAST_NOTIFICATION = "com.lweynant.last_notification";
-    private static final String NOTIFICATION_CHANNEL_ID = "com.lweynant.yearly.events";
+    private final IDateFormatter dateFormatter;
     private IPreferences preferences;
     private IClock clock;
 
-    public EventNotification(Context context, IPreferences preferences, IClock clock) {
+    public EventNotification(Context context, IPreferences preferences, IDateFormatter dateFormatter, IClock clock) {
         Timber.d("create EventNotification instance");
         this.clock = clock;
         this.preferences = preferences;
         this.context = context;
+        this.dateFormatter = dateFormatter;
     }
 
     @Override public void notify(int id, Intent intent,  IEventNotificationText notifText) {
         Timber.d("notify: sending notification for %s using id %d", notifText.getText(), id);
 
         NotificationManager nm = getNotificationManager();
-        registerNotificationChannel(nm);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID);
         builder.setSmallIcon(R.drawable.ic_cake_white_48dp);
         String title = notifText.getTitle();
@@ -49,27 +54,8 @@ public class EventNotification implements IEventNotification {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(pendingIntent);
         nm.notify(id, builder.build());
-        LocalDate now = clock.now();
-        String time = String.format("%02d:%02d:%02d, %s", clock.hour(), clock.minutes(), clock.seconds(), now.toString());
-
+        String time = dateFormatter.format(clock);
         preferences.setStringValue(LAST_NOTIFICATION, time);
-    }
-
-    private void registerNotificationChannel(NotificationManager nm) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            if (nm.getNotificationChannel(NOTIFICATION_CHANNEL_ID) != null) {
-//                return;
-//            }
-            NotificationChannel notificationChannel =
-                    new NotificationChannel(NOTIFICATION_CHANNEL_ID, "Birthday Notifications", NotificationManager.IMPORTANCE_DEFAULT);
-
-            // Configure the notification channel.
-            notificationChannel.setDescription("Events");
-            notificationChannel.enableLights(true);
-            notificationChannel.setLightColor(Color.MAGENTA);
-            notificationChannel.enableVibration(false);
-            nm.createNotificationChannel(notificationChannel);
-        }
     }
 
     private NotificationManager getNotificationManager() {

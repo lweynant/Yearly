@@ -6,7 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.lweynant.yearly.AlarmReceiver;
-import com.lweynant.yearly.IDateFormatter;
+import com.lweynant.yearly.EventNotification;
 
 import javax.inject.Singleton;
 
@@ -46,9 +46,5 @@ public class PlatformModule {
 
     @Provides @Singleton IRawAlarm provideAlarm() {
         return new Alarm(context, new Intent(context, AlarmReceiver.class));
-    }
-    @Provides @Singleton IEventNotification provideEventNotification(IPreferences preferences,
-                                                                     IClock clock) {
-        return new EventNotification(context, preferences, clock);
     }
 }

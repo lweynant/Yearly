@@ -8,10 +8,15 @@ import com.lweynant.yearly.controller.list_events.IEventsLoader;
 import com.lweynant.yearly.model.IEventRepo;
 import com.lweynant.yearly.platform.IAlarm;
 import com.lweynant.yearly.platform.IClock;
+import com.lweynant.yearly.platform.IEventNotification;
+
+import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
 import rx.android.schedulers.AndroidSchedulers;
+
+import static org.mockito.Mockito.mock;
 
 @Module
 public class TestSyncControllerModule {
@@ -27,5 +32,8 @@ public class TestSyncControllerModule {
     @Provides IEventsLoader providesEventLoader(CountingIdlingResource idlingResource,
                                                 IEventRepo repo, IClock clock) {
         return new SyncWithTestsEventsLoader(idlingResource, new SortedEventsLoader(repo, AndroidSchedulers.mainThread(), clock));
+    }
+    @Provides @PerApp IEventNotification provideEventNotification() {
+        return mock(IEventNotification.class);
     }
 }

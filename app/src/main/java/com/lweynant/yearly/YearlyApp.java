@@ -1,6 +1,10 @@
 package com.lweynant.yearly;
 
 import android.app.Application;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.graphics.Color;
+import android.os.Build;
 
 import com.lweynant.yearly.controller.ControllerModule;
 import com.lweynant.yearly.controller.SyncControllerModule;
@@ -26,11 +30,13 @@ import timber.log.Timber;
 public class YearlyApp extends Application implements IStringResources, IEventRepoListener {
 
 
+    public static final String NOTIFICATION_CHANNEL_ID = "com.lweynant.yearly.events";
     @Inject IClock clock;
     @Inject IEventRepo repo;
     @Inject IJsonFileAccessor repoAccessor;
     private BaseYearlyAppComponent component;
     @Inject AlarmGenerator alarmGenerator;
+    @Inject IStringResources stringResources;
 
     @Override
     public void onCreate() {
@@ -73,8 +79,26 @@ public class YearlyApp extends Application implements IStringResources, IEventRe
                     .build();
             Timber.d("injecting component and registering as listener");
             setComponent(cmp);
+            registerNotificationChannels();
         }
         return component;
+    }
+
+    private void registerNotificationChannels() {
+        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel notificationChannel =
+                    new NotificationChannel(NOTIFICATION_CHANNEL_ID,
+                            stringResources.getString(R.string.notification_channel_name), NotificationManager.IMPORTANCE_DEFAULT);
+
+            // Configure the notification channel.
+            notificationChannel.setDescription(stringResources.getString(R.string.notification_channel_desc));
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.MAGENTA);
+            notificationChannel.enableVibration(false);
+            nm.createNotificationChannel(notificationChannel);
+        }
+
     }
 
     public void setComponent(BaseYearlyAppComponent component) {

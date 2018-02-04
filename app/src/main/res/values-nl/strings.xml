@@ -135,5 +135,7 @@
     <string name="settings_preferences_category_alarm">Alarm</string>
     <string name="settings_preferences_alarm_set_at">Alarm gezet op</string>
     <string name="settings_preferences_last_notification">Laatste notificatie</string>
+    <string name="notification_channel_desc">Meldingen voor verjaardagen</string>
+    <string name="notification_channel_name">Verjaardag meldingen</string>
 
 </resources>

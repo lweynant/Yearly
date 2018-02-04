@@ -42,8 +42,6 @@ public class MockPlatformModule {
     }
 
 
-    @Provides @Singleton IEventNotification provideEventNotification() {
-        return mock(IEventNotification.class);
-    }
+
 
 }

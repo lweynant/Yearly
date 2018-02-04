@@ -134,6 +134,8 @@
     <string name="settings_alarm_set">Alarm set</string>
     <string name="settings_preferences_alarm_set_at">Alarm set at</string>
     <string name="settings_preferences_last_notification">Last notification</string>
+    <string name="notification_channel_desc">Birthday events</string>
+    <string name="notification_channel_name">Birthday notifications</string>
 
 
 </resources>

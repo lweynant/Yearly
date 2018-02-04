@@ -11,7 +11,6 @@ public interface BasePlatformComponent {
 
     IRawAlarm alarm();
 
-    IEventNotification eventNotification();
 
     IPreferences preferences();
 }
