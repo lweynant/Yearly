@@ -10,7 +10,8 @@ import dagger.Component;
 
 @PerApp
 @Component(dependencies = PlatformComponent.class, modules = {
-        YearlyAppModule.class, SyncControllerModule.class, ModelModule.class, ViewModule.class, ControllerModule.class})
+        YearlyAppModule.class, SyncControllerModule.class, NotificationModule.class,
+        ModelModule.class, ViewModule.class, ControllerModule.class})
 public interface YearlyAppComponent extends BaseYearlyAppComponent {
 
 }

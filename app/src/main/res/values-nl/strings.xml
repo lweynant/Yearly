@@ -135,7 +135,12 @@
     <string name="settings_preferences_category_alarm">Alarm</string>
     <string name="settings_preferences_alarm_set_at">Alarm gezet op</string>
     <string name="settings_preferences_last_notification">Laatste notificatie</string>
-    <string name="notification_channel_desc">Meldingen voor verjaardagen</string>
-    <string name="notification_channel_name">Verjaardag meldingen</string>
+    <string name="notification_channel_birthday_desc">Meldingen voor verjaardagen</string>
+    <string name="notification_channel_birthday_name">Melding op verjaardag</string>
+    <string name="notification_channel_day_before_birthday_name">Melding 1 dag voor verjaardag</string>
+    <string name="notification_channel_day_before_birthday_desc">Melding een dag voor de verjaardag</string>
+    <string name="notification_channel_2days_before_birthday_name">Melding 2 dagen voor de verjaardag</string>
+    <string name="notification_channel_2days_before_birthday_desc">Melding twee dagen voor de verjaardag</string>
+    <string name="notification_channel_group_default">Standaard</string>
 
 </resources>

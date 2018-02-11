@@ -22,7 +22,6 @@ import timber.log.Timber;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 import static android.support.v4.app.NotificationCompat.CATEGORY_REMINDER;
-import static com.lweynant.yearly.YearlyApp.NOTIFICATION_CHANNEL_ID;
 
 public class EventNotification implements IEventNotification {
     private final Context context;
@@ -43,7 +42,7 @@ public class EventNotification implements IEventNotification {
         Timber.d("notify: sending notification for %s using id %d", notifText.getText(), id);
 
         NotificationManager nm = getNotificationManager();
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NotificationChannels.NOTIFICATION_CHANNEL_BIRTHDAY);
         builder.setSmallIcon(R.drawable.ic_cake_white_48dp);
         String title = notifText.getTitle();
         String subTitle = notifText.getText();

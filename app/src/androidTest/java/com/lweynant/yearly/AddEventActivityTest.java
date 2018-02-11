@@ -43,7 +43,7 @@ public class AddEventActivityTest {
 
     @PerApp
     @Component(dependencies = TestPlatformComponent.class, modules = {YearlyAppModule.class,
-            SyncControllerModule.class, ViewModule.class, ModelModule.class, ControllerModule.class})
+            SyncControllerModule.class, MockNotificationModule.class, ViewModule.class, ModelModule.class, ControllerModule.class})
     public interface TestComponent extends BaseYearlyAppComponent {
         void inject(AddEventActivityTest addEventActivityTest);
     }

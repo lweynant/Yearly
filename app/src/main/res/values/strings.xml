@@ -134,8 +134,13 @@
     <string name="settings_alarm_set">Alarm set</string>
     <string name="settings_preferences_alarm_set_at">Alarm set at</string>
     <string name="settings_preferences_last_notification">Last notification</string>
-    <string name="notification_channel_desc">Birthday events</string>
-    <string name="notification_channel_name">Birthday notifications</string>
+    <string name="notification_channel_birthday_desc">Birthday events</string>
+    <string name="notification_channel_birthday_name">Notifaction on birthday</string>
+    <string name="notification_channel_day_before_birthday_name">Notification on day before birthday</string>
+    <string name="notification_channel_day_before_birthday_desc">Notification the day before the birthday</string>
+    <string name="notification_channel_2days_before_birthday_name">Notification 2 days before birthday</string>
+    <string name="notification_channel_2days_before_birthday_desc">Notification 2 days before the birthday</string>
+    <string name="notification_channel_group_default">Default</string>
 
 
 </resources>

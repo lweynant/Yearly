@@ -85,7 +85,8 @@ public class EventsActivityTest {
 
 
     @PerApp
-    @Component(dependencies = TestPlatformComponent.class, modules = {YearlyAppModule.class, TestSyncControllerModule.class, ViewModule.class, ModelModule.class, ControllerModule.class})
+    @Component(dependencies = TestPlatformComponent.class, modules = {YearlyAppModule.class, TestSyncControllerModule.class, MockNotificationModule.class,
+            ViewModule.class, ModelModule.class, ControllerModule.class})
     public interface TestComponentBase extends BaseYearlyAppComponent {
         void inject(EventsActivityTest eventsActivityTest);
     }
